@@ -30,6 +30,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 1rem;
 }
 
 /* Logo e marca da plataforma */
@@ -124,13 +125,228 @@
 }
 
 /* ========================================
+   MENU DO USUÁRIO
+   ======================================== */
+
+.nav-user {
+    display: flex;
+    align-items: center;
+}
+
+/* Botões de autenticação */
+.auth-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.auth-buttons .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+/* Menu do usuário autenticado */
+.user-menu {
+    position: relative;
+}
+
+.user-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: none;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.user-button:hover {
+    background: rgba(37, 99, 235, 0.1);
+    border-color: rgba(37, 99, 235, 0.2);
+    color: #2563eb;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+}
+
+.user-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-button i.fa-chevron-down {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+}
+
+.user-button i.fa-chevron-down.rotated {
+    transform: rotate(180deg);
+}
+
+/* Dropdown do usuário */
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e2e8f0;
+    min-width: 280px;
+    z-index: 1001;
+    animation: slideInDown 0.2s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Informações do usuário no dropdown */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.user-avatar-large {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.user-details h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.user-details p {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.user-role {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.user-role-super_admin {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.user-role-admin {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.user-role-editor {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.user-role-moderator {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.user-role-viewer {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+/* Ações do usuário */
+.user-actions {
+    padding: 0.5rem;
+}
+
+.user-action {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.user-action:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.user-action.logout {
+    color: #dc2626;
+}
+
+.user-action.logout:hover {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.user-action i {
+    width: 16px;
+    text-align: center;
+    font-size: 0.8rem;
+}
+
+/* ========================================
    RESPONSIVIDADE DA NAVBAR
    ======================================== */
 
 /* Tablets */
 @media (max-width: 768px) {
     .nav-container {
-        flex-direction: column;
+        flex-wrap: wrap;
         gap: 1rem;
     }
     
@@ -140,6 +356,14 @@
     
     .search-input {
         width: 250px;
+    }
+    
+    .user-name {
+        display: none;
+    }
+    
+    .user-dropdown {
+        min-width: 250px;
     }
 }
 
@@ -156,5 +380,20 @@
     
     .search-input {
         width: 200px;
+    }
+    
+    .auth-buttons {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .auth-buttons .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .user-dropdown {
+        min-width: 220px;
+        right: -10px;
     }
 }

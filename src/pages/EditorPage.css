@@ -1,0 +1,123 @@
+/* Estilos para página do editor */
+.editor-page {
+  height: 100vh;
+  background: var(--gray-100);
+  overflow: hidden;
+}
+
+.editor-layout {
+  display: flex;
+  height: 100%;
+}
+
+.editor-sidebar {
+  width: 280px;
+  background: var(--white);
+  border-right: 1px solid var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.editor-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.editor-workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .editor-sidebar {
+    width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .editor-layout {
+    flex-direction: column;
+  }
+  
+  .editor-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    border-right: none;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  
+  .editor-sidebar:last-child {
+    border-bottom: none;
+    border-top: 1px solid var(--gray-200);
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .editor-sidebar {
+    max-height: 150px;
+  }
+  
+  .editor-sidebar:last-child {
+    max-height: 250px;
+  }
+}
+
+/* Modo de tela cheia */
+.editor-page.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
+
+.editor-page.fullscreen .editor-sidebar {
+  display: none;
+}
+
+.editor-page.fullscreen .editor-main {
+  width: 100%;
+}
+
+/* Animações de entrada */
+.editor-page {
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scrollbar personalizada para toda a página */
+.editor-page::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.editor-page::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+.editor-page::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: var(--radius-full);
+}
+
+.editor-page::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+}

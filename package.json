@@ -4,16 +4,33 @@
   "description": "Plataforma de tutoriais do sistema Lukos em React",
   "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "react-scripts test"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@hookform/resolvers": "^5.2.1",
+    "axios": "^1.11.0",
+    "bcryptjs": "^3.0.2",
+    "framer-motion": "^12.23.12",
+    "jsonwebtoken": "^9.0.2",
     "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.62.0",
+    "react-hot-toast": "^2.6.0",
+    "react-quill": "^2.0.0",
+    "react-router-dom": "^6.8.1",
     "react-scripts": "5.0.1",
-    "react-router-dom": "^6.8.1"
+    "react-spring": "^10.0.1",
+    "react-transition-group": "^4.4.5",
+    "yup": "^1.7.0"
   },
   "browserslist": {
     "production": [
@@ -35,5 +52,9 @@
     "sistema"
   ],
   "author": "TutorialLukos",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.2",
+    "vite": "^7.1.4"
+  }
 }

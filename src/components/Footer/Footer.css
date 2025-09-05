@@ -1,0 +1,54 @@
+/* ========================================
+   FOOTER - RODAPÉ
+   ======================================== */
+
+/* Container do footer */
+.footer {
+    background: #3e065e;
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+}
+
+/* Conteúdo do footer */
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Marca no footer */
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* Texto do footer */
+.footer-text {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+/* ========================================
+   RESPONSIVIDADE DO FOOTER
+   ======================================== */
+
+/* Mobile */
+@media (max-width: 480px) {
+    .footer {
+        padding: 1.5rem 0;
+    }
+    
+    .footer-brand {
+        font-size: 1.1rem;
+    }
+    
+    .footer-text {
+        font-size: 0.8rem;
+    }
+}

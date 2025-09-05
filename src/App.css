@@ -1,0 +1,28 @@
+/* ========================================
+   APP - ESTILOS GLOBAIS DO APLICATIVO
+   ======================================== */
+
+.App {
+  text-align: center;
+}
+
+/* Ajuste para compensar a navbar fixa */
+body {
+  padding-top: 80px;
+}
+
+/* ========================================
+   RESPONSIVIDADE GLOBAL
+   ======================================== */
+
+@media (max-width: 768px) {
+  body {
+    padding-top: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding-top: 140px;
+  }
+}

@@ -1,0 +1,39 @@
+/* ========================================
+   SIDEBAR DO TUTORIAL
+   ======================================== */
+
+.tutorial-sidebar {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.tutorial-progress h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+.tutorial-steps {
+  margin-top: 2rem;
+}
+
+.tutorial-steps h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .tutorial-sidebar {
+    position: static;
+    order: 2;
+  }
+}

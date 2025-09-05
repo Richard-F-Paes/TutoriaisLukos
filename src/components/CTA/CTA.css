@@ -1,0 +1,96 @@
+/* ========================================
+   CTA SECTION - CHAMADA PARA AÇÃO
+   ======================================== */
+
+/* Container da seção CTA */
+.cta-section {
+    position: relative;
+    padding: 5rem 0;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+}
+
+/* Background da seção CTA */
+.cta-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #5a008f 0%, #5a008f 100%);
+    z-index: -1;
+}
+
+.cta-background::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Conteúdo da CTA */
+.cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Ícone da CTA */
+.cta-icon {
+    font-size: 4rem;
+    color: #fbbf24;
+    margin-bottom: 1.5rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Título da CTA */
+.cta-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+/* Descrição da CTA */
+.cta-description {
+    font-size: 1.2rem;
+    color: #e0f2fe;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+/* ========================================
+   RESPONSIVIDADE DA CTA
+   ======================================== */
+
+/* Tablets */
+@media (max-width: 768px) {
+    .cta-section {
+        padding: 3rem 0;
+    }
+    
+    .cta-icon {
+        font-size: 3rem;
+    }
+    
+    .cta-description {
+        font-size: 1.1rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .cta-content {
+        padding: 0 15px;
+    }
+    
+    .cta-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .cta-description {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+}

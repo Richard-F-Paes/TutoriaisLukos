@@ -1,0 +1,64 @@
+/* ========================================
+   ITEM DE PASSO
+   ======================================== */
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.step-item:hover {
+  background: #f3f4f6;
+}
+
+.step-item.active {
+  background: rgba(37, 99, 235, 0.05);
+  border-color: #2563eb;
+}
+
+.step-item.completed {
+  background: rgba(16, 185, 129, 0.05);
+  border-color: #10b981;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #6b7280;
+  transition: all 0.3s ease;
+}
+
+.step-item.active .step-number {
+  background: #2563eb;
+  color: white;
+}
+
+.step-item.completed .step-number {
+  background: #10b981;
+  color: white;
+}
+
+.step-content h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.step-content span {
+  font-size: 0.8rem;
+  color: #6b7280;
+}

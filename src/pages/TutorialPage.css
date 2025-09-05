@@ -1,0 +1,40 @@
+/* ========================================
+   PÁGINA DO TUTORIAL
+   ======================================== */
+
+.tutorial-page {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.tutorial-content {
+  padding: 4rem 0;
+}
+
+.tutorial-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.tutorial-main {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .tutorial-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .tutorial-main {
+    order: 1;
+  }
+}

@@ -1,0 +1,169 @@
+/* ========================================
+   BUTTONS - ESTILOS DE BOTÕES
+   ======================================== */
+
+/* Estilo base para todos os botões */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ========================================
+   VARIAÇÕES DE BOTÕES
+   ======================================== */
+
+/* Botão primário - ação principal */
+.btn-primary {
+    background: white;
+    color: #2563eb;
+    padding: 20px 40px;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Botão secundário - ação secundária */
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    padding: 20px 40px;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Botão CTA - chamada para ação */
+.btn-cta {
+    background: white;
+    color: #2563eb;
+    font-size: 1.2rem;
+}
+
+.btn-cta:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Botão outline */
+.btn-outline {
+    background: transparent;
+    color: #2563eb;
+    border: 2px solid #2563eb;
+}
+
+.btn-outline:hover:not(:disabled) {
+    background: #2563eb;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Botão ghost */
+.btn-ghost {
+    background: transparent;
+    color: #64748b;
+    border: 1px solid transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+    background: rgba(100, 116, 139, 0.1);
+    color: #2563eb;
+}
+
+/* ========================================
+   TAMANHOS DE BOTÕES
+   ======================================== */
+
+/* Botão pequeno */
+.btn-small {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    border-radius: 12px;
+}
+
+/* Botão médio (padrão) */
+.btn-medium {
+    padding: 16px 32px;
+    font-size: 1.1rem;
+}
+
+/* Botão grande */
+.btn-large {
+    padding: 20px 40px;
+    font-size: 1.2rem;
+    border-radius: 20px;
+}
+
+/* ========================================
+   EFEITOS ESPECIAIS
+   ======================================== */
+
+/* Efeito de ripple */
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* ========================================
+   RESPONSIVIDADE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+    
+    .btn-large {
+        padding: 16px 32px;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn-medium {
+        padding: 12px 24px;
+        font-size: 1rem;
+    }
+    
+    .btn-large {
+        padding: 14px 28px;
+        font-size: 1rem;
+    }
+}

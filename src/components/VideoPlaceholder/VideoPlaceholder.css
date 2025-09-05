@@ -1,0 +1,38 @@
+/* ========================================
+   PLACEHOLDER DE VÍDEO
+   ======================================== */
+
+.video-container {
+  margin-bottom: 2rem;
+}
+
+.video-placeholder {
+  background: linear-gradient(135deg, #1f2937, #374151);
+  color: white;
+  padding: 4rem 2rem;
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.video-placeholder:hover {
+  transform: scale(1.02);
+}
+
+.video-placeholder.playing {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.video-placeholder i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.video-placeholder p {
+  font-size: 1.1rem;
+  font-weight: 600;
+}

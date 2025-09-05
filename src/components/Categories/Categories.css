@@ -1,0 +1,165 @@
+/* ========================================
+   CATEGORIES SECTION - SEÇÃO DE CATEGORIAS
+   ======================================== */
+
+/* Container da seção de categorias */
+.categories-section {
+    padding: 5rem 0;
+    background: white;
+}
+
+/* Cabeçalho das seções */
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+}
+
+.section-description {
+    font-size: 1.2rem;
+    color: #64748b;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Grid responsivo para categorias */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Card individual de categoria */
+.category-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Barra colorida no topo de cada categoria */
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    transition: all 0.3s ease;
+}
+
+/* Hover effect para categorias */
+.category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Cores específicas para cada categoria */
+.category-card.sistema::before { 
+    background: linear-gradient(90deg, #2563eb, #1d4ed8); 
+}
+
+.category-card.pdv::before { 
+    background: linear-gradient(90deg, #059669, #047857); 
+}
+
+.category-card.vendas::before { 
+    background: linear-gradient(90deg, #ea580c, #dc2626); 
+}
+
+.category-card.analise::before { 
+    background: linear-gradient(90deg, #0891b2, #0284c7); 
+}
+
+.category-card.fiscal::before { 
+    background: linear-gradient(90deg, #059669, #047857); 
+}
+
+/* Ícone da categoria */
+.category-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+/* Conteúdo da categoria */
+.category-content {
+    text-align: center;
+}
+
+/* Título da categoria */
+.category-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
+
+/* Contador de tutoriais */
+.category-count {
+    color: #64748b;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Descrição da categoria */
+.category-description {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* ========================================
+   RESPONSIVIDADE DAS CATEGORIAS
+   ======================================== */
+
+/* Tablets */
+@media (max-width: 768px) {
+    .categories-section {
+        padding: 3rem 0;
+    }
+    
+    .categories-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .category-card {
+        padding: 1.5rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .category-card {
+        padding: 1rem;
+    }
+    
+    .category-icon {
+        font-size: 2.5rem;
+    }
+    
+    .category-title {
+        font-size: 1.2rem;
+    }
+}

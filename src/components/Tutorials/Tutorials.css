@@ -1,0 +1,297 @@
+/* ========================================
+   TUTORIALS SECTION - SEÇÃO DE TUTORIAIS
+   ======================================== */
+
+/* Container da seção de tutoriais */
+.tutorials-section {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+}
+
+/* Badge da seção */
+.section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Grid responsivo para tutoriais */
+.tutorials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+/* Card individual de tutorial */
+.tutorial-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+
+.tutorial-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Container da imagem do tutorial */
+.tutorial-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.tutorial-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.tutorial-card:hover .tutorial-image img {
+    transform: scale(1.05);
+}
+
+/* Overlay escuro sobre a imagem */
+.tutorial-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+}
+
+/* Badges e ícones sobre a imagem */
+.tutorial-badges {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.category-badge {
+    background: rgba(255, 255, 255, 0.95);
+    color: #1a1a1a;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+}
+
+.tutorial-icons {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+}
+
+/* Cores dos ícones por categoria */
+.icon-badge.sistema { 
+    background: linear-gradient(135deg, #2563eb, #1d4ed8); 
+}
+
+.icon-badge.pdv { 
+    background: linear-gradient(135deg, #059669, #047857); 
+}
+
+.icon-badge.vendas { 
+    background: linear-gradient(135deg, #ea580c, #dc2626); 
+}
+
+.icon-badge.analise { 
+    background: linear-gradient(135deg, #0891b2, #0284c7); 
+}
+
+.icon-badge.fiscal { 
+    background: linear-gradient(135deg, #059669, #047857); 
+}
+
+.icon-badge.video { 
+    background: #ef4444; 
+}
+
+/* Meta informações (duração e passos) */
+.tutorial-meta {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    backdrop-filter: blur(10px);
+}
+
+/* Conteúdo do card de tutorial */
+.tutorial-content {
+    padding: 1.5rem;
+}
+
+/* Cabeçalho do conteúdo (nível e rating) */
+.tutorial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Badges de nível */
+.level-badge {
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+}
+
+.level-badge.iniciante { 
+    background: linear-gradient(135deg, #059669, #047857); 
+}
+
+.level-badge.intermediario { 
+    background: linear-gradient(135deg, #2563eb, #1d4ed8); 
+}
+
+.level-badge.avancado { 
+    background: linear-gradient(135deg, #dc2626, #b91c1c); 
+}
+
+/* Rating com estrela */
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.rating i {
+    color: #fbbf24;
+}
+
+/* Título do tutorial */
+.tutorial-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.75rem;
+    transition: color 0.3s ease;
+}
+
+.tutorial-card:hover .tutorial-title {
+    color: #2563eb;
+}
+
+/* Descrição do tutorial */
+.tutorial-description {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+/* Rodapé do card (estudantes e link) */
+.tutorial-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.students {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.start-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.tutorial-card:hover .start-link {
+    color: #1d4ed8;
+}
+
+.start-link i {
+    transition: transform 0.3s ease;
+}
+
+.tutorial-card:hover .start-link i {
+    transform: translateX(4px);
+}
+
+/* ========================================
+   RESPONSIVIDADE DOS TUTORIAIS
+   ======================================== */
+
+/* Tablets */
+@media (max-width: 768px) {
+    .tutorials-section {
+        padding: 3rem 0;
+    }
+    
+    .tutorials-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .tutorials-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .tutorial-card {
+        margin: 0 10px;
+    }
+    
+    .tutorial-content {
+        padding: 1rem;
+    }
+    
+    .tutorial-title {
+        font-size: 1.1rem;
+    }
+    
+    .tutorial-description {
+        font-size: 0.9rem;
+    }
+}

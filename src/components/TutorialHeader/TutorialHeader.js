@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './TutorialHeader.css';
 
 const TutorialHeader = () => {
@@ -6,9 +7,9 @@ const TutorialHeader = () => {
     <section className="tutorial-header">
       <div className="container">
         <div className="tutorial-breadcrumb">
-          <a href="/">Início</a>
+          <Link to="/">Início</Link>
           <i className="fas fa-chevron-right"></i>
-          <a href="/categoria-sistema">Sistema</a>
+          <Link to="/categoria-sistema">Sistema</Link>
           <i className="fas fa-chevron-right"></i>
           <span>Sistema de Retaguarda</span>
         </div>

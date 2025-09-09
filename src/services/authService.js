@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Configuração base da API
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -308,4 +308,4 @@ export const mockAuthService = {
 };
 
 // Usar serviço mockado em desenvolvimento
-export default process.env.NODE_ENV === 'development' ? mockAuthService : authService;
+export default import.meta.env.DEV ? mockAuthService : authService;

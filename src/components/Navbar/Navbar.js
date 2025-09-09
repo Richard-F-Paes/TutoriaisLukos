@@ -54,8 +54,8 @@ const Navbar = () => {
             <div className="nav-container">
                 {/* Logo e marca */}
                 <Link to="/" className="nav-brand">
-                    <img src="/logo.png" alt="Logo" className="nav-logo" />
-                    <span className="nav-title">Tutorial lukos</span>
+                    <i className="fas fa-desktop nav-icon"></i>
+                    <span className="nav-title">TutorialLukos</span>
                 </Link>
                 
                 {/* Menu de navegação */}

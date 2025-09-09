@@ -9,7 +9,7 @@ import { tutorialData } from '../data/tutorialData';
 import './TutorialPage.css';
 
 const TutorialPage = () => {
-  const { currentStep } = useTutorial();
+  const { currentStep, nextStep, prevStep, goToStep } = useTutorial();
 
   // Configura atalhos de teclado
   useEffect(() => {
@@ -17,25 +17,25 @@ const TutorialPage = () => {
       // Seta direita ou espaço = próximo passo
       if (e.key === 'ArrowRight' || e.key === ' ') {
         e.preventDefault();
-        // Lógica será implementada no contexto
+        nextStep();
       }
       
       // Seta esquerda = passo anterior
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        // Lógica será implementada no contexto
+        prevStep();
       }
       
       // Teclas numéricas = passo direto
       if (e.key >= '1' && e.key <= '6') {
         e.preventDefault();
-        // Lógica será implementada no contexto
+        goToStep(parseInt(e.key));
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [nextStep, prevStep, goToStep]);
 
   return (
     <div className="tutorial-page">

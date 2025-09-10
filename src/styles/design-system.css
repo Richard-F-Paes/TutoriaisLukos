@@ -293,7 +293,7 @@ a:hover {
 /* Inputs */
 .input {
   width: 100%;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-) var(--space-4);
   font-size: var(--text-sm);
   line-height: 1.5;
   color: var(--gray-900);
@@ -536,7 +536,7 @@ a:hover {
 /* ===== DARK MODE (Preparado para futuro) ===== */
 @media (prefers-color-scheme: dark) {
   :root {
-    --white: #0f172a;
+    --white: #ffffff;
     --black: #ffffff;
     --gray-50: #1e293b;
     --gray-100: #334155;

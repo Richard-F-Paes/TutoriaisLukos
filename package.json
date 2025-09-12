@@ -1,63 +1,53 @@
 {
-  "name": "tutorial-lukos-react",
+  "name": "tutorial-lukos",
   "version": "1.0.0",
-  "description": "Plataforma de tutoriais do sistema Lukos em React",
-  "main": "index.js",
-  "type": "module",
+  "description": "Plataforma completa de tutoriais do sistema Lukos",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ],
   "scripts": {
-    "dev": "vite",
-    "start": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "react-scripts test"
+    "dev": "start-dev.bat",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "start": "start-prod.bat",
+    "start:frontend": "cd frontend && npm run start",
+    "start:backend": "cd backend && npm run start",
+    "install:all": "npm install && npm run install:frontend && npm run install:backend",
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && npm install",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "cd frontend && npm run test",
+    "test:backend": "cd backend && npm run test",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && npm run lint",
+    "clean": "npm run clean:frontend && npm run clean:backend",
+    "clean:frontend": "cd frontend && rm -rf node_modules dist build",
+    "clean:backend": "cd backend && rm -rf node_modules dist build",
+    "setup": "npm run install:all && npm run setup:env",
+    "setup:env": "echo 'Configurando arquivos de ambiente...' && cp frontend/env.example frontend/.env && cp backend/env.example backend/.env"
   },
-  "dependencies": {
-    "@dnd-kit/core": "^6.3.1",
-    "@dnd-kit/sortable": "^10.0.0",
-    "@dnd-kit/utilities": "^3.2.2",
-    "@hookform/resolvers": "^5.2.1",
-    "axios": "^1.11.0",
-    "bcryptjs": "^3.0.2",
-    "framer-motion": "^12.23.12",
-    "jsonwebtoken": "^9.0.2",
-    "react": "^18.2.0",
-    "react-beautiful-dnd": "^13.1.1",
-    "react-color": "^2.19.3",
-    "react-dom": "^18.2.0",
-    "react-helmet-async": "^2.0.5",
-    "react-hook-form": "^7.62.0",
-    "react-hot-toast": "^2.6.0",
-    "react-quill": "^2.0.0",
-    "react-router-dom": "^6.8.1",
-    "react-scripts": "5.0.1",
-    "react-spring": "^10.0.1",
-    "react-transition-group": "^4.4.5",
-    "trae": "^1.0.0",
-    "yup": "^1.7.0"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
+  "devDependencies": {},
   "keywords": [
-    "react",
     "tutorial",
     "lukos",
     "pdv",
-    "sistema"
+    "sistema",
+    "react",
+    "nodejs",
+    "express",
+    "mongodb"
   ],
   "author": "TutorialLukos",
   "license": "MIT",
-  "devDependencies": {
-    "@vitejs/plugin-react": "^5.0.2",
-    "vite": "^7.1.4"
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

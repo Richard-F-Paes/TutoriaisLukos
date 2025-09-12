@@ -5,3 +5,11 @@ https://vite.dev
 https://developer.mozilla.org/pt-BR/docs/Web/JavaScript
 https://nodejs.org/api/
 https://github.com/axios/axios
+https://modelcontextprotocol.io/introduction
+https://github.com/modelcontextprotocol
+
+
+Não usar dados sintéticos.
+Não usar dados Hardcoded.
+Não usar dados fictícios.
+Não duplicar código nem arquivos.

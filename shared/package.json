@@ -1,0 +1,19 @@
+{
+  "name": "tutorial-lukos-shared",
+  "version": "1.0.0",
+  "description": "Código compartilhado entre frontend e backend",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    "./constants": "./constants.js",
+    "./utils": "./utils.js"
+  },
+  "keywords": [
+    "shared",
+    "utils",
+    "constants",
+    "tutorial-lukos"
+  ],
+  "author": "TutorialLukos",
+  "license": "MIT"
+}

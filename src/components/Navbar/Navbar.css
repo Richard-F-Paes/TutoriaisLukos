@@ -89,19 +89,23 @@
     position: relative;
     display: flex;
     align-items: center;
+  
+    
 }
 
 .nav-search form {
     position: relative;
     display: flex;
     align-items: center;
+    
 }
 
 .search-icon {
     position: absolute;
-    left: 1rem;
+    left: 0.50rem;
     color: #9ca3af;
     z-index: 1;
+    ;
 }
 
 .search-input {
@@ -112,12 +116,14 @@
     font-size: 0.9rem;
     background: white;
     transition: all 0.3s ease;
+    
 }
 
 .search-input:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: #4325eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    
 }
 
 /* ========================================

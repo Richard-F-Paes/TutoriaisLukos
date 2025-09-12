@@ -9,8 +9,8 @@ const Footer = () => {
             <div className="container">
                 <div className="footer-content">
                     <div className="footer-brand">
-                        <i className="fas fa-desktop"></i>
-                        <span>TutorialLukos</span>
+                        <i className="C:\Desenvolvimento\TutoriaisLukos\src\components\Logo\1.png"></i>
+                        <span>Tutorial Lukos</span>
                     </div>
                     <p className="footer-text">
                         © {currentYear} TutorialLukos. Todos os direitos reservados.

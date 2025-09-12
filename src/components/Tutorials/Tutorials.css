@@ -13,9 +13,9 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    background: linear-gradient(135deg, #f3f3f3, #ffffff);
     color: white;
-    padding: 8px 16px;
+  
     border-radius: 12px;
     font-weight: 600;
     margin-bottom: 1rem;
@@ -26,6 +26,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 2rem;
+    
 }
 
 /* Card individual de tutorial */
@@ -47,7 +48,7 @@
 /* Container da imagem do tutorial */
 .tutorial-image {
     position: relative;
-    height: 200px;
+    height: 250px;
     overflow: hidden;
 }
 
@@ -106,6 +107,16 @@
     font-size: 0.9rem;
 }
 
+.nav-logo {
+    width: 50px;
+    height: px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+}
 /* Cores dos ícones por categoria */
 .icon-badge.sistema { 
     background: linear-gradient(135deg, #2563eb, #1d4ed8); 
@@ -154,7 +165,11 @@
 
 /* Conteúdo do card de tutorial */
 .tutorial-content {
-    padding: 1.5rem;
+    padding: 1.50rem;
+ 
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 
 }
 
 /* Cabeçalho do conteúdo (nível e rating) */
@@ -210,6 +225,7 @@
 
 .tutorial-card:hover .tutorial-title {
     color: #2563eb;
+    
 }
 
 /* Descrição do tutorial */
@@ -242,6 +258,7 @@
     font-weight: 600;
     font-size: 0.9rem;
     transition: all 0.3s ease;
+
 }
 
 .tutorial-card:hover .start-link {

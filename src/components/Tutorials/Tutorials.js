@@ -14,7 +14,7 @@ const Tutorials = () => {
             steps: '8 passos',
             students: '1.250 usuários',
             rating: '4.9',
-            image: 'C:\Users\Suporte\Downloads\teste em react\src\components\Tutorials\retaguarda.png',
+            image: 'retaguarda.png',
             icons: ['sistema', 'video']
         },
         {
@@ -27,7 +27,7 @@ const Tutorials = () => {
             steps: '6 passos',
             students: '2.340 usuários',
             rating: '4.8',
-            image: 'https://images.pexels.com/photos/4386321/pexels-photo-4386321.jpeg?auto=compress&cs=tinysrgb&w=500',
+            image: 'CaixaPDV.png',
             icons: ['pdv', 'video']
         },
         {
@@ -83,8 +83,8 @@ const Tutorials = () => {
                 {/* Cabeçalho da seção */}
                 <div className="section-header">
                     <div className="section-badge">
-                        <i className="fas fa-desktop"></i>
-                        <span>TutorialLukos</span>
+                         <img src="/1.png" alt="Logo Tutorial Lukos" className="nav-logo" />
+                        <span>Tutorial Lukos</span>
                     </div>
                     <h2 className="section-title">Tutoriais Especializados</h2>
                     <p className="section-description">

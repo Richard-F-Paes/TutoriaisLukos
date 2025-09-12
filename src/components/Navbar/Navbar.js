@@ -3,6 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './Navbar.css';
 
+
+
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -54,9 +56,10 @@ const Navbar = () => {
             <div className="nav-container">
                 {/* Logo e marca */}
                 <Link to="/" className="nav-brand">
-                    <i className="fas fa-desktop nav-icon"></i>
-                    <span className="nav-title">TutorialLukos</span>
+                    <i className="C:\Desenvolvimento\TutoriaisLukos\public\2.png"></i>
+                    <span className="nav-title">Tutorial Lukos</span>
                 </Link>
+                
                 
                 {/* Menu de navegação */}
                 <div className="nav-menu">

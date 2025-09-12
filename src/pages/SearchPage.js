@@ -176,7 +176,7 @@ function SearchPage() {
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Buscar Tutoriais
         </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="text-xl text-ray-600 max-w-2xl mx-auto">
           Encontre exatamente o que você precisa para aprender o sistema Lukos
         </p>
       </motion.div>

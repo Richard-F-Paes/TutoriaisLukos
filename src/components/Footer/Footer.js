@@ -13,7 +13,7 @@ const Footer = () => {
                         <span>Tutorial Lukos</span>
                     </div>
                     <p className="footer-text">
-                        © {currentYear} TutorialLukos. Todos os direitos reservados.
+                        © {currentYear} Tutorial Lukos. Todos os direitos reservados.
                     </p>
                 </div>
             </div>

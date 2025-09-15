@@ -56,7 +56,7 @@ const Navbar = () => {
             <div className="nav-container">
                 {/* Logo e marca */}
                 <Link to="/" className="nav-brand">
-                    <i className="C:\Desenvolvimento\TutoriaisLukos\public\2.png"></i>
+                    <img src="logo.png" alt="Logo Tutorial Lukos" className="nav-logo" />
                     <span className="nav-title">Tutorial Lukos</span>
                 </Link>
                 

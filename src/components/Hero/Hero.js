@@ -25,13 +25,15 @@ const Hero = () => {
     return (
         <section className="hero-section">
             {/* Background com gradiente animado */}
-            <div className="hero-background"></div>
+            <div className="hero-background">
+                <img src="FundoHome.png" alt="Fundo Animado" className="hero-bg-image" />
+            </div>
             
             {/* Conteúdo principal */}
             <div className="hero-content">
                 {/* Badge de identificação */}
                 <div className="hero-badge animate-pulse">
-                    <i className="public\2.png"></i>
+                    <i className="C:\Desenvolvimento\TutoriaisLukos\public\Fundo Home.png"></i>
                     <span>Tutorial Lukos</span>
                 </div>
                 
@@ -51,7 +53,7 @@ const Hero = () => {
                         className="btn btn-primary" 
                         onClick={() => scrollToSection('tutoriais')}
                     >
-                        <i className="fas fa-book-open"></i>
+                        <i className="TutoriaisLukos\src\components\Navbar\logo.png"></i>
                         Começar Agora
                     </button>
                     <button 

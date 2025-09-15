@@ -169,7 +169,7 @@
  
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 
+
 }
 
 /* Cabeçalho do conteúdo (nível e rating) */
@@ -187,6 +187,7 @@
     font-size: 0.8rem;
     font-weight: 600;
     color: white;
+    margin-left: 20px;
 }
 
 .level-badge.iniciante { 
@@ -218,7 +219,7 @@
 .tutorial-title {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #000000;
     margin-bottom: 0.75rem;
     transition: color 0.3s ease;
 }
@@ -233,6 +234,7 @@
     color: #64748b;
     margin-bottom: 1.5rem;
     line-height: 1.6;
+    ;
 }
 
 /* Rodapé do card (estudantes e link) */
@@ -248,6 +250,8 @@
     gap: 4px;
     color: #64748b;
     font-size: 0.9rem;
+    margin-left: 30px;
+    
 }
 
 .start-link {
@@ -258,6 +262,7 @@
     font-weight: 600;
     font-size: 0.9rem;
     transition: all 0.3s ease;
+    margin-right: 30px
 
 }
 

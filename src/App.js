@@ -21,6 +21,12 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import EditorPage from './pages/EditorPage';
+import PaginaTutorial from "./pages/PaginaTutorial";
+
+
+
+
+
 
 function App() {
   return (
@@ -39,6 +45,9 @@ function App() {
               <Route path="/tutorial/:id/executar" element={<TutorialPage />} />
               <Route path="/sobre" element={<AboutPage />} />
               <Route path="/busca" element={<SearchPage />} />
+               <Route path="/pagina-tutorial" element={<PaginaTutorial />} />
+           
+              
               
               {/* Rotas de autenticação */}
               <Route path="/login" element={<LoginPage />} />
@@ -72,10 +81,13 @@ function App() {
                     <div className="page-container">
                       <h1>Painel Administrativo</h1>
                       <p>Esta página será implementada em breve.</p>
+                      
                     </div>
+                    
                   </ProtectedRoute>
                 } 
               />
+              
             </Routes>
           </main>
           <Footer />

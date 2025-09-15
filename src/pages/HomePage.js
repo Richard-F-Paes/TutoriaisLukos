@@ -9,8 +9,8 @@ function HomePage() {
     <>
       <Hero />
       <Categories />
-      <Tutorials />
       <CTA />
+
     </>
   );
 }

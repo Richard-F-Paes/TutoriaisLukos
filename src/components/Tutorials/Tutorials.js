@@ -40,7 +40,7 @@ const Tutorials = () => {
             steps: '7 passos',
             students: '1.890 usuários',
             rating: '4.9',
-            image: 'https://images.pexels.com/photos/4386370/pexels-photo-4386370.jpeg?auto=compress&cs=tinysrgb&w=500',
+            image: 'Smartpos.jpg',
             icons: ['pdv', 'video']
         },
         {
@@ -83,7 +83,7 @@ const Tutorials = () => {
                 {/* Cabeçalho da seção */}
                 <div className="section-header">
                     <div className="section-badge">
-                         <img src="/1.png" alt="Logo Tutorial Lukos" className="nav-logo" />
+                         <img src="/logo.png" alt="Logo Tutorial Lukos" className="nav-logo" />
                         <span>Tutorial Lukos</span>
                     </div>
                     <h2 className="section-title">Tutoriais Especializados</h2>

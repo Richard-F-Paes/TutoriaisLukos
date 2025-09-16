@@ -151,7 +151,6 @@
 .btn-primary {
   background-color: #3b82f6;
   color: white;
-  align-items: center
 }
 
 .btn-primary:hover {
@@ -164,7 +163,7 @@
 }
 
 .btn-secondary:hover {
-  background-color: #cbd5e1;
+  background-color: #ffffff;
 }
 
 /* Responsivo */

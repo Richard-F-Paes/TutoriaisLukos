@@ -33,7 +33,7 @@ const Hero = () => {
                 {/* Badge de identificação */}
                 <div className="hero-badge animate-pulse">
                     <i className="C:\Desenvolvimento\TutoriaisLukos\public\Fundo Home.png"></i>
-                    <span>Tutorial Lukos</span>
+                    <img src="/logo.png" alt="Logo Tutorial Lukos" className="nav-logo" />
                 </div>
                 
                 {/* Título principal */}

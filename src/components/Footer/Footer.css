@@ -1,57 +1,115 @@
-/* ========================================
-   FOOTER - RODAPÉ
-   ======================================== */
-
-/* Container do footer */
 .footer {
-    
-    background-color: linear-gradient(90deg, rgb(140, 41, 199) 0%, rgb(94, 29, 133) 100%);
-    padding: 3rem 0;
-    text-align: center;
+ background: linear-gradient(135deg, #5a008f 0%, #5a008f 100%);
+  color: #ffffff;
+  padding: 40px 20px;
+  border-top: 1px solid #ffffff;
 }
 
-/* Conteúdo do footer */
-.footer-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    
+.footer-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-
-
-/* Marca no footer */
 .footer-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: linear-gradient(90deg, rgb(140, 41, 199) 0%, rgb(94, 29, 133) 100%);
-    font-weight: 700;
-    font-size: 1.25rem;
+  flex: 1;
 }
 
-/* Texto do footer */
-.footer-text {
-    color: #000000;
+.brand-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  color: inherit;
 }
 
+.brand-icon {
+  width: 50px;
+  height: 50px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-/* ========================================
-   RESPONSIVIDADE DO FOOTER
-   ======================================== */
+.brand-svg {
+  width: 20px;
+  height: 20px;
+  color: white;
+}
 
-/* Mobile */
-@media (max-width: 480px) {
-    .footer {
-        padding: 1.5rem 0;
-    }
-    
-    .footer-brand {
-        font-size: 1.1rem;
-    }
-    
-    .footer-text {
-        font-size: 0.8rem;
-    }
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 20px;
+  flex: 2;
+}
+
+.footer-links h3 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-bottom: 8px;
+}
+.logo-image {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.footer-links a {
+  text-decoration: none;
+  color: #ffffff;f
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: #7c3aed;
+}
+
+.social-icons {
+  display: flex;
+  gap: 12px;
+  margin-left: 70px;
+}
+
+.social-icons a {
+  font-size: 1.2rem;
+  color: #ffffff;
+  transition: color 0.2s ease;
+}
+
+.social-icons a:hover {
+  color: #7c3aed;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding: 30px;
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+@media (min-width: 640px) {
+  .footer-container {
+    flex-direction: row;
+    align-items: flex-start;
+  }
 }

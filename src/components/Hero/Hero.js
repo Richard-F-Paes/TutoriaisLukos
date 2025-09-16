@@ -26,7 +26,6 @@ const Hero = () => {
         <section className="hero-section">
             {/* Background com gradiente animado */}
             <div className="hero-background">
-                <img src="FundoHome.png" alt="Fundo Animado" className="hero-bg-image" />
             </div>
             
             {/* Conteúdo principal */}

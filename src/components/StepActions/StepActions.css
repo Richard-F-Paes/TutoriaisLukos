@@ -1,0 +1,39 @@
+/* ========================================
+   AÇÕES DO PASSO
+   ======================================== */
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.step-actions .btn {
+  padding: 0.75rem 2rem;
+}
+
+.step-actions .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.step-actions .btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .step-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .step-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

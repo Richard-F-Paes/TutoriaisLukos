@@ -9,6 +9,7 @@
     text-align: center;
     color: white;
     overflow: hidden;
+ 
 }
 
 /* Background da seção CTA */
@@ -54,7 +55,7 @@
 /* Descrição da CTA */
 .cta-description {
     font-size: 1.2rem;
-    color: #e0f2fe;
+    color: #ffffff;
     margin-bottom: 2.5rem;
     line-height: 1.6;
 }

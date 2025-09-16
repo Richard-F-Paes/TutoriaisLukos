@@ -45,7 +45,8 @@ function App() {
               <Route path="/tutorial/:id/executar" element={<TutorialPage />} />
               <Route path="/sobre" element={<AboutPage />} />
               <Route path="/busca" element={<SearchPage />} />
-               <Route path="/pagina-tutorial" element={<PaginaTutorial />} />
+               <Route path="/paginatutorial" element={<PaginaTutorial />} />
+             
            
               
               

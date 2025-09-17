@@ -6,7 +6,8 @@ const steps = [
     id: 1,
     title: "Passo 1: Introdução ao Sistema de Retaguarda",
     duration: "5 minutos",
-    video: "https://www.youtube.com/embed/XY2OcTZqvqs?si=Sc3vHr5CH2SH6SAc",
+      thumbnail: "Smartpos.jpg", // <--- imagem de fundo
+    
     content: (
       <>
         <h3>O que você vai aprender</h3>
@@ -28,6 +29,7 @@ const steps = [
     ),
   },
   {
+    
     id: 2,
     title: "Passo 2: Configuração Inicial",
     duration: "8 minutos",
@@ -69,7 +71,6 @@ const steps = [
     ),
   },
 ];
-
 function TutorialMain() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showVideo, setShowVideo] = useState(false);
@@ -78,7 +79,7 @@ function TutorialMain() {
 
   const handleNextStep = () => {
     setCurrentStep(currentStep + 1);
-    setShowVideo(false); // Reseta vídeo para próximo passo
+    setShowVideo(false); // reseta vídeo
   };
 
   const handlePrevStep = () => {
@@ -103,8 +104,8 @@ function TutorialMain() {
           <div className="video-container">
             {showVideo ? (
               <iframe
-                width="560"
-                height="315"
+                width="800"
+                height="450"
                 src={step.video}
                 title="YouTube video player"
                 frameBorder="0"
@@ -114,11 +115,13 @@ function TutorialMain() {
             ) : (
               <div
                 className="video-placeholder"
-                onClick={() => setShowVideo(true)}
-              >
-                <i className="fas fa-play-circle"></i>
-                <p>Clique para assistir o vídeo</p>
-              </div>
+                   onClick={() => setShowVideo(true)}
+                      style={{ backgroundImage: `url(${step.thumbnail})` }} // <--- aplica a imagem
+>
+  <i className="fas fa-play-circle"></i>
+  <p>Clique para assistir o vídeo</p>
+</div>
+
             )}
           </div>
 
@@ -133,9 +136,11 @@ function TutorialMain() {
             </button>
           )}
           {currentStep < steps.length && (
+            <div className="Botãopasso">
             <button className="btn btn-primary next-step" onClick={handleNextStep}>
               Próximo Passo <i className="fas fa-arrow-right"></i>
             </button>
+            </div>
           )}
         </div>
       </div>

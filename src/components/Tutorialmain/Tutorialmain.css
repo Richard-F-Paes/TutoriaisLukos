@@ -1,3 +1,4 @@
+/* Container principal */
 .tutorial-main {
   max-width: 900px;
   margin: 0 auto;
@@ -5,6 +6,7 @@
   font-family: 'Inter', sans-serif;
 }
 
+/* Cabeçalho do passo */
 .step-header {
   display: flex;
   justify-content: space-between;
@@ -25,6 +27,7 @@
   color: #64748b;
 }
 
+/* Conteúdo do passo */
 .step-content {
   margin-bottom: 24px;
 }
@@ -35,10 +38,13 @@
   margin-bottom: 16px;
 }
 
+/* Placeholder do vídeo antes do play */
 .video-placeholder {
   width: 560px;
   height: 315px;
-  background: #f1f5f9;
+  aspect-ratio: 16 / 9;
+  background-size: cover;       /* cobre todo o container */
+  background-position: center;  /* centraliza a imagem */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -46,28 +52,38 @@
   cursor: pointer;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  transition: transform 0.3s;
+  transition: transform 0.3s, filter 0.3s;
 }
 
 .video-placeholder:hover {
   transform: scale(1.02);
+  filter: brightness(0.9); /* escurece levemente */
+  
 }
 
 .video-placeholder i {
   font-size: 48px;
-  color: #3b82f6;
+  color: #ffffff; /* destaque no play */
   margin-bottom: 8px;
+  text-shadow: 0 0 10px rgba(0,0,0,0.6);
+  
+  
 }
 
 .video-placeholder p {
   font-size: 16px;
-  color: #1e293b;
+  color: #ffffff;
+  text-shadow: 0 0 5px rgba(0,0,0,0.5);
+  
+  
 }
 
+/* Conteúdo textual */
 .content-text h3 {
   font-size: 20px;
   margin-bottom: 8px;
   color: #1e293b;
+  
 }
 
 .content-text p {
@@ -76,6 +92,7 @@
   line-height: 1.5;
 }
 
+/* Lista de recursos */
 .feature-list {
   list-style: none;
   padding: 0;
@@ -94,55 +111,17 @@
   color: #10b981;
 }
 
-/* Config steps */
-.config-steps {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.config-item {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.config-number {
-  font-weight: 700;
-  font-size: 18px;
-  color: #3b82f6;
-  flex-shrink: 0;
-}
-
-.config-content h4 {
-  margin: 0;
-  font-size: 16px;
-  color: #1e293b;
-}
-
-.config-content p {
-  margin: 2px 0 0 0;
-  font-size: 14px;
-  color: #64748b;
-}
-
 /* Botões */
 .step-actions {
   display: flex;
-  justify-content: space-between;
   gap: 12px;
-  flex-wrap: wrap;
   margin-top: 12px;
 }
 
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
+.step-actions-right {
+  justify-content: flex-end; /* alinha os botões à direita */
 }
+
 
 .btn:hover {
   transform: translateY(-2px);

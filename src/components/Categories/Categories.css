@@ -54,13 +54,7 @@
 
 /* Barra colorida no topo de cada categoria */
 .category-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    transition: all 0.3s ease;
+ display: none;
 }
 
 /* Hover effect para categorias */

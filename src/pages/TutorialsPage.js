@@ -12,13 +12,13 @@ function TutorialsPage() {
   const [loading, setLoading] = useState(true);
 
   const categories = [
-    { id: "all", name: "Todas as Categorias", icon: "📚" },
-    { id: "pdv", name: "PDV", icon: "🛒" },
-    { id: "retaguarda", name: "Retaguarda", icon: "📦" },
-    { id: "faturamento", name: "Faturamento", icon: "💰" },
-    { id: "relatorios", name: "Relatórios", icon: "📊" },
-    { id: "configuracoes", name: "Configurações", icon: "⚙️" },
-    { id: "integracao", name: "Integração", icon: "🔗" },
+    { id: "all", name: "Todas as Categorias", icon: "" },
+    { id: "pdv", name: "PDV CAIXA", icon: "" },
+    { id: "retaguarda", name: "Retaguarda", icon: "" },
+    { id: "faturamento", name: "Dashboard", icon: "" },
+    { id: "relatorios", name: "Fatura Web", icon: "" },
+    { id: "configuracoes", name: "Pré-Venda", icon: "" },
+    { id: "integracao", name: "PDV-SMART POS", icon: "" },
   ];
 
   const difficulties = [
@@ -32,13 +32,28 @@ function TutorialsPage() {
   useEffect(() => {
     setTimeout(() => {
       const allTutorials = [
-        { id: 1, title: "Primeira Venda no PDV", description: "Aprenda a realizar sua primeira venda", duration: "5 min", difficulty: "Iniciante", category: "pdv", rating: 4.8, students: 1250 },
-        { id: 2, title: "Gestão de Clientes", description: "Como cadastrar e gerenciar clientes", duration: "8 min", difficulty: "Iniciante", category: "pdv", rating: 4.6, students: 980 },
-        { id: 3, title: "Formas de Pagamento", description: "Configurar e usar diferentes formas de pagamento", duration: "10 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 1100 },
+        { id: 1, title: "Medição De Tanque", description: "Aprenda a realizar sua primeira venda", duration: "5 min", difficulty: "Iniciante", category: "pdv", rating: 4.8, students: 1250 },
+        { id: 2, title: "Aferição", description: "Como cadastrar e gerenciar clientes", duration: "8 min", difficulty: "Iniciante", category: "pdv", rating: 4.6, students: 980 },
+        { id: 3, title: "Venda Comum", description: "Configurar e usar diferentes formas de pagamento", duration: "10 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 1100 },
+        { id: 4, title: "Sangria", description: "", duration: "18 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 890 },
+        { id: 5, title: "Recebimento", description: "", duration: "18 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 890 },
+        { id: 6, title: "Cancelar Cupom", description: "", duration: "18 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 890 },
+        { id: 7, title: "reimprimir Cupom", description: "", duration: "18 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 890 },
+        { id: 8, title: "Desconto No Cupom", description: "", duration: "18 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 890 },
+        { id: 9, title: "Relatório De Caixa", description: "", duration: "18 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 890 },
+        { id: 10, title: "Serviços", description: "", duration: "18 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 890 },
+        { id: 11, title: "Despesa Ou Pagamento", description: "", duration: "18 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 890 },
+        { id: 12, title: "Cancelar Venda", description: "", duration: "18 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 890 },
+        { id: 13, title: "Consulta De Venda", description: "", duration: "18 min", difficulty: "Intermediário", category: "pdv", rating: 4.7, students: 890 },
+
         { id: 4, title: "Cadastro de Produtos", description: "Como cadastrar produtos no sistema", duration: "15 min", difficulty: "Iniciante", category: "retaguarda", rating: 4.6, students: 1200 },
-        { id: 5, title: "Emissão de Nota Fiscal", description: "Como emitir notas fiscais", duration: "18 min", difficulty: "Intermediário", category: "faturamento", rating: 4.7, students: 890 },
-        // ... acrescente mais conforme quiser
+        { id: 5, title: "", description: "", duration: "18 min", difficulty: "Intermediário", category: "", rating: 4.7, students: 890 },
+        { id: 6, title: "", description: "", duration: "18 min", difficulty: "Intermediário", category: "", rating: 4.7, students: 890 },
+        { id: 7, title: "", description: "", duration: "18 min", difficulty: "Intermediário", category: "", rating: 4.7, students: 890 },
+
+      
       ];
+
       setTutorials(allTutorials);
       setFilteredTutorials(allTutorials);
       setLoading(false);
@@ -233,19 +248,16 @@ function TutorialsPage() {
                     </div>
                   </div>
 
-                  <div className="tutorial-meta">
+                  <div className="tutorial">
                     <div className="tutorial-meta-left">
                       <span className="meta-duration">⏱ {tutorial.duration}</span>
                       <span className={diffClass}>{tutorial.difficulty}</span>
                     </div>
 
-                    <div className="tutorial-rating" title={`Avaliação ${tutorial.rating}`}>
-                      ⭐ {tutorial.rating}
-                    </div>
                   </div>
 
                   <div className="tutorial-footer">
-                    <span className="tutorial-students">{tutorial.students.toLocaleString()} alunos</span>
+        
                     <span className="tutorial-start">Iniciar →</span>
                   </div>
                 </Link>

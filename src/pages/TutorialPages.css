@@ -1,283 +1,142 @@
-/* ========================================
-   TUTORIALS PAGE - PÁGINA DE TUTORIAIS
-   ======================================== */
-
-/* Container principal */
-.tutorials-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
-
-/* Cabeçalho da página */
-.tutorials-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.tutorials-title {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 800;
-  color: #1a1a1a;
-  margin-bottom: 0.8rem;
-}
-
-.tutorials-description {
-  font-size: 1.1rem;
-  color: #64748b;
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-
-/* ========================================
-   FILTROS
-   ======================================== */
-
-.tutorials-filters {
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  padding: 2rem;
-  margin-bottom: 2.5rem;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1.5rem;
-}
-
-.filter-label {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 0.5rem;
-}
-
-.filter-input,
-.filter-select {
-  padding: 0.7rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
-  font-size: 0.95rem;
-}
-
-.filter-input:focus,
-.filter-select:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-}
-
-.filter-results {
-  font-size: 0.9rem;
-  color: #64748b;
-  margin-top: 1rem;
-}
-
-/* ========================================
-   GRID DE TUTORIAIS
-   ======================================== */
-
+/* ===============================
+   TUTORIALS GRID
+   =============================== */
 .tutorials-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  
 }
 
-/* Card do tutorial */
+/* Card tutorial com mesmo layout */
 .tutorial-card {
   background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: left;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid #f1f5f9;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
 }
 
+/* Barra colorida por dificuldade */
+.tutorial-card::before {
+ display: none;
+}
+.tutorials-container{
+  margin-bottom: 70px;
+
+}
+.tutorial-card.iniciante::before { background: linear-gradient(90deg, #22c55e, #16a34a); }
+.tutorial-card.intermediario::before { background: linear-gradient(90deg, #facc15, #eab308); }
+.tutorial-card.avancado::before { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+/* Hover igual ao category-card */
 .tutorial-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.18);
 }
 
-/* Header do card */
-.tutorial-card-header {
+/* Conteúdo interno */
+.tutorial-header {
   display: flex;
   align-items: flex-start;
-  gap: 0.8rem;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.tutorial-card-icon {
-  font-size: 1.8rem;
+.tutorial-icon {
+  font-size: 2.5rem;
 }
 
 .tutorial-card-title {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: #1a1a1a;
-  margin-bottom: 0.4rem;
-  transition: color 0.3s ease;
-}
-
-.tutorial-card:hover .tutorial-card-title {
-  color: #2563eb;
+  margin-bottom: 0.3rem;
 }
 
 .tutorial-card-description {
-  font-size: 0.9rem;
   color: #64748b;
+  font-size: 1rem;
   line-height: 1.4;
-}
-
-/* Infos do card */
-.tutorial-card-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 1rem 0;
 }
 
 .tutorial-meta {
   display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.tutorial-meta span {
-  font-size: 0.8rem;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-}
-
-.tutorial-difficulty {
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.difficulty-iniciante {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.difficulty-intermediario {
-  background: #fef9c3;
-  color: #854d0e;
-}
-
-.difficulty-avancado {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.tutorial-rating {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #facc15;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-/* Footer do card */
-.tutorial-card-footer {
-  display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.tutorial-students {
-  font-size: 0.8rem;
-  color: #64748b;
-}
-
-.tutorial-link {
-  font-weight: 600;
-  color: #2563eb;
-  display: flex;
-  align-items: center;
-  transition: transform 0.3s ease;
-}
-
-.tutorial-link:hover {
-  transform: translateX(4px);
-}
-
-/* ========================================
-   NENHUM RESULTADO
-   ======================================== */
-
-.no-results {
-  text-align: center;
-  padding: 4rem 2rem;
-}
-
-.no-results-icon {
-  font-size: 3.5rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
 }
 
-.no-results-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #1a1a1a;
+.meta-duration {
+  font-size: 0.95rem;
+  color: #475569;
+  font-weight: 500;
 }
 
-.no-results-description {
-  font-size: 1rem;
-  color: #64748b;
-  margin-bottom: 1.5rem;
-}
-
-.no-results-button {
-  padding: 0.7rem 1.5rem;
-  border-radius: 10px;
-  background: #2563eb;
-  color: white;
+/* Badge de dificuldade */
+.difficulty {
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
   font-weight: 600;
-  transition: all 0.3s ease;
-  border: none;
-  cursor: pointer;
+  color: white;
 }
 
-.no-results-button:hover {
-  background: #1e40af;
+.difficulty-iniciante { background: #16a34a; 
+margin-left: 110px;}
+.difficulty-intermediario {
+   background: #eab308; 
+  margin-left: 50px;}
+.difficulty-avancado { background: #dc2626; }
+
+.tutorial-footer {
+  text-align: right;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: end;
+  margin-right: 10px;
 }
 
-/* ========================================
+.tutorial-start {
+  font-weight: 600;
+  color: #2563eb;
+  transition: color 0.3s;
+}
+
+.tutorial-start:hover {
+  color: #000000;
+}
+
+/* ===============================
    RESPONSIVIDADE
-   ======================================== */
-
+   =============================== */
 @media (max-width: 768px) {
-  .tutorials-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.2rem;
+  .tutorial-card {
+    padding: 1.5rem;
   }
-
-  .tutorials-filters {
-    padding: 1.2rem;
+  .tutorial-card-title {
+    font-size: 1.2rem;
   }
 }
 
 @media (max-width: 480px) {
-  .tutorials-title {
-    font-size: 1.8rem;
+  .tutorials-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
-
   .tutorial-card {
     padding: 1rem;
   }
-
-  .tutorial-card-title {
-    font-size: 1rem;
+  .tutorial-icon {
+    font-size: 2rem;
   }
 }

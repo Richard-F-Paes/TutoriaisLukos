@@ -80,15 +80,15 @@ const Navbar = () => {
                     </Link>
                     <Link 
                         to="/categorias"
-                        className={`nav-link ${location.pathname === '/categorias' ? 'active' : ''}`}
+                        className={`nav-link ${location.pathname === '/Tutoriais' ? 'active' : ''}`}
                     >
-                        Categorias
+                        Tutoriais
                     </Link>
                     <Link 
                         to="/tutoriais"
-                        className={`nav-link ${location.pathname === '/tutoriais' ? 'active' : ''}`}
+                        className={`nav-link ${location.pathname === '/Categorias' ? 'active' : ''}`}
                     >
-                        Tutoriais
+                        Categoriais
                     </Link>
                     <Link 
                         to="/sobre"
@@ -204,8 +204,8 @@ const Navbar = () => {
                             <Link to="/login" className="btn btn-ghost">
                                 Entrar
                             </Link>
-                            <Link to="/register" className="btn btn-primary">
-                                Criar conta
+                            <Link to="/register" className="btn btn-primry">
+                               
                             </Link>
                         </div>
                     )}

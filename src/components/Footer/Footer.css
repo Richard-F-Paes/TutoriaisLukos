@@ -1,35 +1,36 @@
+/* Rodapé */
 .footer {
- background: linear-gradient(135deg, #5a008f 0%, #5a008f 100%);
-  color: hwb(0 100% 0%);
-  padding: 1px 0px;
+  background: linear-gradient(135deg, #5a008f 0%, #5a008f 100%);
+  color: #ffffff;
+  padding: 3rem 1rem;
   border-top: 1px solid #ffffff;
-
 }
 
 .footer-container {
   display: flex;
   flex-direction: column;
-  justify-content:;
+  justify-content: space-between; /* alinha bem os blocos */
+  align-items: flex-start;
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .footer-brand {
-  flex: ;
+  flex: 1;
 }
 
 .brand-link {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 1rem;
   text-decoration: none;
   color: inherit;
 }
 
 .brand-icon {
-  width: 30px;
-  height: 33px;
+  width: 40px;
+  height: 40px;
   background: #ffffff;
   border-radius: 50%;
   display: flex;
@@ -38,8 +39,8 @@
 }
 
 .brand-svg {
-  width: 200px;
-  height: 200px;
+  width: 160px;
+  height: auto;
 }
 
 .brand-name {
@@ -49,50 +50,43 @@
 
 .footer-links {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2rem;
   flex: 2;
 }
 
 .footer-links h3 {
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-transform: uppercase;
   font-weight: 600;
-  margin-bottom: 10px;
-  margin-top: 30px;
+  margin-bottom: 1rem;
   color: #ffffff;
 }
 
 .footer-links ul {
   list-style: none;
-  padding: 10px;
+  padding: 0;
+  margin: 0;
 }
 
 .footer-links li {
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 }
-.logo-image {
-  width: 150px;
-  height: 150px;
-  object-fit: contain;
-  margin-top: 150px
- 
-;
-}
+
 .footer-links a {
   text-decoration: none;
-  color: #ffffff;f
+  color: #ffffff;
   transition: color 0.2s ease;
 }
 
 .footer-links a:hover {
-  color: #7c3aed;
+  color: #d4b3ff;
 }
 
 .social-icons {
   display: flex;
-  gap: 12px;
-  margin-left: 120px;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .social-icons a {
@@ -102,15 +96,31 @@
 }
 
 .social-icons a:hover {
-  color: #7c3aed;
+  color: #d4b3ff;
 }
 
 .footer-bottom {
   text-align: center;
-  padding: 30px;
+  padding: 2px;
+  padding-top: 50px;
   font-size: 0.9rem;
   color: #ffffff;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+
+.logo-image {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+  margin: 0; /* removi o margin-top exagerado */
+}
+
+/* Responsividade */
 @media (min-width: 640px) {
   .footer-container {
     flex-direction: row;

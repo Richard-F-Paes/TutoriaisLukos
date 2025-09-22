@@ -165,13 +165,8 @@
 }
 
 /* Conteúdo do card de tutorial */
-.tutorial-content {
-    padding: 1.50rem;
-    
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
-}
+
 
 /* Cabeçalho do conteúdo (nível e rating) */
 .tutorial-header {

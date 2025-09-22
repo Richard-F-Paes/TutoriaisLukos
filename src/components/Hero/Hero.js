@@ -56,6 +56,7 @@ const Hero = () => {
                     >
                         <i className="fas fa-play"></i>
                         Ver Tutoriais
+                        
                     </button>
                 </div>
             </div>

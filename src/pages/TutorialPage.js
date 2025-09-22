@@ -6,7 +6,7 @@ import Sidebar from '../components/Sidebar/Sidebar';
 import Step from '../components/Step/Step';
 import Footer from '../components/Footer/Footer';
 import { tutorialData } from '../data/tutorialData';
-import './TutorialPage.css';
+
 
 const TutorialPage = () => {
   const { currentStep, nextStep, prevStep, goToStep } = useTutorial();

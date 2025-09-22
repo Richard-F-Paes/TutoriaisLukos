@@ -1,0 +1,53 @@
+/* ========================================
+   PROGRESS BAR - ABAIXO DA NAVBAR
+   ======================================== */
+
+.progress-wrapper {
+  position: fixed;
+  top: 100px; /* Logo abaixo da navbar (ajuste conforme a altura real) */
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  z-index: 999; /* abaixo da navbar (1000), mas acima do conteúdo */
+  padding: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+/* Container interno da barra, igual ao .nav-container */
+.progress-container {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 0 20px; /* igual à navbar */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* A barra de progresso em si */
+.progress-bar {
+  flex: 1;
+  height:10px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  transition: width 0.3s ease;
+}
+
+.imagem { 
+padding: 100px;
+}
+.progress-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+  margin-left: 1rem;
+  white-space: nowrap;
+}

@@ -26,7 +26,6 @@
 .nav-container {
     max-width: 1700px;
     margin: 0 auto;
-    padding: 0 px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -75,6 +74,7 @@
     position: relative;
 }
 
+
 .nav-link:hover {
     color: #2563eb;
     background-color: rgba(37, 99, 235, 0.05);
@@ -99,30 +99,32 @@
     position: relative;
     display: flex;
     align-items: center;
+
    
     
 }
 
 .search-icon {
     position: absolute;
-    left: 0.50rem;
+    left: 1rem;
     color: #9ca3af;
     z-index: 1;
 
     ;
 }
 
-.search-input {
+.Search-text {
     padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 2px solid #e5e7eb;
+    border: 2px solid #8d12ff5e;
     border-radius: 12px;
     width: 300px;
     font-size: 0.9rem;
-    background: white;
+    background: swhite;
     transition: all 0.3s ease;
     
-}
 
+    
+}
 .search-input:focus {
     outline: none;
     border-color: #4325eb;

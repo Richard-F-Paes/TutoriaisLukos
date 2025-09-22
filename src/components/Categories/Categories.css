@@ -71,25 +71,27 @@
 
 /* Cores específicas para cada categoria */
 .category-card.sistema::before { 
-    background: linear-gradient(90deg, #2563eb, #1d4ed8); 
+    background: linear-gradient(90deg, #2563eb, #3d00cc); 
 }
 
-.category-card.pdv::before { 
-    background: linear-gradient(90deg, #059669, #047857); 
+.category-card.Pista::before { 
+    background: linear-gradient(90deg, #287eff, #3d00cc); 
 }
 
-.category-card.vendas::before { 
-    background: linear-gradient(90deg, #ea580c, #dc2626); 
+.category-card.Loja::before { 
+    background: linear-gradient(90deg, #287eff, #3d00cc); 
 }
 
-.category-card.analise::before { 
-    background: linear-gradient(90deg, #0891b2, #0284c7); 
+.category-card.Smart::before { 
+    background: linear-gradient(90deg, #287eff, #3d00cc); 
 }
 
-.category-card.fiscal::before { 
-    background: linear-gradient(90deg, #059669, #047857); 
+.category-card.Pre::before { 
+    background: linear-gradient(90deg, #287eff, #047857); 
 }
-
+.category-card.Dashboard::before { 
+    background: linear-gradient(90deg, #287eff, #047857); 
+}
 /* Ícone da categoria */
 .category-icon {
     font-size: 3rem;

@@ -18,10 +18,13 @@ const TutorialHero = () => {
             <span className="category-badge">Sistema</span>
             <span className="level-badge intermediario">Intermediário</span>
             <div className="rating">
-              <i className="fas fa-star"></i>
+             
               <span></span>
             </div>
           </div>
+<div className="tutorial-main-content">
+  <TutorialMain />
+</div>
 
           <h1 className="tutorial-main-title">Sistema de Retaguarda</h1>
           <p className="tutorial-main-description">

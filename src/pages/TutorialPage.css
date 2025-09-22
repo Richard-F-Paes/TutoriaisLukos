@@ -5,8 +5,10 @@
 .tutorial-page {
   min-height: 100vh;
   background: #ffffff;
+  
+    
 }
-
+.text 
 .tutorial-content {
   padding: 4rem 0;
 }

@@ -19,14 +19,14 @@ const StepActions = ({ stepNumber }) => {
         Passo Anterior
       </button>
       
-      <button 
+      {/* <button 
         className="btn btn-primary next-step"
         onClick={nextStep}
         disabled={!canGoNext}
       >
         Próximo Passo
         <i className="fas fa-arrow-right"></i>
-      </button>
+      </button> */}
     </div>
   );
 };

@@ -30,11 +30,6 @@ const Hero = () => {
             
             {/* Conteúdo principal */}
             <div className="hero-content">
-                {/* Badge de identificação */}
-                <div className="hero-badge animate-pulse">
-                    <i className="C:\Desenvolvimento\TutoriaisLukos\public\Fundo Home.png"></i>
-                    <img src="/logo.png" alt="Logo Tutorial Lukos" className="nav-logo" />
-                </div>
                 
                 {/* Título principal */}
                 <h1 className="hero-title">
@@ -60,7 +55,7 @@ const Hero = () => {
                         onClick={showDemo}
                     >
                         <i className="fas fa-play"></i>
-                        Ver Demonstração
+                        Ver Tutoriais
                     </button>
                 </div>
             </div>

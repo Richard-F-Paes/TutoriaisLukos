@@ -16,6 +16,8 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^5.2.1",
+    "@tailwindcss/cli": "^4.1.13",
+    "@tailwindcss/vite": "^4.1.13",
     "axios": "^1.11.0",
     "bcryptjs": "^3.0.2",
     "framer-motion": "^12.23.12",
@@ -32,6 +34,7 @@
     "react-scripts": "5.0.1",
     "react-spring": "^10.0.1",
     "react-transition-group": "^4.4.5",
+    "tailwindcss": "^4.1.13",
     "trae": "^1.0.0",
     "yup": "^1.7.0"
   },

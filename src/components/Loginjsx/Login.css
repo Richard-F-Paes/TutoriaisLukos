@@ -1,0 +1,135 @@
+/* Fundo da página */
+
+
+/* Container principal */
+.page-container {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .page-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Box central */
+.form-box {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 24rem; /* sm:max-w-sm */
+  text-align: center;
+}
+
+/* Logo */
+.logo {
+  margin: 0 auto;
+  height: 100px;
+  width: auto;
+}
+
+/* Título */
+.form-title {
+  margin-top: 2.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: rgb(155, 37, 223);
+}
+
+/* Formulário */
+.form {
+  margin-top: 2.5rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* Labels */
+.label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #b73cff; /* text-gray-100 */
+  margin-bottom: 0.25rem;
+}
+
+/* Inputs */
+.input {
+  display: block;
+  width: 100%;
+  border-radius: 0.375rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  color: rgb(83, 20, 255);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.input::placeholder {
+  color: #6b7280; /* text-gray-500 */
+}
+
+.input:focus {
+  border-color: #6366f1; /* indigo-500 */
+  box-shadow: 0 0 0 2px #6366f1;
+}
+
+/* Link de esqueci a senha */
+.forgot-password {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #b73cff; /* indigo-400 */
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  color: #a5b4fc; /* indigo-300 */
+}
+
+/* Botão */
+.btnLogin {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  border-radius: 0.375rem;
+  background-color: #b73cff; /* indigo-500 */
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background-color: #818cf8; /* indigo-400 */
+}
+
+.btn:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Rodapé */
+.footer-text {
+  margin-top: 2.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #9ca3af; /* text-gray-400 */
+}
+
+.footer-text a {
+  font-weight: 600;
+  color: #818cf8; /* indigo-400 */
+  text-decoration: none;
+}
+
+.footer-text a:hover {
+  color: #a5b4fc; /* indigo-300 */
+}

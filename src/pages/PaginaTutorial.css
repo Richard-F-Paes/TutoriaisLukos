@@ -1,0 +1,26 @@
+/* src/pages/PaginaTutorial.css */
+
+.tutorial-container {
+    display: flex;
+    gap: 5rem;
+    padding: 120rem;
+    align-items: flex-start;
+    margin-left: 50px;
+}
+
+.tutorial-container .tutorial-main {
+    flex: 1; /* Permite que o componente TutorialMain ocupe o espaço restante */;
+}
+
+.tutorial-container .tutorial-progress {
+    flex-basis: 300px; /* Define uma largura fixa para o componente Progresso */
+    flex-shrink: 0; /* Impede que ele encolha */
+}
+
+/* Adicione regras de responsividade para telas menores */
+@media (max-width: 1024px) {
+    .tutorial-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}

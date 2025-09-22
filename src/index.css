@@ -1,7 +1,7 @@
 /* ========================================
    RESET E CONFIGURAÇÕES BÁSICAS GLOBAIS
    ======================================== */
-
+@import "tailwindcss";
 /* Remove margens e paddings padrão, define box-sizing universal */
 * {
     margin: 0;

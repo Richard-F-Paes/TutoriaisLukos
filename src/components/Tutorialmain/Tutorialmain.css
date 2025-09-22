@@ -1,8 +1,9 @@
 /* Container principal */
 .tutorial-main {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 16px;
+  margin-top: 170px;
+  margin-bottom: 50px;
   font-family: 'Inter', sans-serif;
 }
 
@@ -116,10 +117,11 @@
   display: flex;
   gap: 12px;
   margin-top: 12px;
+  
 }
 
 .step-actions-right {
-  justify-content: flex-end; /* alinha os botões à direita */
+  justify-content: flex-start; /* alinha os botões à direita */
 }
 
 

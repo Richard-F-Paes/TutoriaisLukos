@@ -35,7 +35,7 @@ function Footer() {
           </div>
 
           <div>
-            <h3>Médias Sociais</h3>
+            <h3>Mídias Sociais</h3>
             <div className="social-icons">
               <a href="#" title="Facebook">
                 <i className="fab fa-facebook"></i>

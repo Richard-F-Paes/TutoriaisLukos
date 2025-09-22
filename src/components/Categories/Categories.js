@@ -8,42 +8,42 @@ const Categories = () => {
             id: 'sistema',
             title: 'Sistema De Retaguarda',
             count: '45 tutoriais',
-            icon: '🖥️',
+            icon: '',
             description: 'Configurações gerais e administração'
         },
         {
             id: 'Pista',
             title: 'PDV Caixa',
             count: '32 tutoriais',
-            icon: '💳',
+            icon: '',
             description: 'Ponto de venda e operações'
         },
          {
             id: 'Loja',
             title: 'PDV Loja',
             count: '32 tutoriais',
-            icon: '💳',
+            icon: '',
             description: 'Ponto de venda e operações'
         },
         {
-            id: 'Smart Pos',
-            title: 'PDV Smart Pos',
+            id: 'Smart',
+            title: 'Lukos Pay',
             count: '28 tutoriais',
-            icon: '🛒',
+            icon: '',
             description: 'Gestão de vendas e clientes'
         },
         {
-            id: 'Pré Venda',
+            id: 'Pre',
             title: 'Pré Venda',
             count: '19 tutoriais',
-            icon: '📊',
+            icon: '',
             description: 'Relatórios e análises'
         },
         {
             id: 'Dashboard',
             title: 'Dashboard',
             count: '15 tutoriais',
-            icon: '📄',
+            icon: '',
             description: 'Documentos fiscais e impostos'
         }
          

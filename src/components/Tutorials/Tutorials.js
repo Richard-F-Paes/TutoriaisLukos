@@ -160,6 +160,7 @@ const Tutorials = () => {
                 </div>
             </div>
         </section>
+        
     );
 };
 

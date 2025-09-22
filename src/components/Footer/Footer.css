@@ -1,34 +1,35 @@
 .footer {
  background: linear-gradient(135deg, #5a008f 0%, #5a008f 100%);
-  color: #ffffff;
-  padding: 40px 20px;
+  color: hwb(0 100% 0%);
+  padding: 1px 0px;
   border-top: 1px solid #ffffff;
+
 }
 
 .footer-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content:;
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .footer-brand {
-  flex: 1;
+  flex: ;
 }
 
 .brand-link {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 20px;
   text-decoration: none;
   color: inherit;
 }
 
 .brand-icon {
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 33px;
   background: #ffffff;
   border-radius: 50%;
   display: flex;
@@ -37,9 +38,8 @@
 }
 
 .brand-svg {
-  width: 20px;
-  height: 20px;
-  color: white;
+  width: 200px;
+  height: 200px;
 }
 
 .brand-name {
@@ -59,21 +59,25 @@
   text-transform: uppercase;
   font-weight: 600;
   margin-bottom: 10px;
+  margin-top: 30px;
   color: #ffffff;
 }
 
 .footer-links ul {
   list-style: none;
-  padding: 0;
+  padding: 10px;
 }
 
 .footer-links li {
   margin-bottom: 8px;
 }
 .logo-image {
-  width: 40px;
-  height: 40px;
+  width: 150px;
+  height: 150px;
   object-fit: contain;
+  margin-top: 150px
+ 
+;
 }
 .footer-links a {
   text-decoration: none;
@@ -88,7 +92,7 @@
 .social-icons {
   display: flex;
   gap: 12px;
-  margin-left: 70px;
+  margin-left: 120px;
 }
 
 .social-icons a {

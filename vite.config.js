@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+
     },
   },
   esbuild: {
@@ -32,3 +33,4 @@ export default defineConfig({
     sourcemap: true
   }
 })
+

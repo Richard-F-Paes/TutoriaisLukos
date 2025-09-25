@@ -258,7 +258,7 @@ function TutorialsPage() {
 
                   <div className="tutorial-footer">
         
-                    <span className="tutorial-start">Iniciar →</span>
+                    <span className="tutorial-">Iniciar →</span>
                   </div>
                 </Link>
               </motion.article>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import "./AboutPage.css";
 
 function AboutPage() {
   const features = [
@@ -47,15 +48,15 @@ function AboutPage() {
     <div className="page-container">
       {/* Hero Section */}
       <motion.div 
-        className="text-center mb-16"
+        className="about-hero text-center mb-16"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="text-5xl font-bold text-gray-900 mb-6">
-          Sobre o <span className="text-primary-600">TutorialLukos</span>
+        <h1 className="about-title text-5xl font-bold text-gray-900 mb-6">
+          Sobre o <span className="text-primary-600">Tutorial Lukos</span>
         </h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        <p className="about-subtitle text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
           A plataforma definitiva para aprender o sistema Lukos. Transformamos a complexidade em simplicidade, 
           oferecendo tutoriais interativos e didáticos para dominar todas as funcionalidades do sistema.
         </p>
@@ -63,7 +64,7 @@ function AboutPage() {
 
       {/* Stats */}
       <motion.div 
-        className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16"
+        className="ts grid grid-cols-2 md:grid-cols-4 gapabout-sta-8 mb-16"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
@@ -71,15 +72,15 @@ function AboutPage() {
         {stats.map((stat, index) => (
           <motion.div
             key={index}
-            className="text-center"
+            className="about-stat-card text-center"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
           >
-            <div className="text-4xl font-bold text-primary-600 mb-2">
+            <div className="stat-number text-4xl font-bold text-primary-600 mb-2">
               {stat.number}
             </div>
-            <div className="text-gray-600 font-medium">
+            <div className="stat-label text-gray-600 font-medium">
               {stat.label}
             </div>
           </motion.div>
@@ -88,45 +89,45 @@ function AboutPage() {
 
       {/* Mission, Vision, Values */}
       <motion.div 
-        className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
+        className="about-core grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
       >
         <motion.div 
-          className="card p-8 text-center"
+          className="card-about"
           whileHover={{ y: -5 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="text-4xl mb-4">🎯</div>
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Nossa Missão</h3>
-          <p className="text-gray-600 leading-relaxed">
+          <div className="card-icon text-4xl mb-4">🎯</div>
+          <h3 className="card-title text-xl font-bold text-gray-900 mb-4">Nossa Missão</h3>
+          <p className="card-text text-gray-600 leading-relaxed">
             Facilitar o aprendizado do sistema Lukos através de tutoriais interativos, 
             didáticos e práticos, democratizando o acesso ao conhecimento tecnológico.
           </p>
         </motion.div>
 
         <motion.div 
-          className="card p-8 text-center"
+          className="card-about"
           whileHover={{ y: -5 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="text-4xl mb-4">🚀</div>
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Nossa Visão</h3>
-          <p className="text-gray-600 leading-relaxed">
+          <div className="card-icon text-4xl mb-4">🚀</div>
+          <h3 className="card-title text-xl font-bold text-gray-900 mb-4">Nossa Visão</h3>
+          <p className="card-text text-gray-600 leading-relaxed">
             Ser a principal referência em tutoriais para sistemas de PDV e retaguarda, 
             reconhecida pela qualidade e eficácia do ensino.
           </p>
         </motion.div>
 
         <motion.div 
-          className="card p-8 text-center"
+          className="card-about"
           whileHover={{ y: -5 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="text-4xl mb-4">💎</div>
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Nossos Valores</h3>
-          <p className="text-gray-600 leading-relaxed">
+          <div className="card-icon text-4xl mb-4">💎</div>
+          <h3 className="card-title text-xl font-bold text-gray-900 mb-4">Nossos Valores</h3>
+          <p className="card-text text-gray-600 leading-relaxed">
             Qualidade, simplicidade, eficiência e inovação no ensino de tecnologia, 
             sempre priorizando a experiência do usuário.
           </p>
@@ -135,30 +136,30 @@ function AboutPage() {
 
       {/* Features */}
       <motion.div 
-        className="mb-16"
+        className="card-about"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.6 }}
       >
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-          Por que escolher o TutorialLukos?
+        <h2 className="features-title text-3xl font-bold text-gray-900 text-center mb-12">
+          Por que escolher o Tutorial Lukos?
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="features-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="card p-6"
+              className=" card-about"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.7 + index * 0.1 }}
               whileHover={{ y: -5 }}
             >
-              <div className="text-3xl mb-4">{feature.icon}</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              <div className="feature-icon text-3xl mb-4">{feature.icon}</div>
+              <h3 className="feature-title text-lg font-semibold text-gray-900 mb-3">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="feature-text text-gray-600 leading-relaxed">
                 {feature.description}
               </p>
             </motion.div>
@@ -168,48 +169,48 @@ function AboutPage() {
 
       {/* Team Section */}
       <motion.div 
-        className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-2xl p-8 mb-16"
+        className="card-about"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
       >
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+        <div className="team-header text-center mb-8">
+          <h2 className="about-text">
             Nossa Equipe
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="team-subtitle text-gray-600 max-w-2xl mx-auto">
             Profissionais especializados em sistemas de gestão e educação, 
             dedicados a criar a melhor experiência de aprendizado possível.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center">
-            <div className="w-20 h-20 bg-primary-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
+        <div className="team-grid grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="team-card text-center">
+            <div className="team-avatar w-20 h-20 bg-primary-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
               TL
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Equipe Técnica</h3>
-            <p className="text-gray-600 text-sm">
+            <h3 className="team-role font-semibold text-gray-900 mb-2">Equipe Técnica</h3>
+            <p className="team-text text-gray-600 text-sm">
               Especialistas em sistemas Lukos com anos de experiência
             </p>
           </div>
           
-          <div className="text-center">
-            <div className="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
+          <div className="team-card text-center">
+            <div className="team-avatar w-20 h-20 bg-green-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
               ED
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Educadores</h3>
-            <p className="text-gray-600 text-sm">
+            <h3 className="team-role font-semibold text-gray-900 mb-2">Educadores</h3>
+            <p className="team-text text-gray-600 text-sm">
               Pedagogos especializados em educação tecnológica
             </p>
           </div>
           
-          <div className="text-center">
-            <div className="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
+          <div className="team-card text-center">
+            <div className="team-avatar w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
               UX
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Designers UX/UI</h3>
-            <p className="text-gray-600 text-sm">
+            <h3 className="team-role font-semibold text-gray-900 mb-2">Designers UX/UI</h3>
+            <p className="team-text text-gray-600 text-sm">
               Criadores de interfaces intuitivas e experiências fluidas
             </p>
           </div>
@@ -218,19 +219,19 @@ function AboutPage() {
 
       {/* CTA Section */}
       <motion.div 
-        className="text-center"
+        className="card-about"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 1.0 }}
       >
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+        <h2 className="about-title">
           Pronto para começar sua jornada?
         </h2>
-        <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+        <p className="cta-subtitle text-gray-600 mb-8 max-w-2xl mx-auto">
           Junte-se a milhares de usuários que já dominam o sistema Lukos através dos nossos tutoriais.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="cta-buttons flex flex-col sm:flex-row gap-4 justify-center">
           <Link 
             to="/tutoriais" 
             className="btn btn-primary inline-flex items-center"

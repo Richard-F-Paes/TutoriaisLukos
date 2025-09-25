@@ -1,0 +1,207 @@
+/* ==============================
+   CONTAINER GERAL
+============================== */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
+}
+
+/* ==============================
+   HERO
+============================== */
+.page-container h1 {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.card-about {
+    color: #0051ff;
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.card-about {
+     background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    margin-top: 50px;
+}
+.about-title {
+    color: #000000;
+
+}
+.page-container h1 .text-primary-600 {
+  color: #000000; /* azul destaque */
+}
+
+.page-container p {
+  font-size: 1.1rem;
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+/* ==============================
+   STATS (NÚMEROS)
+============================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item .number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 0.5rem;
+}
+
+.stat-item .label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* ==============================
+   CARDS (MISSÃO, VISÃO, VALORES, FEATURES)
+============================== */
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.card h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.card p {
+  font-size: 0.95rem;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* ==============================
+   FEATURES GRID
+============================== */
+.features-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ==============================
+   TEAM SECTION
+============================== */
+.team-section {
+  background: linear-gradient(to right, #eff6ff, #f0f9ff);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  margin: 4rem 0;
+}
+
+.team-grid {
+  display: grid;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 768px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.team-member {
+  text-align: center;
+}
+
+.team-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.team-avatar.blue {
+  background: #2563eb;
+}
+
+.team-avatar.green {
+  background: #16a34a;
+}
+
+.team-avatar.purple {
+  background: #7c3aed;
+}
+
+/* ==============================
+   BOTÕES CTA
+============================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn svg {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
+}

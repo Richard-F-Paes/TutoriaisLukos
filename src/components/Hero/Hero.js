@@ -31,6 +31,7 @@ const Hero = () => {
             {/* Conteúdo principal */}
             <div className="hero-content">
                 
+                
                 {/* Título principal */}
                 <h1 className="hero-title">
                     Tutoriais Lukos

@@ -39,8 +39,9 @@
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
+  margin-top: 10px;
 }
-
+.level-badge.intermediario
 .level-badge.iniciante {
   background: #ffffff;
   color: #22543d;
@@ -101,13 +102,7 @@
   font-size: 0.8rem;
 }
 
-.tutorial-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid #ffffff;
-}
+
 
 .tutorial-steps {
   color: #718096;

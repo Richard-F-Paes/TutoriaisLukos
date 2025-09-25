@@ -5,27 +5,40 @@
 /* Container da seção de tutoriais */
 .tutorials-section {
     padding: 5rem 0;
-    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+    background-color: white;
 }
 
+.container {
+    background-color: #ffffffb2;
+    border-radius: 30px;
+
+
+}
 /* Badge da seção */
 .section-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #f3f3f3, #ffffff);
-    color: white;
+    background-color: white;
+    width: 200px;
+    margin-top: 20px;
+
+
   
     border-radius: 12px;
     font-weight: 600;
     margin-bottom: 1rem;
 }
-
+.span{
+    color: #0284c7;
+}
 /* Grid responsivo para tutoriais */
 .tutorials-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(4, 350px); /* 4 cards lado a lado */
     gap: 2rem;
+    justify-content: center;
+    
     
 }
 
@@ -35,11 +48,61 @@
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(255, 255, 255, 0.08);
-    border: 1px solid #f1f5f9;
+    border: 1px solid #ffffff;
     transition: all 0.4s ease;
     cursor: pointer;
+    margin-bottom: 30px;
+
+    
+}
+.nav-img{
+    border-radius: 20px;
+}
+.start-tutorial{
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
 }
 
+.footer-icon{
+    display: flex;
+    width: 65px;
+    height: 60px;
+    justify-content: center;
+    align-items: center;
+    
+    
+}
+.tutorial-footer{
+    width: 300px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+
+    
+}
+
+.footer-iniciar{
+    width: 20px;
+    heit
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+.footer-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.categories-grid{
+    padding-bottom: 30px;
+}
 .tutorial-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 40px rgba(255, 255, 255, 0.15);
@@ -69,6 +132,7 @@
     position: absolute;
     inset: 0;
     background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+    border-radius: 10px;
 }
 
 /* Badges e ícones sobre a imagem */
@@ -91,10 +155,15 @@
     font-weight: 600;
     backdrop-filter: blur(10px);
 }
-
+.img-footer-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .tutorial-icons {
     display: flex;
     gap: 8px;
+    
 }
 
 .icon-badge {
@@ -218,6 +287,9 @@
     color: #000000;
     margin-bottom: 0.75rem;
     transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .tutorial-card:hover .tutorial-title {
@@ -230,16 +302,23 @@
     color: #64748b;
     margin-bottom: 1.5rem;
     line-height: 1.6;
+    justify-content: center;
+    text-align: center
     ;
 }
 
-/* Rodapé do card (estudantes e link) */
-.tutorial-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
 
+.tutorial-image{
+    border-radius: 20px;
+}
+/* Rodapé do card (estudantes e link) */
+
+.start-tutorial{
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.t
 .students {
     display: flex;
     align-items: center;

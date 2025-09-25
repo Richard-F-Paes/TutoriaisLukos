@@ -1,0 +1,97 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+@import url('https://cdn-uicons.flaticon.com/3.0.0/uicons-brands/css/uicons-brands.css');
+
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+}
+.nav-sidebarmenu{
+  top: 600px;
+  height: 600px;
+}
+
+.vertical-sidebar {
+  display: flex;
+  margin-block: 5vmin;
+}
+
+.vertical-sidebar nav {
+  background: hsl(203, 7%, 92%);
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.75rem;
+  transition: width 0.3s ease;
+  padding: 0.5rem;
+}
+
+.vertical-sidebar.expanded nav {
+  width:  300px
+}
+
+.vertical-sidebar.collapsed nav {
+  width: 3.25rem;
+}
+
+.nav__toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.sidebar__toggle-container{}
+
+.toggle--icons svg {
+  display: none;
+}
+
+.toggle--icons .visible {
+  display: block;
+}
+
+figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.codepen-logo {
+  font-size: 2rem;
+}
+
+.user-id, .user-role {
+  margin: 0;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.sidebar__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  color: hsl(200, 14%, 30%);
+  transition: background 0.3s, color 0.3s;
+}
+
+.sidebar__link:hover {
+  background: hsl(200, 7%, 84%);
+  color: hsl(203, 13%, 14%);
+}
+
+.icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: hsl(200, 10%, 50%);
+}
+
+.text {
+  pointer-events: none;
+}

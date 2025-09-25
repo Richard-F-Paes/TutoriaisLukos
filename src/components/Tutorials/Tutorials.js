@@ -9,62 +9,58 @@ const Tutorials = () => {
             title: 'Sistema de Retaguarda',
             description: 'Aprenda a configurar e gerenciar o sistema de retaguarda completo para controle de estoque, produtos e relatórios',
             category: 'Sistema',
-            level: 'intermediario',
+            level: '',
             duration: '45min',
-            steps: '8 passos',
-            students: '1.250 usuários',
-            rating: '4.9',
+            steps: '20 Tutoriais',
             image: 'retaguarda.png',
-            icons: ['sistema', 'video']
+            icons: ['sistema', 'video'],
+            footerIcon: 'logo.png'
         },
         {
             id: 'pdv-caixa',
             title: 'PDV Caixa',
             description: 'Domine o sistema PDV Caixa para vendas eficientes, controle de pagamentos e emissão de cupons fiscais',
             category: 'PDV',
-            level: 'iniciante',
+            level: '',
             duration: '35min',
-            steps: '6 passos',
-            students: '2.340 usuários',
-            rating: '4.8',
+            steps: '20 Tutoriais',
             image: 'CaixaPDV.png',
-            icons: ['pdv', 'video']
+            icons: ['pdv', 'video'],
+            footerIcon: 'bombagasolina.png'
         },
         {
             id: 'smart-pos',
             title: 'PDV Smart Pos',
             description: 'Configure e utilize o PDV Smart Pos para vendas modernas com interface touch e integração completa',
             category: 'PDV',
-            level: 'intermediario',
+            level: '',
             duration: '40min',
-            steps: '7 passos',
-            students: '1.890 usuários',
-            rating: '4.9',
+            steps: '20 Tutoriais',
             image: 'Smartpos.jpg',
-            icons: ['pdv', 'video']
+            icons: ['pdv', 'video'],
+            footerIcon: 'loja.png'
         },
         {
             id: 'pre-venda',
             title: 'Pré Venda',
             description: 'Aprenda a usar o sistema de pré-venda para orçamentos, pedidos e gestão de vendas externas',
             category: 'Vendas',
-            level: 'iniciante',
+            level: '',
             duration: '30min',
             steps: '5 passos',
-            students: '3.210 usuários',
-            rating: '4.7',
-            image: '"retaguarda.png"',
-            icons: ['vendas', 'video']
+            image: 'retaguarda.png',
+            icons: ['vendas', 'video'],
+            footerIcon: 'loja.'
         }
     ];
 
-    // Função para navegar para tutorial
+    // Navegação
     const handleTutorialClick = (tutorialId) => {
         console.log(`Navegando para tutorial: ${tutorialId}`);
-        // Implementar navegação para tutorial específico
+        // implementar navegação
     };
 
-    // Função para obter ícone do FontAwesome baseado no tipo
+    // Ícones
     const getIconClass = (iconType) => {
         const iconMap = {
             'sistema': 'fas fa-desktop',
@@ -83,7 +79,7 @@ const Tutorials = () => {
                 {/* Cabeçalho da seção */}
                 <div className="section-header">
                     <div className="section-badge">
-                         <img src="/logo.png" alt="Logo Tutorial Lukos" className="nav-logo" />
+                        <img src="/logo.png" alt="Logo Tutorial Lukos" className="nav-logo" />
                         <span>Tutorial Lukos</span>
                     </div>
                     <h2 className="section-title">Tutoriais Especializados</h2>
@@ -134,10 +130,10 @@ const Tutorials = () => {
                             <div className="tutorial-content">
                                 <div className="tutorial-header">
                                     <span className={`level-badge ${tutorial.level}`}>
-                                        {tutorial.level.charAt(0).toUpperCase() + tutorial.level.slice(1)}
+                                        {tutorial.level ? tutorial.level.charAt(0).toUpperCase() + tutorial.level.slice(1) : ''}
                                     </span>
                                     <div className="rating">
-                                        <i className="fas fa-star"></i>
+                                        <i className=""></i>
                                         <span>{tutorial.rating}</span>
                                     </div>
                                 </div>
@@ -146,12 +142,12 @@ const Tutorials = () => {
                                 <p className="tutorial-description">{tutorial.description}</p>
                                 
                                 <div className="tutorial-footer">
-                                    <span className="students">
-                                        <i className="fas fa-user"></i>
-                                        {tutorial.students}
+                                    <span className="">
+                                        <i className=""></i> {tutorial.students}
                                     </span>
-                                    <span className="start-link">
-                                        Iniciar <i className="fas fa-arrow-right"></i>
+                                    <span className="footer-icon">
+                                        <img src={tutorial.footerIcon} alt="Iniciar" className="footer-icon" />
+                                        
                                     </span>
                                 </div>
                             </div>
@@ -160,7 +156,6 @@ const Tutorials = () => {
                 </div>
             </div>
         </section>
-        
     );
 };
 

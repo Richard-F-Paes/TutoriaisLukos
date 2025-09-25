@@ -1,135 +1,133 @@
-/* Fundo da página */
+.container-login{
+  max-width: 500px;
+  height: px; /* Altura de 200 pixels */
+  background: linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(244, 247, 251) 100%);
+  border-radius: 40px;
+  padding: 25px 35px;
+  border: 5px solid rgb(255, 255, 255);
+  box-shadow: rgba(133, 189, 215, 0.88) 0px 30px 30px -20px;
+  margin: 20px auto;
 
-
-/* Container principal */
-.page-container {
-  display: flex;
-  min-height: 100%;
-  flex-direction: column;
-  justify-content: center;
-  padding: 3rem 1.5rem;
-}
-
-@media (min-width: 1024px) {
-  .page-container {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-}
-
-/* Box central */
-.form-box {
-  margin: 0 auto;
-  width: 100%;
-  max-width: 24rem; /* sm:max-w-sm */
+.heading {
   text-align: center;
+  font-weight: 900;
+  font-size: 30px;
+  color: rgba(98, 1, 255, 0.623);
 }
 
-/* Logo */
-.logo {
-  margin: 0 auto;
-  height: 100px;
-  width: auto;
-}
-
-/* Título */
-.form-title {
-  margin-top: 2.5rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: rgb(155, 37, 223);
-}
-
-/* Formulário */
 .form {
-  margin-top: 2.5rem;
-  display: grid;
-  gap: 1.5rem;
+  margin-top: 20px;
 }
 
-/* Labels */
-.label {
-  display: block;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #b73cff; /* text-gray-100 */
-  margin-bottom: 0.25rem;
-}
-
-/* Inputs */
 .input {
-  display: block;
   width: 100%;
-  border-radius: 0.375rem;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  color: rgb(83, 20, 255);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  outline: none;
+  background: white;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 20px;
+  margin-top: 15px;
+  box-shadow: #cff0ff 0px 10px 10px -5px;
+  border-inline: 2px solid transparent;
 }
 
 .input::placeholder {
-  color: #6b7280; /* text-gray-500 */
+  color: rgb(170, 170, 170);
 }
 
 .input:focus {
-  border-color: #6366f1; /* indigo-500 */
-  box-shadow: 0 0 0 2px #6366f1;
+  outline: none;
+  border-inline: 2px solid #12B1D1;
 }
 
-/* Link de esqueci a senha */
 .forgot-password {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #b73cff; /* indigo-400 */
+  display: block;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+.forgot-password a {
+  font-size: 11px;
+  color: #0099ff;
   text-decoration: none;
 }
 
-.forgot-password:hover {
-  color: #a5b4fc; /* indigo-300 */
+.login-button {
+  display: block;
+  width: 100%;
+  font-weight: bold;
+  background: linear-gradient(45deg, rgb(89, 0, 255) 0%, rgb(81, 17, 255) 100%);
+  color: white;
+  padding-block: 15px;
+  margin: 20px auto;
+  border-radius: 20px;
+  box-shadow: rgba(15, 32, 185, 0.88) 0px 20px 10px -15px;
+  border: none;
+  transition: all 0.2s ease-in-out;
 }
 
-/* Botão */
-.btnLogin {
+.login-button:hover {
+  transform: scale(1.03);
+  box-shadow: rgba(133, 189, 215, 0.88) 0px 23px 10px -20px;
+}
+
+.login-button:active {
+  transform: scale(0.95);
+  box-shadow: rgba(133, 189, 215, 0.88) 0px 15px 10px -10px;
+}
+
+.social-account-container {
+  margin-top: 25px;
+}
+
+.title {
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  color: rgb(170, 170, 170);
+}
+
+.social-accounts {
+  width: 100%;
   display: flex;
   justify-content: center;
-  width: 100%;
-  border-radius: 0.375rem;
-  background-color: #b73cff; /* indigo-500 */
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: white;
-  cursor: pointer;
-  border: none;
-  transition: background 0.2s;
+  gap: 15px;
+  margin-top: 5px;
 }
 
-.btn:hover {
-  background-color: #818cf8; /* indigo-400 */
+.social-button {
+  background: linear-gradient(45deg, rgb(0,0,0) 0%, rgb(112,112,112) 100%);
+  border: 5px solid white;
+  padding: 5px;
+  border-radius: 50%;
+  width: 40px;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  box-shadow: rgba(133, 189, 215, 0.88) 0px 12px 10px -8px;
+  transition: all 0.2s ease-in-out;
 }
 
-.btn:focus {
-  outline: 2px solid #6366f1;
-  outline-offset: 2px;
+.social-button .svg {
+  fill: white;
+  margin: auto;
 }
 
-/* Rodapé */
-.footer-text {
-  margin-top: 2.5rem;
+.social-button:hover {
+  transform: scale(1.2);
+}
+
+.social-button:active {
+  transform: scale(0.9);
+}
+
+.agreement {
+  display: block;
   text-align: center;
-  font-size: 0.875rem;
-  color: #9ca3af; /* text-gray-400 */
+  margin-top: 15px;
 }
 
-.footer-text a {
-  font-weight: 600;
-  color: #818cf8; /* indigo-400 */
+.agreement a {
   text-decoration: none;
-}
-
-.footer-text a:hover {
-  color: #a5b4fc; /* indigo-300 */
+  color: #0099ff;
+  font-size: 9px;
 }

@@ -1,37 +1,46 @@
-import "./Login.css";
+import React from 'react';
+import './Login.css';
+import { LogOut } from 'lucide-react';
 
-export default function Example() {
+const Login = () => {
   return (
-    <div className="page-container">
-      <div className="form-box">
-        <img
-          alt="Lukos"
-          src="logo.png"
-          className="logo"
-        />
-        <h2 className="form-title">Entrar na sua conta</h2>
-
-        <form action="#" method="POST" className="form">
-          <div>
-            <label htmlFor="email" className="label">Login</label>
-            <input id="email" name="email" type="email" required className="input" placeholder="Seu Login"/>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <label htmlFor="password" className="label">Senha</label>
-              <a href="#" className="forgot-password">Esqueceu sua senha?</a>
-            </div>
-            <input id="password" name="password" type="password" required className="input" placeholder="••••••••"/>
-          </div>
-
-          <button type="submit" className="btnLogin">Entrar</button>
-        </form>
-
-        <p className="footer-text">
-
-        </p>
+    <div className="container-login">
+      <div className='icon-logo' src="logo.png">
+        
       </div>
+      <div className="heading">Login</div>
+
+
+      <form className="form">
+        <input 
+          required 
+          className="input" 
+          type="email" 
+          name="email" 
+          id="email" 
+          placeholder="Usuário"
+        />
+        <input 
+          required 
+          className="input" 
+          type="password" 
+          name="password" 
+          id="password" 
+          placeholder="Senha"
+        />
+    
+        <input 
+          className="login-button" 
+          type="submit" 
+          value="Entrar"
+        />
+      </form>
+
+  
+
+  
     </div>
   );
-}
+};
+
+export default Login;

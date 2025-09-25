@@ -1,7 +1,7 @@
 /* ===============================
    TUTORIALS GRID
    =============================== */
-.tutorials-grid {
+. {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
@@ -9,7 +9,14 @@
   margin: 0 auto;
   
 }
-
+.filter-label{
+  color: #000000;
+  margin-right: 15px;
+  margin-top: 20px;
+}
+.filter-select{
+  margin-top: 20px;
+}
 /* Card tutorial com mesmo layout */
 .tutorial-card {
   background: white;
@@ -98,13 +105,7 @@ margin-left: 110px;}
   margin-left: 50px;}
 .difficulty-avancado { background: #dc2626; }
 
-.tutorial-footer {
-  text-align: right;
-  margin-top: 1rem;
-  display: flex;
-  justify-content: end;
-  margin-right: 10px;
-}
+
 
 .tutorial-start {
   font-weight: 600;
@@ -129,7 +130,7 @@ margin-left: 110px;}
 }
 
 @media (max-width: 480px) {
-  .tutorials-grid {
+  . {
     grid-template-columns: 1fr;
     gap: 1rem;
   }

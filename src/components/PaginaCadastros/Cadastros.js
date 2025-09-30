@@ -1,9 +1,9 @@
 import React from 'react';
-import './Tutorials.css';
+import './Cadastros.css';
 
-const Tutorials = () => {
+const Cadastros = () => {
     // Dados dos tutoriais
-    const tutorials = [
+    const Cadastros = [
         {
             id: 'retaguarda',
             title: 'Sistema de Retaguarda',
@@ -159,4 +159,4 @@ const Tutorials = () => {
     );
 };
 
-export default Tutorials;
+export default Cadastros;

@@ -60,7 +60,7 @@ const steps = [
     id: 4,
     title: "Passo 4: Controle de Estoque",
     duration: "12 minutos",
-    content: <p>Adicionar item > selecione o produto desejado </p>,
+    content: <p>Adicionar item selecione o produto desejado </p>,
   },
   {
     id: 5,

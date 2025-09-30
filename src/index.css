@@ -1,15 +1,5 @@
 /* ========================================
    RESET E CONFIGURAÇÕES BÁSICAS GLOBAIS
-   ======================================== */
-
-@plugin "tailwindcss-animate";
-@import "tailwindcss";
-@import "tw-animate-css";
-
-@custom-variant dark (&:is(.dark *));
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* Remove margens e paddings padrão, define box-sizing universal */
 * {

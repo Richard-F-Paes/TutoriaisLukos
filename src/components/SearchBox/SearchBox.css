@@ -1,0 +1,65 @@
+.search-box {
+  box-shadow: rgba(46, 45, 55, 0.12) 0px 1px 2px;
+  padding: 24px 32px;
+  border-radius: 8px;
+  background: white;
+  margin: 0;
+  box-sizing: inherit;
+  max-width: 600px;
+  margin: 20px auto;
+  height: 300px;
+  
+}
+
+.search-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.search-header h2 {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+}
+
+.search-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: center;
+  justify-items: center;
+}
+
+.search-tabs button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  background-color: #f2f2f2;
+  cursor: pointer;
+}
+
+.search-tabs button.active {
+  background-color: #e22446;
+  color: white;
+}
+
+.search-form input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 24px;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+}
+
+.search-all-offers {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  background-color: #e22446;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  text-align: center;
+}

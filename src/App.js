@@ -22,6 +22,7 @@ import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import EditorPage from './pages/EditorPage';
 import PaginaTutorial from "./pages/PaginaTutorial";
+import RetaguardaTutorial from './components/RetaguardaTutorial/RetaguardaTutorial';
 
 
 
@@ -46,6 +47,9 @@ function App() {
               <Route path="/sobre" element={<AboutPage />} />
               <Route path="/busca" element={<SearchPage />} />
                <Route path="/paginatutorial" element={<PaginaTutorial />} />
+              <Route path="/Retaguarda" element={<RetaguardaTutorial />} />
+              
+              
              
            
               

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTutorial } from '../../contexts/TutorialContext';
+import { useTutorial } from '../../../contexts/TutorialContext';
 import VideoPlaceholder from '../VideoPlaceholder/VideoPlaceholder';
 import StepActions from '../StepActions/StepActions';
 import './Step.css';

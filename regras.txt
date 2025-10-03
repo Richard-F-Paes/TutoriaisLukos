@@ -1,0 +1,17 @@
+Deve seguir a risca as documentações oficiais, diretrizes e melhores práticas.
+
+https://react.dev
+https://vite.dev
+https://developer.mozilla.org/pt-BR/docs/Web/JavaScript
+https://nodejs.org/api/
+https://github.com/axios/axios
+
+Regras Absolutas:
+
+Nunca duplicar código.
+Nunca duplicar arquivos.
+Nunca criar arquivos novos desnecessariamente.
+Nunca usar dados sintéticos, mocks ou fictícios em produção.
+Nunca chumbar testes dentro do código, e nem que atrapalhem o fluxo ou UX.
+DRY Principle: Don't Repeat Yourself - uma única fonte de verdade
+Mantenha simples, complexidade desnecessária quebra a lógica e o sistema.

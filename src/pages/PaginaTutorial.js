@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Navbar from "../components/Navbar/Navbar";
-import Hero from "../components/Hero/Hero";
-import Progresso from "../components/BarrradePogresso/Progresso";
-import TutorialMain from "../components/Tutorialmain/Tutorialmain";
+import Navbar from "../components/layout/Navbar/Navbar";
+import Hero from "../components/ui/Hero/Hero";
+import Progresso from "../components/ui/BarrradePogresso/Progresso";
+import TutorialMain from "../components/tutorial/Tutorialmain/Tutorialmain";
 
 
 const PaginaTutorial = () => {

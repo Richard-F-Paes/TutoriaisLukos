@@ -20,14 +20,6 @@ export default function NavMenu() {
           </li>
           <li>
             <Link 
-              to="/mcp-demo" 
-              className={`hover:text-blue-200 ${location.pathname === '/mcp-demo' ? 'font-bold underline' : ''}`}
-            >
-              MCP Demo
-            </Link>
-          </li>
-          <li>
-            <Link 
               to="/admin" 
               className={`hover:text-blue-200 ${location.pathname === '/admin' ? 'font-bold underline' : ''}`}
             >

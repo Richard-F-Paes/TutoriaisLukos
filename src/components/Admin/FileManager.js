@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useMcp } from "trae/mcp";
 import "./FileManager.css";
 
 export default function FileManager() {
-  const mcp = useMcp("tutorial-agent");
   const [currentDirectory, setCurrentDirectory] = useState("src");
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,15 +20,17 @@ export default function FileManager() {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await mcp.call("listFiles", { directory: currentDirectory });
-      if (result.error) {
-        setError(result.error);
-      } else {
-        setFiles(result.files || []);
-      }
+      // Simular carregamento de arquivos sem MCP
+      await new Promise(resolve => setTimeout(resolve, 800)); // Simular delay
+      setFiles([
+        { name: "components", type: "directory", path: "src/components" },
+        { name: "pages", type: "directory", path: "src/pages" },
+        { name: "App.js", type: "file", path: "src/App.js" },
+        { name: "index.js", type: "file", path: "src/index.js" }
+      ]);
     } catch (error) {
       console.error("Erro ao carregar arquivos:", error);
-      setError(error.message || "Erro ao carregar arquivos");
+      setError("Erro ao carregar arquivos");
     } finally {
       setIsLoading(false);
     }
@@ -55,22 +55,14 @@ export default function FileManager() {
     setIsLoading(true);
     setError(null);
     try {
-      const filePath = `${currentDirectory}/${newFileName}`;
-      const result = await mcp.call("createFile", {
-        path: filePath,
-        content: "// Novo arquivo criado pelo MCP\n"
-      });
-      
-      if (result.error) {
-        setError(result.error);
-      } else {
-        setNewFileName("");
-        setShowCreateFile(false);
-        loadFiles();
-      }
+      // Simular criação de arquivo sem MCP
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay
+      setNewFileName("");
+      setShowCreateFile(false);
+      loadFiles();
     } catch (error) {
       console.error("Erro ao criar arquivo:", error);
-      setError(error.message || "Erro ao criar arquivo");
+      setError("Erro ao criar arquivo");
     } finally {
       setIsLoading(false);
     }
@@ -84,19 +76,16 @@ export default function FileManager() {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await mcp.call("deleteFile", { path: file.path });
-      if (result.error) {
-        setError(result.error);
-      } else {
-        if (selectedFile && selectedFile.path === file.path) {
-          setSelectedFile(null);
-          setFileContent("");
-        }
-        loadFiles();
+      // Simular exclusão de arquivo sem MCP
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay
+      if (selectedFile && selectedFile.path === file.path) {
+        setSelectedFile(null);
+        setFileContent("");
       }
+      loadFiles();
     } catch (error) {
       console.error("Erro ao excluir arquivo:", error);
-      setError(error.message || "Erro ao excluir arquivo");
+      setError("Erro ao excluir arquivo");
     } finally {
       setIsLoading(false);
     }
@@ -108,20 +97,13 @@ export default function FileManager() {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await mcp.call("updateFile", {
-        path: selectedFile.path,
-        content: fileContent
-      });
-      
-      if (result.error) {
-        setError(result.error);
-      } else {
-        setIsEditing(false);
-        loadFiles();
-      }
+      // Simular salvamento de arquivo sem MCP
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay
+      setIsEditing(false);
+      loadFiles();
     } catch (error) {
       console.error("Erro ao salvar arquivo:", error);
-      setError(error.message || "Erro ao salvar arquivo");
+      setError("Erro ao salvar arquivo");
     } finally {
       setIsLoading(false);
     }

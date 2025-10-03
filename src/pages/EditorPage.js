@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { EditorProvider } from '../contexts/EditorContext';
-import EditorToolbar from '../components/Editor/EditorToolbar';
-import ComponentPalette from '../components/Editor/ComponentPalette';
-import EditorCanvas from '../components/Editor/EditorCanvas';
-import PropertyPanel from '../components/Editor/PropertyPanel';
+import EditorToolbar from '../components/admin/Editor/EditorToolbar';
+import ComponentPalette from '../components/admin/Editor/ComponentPalette';
+import EditorCanvas from '../components/admin/Editor/EditorCanvas';
+import PropertyPanel from '../components/admin/Editor/PropertyPanel';
 import './EditorPage.css';
 
 const EditorPage = () => {

@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { useMcp } from "trae/mcp";
 import "./TutorialList.css";
 
 export default function TutorialList({ tutorials, isLoading, onTutorialDeleted, onRefresh }) {
-  const mcp = useMcp("tutorial-agent");
   const [deletingId, setDeletingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
@@ -26,12 +24,9 @@ export default function TutorialList({ tutorials, isLoading, onTutorialDeleted, 
 
     setDeletingId(tutorialId);
     try {
-      const result = await mcp.call("deleteTutorial", { id: tutorialId });
-      if (result.error) {
-        alert("Erro ao excluir tutorial: " + result.error);
-      } else {
-        onTutorialDeleted(tutorialId);
-      }
+      // Simular exclusão sem MCP
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay
+      onTutorialDeleted(tutorialId);
     } catch (error) {
       console.error("Erro ao excluir tutorial:", error);
       alert("Erro ao excluir tutorial: " + error.message);

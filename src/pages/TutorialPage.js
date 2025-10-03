@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useTutorial } from '../contexts/TutorialContext';
-import Navbar from '../components/Navbar/Navbar';
-import TutorialHeader from '../components/TutorialHeader/TutorialHeader';
-import Step from '../components/Step/Step';
-import Footer from '../components/Footer/Footer';
+import Navbar from '../components/layout/Navbar/Navbar';
+import TutorialHeader from '../components/tutorial/TutorialHeader/TutorialHeader';
+import Step from '../components/tutorial/Step/Step';
+import Footer from '../components/layout/Footer/Footer';
 import { tutorialData } from '../data/tutorialData';
 
 

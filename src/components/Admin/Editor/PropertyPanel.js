@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useEditor } from '../../contexts/EditorContext';
+import { useEditor } from '../../../contexts/EditorContext';
 import { ChromePicker } from 'react-color';
 import './PropertyPanel.css';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTutorial } from '../../contexts/TutorialContext';
+import { useTutorial } from '../../../contexts/TutorialContext';
 import './VideoPlaceholder.css';
 
 const VideoPlaceholder = ({ title, description }) => {

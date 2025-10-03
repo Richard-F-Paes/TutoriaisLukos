@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useEditor } from '../../contexts/EditorContext';
-import { useAuth } from '../../contexts/AuthContext';
+import { useEditor } from '../../../contexts/EditorContext';
+import { useAuth } from '../../../contexts/AuthContext';
 import './EditorToolbar.css';
 
 const EditorToolbar = () => {

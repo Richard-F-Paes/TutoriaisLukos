@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useMcp } from "trae/mcp";
 import TutorialEditor from "../components/Admin/TutorialEditor";
 import TutorialList from "../components/Admin/TutorialList";
 import FileManager from "../components/Admin/FileManager";
 import "./AdminPage.css";
 
 export default function AdminPage() {
-  const mcp = useMcp("tutorial-agent");
   const [activeTab, setActiveTab] = useState("tutorials");
   const [tutorials, setTutorials] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,15 +20,21 @@ export default function AdminPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await mcp.call("getTutorials", {});
-      if (result.error) {
-        setError(result.error);
-      } else {
-        setTutorials(result.tutorials || []);
-      }
+      // Simular carregamento de tutoriais sem MCP
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay
+      setTutorials([
+        {
+          id: 1,
+          title: "Tutorial de Exemplo",
+          description: "Um tutorial de exemplo para demonstração",
+          category: "react",
+          difficulty: "beginner",
+          createdAt: new Date().toISOString()
+        }
+      ]);
     } catch (error) {
       console.error("Erro ao carregar tutoriais:", error);
-      setError(error.message || "Erro ao carregar tutoriais");
+      setError("Erro ao carregar tutoriais");
     } finally {
       setIsLoading(false);
     }

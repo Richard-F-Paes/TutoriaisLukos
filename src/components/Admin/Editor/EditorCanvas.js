@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEditor } from '../../contexts/EditorContext';
+import { useEditor } from '../../../contexts/EditorContext';
 import './EditorCanvas.css';
 
 const EditorCanvas = () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTutorial } from '../../contexts/TutorialContext';
+import { useTutorial } from '../../../contexts/TutorialContext';
 import './StepActions.css';
 
 const StepActions = ({ stepNumber }) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useEditor } from '../../contexts/EditorContext';
+import { useEditor } from '../../../contexts/EditorContext';
 import './ComponentPalette.css';
 
 const ComponentPalette = () => {

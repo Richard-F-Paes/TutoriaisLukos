@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTutorial } from '../../contexts/TutorialContext';
+import { useTutorial } from '../../../contexts/TutorialContext';
 import StepItem from '../StepItem/StepItem';
 import './StepList.css';
 

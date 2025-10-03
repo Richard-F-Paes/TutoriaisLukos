@@ -1,7 +1,7 @@
 import React from 'react';
-import Hero from '../components/Hero/Hero';
-import Categories from '../components/Categories/Categories';
-import SearchBox from '../components/SearchBox/SearchBox';
+import Hero from '../components/ui/Hero/Hero';
+import Categories from '../components/ui/Categories/Categories';
+import SearchBox from '../components/ui/SearchBox/SearchBox';
 
 
 

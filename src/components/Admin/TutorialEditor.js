@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { useMcp } from "trae/mcp";
 import "./TutorialEditor.css";
 
 export default function TutorialEditor({ tutorials, onTutorialCreated, onTutorialUpdated }) {
-  const mcp = useMcp("tutorial-agent");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [editingTutorial, setEditingTutorial] = useState(null);

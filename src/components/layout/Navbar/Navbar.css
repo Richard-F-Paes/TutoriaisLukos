@@ -2,15 +2,25 @@
    NAVBAR - BARRA DE NAVEGAÇÃO
    ======================================== */
 
+/* Remove sublinhado de TODOS os links da navbar */
+.navbar a,
+.navbar a:hover,
+.navbar a:focus,
+.navbar a:active,
+.navbar a:visited {
+    text-decoration: none !important;
+    outline: none;
+}
+
 /* Container principal da navbar - fixa no topo */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(135deg, #5a008f 40%, #6c2396 60%);
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     z-index: 1000;
     padding: 1rem 0;
     transition: all 0.3s ease;
@@ -18,8 +28,8 @@
 
 /* Estado quando a página foi rolada */
 .navbar.scrolled {
-    background: rgba(255, 255, 255, 0.98);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #5a008f 40%, #6c2396 60%);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Container interno da navbar */
@@ -29,33 +39,51 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1.5rem;
+    padding: 0 1rem;
 }
 
-/* Logo e marca da plataforma */
+/* Logo e marca da plataforma - idêntico ao footer */
 .nav-brand {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    font-weight: 700;
-    font-size: 1.25rem;
-    color: #2563eb;
-    text-decoration: none;
+    gap: 1.5rem;
+    text-decoration: none !important;
+    color: inherit;
     transition: all 0.3s ease;
 }
 
-.nav-brand:hover {
-    transform: scale(1.05);
+.nav-brand:hover,
+.nav-brand:focus,
+.nav-brand:active,
+.nav-brand:visited {
+    text-decoration: none !important;
 }
 
-.nav-icon {
-    font-size: 1.5rem;
-    color: #2563eb;
+.nav-brand-icon {
+    width: 50px;
+    height: 50px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-.nav-title {
-    color: #6a04ca;
-    ;
+.nav-logo-image {
+    width: 53px;
+    height: 53px;
+    object-fit: contain;
+    margin: 0;
+}
+
+.nav-brand-name {
+    font-size: 1.8rem;
+    font-weight: 600;
+    line-height: 1.2;
+    font-family: 'Times New Roman', serif;
+    color: #ffffff;
 }
 
 /* Menu de navegação */
@@ -65,26 +93,33 @@
 }
 
 .nav-link {
-    color: #6b7280;
-    text-decoration: none;
+    color: #ffffff;
+    text-decoration: none !important;
     font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
     transition: all 0.3s ease;
     position: relative;
-    display: flex;
-    align-items: center;
+    display: inline-block;
+    opacity: 1;
 }
 
-
-.nav-link:hover {
-    color: #2563eb;
-    background-color: rgba(37, 99, 235, 0.05);
+.nav-link:hover,
+.nav-link:focus,
+.nav-link:active,
+.nav-link:visited {
+    text-decoration: none !important;
+    color: #d4b3ff;
+    opacity: 1;
+    box-shadow: 0 2px 8px rgba(212, 179, 255, 0.3);
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .nav-link.active {
-    color: #2563eb;
-    background-color: rgba(37, 99, 235, 0.1);
+    color: #d4b3ff;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(212, 179, 255, 0.2);
 }
 
 /* Barra de pesquisa */
@@ -109,29 +144,26 @@
 .search-icon {
     position: absolute;
     left: 1rem;
-    color: #9ca3af;
+    color: #6b7280;
     z-index: 1;
-
-    ;
 }
 
 .Search-text {
     padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 2px solid #b8b8b8fb;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 12px;
     width: 300px;
     font-size: 0.9rem;
-    background: swhite;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
     transition: all 0.3s ease;
-    
-
-    
 }
-.search-input:focus {
+
+.Search-text:focus {
     outline: none;
-    border-color: #4325eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    
+    border-color: #d4b3ff;
+    box-shadow: 0 0 0 3px rgba(212, 179, 255, 0.2);
+    background: rgba(255, 255, 255, 1);
 }
 
 /* ========================================
@@ -143,17 +175,30 @@
     align-items: center;
 }
 
-/* Botões de autenticação */
-.auth-buttons {
+/* Engrenagem discreta para login */
+.auth-gear {
     display: flex;
-    gap: 0.5rem;
     align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    opacity: 0.4;
+    margin-left: auto;
 }
 
-.auth-buttons .btn {
-    padding: 0.5rem 1rem;
+.auth-gear:hover {
+    color: #d4b3ff;
+    background: rgba(255, 255, 255, 0.05);
+    opacity: 0.8;
+    transform: rotate(90deg);
+}
+
+.auth-gear i {
     font-size: 0.9rem;
-    text-decoration: none;
 }
 
 /* Menu do usuário autenticado */
@@ -165,32 +210,37 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    padding: 0.3rem 0.5rem;
     background: none;
     border: 2px solid transparent;
-    border-radius: 12px;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    color: #64748b;
+    color: #ffffff;
     font-weight: 500;
+    text-decoration: none !important;
 }
 
 .user-button:hover {
-    background: rgba(37, 99, 235, 0.1);
-    border-color: rgba(37, 99, 235, 0.2);
-    color: #2563eb;
+    text-decoration: none !important;
+    color: #d4b3ff;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(212, 179, 255, 0.3);
+    transform: translateY(-1px);
 }
 
 .user-avatar {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background: linear-gradient(135deg, #d4b3ff, #b19cd9);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #5a008f;
     font-size: 0.8rem;
+    font-weight: 600;
 }
 
 .user-name {
@@ -250,12 +300,13 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background: linear-gradient(135deg, #d4b3ff, #b19cd9);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #5a008f;
     font-size: 1.2rem;
+    font-weight: 600;
 }
 
 .user-details h4 {
@@ -319,19 +370,22 @@
     padding: 0.75rem 1rem;
     background: none;
     border: none;
-    border-radius: 8px;
+    border-radius: 4px;
     color: #374151;
-    text-decoration: none;
+    text-decoration: none !important;
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     text-align: left;
 }
 
 .user-action:hover {
+    text-decoration: none !important;
     background: #f3f4f6;
     color: #1f2937;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
 }
 
 .user-action.logout {
@@ -341,6 +395,8 @@
 .user-action.logout:hover {
     background: #fef2f2;
     color: #b91c1c;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+    transform: translateY(-1px);
 }
 
 .user-action i {
@@ -362,6 +418,30 @@
     
     .nav-menu {
         gap: 1rem;
+    }
+    
+    .nav-brand-icon {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .nav-logo-image {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .nav-brand-name {
+        font-size: 1.4rem;
+    }
+    
+    .auth-gear {
+        width: 28px;
+        height: 28px;
+        margin-left: auto;
+    }
+    
+    .auth-gear i {
+        font-size: 0.8rem;
     }
     
     .search-input {
@@ -393,6 +473,20 @@
         font-size: 1.2rem;
     }
     
+    .nav-brand-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .nav-logo-image {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .nav-brand-name {
+        font-size: 1.2rem;
+    }
+    
     .nav-menu {
         flex-wrap: wrap;
         justify-content: center;
@@ -402,14 +496,14 @@
         width: 200px;
     }
     
-    .auth-buttons {
-        flex-direction: column;
-        gap: 0.25rem;
+    .auth-gear {
+        width: 26px;
+        height: 26px;
+        margin-left: auto;
     }
     
-    .auth-buttons .btn {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
+    .auth-gear i {
+        font-size: 0.7rem;
     }
     
     .user-dropdown {

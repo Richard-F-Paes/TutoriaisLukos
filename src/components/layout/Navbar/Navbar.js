@@ -66,8 +66,10 @@ const Navbar = () => {
 
                 {/* LOGO */}
                 <Link to="/" className="nav-brand">
-                    <img src="logo.png" alt="Logo Tutorial Lukos" className="nav-logo" />
-                    <span className="nav-title">Tutorial Lukos</span>
+                    <div className="nav-brand-icon">
+                        <img src="Logo512.png" alt="Logo" className="nav-logo-image" />
+                    </div>
+                    <span className="nav-brand-name">Tutoriais Lukos</span>
                 </Link>
                 
                 {/* MENU PRINCIPAL */}
@@ -199,15 +201,10 @@ const Navbar = () => {
                             )}
                         </div>
                     ) : (
-                        // Se não autenticado, mostra botões de login/cadastro
-                        <div className="auth-buttons">
-                            <Link to="/login" className="btn btn-ghost">
-                                Entrar
-                            </Link>
-                            <Link to="/register" className="btn btn-primry">
-                               
-                            </Link>
-                        </div>
+                        // Se não autenticado, mostra engrenagem discreta
+                        <Link to="/login" className="auth-gear">
+                            <i className="fas fa-cog"></i>
+                        </Link>
                     )}
                 </div>
             </div>

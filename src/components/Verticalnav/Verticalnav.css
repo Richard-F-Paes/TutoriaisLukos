@@ -1,0 +1,109 @@
+.verticalnav {
+  position: fixed;   /* fixa na lateral */
+  left: 0;
+  top: 85px;
+  bottom: 0;
+  width: 120px;
+  background: linear-gradient(160deg, #252834 0%, #2d1c40 100%);
+  border-radius: 18px;
+  padding: 70px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+}
+
+.verticalnav:hover {
+  transform: translateX(0);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+  width: 240px; /* expansão suave ao passar o mouse */
+}
+.verticalnav .logo img {
+  width: 60%;
+  margin-top: 100px;
+  margin-bottom: 50px;
+  transition: transform 0.3s ease;
+}
+.verticalnav:hover .logo img {
+  transform: scale(1.05);
+}
+.verticalnav h3 {
+  color: #fff;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 0 0 10px 0;
+}
+
+.separator {
+  border-top: 1.5px solid #42434a;
+  margin: 0 10px;
+}
+
+.list {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  padding: 0 30px;
+  margin: 0;
+  align-items: center;
+}
+
+.element {
+  display: flex;
+  align-items: center;
+  color: #aeb4c2;
+  gap: 10px;
+  transition: all 0.3s ease-out;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+ 
+}
+
+.element i {
+  font-size: 20px;
+  transition: all 0.3s ease-out;
+}
+
+.element svg {
+  width: 20px;
+  height: 20px;
+  transition: all 0.3s ease-out;
+}
+
+.element .label {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  
+}
+.Label {
+  
+}
+.element:hover {
+  background-color: #5353ff;
+  color: #ffffff;
+  transform: translateX(5px);
+}
+
+.element:hover svg {
+  stroke: #ffffff;
+}
+
+.element.delete:hover {
+  background-color: #d43d3d;
+}
+
+.list:last-child .element {
+  color: #bd89ff;
+}
+
+.list:last-child .element:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}

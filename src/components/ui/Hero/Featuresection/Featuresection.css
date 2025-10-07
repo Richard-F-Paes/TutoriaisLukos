@@ -1,0 +1,176 @@
+.feature-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 80px 10%;
+  background: #fff;
+  flex-wrap: wrap;
+
+
+}
+
+/* Container da imagem */
+.feature-image-container {
+background: #6a1bcc;
+background: linear-gradient(98deg,rgb(226, 226, 226) 0%, rgb(219, 219, 219) 50%, rgb(233, 233, 233) 100%);
+  padding: 15px;
+  border-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+margin-bottom: 150px;
+animation: 0.6s ease-out 0s 1 normal none running fadeInUp;
+background: white;
+border-radius: 20px;
+padding: 1rem;
+text-align: center;
+box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 20px;
+border: 1px solid rgb(241, 245, 249);
+transition: 0.4s;
+cursor: pointer;
+position: relative;
+overflow: hidden;
+margin: 0px;
+box-sizing: border-box;
+
+}
+
+.feature-image {
+  width: 600px;
+  height: auto;
+  border-radius: 20px;
+  
+
+
+
+}
+.feature-PDV {
+     width: 600px;
+  height: auto;
+  border-radius: 20px;
+   
+
+
+}
+
+.feature-image-PDV {
+    order: 2;
+    animation: 0.6s ease-out 0s 1 normal none running fadeInUp;
+background: white;
+border-radius: 20px;
+padding: 1rem;
+text-align: center;
+box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 20px;
+border: 1px solid rgb(241, 245, 249);
+transition: 0.4s;
+cursor: pointer;
+position: relative;
+overflow: hidden;
+margin: 0px;
+box-sizing: border-box;
+}
+
+.text-PDV {
+      max-width: 420px;
+      animation: 0.6s ease-out 0s 1 normal none running fadeInUp;
+background: white;
+border-radius: 20px;
+padding: 2rem;
+text-align: center;
+box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 20px;
+border: 1px solid rgb(241, 245, 249);
+transition: 0.4s;
+cursor: pointer;
+position: relative;
+overflow: hidden;
+margin: 0px;
+box-sizing: border-box;
+     
+     
+}
+.text-PDV h1 {
+        font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #000;
+   
+ 
+}
+.text-PDV p {
+     margin-top: 16px;
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+
+
+}
+/* Texto */
+.text-retaguarda {
+  max-width: 420px;
+  animation: 0.6s ease-out 0s 1 normal none running fadeInUp;
+background: white;
+border-radius: 20px;
+padding: 2rem;
+text-align: center;
+box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 20px;
+border: 1px solid rgb(241, 245, 249);
+transition: 0.4s;
+cursor: pointer;
+position: relative;
+overflow: hidden;
+margin: 0px;
+box-sizing: border-box;
+ 
+ 
+}
+
+.text-retaguarda h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #000;
+
+ 
+}
+
+.highlight {
+  color: #3b5bff;
+}
+
+.text-retaguarda p {
+  margin-top: 16px;
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.feature-link {
+background-color: var(--primary-700);
+border-color: var(--primary-700);
+transform: translateY(-1px);
+box-shadow: var(--shadow-md);
+padding: 0.75rem 2rem;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: var(--space-2);
+font-size: 1rem;
+font-weight: 600;
+line-height: 1;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+transition: 0.3s;
+text-decoration: none;
+white-space: nowrap;
+user-select: none;
+color: white;
+background: rgb(0, 123, 255);
+margin: 0px;
+box-sizing: border-box;   
+}
+
+.feature-link:hover {
+  transform: translateX(5px);
+}

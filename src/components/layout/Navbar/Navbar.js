@@ -90,13 +90,31 @@ const Navbar = () => {
                         to="/tutoriais"
                         className={`nav-link ${location.pathname === '/Categorias' ? 'active' : ''}`}
                     >
-                        Categoriais
+                        Fatura Web
                     </Link>
                     <Link 
-                        to="/sobre"
+                        to="/Dashboard"
+                        className={`nav-link ${location.pathname === '/Dashboard' ? 'active' : ''}`}
+                    >
+                        Dashboard
+                    </Link>
+                     <Link 
+                        to="/Retaguarda"
+                        className={`nav-link ${location.pathname === '/Retaguarda' ? 'active' : ''}`}
+                    >
+                        Retaguarda
+                    </Link>
+                     <Link 
+                        to="/PDV "
+                        className={`nav-link ${location.pathname === '/PDV pista' ? 'active' : ''}`}
+                    >
+                        PDV 
+                    </Link>
+                     <Link 
+                        to="/Pré Venda"
                         className={`nav-link ${location.pathname === '/sobre' ? 'active' : ''}`}
                     >
-                        Sobre
+                        Pré Venda
                     </Link>
                     <Link 
                         to="/paginatutorial"

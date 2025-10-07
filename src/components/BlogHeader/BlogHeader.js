@@ -27,6 +27,7 @@ export default function BlogHeader() {
       avatar: "https://lh3.googleusercontent.com/sitesv/AICyYdaYuSdmWek7JEJ4pvBfU8YGfZD-hA8wYTG56orymM9ecWdVYWb5ZGZgLX12i1HzH-KMxGYluwGwfSwWf9m9sMlgf9heWu0O7vodR2xX4oS7Ux4-9qJFYkKFrGlmY3qOzRfXaQm_ftiym1IwCpp_TQPD1D3bf2O7_Cwn5ZrRadwmGcjvgnP1UKOyLsBsqNJmoVWod62eBNGBJFWGnVbCQV-fm46-1Sl5pUCG=w1280",
       img: "https://lh3.googleusercontent.com/sitesv/AICyYdbO_tF9A6P9hC3KTGM0EXrJhPrx__MHTgCM0wPL8Cbk83L1aYzOVJbCUPrlJqBnPO1u8bYCdE_HH8anv4M-qoHBKbiVYJCgVAc3QNJIjAvpkXq1BjeahyXwqYINe44034894YuD2EcLec9Rzu2KPpqYAn6x9_9vQ_UXGnHOyjr8tylexB9OIipXv3HkkAwQ_JJQYZYUXgFZiOiID_swr5f_VAo-UWZb3NJ8=w1280",
     },
+
      {
       category: "Retaguarda",
       title: "Cadastro de Clientes Com CFP",
@@ -35,7 +36,34 @@ export default function BlogHeader() {
       date: "",
       avatar: "https://lh3.googleusercontent.com/sitesv/AICyYdaYuSdmWek7JEJ4pvBfU8YGfZD-hA8wYTG56orymM9ecWdVYWb5ZGZgLX12i1HzH-KMxGYluwGwfSwWf9m9sMlgf9heWu0O7vodR2xX4oS7Ux4-9qJFYkKFrGlmY3qOzRfXaQm_ftiym1IwCpp_TQPD1D3bf2O7_Cwn5ZrRadwmGcjvgnP1UKOyLsBsqNJmoVWod62eBNGBJFWGnVbCQV-fm46-1Sl5pUCG=w1280",
       img: "https://lh3.googleusercontent.com/sitesv/AICyYdbO_tF9A6P9hC3KTGM0EXrJhPrx__MHTgCM0wPL8Cbk83L1aYzOVJbCUPrlJqBnPO1u8bYCdE_HH8anv4M-qoHBKbiVYJCgVAc3QNJIjAvpkXq1BjeahyXwqYINe44034894YuD2EcLec9Rzu2KPpqYAn6x9_9vQ_UXGnHOyjr8tylexB9OIipXv3HkkAwQ_JJQYZYUXgFZiOiID_swr5f_VAo-UWZb3NJ8=w1280",
-    },
+      },
+      {
+    category: "",
+    title: "",
+    desc: "",
+    author: "",
+    date: "",
+    avatar: "",
+    img: "",
+  },
+  {
+    category: "",
+    title: "",
+    desc: "",
+    author: "",
+    date: "",
+    avatar: "",
+    img: "",
+  },
+  {
+    category: "",
+    title: "",
+    desc: "",
+    author: "",
+    date: "",
+    avatar: "",
+    img: "",
+  },
   ];
 
   // Filtrar por aba

@@ -96,6 +96,8 @@ const Navbar = () => {
                     >
                         Sobre
                     </Link>
+                    
+                    
                     <Link 
                         to="/paginatutorial"
                         className={`nav-link ${location.pathname === '/paginatutorias' ? 'active' : ''}`}

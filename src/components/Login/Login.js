@@ -1,12 +1,17 @@
 import React from "react";
 import "./Login.css";
-import { LogIn, Mail, Lock, Facebook, Chrome } from "lucide-react";
+import { LogIn, Mail, Lock } from "lucide-react";
 
 const Login = () => {
   return (
     <div className="login-wrapper">
       {/* Coluna da esquerda - formulário */}
-      <div className="login-form">
+      <div className="login-form playing">
+        {/* Ondas animadas */}
+        <div className="wave"></div>
+        <div className="wave"></div>
+        <div className="wave"></div>
+
         {/* Logo no topo */}
         <div className="logo-container">
           <img src="logo.png" alt="Logo" className="logo" />
@@ -29,19 +34,10 @@ const Login = () => {
           ENTRAR <LogIn size={18} style={{ marginLeft: "8px" }} />
         </button>
 
-        <div className="divider">
-        
-        </div>
+        <div className="divider"></div>
 
-        <button className="">
-        
-           <b></b>
-        </button>
+       
 
-        <button className="">
-        
-           <b></b>
-        </button>
       </div>
 
       {/* Coluna da direita - imagem */}

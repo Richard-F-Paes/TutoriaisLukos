@@ -1,0 +1,108 @@
+.ts-section {
+  background-color: #fff;
+  color: #374151;
+  position: relative;
+  padding: 40px 24px;
+}
+
+.ts-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.ts-subtitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #3b82f6;
+}
+
+.ts-title {
+  margin-top: 8px;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.ts-main {
+  position: relative;
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ts-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 24rem;
+  background-color: #3b82f6;
+  border-radius: 16px;
+  z-index: 0;
+}
+
+.ts-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #3b82f6;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  color: #fff;
+}
+
+.ts-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.ts-content {
+  margin-top: 12px;
+}
+
+.ts-name {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.ts-role {
+  color: #bfdbfe;
+  margin-top: 4px;
+}
+
+.ts-text {
+  margin-top: 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.ts-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.ts-btn {
+  background: none;
+  border: 1px solid #fff;
+  padding: 8px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.ts-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.ts-btn-icon {
+  width: 24px;
+  height: 24px;
+}

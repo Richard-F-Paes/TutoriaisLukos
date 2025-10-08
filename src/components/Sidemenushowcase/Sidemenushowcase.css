@@ -1,0 +1,150 @@
+.sm-section {
+  display: flex;
+  flex-direction: column;
+  width: 16rem;
+  height: 100vh;
+  padding: 2rem 1rem;
+  background-color: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  overflow-y: auto;
+  position: fixed; /* fixa a sidebar na tela */
+  top: 0;
+  left: 0;
+  z-index: 50;
+  margin-top: 100px;
+}
+
+.sm-logo {
+  width: auto;
+  height: 1.75rem;
+}
+
+.sm-search {
+  position: relative;
+  margin-top: 1.5rem;
+}
+
+.sm-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.sm-svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #9ca3af;
+}
+
+.sm-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+  border-radius: 0.375rem;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  background-color: #fff;
+}
+
+.sm-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.sm-nav-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  margin-top: 1.875rem;
+}
+
+.sm-link {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  margin-top: 1.25rem;
+  border-radius: 0.375rem;
+  color: #4b5563;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.sm-link:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.sm-link.active {
+  background-color: #5b59e4d8;
+  color: #f8f8f8;
+}
+
+.sm-link-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.sm-link-text {
+  margin-left: 1rem;
+  font-weight: 500;
+  color: inherit;
+}
+
+.sm-profile {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  margin-top: 1.25rem;
+}
+
+.sm-avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  margin-right: 0.5rem;
+}
+
+.sm-profile-name {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+/* Dark mode */
+.dark .sm-section {
+  background-color: #111827;
+  border-right: 1px solid #374151;
+}
+
+.dark .sm-input {
+  background-color: #1f2937;
+  color: #d1d5db;
+  border-color: #374151;
+}
+
+.dark .sm-input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+}
+
+.dark .sm-link {
+  color: #9ca3af;
+}
+
+.dark .sm-link:hover {
+  background-color: #374151;
+  color: #f8fafc;
+}
+
+.dark .sm-link.active {
+  background-color: #6366f1;
+  color: #f8fafc;
+}
+
+.dark .sm-profile-name {
+  color: #f3f4f6;
+}

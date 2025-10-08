@@ -1,0 +1,157 @@
+.blogshowcase-section {
+  background-color: #111827;
+  color: #1f2937;
+  padding: 3rem 1.5rem;
+}
+
+.blogshowcase-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.blogshowcase-header {
+  text-align: center;
+}
+
+.blogshowcase-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1f2937;
+  text-transform: capitalize;
+}
+
+.blogshowcase-description {
+  max-width: 600px;
+  margin: 1rem auto 0;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.blogshowcase-grid {
+  display: grid;
+  gap: 2rem;
+  margin-top: 3rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .blogshowcase-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .blogshowcase-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.blogshowcase-card {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: rgba(255, 255, 255, 0.08) 0px 4px 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.blogshowcase-card:hover {
+  transform: translateY(-5px);
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 8px 24px;
+}
+
+.blogshowcase-image-wrapper {
+  position: relative;
+}
+
+.blogshowcase-image {
+  width: 100%;
+  height: 16rem;
+  object-fit: cover;
+}
+
+.blogshowcase-author {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 0.75rem;
+}
+
+.blogshowcase-author-img {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.blogshowcase-author-info {
+  margin-left: 1rem;
+}
+
+.blogshowcase-author-info h1 {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.blogshowcase-author-info p {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.blogshowcase-post-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+}
+
+.blogshowcase-divider {
+  width: 8rem;
+  height: 2px;
+  background-color: #3b82f6;
+  border: none;
+  margin: 1.5rem 0;
+}
+
+.blogshowcase-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.blogshowcase-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #3b82f6;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.blogshowcase-link:hover {
+  color: #60a5fa;
+}
+
+/* Dark mode automático */
+@media (prefers-color-scheme: dark) {
+  .blogshowcase-section {
+    background-color: #111827;
+    color: #f9fafb;
+  }
+
+  .blogshowcase-card {
+    background-color: #1f2937;
+  }
+
+  .blogshowcase-author {
+    background-color: #1f2937;
+  }
+
+  .blogshowcase-title {
+    color: #ffffff;
+  }
+
+  .blogshowcase-text,
+  .blogshowcase-description {
+    color: #9ca3af;
+  }
+}

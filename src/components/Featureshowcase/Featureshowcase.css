@@ -1,0 +1,110 @@
+.fs-section {
+  background-color: #111827;
+  color: #333;
+  padding: 40px 20px;
+  font-family: sans-serif;
+
+
+
+}
+
+.fs-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #111827;
+}
+
+.fs-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  line-height: 1.2;
+    margin
+}
+
+.fs-underline {
+  text-decoration: underline;
+  text-decoration-color: #3b82f6; /* azul */
+}
+
+.fs-subtitle {
+  font-size: 1rem;
+  margin-bottom: 40px;
+  color: #6b7280; /* cinza */
+}
+
+.fs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+    margin-top: 20px ;
+  
+
+    
+}
+
+@media(min-width: 768px) {
+  .fs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(min-width: 1280px) {
+  .fs-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.fs-card {
+  border: 2px solid #3b82f6;
+  border-radius: 15px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #5402a0;
+}
+
+.fs-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.fs-icon svg {
+  width: 32px;
+  height: 32px;
+  color: #3b82f6;
+}
+
+.fs-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.fs-card-text {
+  color: #ffffff;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+.fs-bg{
+    background-color: #121927;
+}
+ 
+.fs-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #dbeafe;
+  color: #3b82f6;
+  border-radius: 9999px;
+  width: 36px;
+  height: 36px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.fs-link:hover {
+  background-color: #3b82f6;
+  color: #fff;
+}

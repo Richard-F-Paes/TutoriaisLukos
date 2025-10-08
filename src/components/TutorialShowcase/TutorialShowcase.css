@@ -1,0 +1,110 @@
+.Tutorialshowcase {
+  background-color: #0f172a; /* Dark background similar ao print */
+  color: #f8fafc;
+  padding: 2.5rem 1.5rem;
+  min-height: 100vh;
+}
+
+.TutorialContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.TutorialTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #f8fafc;
+  text-transform: capitalize;
+  margin-bottom: 2rem;
+}
+
+.TutorialGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+
+@media (min-width: 768px) {
+  .TutorialGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.TutorialCard {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.TutorialCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.TutorialImage {
+  width: 100%;
+  height: 14rem;
+  object-fit: cover;
+}
+
+@media (min-width: 1024px) {
+  .TutorialImage {
+    height: 16rem;
+  }
+}
+
+.TutorialContent {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.TutorialCardTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
+  text-transform: capitalize;
+}
+
+.TutorialCardTitle:hover {
+  color: #3b82f6; /* azul */
+  text-decoration: underline;
+}
+
+.TutorialDate {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .Tutorialshowcase {
+    background-color: #111827;
+    color: #f8fafc;
+  }
+
+  .TutorialCard {
+    background-color: #1f2937;
+  }
+
+  .TutorialCardTitle {
+    color: #f8fafc;
+  }
+
+  .TutorialCardTitle:hover {
+    color: #3b82f6;
+  }
+
+  .TutorialDate {
+    color: #d1d5db;
+  }
+}

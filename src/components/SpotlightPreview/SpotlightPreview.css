@@ -1,0 +1,84 @@
+.spotlight-preview {
+  position: relative;
+  display: flex;
+  height: 40rem;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.96);
+  align-items: center;
+  justify-content: center;
+}
+
+.spotlight-grid {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-size: 40px 40px;
+  user-select: none;
+  background-image: 
+    linear-gradient(to right, #171717 1px, transparent 1px),
+    linear-gradient(to bottom, #171717 1px, transparent 1px);
+}
+
+/* Spotlight difusa com animação suave */
+.spotlight-circle {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(200px);
+  opacity: 0.5;
+  transition: transform 0.15s ease-out; /* suaviza movimento */
+}
+
+.spotlight-content {
+  position: relative;
+  z-index: 10;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1120px;
+  padding: 1rem;
+  padding-top: 5rem;
+  text-align: center;
+}
+
+/* Logo Lukos */
+.Logolukos {
+  margin-bottom: 1.5rem;
+}
+
+.Logolukos-img {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Título com gradiente */
+.spotlight-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  background: linear-gradient(to bottom, #a797ff, #6739e6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@media (min-width: 768px) {
+  .spotlight-title {
+    font-size: 4.5rem;
+  }
+}
+
+/* Texto secundário */
+.spotlight-text {
+  margin: 1rem auto 0;
+  max-width: 36rem;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #d1d5db;
+}
+@media (min-width: 768px) {
+  .spotlight-text {
+    font-size: 1.125rem;
+  }
+}

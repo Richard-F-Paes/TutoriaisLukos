@@ -1,0 +1,161 @@
+.superhero-wrapper {
+  position: relative;
+  overflow: hidden;
+
+  background-image: linear-gradient(145deg, #9013fe 0%, #101a8e 100%);
+  background-size: cover;
+  background-position: center;
+  padding-top: 10px; /* se quiser manter o espaçamento do original */
+}
+.superhero-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 200%; /* cobre mais área horizontal */
+  height: 200%; /* cobre mais área vertical */
+  background-image: url('https://preline.co/assets/svg/examples/squared-bg-element.svg');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  transform: translateX(-50%) translateY(-20%) rotate(15deg); /* ajuste fino */
+  opacity: 0.3; /* suaviza o efeito */
+  z-index: -1;
+}
+
+.superhero-container {
+  max-width: 85rem;
+  margin: 0 auto;
+  padding: 6rem 1rem 2.5rem;
+  text-align: center;
+  width: 100%; /* para responsividade */
+}
+
+.superhero-banner {
+  display: flex;
+  justify-content: center;
+}
+
+.superhero-banner-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  color: #4b5563;
+  transition: border 0.2s;
+  text-decoration: none;
+}
+
+.superhero-banner-link:hover {
+  border-color: #d1d5db;
+}
+
+.superhero-banner-span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.superhero-banner-explore {
+  border-left: 1px solid #e5e7eb;
+  padding-left: 0.5rem;
+  color: #2563eb;
+}
+
+.superhero-banner-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  color: #2563eb;
+}
+
+.Logolukos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  max-width: 85rem;
+  height: 120px;
+}
+
+.Logolukos-img {
+  max-width: 1200px;
+  height: 120px;
+  object-fit: contain;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.superhero-title-wrapper {
+  margin-top: 1.25rem;
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.superhero-title {
+  font-weight: bold;
+  color: #ffffff;
+  font-size: 2.25rem;
+}
+
+@media (min-width: 768px) {
+  .superhero-title {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .superhero-title {
+    font-size: 3.75rem;
+  }
+}
+
+.superhero-subtitle-wrapper {
+  margin-top: 1.25rem;
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.superhero-subtitle {
+  font-size: 1.125rem;
+  color: #d1d5db; /* mais contraste no fundo escuro */
+}
+
+.superhero-buttons-wrapper {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.superhero-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(to top left, #2563eb, #7c3aed);
+  border: none;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.superhero-button:hover {
+  background: linear-gradient(to top left, #7c3aed, #2563eb);
+}
+
+.superhero-button-icon {
+  width: 1rem;
+  height: 1rem;
+}

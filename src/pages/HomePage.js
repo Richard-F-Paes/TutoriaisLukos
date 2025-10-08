@@ -14,6 +14,12 @@ import Tutorialshowcase from '../components/TutorialShowcase/TutorialShowcase';
 import Videocase from '../components/Videocase/Videocase';
 import Tutorialcase from '../components/Tutorialcase/Tutorialcase';
 import Lukospay from '../components/Lukospay/Lukos';
+import Herocase from '../components/Herocase/Herocase';
+import Heropreline from '../components/Heropreline/Heropreline';
+import Herofeatures from '../components/Herofeatures/Herofeatures';
+import Superhero from '../components/Superhero/Superhero';
+import Portfolio12_lbVkoxZk from '../components/portfolios/portfolios';
+import { SpotlightPreview } from '../components/SpotlightPreview/SpotlightPreview';
 
 
 
@@ -49,16 +55,17 @@ function HomePage() {
    
   
       <Sidemenushowcase />
-      <Erroshowcase />
-     
+       <SpotlightPreview />
+     <Videocase />
+     <Lukospay />
       <Featureshowcase />
-      <Videocase />
-      <Lukospay />
-      <Blogshowcase />  
-      <Tutorialcase />
     
+      <Blogshowcase />  
+      <Herofeatures />
+      <Portfolio12_lbVkoxZk />
      
-        <Featuresection />
+     
+
        
         
         

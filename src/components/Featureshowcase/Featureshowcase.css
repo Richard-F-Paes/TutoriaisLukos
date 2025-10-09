@@ -3,9 +3,6 @@
   color: #333;
   padding: 40px 20px;
   font-family: sans-serif;
-
-
-
 }
 
 .fs-container {
@@ -19,7 +16,7 @@
   font-weight: 600;
   margin-bottom: 10px;
   line-height: 1.2;
-    margin
+  /* Se quiser adicionar margin extra, use: margin: 10px 0; */
 }
 
 .fs-underline {
@@ -37,10 +34,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 30px;
-    margin-top: 20px ;
-  
-
-    
+  margin-top: 20px;
 }
 
 @media(min-width: 768px) {
@@ -63,7 +57,7 @@
   flex-direction: column;
   gap: 15px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: #5402a0;
+  background-color: #5402a0;
 }
 
 .fs-card:hover {
@@ -87,10 +81,11 @@
   font-size: 0.95rem;
   line-height: 1.4;
 }
-.fs-bg{
-    background-color: #121927;
+
+.fs-bg {
+  background-color: #121927;
 }
- 
+
 .fs-link {
   display: inline-flex;
   align-items: center;

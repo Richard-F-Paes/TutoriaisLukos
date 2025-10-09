@@ -7,7 +7,7 @@ import BlogHeader from '../components/BlogHeader/BlogHeader';
 function CategoriesPage() {
   return (
     <>
-    <Tutorials />
+    
       <BlogHeader />
       
     </>

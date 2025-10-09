@@ -26,6 +26,11 @@ import EditorPage from './pages/EditorPage';
 import AdminPage from './pages/AdminPage';
 import PaginaTutorial from "./pages/PaginaTutorial";
 import RetaguardaTutorial from './components/tutorial/RetaguardaTutorial/RetaguardaTutorial';
+import Dashboard from './pages/Dashboard';
+import PDV from './pages/PDV';
+import Prevenda from './pages/Prevenda';
+import FaturaWeb from './pages/FaturaWeb';
+
 
 
 
@@ -43,15 +48,19 @@ function App() {
               <Routes>
                 {/* Rotas públicas */}
                 <Route path="/" element={<HomePage />} />
-                <Route path="/categorias" element={<CategoriesPage />} />
+                <Route path="/Retaguarda" element={<CategoriesPage />} />
                 <Route path="/categoria/:id" element={<CategoryPage />} />
-                <Route path="/tutoriais" element={<TutorialsPage />} />
+                <Route path="/Fatura Web" element={<TutorialsPage />} />
                 <Route path="/tutorial/:id" element={<TutorialDetailPage />} />
                 <Route path="/tutorial/:id/executar" element={<TutorialPage />} />
                 <Route path="/sobre" element={<AboutPage />} />
                 <Route path="/busca" element={<SearchPage />} />
                 <Route path="/paginatutorial" element={<PaginaTutorial />} />
                 <Route path="/Retaguarda" element={<RetaguardaTutorial />} />
+                <Route path="/Dashboard" element={<Dashboard />} />
+                <Route path="/PDV" element={<PDV />} />
+                <Route path="/prevenda" element={<Prevenda />} />
+                <Route path="/FaturaWeb" element={<FaturaWeb />} />
                 
                 {/* Rotas administrativas */}
                 <Route path="/admin" element={<AdminPage />} />

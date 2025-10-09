@@ -1,6 +1,9 @@
 /* ========================================
    APP - ESTILOS GLOBAIS DO APLICATIVO
    ======================================== */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 .App {
   min-height: 100vh;

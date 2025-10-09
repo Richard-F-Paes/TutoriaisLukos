@@ -1,142 +1,74 @@
-import React, { useState } from "react";
+import React from "react";
 
 const portfolioItems = [
   {
     id: 1,
-    category: "branding",
-    title: "Branding Design",
-    subtitle: "Branding",
+    title: "Best Website Collections",
+    category: "Website",
     image:
-      "https://cdn.tailgrids.com/assets/images/marketing/portfolio/portfolio-01/image-01.jpg",
+      "https://images.unsplash.com/photo-1621111848501-8d3634f82336?ixlib=rb-1.2.1&auto=format&fit=crop&w=1565&q=80",
   },
   {
     id: 2,
-    category: "marketing",
-    title: "Best Marketing tips",
-    subtitle: "Marketing",
+    title: "Block Of Ui Kit Collections",
+    category: "Ui Kit",
     image:
-      "https://cdn.tailgrids.com/assets/images/marketing/portfolio/portfolio-01/image-02.jpg",
+      "https://images.unsplash.com/photo-1621609764180-2ca554a9d6f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=764&q=80",
   },
   {
     id: 3,
-    category: "development",
-    title: "Web Design Trend",
-    subtitle: "Development",
+    title: "Ton’s Of Mobile Mockup",
+    category: "Mockups",
     image:
-      "https://cdn.tailgrids.com/assets/images/marketing/portfolio/portfolio-01/image-03.jpg",
+      "https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-1.2.1&auto=format&fit=crop&w=1470&q=80",
   },
-  {
-    id: 4,
-    category: "design",
-    title: "Business Card Design",
-    subtitle: "Design",
-    image:
-      "https://cdn.tailgrids.com/assets/images/marketing/portfolio/portfolio-01/image-04.jpg",
-  },
-  {
-    id: 5,
-    category: "marketing",
-    title: "Digital marketing",
-    subtitle: "Marketing",
-    image:
-      "https://cdn.tailgrids.com/assets/images/marketing/portfolio/portfolio-01/image-05.jpg",
-  },
-  {
-    id: 6,
-    category: "branding",
-    title: "Creative Agency",
-    subtitle: "Branding",
-    image:
-      "https://cdn.tailgrids.com/assets/images/marketing/portfolio/portfolio-01/image-06.jpg",
-  },
-];
-
-const categories = [
-  { key: "all", label: "All Projects" },
-  { key: "branding", label: "Branding" },
-  { key: "design", label: "Design" },
-  { key: "marketing", label: "Marketing" },
-  { key: "development", label: "Development" },
 ];
 
 const Portfolio = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
-
-  const activeClasses = "bg-primary text-white";
-  const inactiveClasses =
-    "text-body-color dark:text-dark-6 hover:bg-primary hover:text-white";
-
   return (
-    <section className="pb-12 pt-20 lg:pb-[90px] lg:pt-[120px] dark:bg-dark">
-      <div className="container mx-auto">
-        {/* Header */}
-        <div className="-mx-4 flex flex-wrap">
-          <div className="w-full px-4">
-            <div className="mx-auto mb-[60px] max-w-[510px] text-center">
-              <span className="mb-2 block text-lg font-semibold text-primary">
-                Our Portfolio
-              </span>
-              <h2 className="mb-3 text-3xl font-bold leading-[1.208] text-dark sm:text-4xl md:text-[40px]">
-                Our Recent Projects
-              </h2>
-              <p className="text-base text-body-color dark:text-dark-6">
-                There are many variations of passages of Lorem Ipsum available
-                but the majority have suffered alteration in some form.
-              </p>
-            </div>
+    <section className="bg-[#181f3c] min-h-screen py-16">
+      <div className="container mx-auto px-6">
+        <h1 className="text-3xl font-semibold text-white mb-12">Portfolio</h1>
+
+        <div className="flex flex-col lg:flex-row lg:gap-12">
+          {/* Table of Content */}
+          <div className="mb-12 lg:mb-0 lg:w-1/4">
+            <h2 className="text-xl font-semibold text-white mb-6">
+              Table of Content
+            </h2>
+            <nav className="flex flex-col gap-4">
+              <a href="#" className="text-blue-400 hover:underline">
+                Web design
+              </a>
+              <a href="#" className="text-gray-300 hover:underline">
+                App design
+              </a>
+              <a href="#" className="text-gray-300 hover:underline">
+                Branding
+              </a>
+              <a href="#" className="text-gray-300 hover:underline">
+                Animation
+              </a>
+            </nav>
+          </div>
+
+          {/* Portfolio Items */}
+          <div className="flex-1 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+            {portfolioItems.map((item) => (
+              <div key={item.id} className="group overflow-hidden rounded-lg">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-96 object-cover rounded-lg transform transition-transform duration-500 group-hover:scale-105"
+                />
+                <h3 className="mt-4 text-lg font-semibold text-">
+                  {item.title}
+                </h3>
+                <p className="text-blue-400 uppercase tracking-wider">{item.category}</p>
+              </div>
+            ))}
           </div>
         </div>
-
-        {/* Category Buttons */}
-        <div className="-mx-4 flex flex-wrap justify-center">
-          <div className="w-full px-4">
-            <ul className="mb-12 flex flex-wrap justify-center space-x-1">
-              {categories.map((cat) => (
-                <li key={cat.key} className="mb-1">
-                  <button
-                    onClick={() => setActiveCategory(cat.key)}
-                    className={`inline-block rounded-lg px-5 py-2 text-center text-base font-semibold transition md:py-3 lg:px-8 ${
-                      activeCategory === cat.key ? activeClasses : inactiveClasses
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Portfolio Items */}
- {/* Portfolio Items */}
-<div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-  {portfolioItems
-    .filter(
-      (item) => activeCategory === "all" || item.category === activeCategory
-    )
-    .map((item) => (
-      <div key={item.id} className="relative">
-        <div className="overflow-hidden rounded-[10px]">
-          <img src={item.image} alt={item.title} className="w-full" />
-        </div>
-        <div className="relative z-10 mx-4 -mt-16 rounded-lg bg-white px-3 py-8 text-center shadow-portfolio dark:bg-dark-2 dark:shadow-box-dark">
-          <span className="mb-2 block text-sm font-medium text-primary">
-            {item.subtitle}
-          </span>
-          <h3 className="mb-5 text-xl font-bold text-dark dark:text-white">
-            {item.title}
-          </h3>
-          <a
-            href="#"
-            className="inline-block rounded-md border border-stroke px-7 py-[10px] text-sm font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6"
-          >
-            View sadfsadf
-          </a>
-        </div>
-      </div>
-    ))}
-</div>
-
       </div>
     </section>
   );

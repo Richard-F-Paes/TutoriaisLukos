@@ -48,12 +48,18 @@
 /* Logo Lukos */
 .Logolukos {
   margin-bottom: 1.5rem;
+ width: 100%;
+ display: flex;
+  justify-content: center;
 }
 
 .Logolukos-img {
   width: 120px;
   height: auto;
   object-fit: contain;
+  display: flex;
+  justify-content: end;
+  align-items: end;
 }
 .Imagebackground {
   order: 2;

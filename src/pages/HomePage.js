@@ -19,6 +19,7 @@ import Divisor from '../components/Divisor/Divisor';
 import Homecategorias from '../components/Portfolio/Portfolio';
 import Blogcard from '../components/Portfolio/Portfolio';
 import Portfolio from '../components/Portfolio/Portfolio';
+import SearchForm from '../components/SearchForm/SearchForm';
 
 
 
@@ -54,6 +55,7 @@ function HomePage() {
   
       
        <SpotlightPreview />
+      
      <Videocase />
      <Lukospay />
      <Divisor />

@@ -20,6 +20,7 @@ import Herofeatures from '../components/Herofeatures/Herofeatures';
 import Superhero from '../components/Superhero/Superhero';
 import Portfolio12_lbVkoxZk from '../components/portfolios/portfolios';
 import { SpotlightPreview } from '../components/SpotlightPreview/SpotlightPreview';
+import Lukossidebar from '../components/Lukossidebar/Lukossidebar';
 
 
 
@@ -54,14 +55,15 @@ function HomePage() {
     <>
    
   
-      <Sidemenushowcase />
+      
        <SpotlightPreview />
+    
      <Videocase />
      <Lukospay />
       <Featureshowcase />
     
       <Blogshowcase />  
-      <Herofeatures />
+     
       <Portfolio12_lbVkoxZk />
      
      

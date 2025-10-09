@@ -25,19 +25,28 @@ export function SpotlightPreview() {
   };
 
   return (
-    <div className="spotlight-preview" onMouseMove={handleMouseMove}>
+    <div className="spotlight-preview">
+       
+
+      <div className="Imagebackground">
+        <img
+          className="Imagebackground-img" src="logo.png"></img> </div>
       <div className="spotlight-grid" />
+    
       <Spotlight x={position.x} y={position.y} fill="white" />
       <div className="spotlight-content">
         <div className="Logolukos">
           <img className="Logolukos-img" src="logo.png" alt="Logo Lukos" />
         </div>
+
         <h1 className="spotlight-title">
           Lukos <br /> Tutoriais
+          <div className="spotlight-underline"></div>
         </h1>
         <p className="spotlight-text">
           Site com tutoriais para facilitar o uso do sistema Lukos.
         </p>
+        
       </div>
     </div>
   );

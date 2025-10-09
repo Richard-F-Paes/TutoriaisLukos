@@ -4,7 +4,7 @@
 
 .App {
   min-height: 100vh;
-  background: #111827;
+background: linear-gradient(180deg, #161C2D 0%, #111827 100%);
   text-align: center;
 }
 

@@ -4,6 +4,12 @@ import "./Videocase.css";
 const Videocase = () => {
   return (
     <section className="vc-section">
+      <div className="Wave" >
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+  <path fill="#001022" fill-opacity="1" d="M0,256L40,213.3C80,171,160,85,240,42.7C320,0,400,0,480,5.3C560,11,640,21,720,58.7C800,96,880,160,960,170.7C1040,181,1120,139,1200,128C1280,117,1360,139,1400,149.3L1440,160L1440,0L1400,0C1360,0,1280,0,1200,0C1120,0,1040,0,960,0C880,0,800,0,720,0C640,0,560,0,480,0C400,0,320,0,240,0C160,0,80,0,40,0L0,0Z"></path>
+</svg>
+      </div>
+      
       <div className="vc-container">
         <h1 className="vc-title">
           Lukos Tecnologia<br /> {" "}

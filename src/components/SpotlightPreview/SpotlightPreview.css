@@ -25,22 +25,24 @@
 .spotlight-circle {
   position: absolute;
   width: 600px;
-  height: 600px;
+  height: 500px;
   border-radius: 50%;
   filter: blur(200px);
-  opacity: 0.5;
+  opacity: 30%;
   transition: transform 0.15s ease-out; /* suaviza movimento */
+ margin-right: 850px;
 }
 
 .spotlight-content {
   position: relative;
   z-index: 10;
   margin: 0 auto;
-  width: 100%;
+  width: 70%;
   max-width: 1120px;
   padding: 1rem;
   padding-top: 5rem;
   text-align: center;
+
 }
 
 /* Logo Lukos */
@@ -53,6 +55,17 @@
   height: auto;
   object-fit: contain;
 }
+.Imagebackground {
+  order: 2;
+  margin-top: 120px;
+  width: 80%;
+  height: 150%;
+}
+.Imagebackground-img {
+  width: 95%;
+  height: 90%;
+  object-fit: contain;
+}
 
 /* Título com gradiente */
 .spotlight-title {
@@ -61,6 +74,7 @@
   background: linear-gradient(to bottom, #a797ff, #6739e6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  order: 2;
 }
 
 @media (min-width: 768px) {
@@ -68,14 +82,25 @@
     font-size: 4.5rem;
   }
 }
-
+.imagembackground {
+width: 500px;
+height: 200px;
+flex-shrink: 0;
+order: 2;
+}
 /* Texto secundário */
 .spotlight-text {
-  margin: 1rem auto 0;
-  max-width: 36rem;
-  font-size: 1rem;
-  font-weight: 400;
-  color: #d1d5db;
+ display: inline-flex;
+height: 55px;
+padding: 6px 24px 6px 6px;
+align-items: center;
+gap: 24px;
+flex-shrink: 0;
+border-radius: var(--Sizes-Border-Radius-Pill, 200px);
+border: 0.5px solid var(--Colors-Neutrals-Neutral-300, #D9DBE9);
+background: rgba(157, 10, 255, 0.55);
+box-shadow: 0 9px 25px 0 rgba(191, 185, 202, 0.20);
+backdrop-filter: blur(4.5px);
 }
 @media (min-width: 768px) {
   .spotlight-text {

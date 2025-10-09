@@ -6,7 +6,7 @@ export default function Example() {
       <div className="mx-auto max-w-2xl lg:max-w-4xl">
         <img
           alt=""
-          src="logo.png"
+     
           className="mx-auto h-12"
         />
         <figure className="mt-10">

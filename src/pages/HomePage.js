@@ -14,6 +14,11 @@ import Example from '../components/Testecss/Testecss';
 
 import Serviceprodut from '../components/HighlightsSection/HighlightsSection';
 import HighlightsSection from '../components/HighlightsSection/HighlightsSection';
+import Sidebarhome from '../components/Sidebarhome/Sidebarhome';
+import Divisor from '../components/Divisor/Divisor';
+import Homecategorias from '../components/Portfolio/Portfolio';
+import Blogcard from '../components/Portfolio/Portfolio';
+import Portfolio from '../components/Portfolio/Portfolio';
 
 
 
@@ -49,13 +54,15 @@ function HomePage() {
   
       
        <SpotlightPreview />
-    s
      <Videocase />
      <Lukospay />
-   
-      <Blogshowcase />  
+     <Divisor />
+      
+      <Blogshowcase />
+       <Divisor />  
      <Example />
-       <HighlightsSection />
+    
+   
      
      
 

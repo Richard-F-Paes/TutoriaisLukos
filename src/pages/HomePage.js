@@ -20,6 +20,16 @@ import Homecategorias from '../components/Portfolio/Portfolio';
 import Blogcard from '../components/Portfolio/Portfolio';
 import Portfolio from '../components/Portfolio/Portfolio';
 import SearchForm from '../components/SearchForm/SearchForm';
+import UISection from '../components/UISection/UISection';
+import Navtutorial from '../components/Navtutorial/Navtutorial';
+import { BuildingOfficeIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/20/solid';
+import Blogmenu from '../components/Blogmenu/Blogmenu';
+import Playstore from '../components/Playstore/Playstore';
+import Busca from '../components/Busca/Busca';
+import Abc from '../components/abc/abc';
+import Heroteste from '../components/Heroteste/Heroteste';
+import Searchbar from '../components/Searchbar/Searchbar';
+
 
 
 
@@ -55,14 +65,20 @@ function HomePage() {
   
       
        <SpotlightPreview />
-      
+  
      <Videocase />
+   
+
      <Lukospay />
+     
+     <Playstore />
      <Divisor />
-      
-      <Blogshowcase />
+      <Searchbar />
+   
        <Divisor />  
+      
      <Example />
+     <Busca />
     
    
      

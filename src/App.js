@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { TutorialProvider } from './contexts/TutorialContext';
 import Navbar from './components/layout/Navbar/Navbar';
-import NavMenu from './components/layout/NavMenu/NavMenu';
 import Footer from './components/layout/Footer/Footer';
 import ProtectedRoute from './components/layout/ProtectedRoute/ProtectedRoute';
 import './App.css';

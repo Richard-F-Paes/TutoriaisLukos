@@ -87,8 +87,8 @@ const Navbar = () => {
                         Tutoriais
                     </Link>
                     <Link 
-                        to="/tutoriais"
-                        className={`nav-link ${location.pathname === '/Categorias' ? 'active' : ''}`}
+                        to="/FaturaWeb"
+                        className={`nav-link ${location.pathname === '/FaturaWeb' ? 'active' : ''}`}
                     >
                         Fatura Web
                     </Link>
@@ -111,7 +111,7 @@ const Navbar = () => {
                         PDV 
                     </Link>
                      <Link 
-                        to="/Pré Venda"
+                        to="/Prevenda"
                         className={`nav-link ${location.pathname === '/sobre' ? 'active' : ''}`}
                     >
                         Pré Venda

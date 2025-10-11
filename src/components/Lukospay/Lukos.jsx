@@ -9,12 +9,14 @@ const Lukospay = () => {
           {/* Conteúdo principal */}
           <div className="lp-main">
             <img
-              className="lp-main-img"
+              className="lp-main-img "
               src="Smartpos.jpg"
               alt="Lukospay Maquininha POS"
             />
 
             <div className="lp-content">
+
+
               <p className="lp-subtitle">Sobre Lukospay</p>
               <h1 className="lp-title">
                 Lukospay Maquininha POS: tudo que você precisa saber

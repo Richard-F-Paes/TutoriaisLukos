@@ -13,7 +13,7 @@ const steps = [
     title: "Passo 1: Introdução ao Sistema de Retaguarda", // Título do passo
     duration: "5 minutos", // Tempo estimado
     thumbnail: "Smartpos.jpg", // Imagem mostrada antes do vídeo
-    image: "https://lh3.googleusercontent.com/sitesv/AICyYdaTvEkQOm7KR3w-ztlJPic2Piuha9ysJH5w6cPbO0olDuG339l8cC-grZ4AQR-UihMAqsWBWeOaA_SfsAee9fXu9NURqwu8TIs98HmKWKjhThZRo6WQIDTIiFOAEvTIYHote7J3iVuApcaDQ0l9Zrc-ccTNVnMwevfiE6Lerbsmemsv0MG83ulEaUhuaoDus586-pC0uiqtK1BK7PcmErpnSPnmnHbXr5ZNjvk=w1280",
+    image: "",
     
     content: (
   
@@ -36,7 +36,7 @@ const steps = [
     title: "Passo 2: Cadastro de Regra Fiscal ao Produto",
     duration: "4 minutos",
     video: "https://www.youtube.com/embed/ZDu8o37BwH0?si=nQZ1WTL_4wcjxyRZ", // Link do vídeo
-    thumbnail: "logo.png", // Imagem antes do play
+    thumbnail: "retaguarda.png", // Imagem antes do play
     content: (
       <>
         <h3>Configurações Essenciais</h3>

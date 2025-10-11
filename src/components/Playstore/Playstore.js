@@ -43,7 +43,7 @@ import React from "react";
                 height="24"
               />
             </svg>
-            <span className="relative text-white">A baixa Pela Play store</span>
+            <span className="relative text-white">Lukos Pay</span>
           </span>{' '}
        
         </h2>
@@ -67,9 +67,11 @@ import React from "react";
             />
           </a>
         </div>
+        <a href="https://play.google.com/store/apps/details?id=com.wendev.LukosInvent&pcampaignid=web_share">
         <p className="max-w-xs text-xs text-gray-600 sm:text-sm sm:max-w-sm sm:mx-auto">
         Lukos Tecnologia
         </p>
+        </a> 
       </div>
     </div>
   );

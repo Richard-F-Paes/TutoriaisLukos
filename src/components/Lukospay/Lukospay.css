@@ -15,6 +15,7 @@
 /* Container centralizado */
 .lp-container {
   max-width: 1200px;
+  
   margin: 0 auto;
 }
 
@@ -31,15 +32,21 @@
   min-width: 0;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
+  
 }
 
 /* Imagem principal */
 .lp-main-img {
   width: 80%;
   height: 28rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   object-fit: cover;
   object-position: 20% 70%; /* 50% horizontal, 70% vertical */
-  border-radius: 1rem;
+  border-radius: 2rem;
+  margin-left: 60px;
+  margin-top: 20px;
 }
 
 @media (min-width: 1280px) {
@@ -59,7 +66,7 @@ align-items: center;
 
 /* Subtítulo */
 .lp-subtitle {
-  font-size: 0.875rem; /* text-sm */
+  font-size: 1rem; /* text-sm */
   text-transform: uppercase;
   color: #3b82f6; /* blue-500 */
   margin-top: 1.5rem;
@@ -93,7 +100,7 @@ align-items: center;
 }
 
 .lp-author-img {
-  width: 2.5rem;
+  width: 5rem;
   height: 2.5rem;
   border-radius: 9999px;
   object-fit: cover;

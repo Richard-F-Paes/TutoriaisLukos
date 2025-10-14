@@ -9,6 +9,7 @@ import './App.css';
 import './styles/design-system.css';
 import './styles/pages.css';
 
+
 // Importar páginas
 import HomePage from './pages/HomePage';
 import CategoriesPage from './pages/CategoriesPage';
@@ -29,6 +30,9 @@ import Dashboard from './pages/Dashboard';
 import PDV from './pages/PDV';
 import Prevenda from './pages/Prevenda';
 import FaturaWeb from './pages/FaturaWeb';
+import Home from './pages/Homedesigner/Home';
+import Homedesigner from './pages/Homedesigner/Home';
+import Navbarcategoria from './components/Navbarcategoria/Navbarcategoria';
 
 
 
@@ -42,7 +46,9 @@ function App() {
       <TutorialProvider>
         <Router>
           <div className="App">
+            
             <Navbar />
+            <Navbarcategoria />
             <main>
               <Routes>
                 {/* Rotas públicas */}
@@ -60,6 +66,7 @@ function App() {
                 <Route path="/PDV" element={<PDV />} />
                 <Route path="/prevenda" element={<Prevenda />} />
                 <Route path="/FaturaWeb" element={<FaturaWeb />} />
+                
                 
                 {/* Rotas administrativas */}
                 <Route path="/admin" element={<AdminPage />} />

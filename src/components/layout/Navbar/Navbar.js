@@ -131,7 +131,7 @@ const Navbar = () => {
                         <input 
                             className="Search-text"
                             type="text" 
-                            placeholder="Buscar tutoriais" 
+                            placeholder="Buscar sdfsd" 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -216,6 +216,8 @@ const Navbar = () => {
                                         </button>
                                     </div>
                                 </div>
+                                
+                                
                             )}
                         </div>
                     ) : (
@@ -223,6 +225,7 @@ const Navbar = () => {
                         <Link to="/login" className="auth-gear">
                             <i className="fas fa-cog"></i>
                         </Link>
+                      
                     )}
                 </div>
             </div>

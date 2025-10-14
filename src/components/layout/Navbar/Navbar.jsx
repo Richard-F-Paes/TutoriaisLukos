@@ -4,217 +4,242 @@ import { useAuth } from '../../../contexts/AuthContext';
 import './Navbar.css';
 
 const Navbar = () => {
-    // Estado para controlar se a navbar está com efeito de scroll
-    const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-    // Estado para armazenar o termo de busca digitado
-    const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user, logout, isAuthenticated } = useAuth();
 
-    // Estado para exibir/esconder o menu do usuário
-    const [showUserMenu, setShowUserMenu] = useState(false);
-
-    // Hooks do React Router
-    const navigate = useNavigate();   // usado para redirecionar páginas
-    const location = useLocation();   // pega o caminho atual da URL
-
-    // Contexto de autenticação (usuário logado, logout, etc.)
-    const { user, logout, isAuthenticated } = useAuth();
-
-    // 📌 Efeito: verifica se o usuário rolou a página
-    useEffect(() => {
-        const handleScroll = () => {
-            const scrollTop = window.pageYOffset;
-            setIsScrolled(scrollTop > 100); // ativa scrolled quando passa 100px
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    // 📌 Função: lida com a busca
-    const handleSearch = (e) => {
-        e.preventDefault(); // evita recarregar a página
-        if (searchTerm.trim()) {
-            // redireciona para a rota de busca passando o termo
-            navigate(`/busca?q=${encodeURIComponent(searchTerm)}`);
-        }
+  // Efeito de rolagem
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
     };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-    // 📌 Função: logout do usuário
-    const handleLogout = () => {
-        logout(); // dispara função de logout do contexto
-        setShowUserMenu(false); // fecha o menu
-        navigate('/'); // redireciona para home
+  // Lida com busca
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/busca?q=${encodeURIComponent(searchTerm)}`);
+    }
+  };
+
+  // Logout
+  const handleLogout = () => {
+    logout();
+    setShowUserMenu(false);
+    navigate('/');
+  };
+
+  // Fecha menu do usuário se clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showUserMenu && !event.target.closest('.user-menu')) {
+        setShowUserMenu(false);
+      }
     };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showUserMenu]);
 
-    // 📌 Efeito: fecha o menu do usuário quando clica fora
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            // se clicar fora do menu, ele fecha
-            if (showUserMenu && !event.target.closest('.user-menu')) {
-                setShowUserMenu(false);
-            }
-        };
+  return (
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 md:py-4 shadow transition-all duration-300 
+      ${isScrolled ? 'bg-white/90 backdrop-blur-md shadow-lg' : 'bg-white'} 
+      max-w-7xl rounded-full mx-auto mt-4`}
+    >
+      {/* LOGO */}
+      <Link to="/" className="flex items-center gap-3">
+        <img
+          src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/dummyLogo/prebuiltuiDummyLogo.svg"
+          alt="Logo Tutorial Lukos"
+          className="w-10 h-10"
+        />
+        <span className="text-gray-900 font-semibold text-lg">
+          Tutorial Lukos
+        </span>
+      </Link>
 
-        document.addEventListener('click', handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
-    }, [showUserMenu]);
+      {/* MENU PRINCIPAL */}
+      <nav
+        id="menu"
+        className={`max-md:absolute max-md:top-0 max-md:left-0 max-md:overflow-hidden flex flex-col md:flex-row items-center justify-center gap-8 text-gray-900 text-sm font-medium bg-white/70 backdrop-blur-lg transition-[width] duration-300
+          ${menuOpen ? 'max-md:w-full max-md:h-full' : 'max-md:w-0 max-md:h-0'}
+        `}
+      >
+        <Link
+          to="/"
+          className={`hover:text-indigo-600 ${location.pathname === '/' ? 'text-indigo-600 font-semibold' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          Início
+        </Link>
+        <Link
+          to="/tutoriais"
+          className={`hover:text-indigo-600 ${location.pathname === '/tutoriais' ? 'text-indigo-600 font-semibold' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          Tutoriais
+        </Link>
+        <Link
+          to="/categorias"
+          className={`hover:text-indigo-600 ${location.pathname === '/categorias' ? 'text-indigo-600 font-semibold' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          Categorias
+        </Link>
+        <Link
+          to="/sobre"
+          className={`hover:text-indigo-600 ${location.pathname === '/sobre' ? 'text-indigo-600 font-semibold' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          Sobre
+        </Link>
 
-    return (
-        <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
-            <div className="nav-container">
+        {/* Fechar menu mobile */}
+        <button
+          onClick={() => setMenuOpen(false)}
+          className="md:hidden text-gray-700 absolute top-6 right-6"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </nav>
 
-                {/* LOGO */}
-                <Link to="/" className="nav-brand">
-                    <img src="logo.png" alt="Logo Tutorial Lukos" className="nav-logo" />
-                    <span className="nav-title">Tutorial Lukos</span>
+      {/* Ações da direita */}
+      <div className="flex items-center space-x-4">
+        {/* 🔍 Campo de busca */}
+        <form onSubmit={handleSearch} className="hidden md:flex items-center bg-gray-100 px-3 py-1.5 rounded-full">
+          <i className="fas fa-search text-gray-500 mr-2 text-sm"></i>
+          <input
+            type="text"
+            placeholder="Buscar..."
+            className="bg-transparent outline-none text-sm text-gray-700 w-32"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </form>
+
+        {/* ☀️ Botão genérico */}
+        <button className="size-8 flex items-center justify-center hover:bg-gray-100 transition border border-slate-300 rounded-md">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7.5 10.39a2.889 2.889 0 1 0 0-5.779 2.889 2.889 0 0 0 0 5.778M7.5 1v.722m0 11.556V14M1 7.5h.722m11.556 0h.723m-1.904-4.596-.511.51m-8.172 8.171-.51.511m-.001-9.192.51.51m8.173 8.171.51.511"
+              stroke="#353535"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+
+        {/* 🔒 Autenticação / Usuário */}
+        {isAuthenticated ? (
+          <div className="relative user-menu">
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-full transition"
+            >
+              <i className="fas fa-user text-gray-700"></i>
+              <span className="text-sm text-gray-700">{user?.name}</span>
+              <i
+                className={`fas fa-chevron-down transition-transform ${
+                  showUserMenu ? 'rotate-180' : ''
+                }`}
+              ></i>
+            </button>
+
+            {showUserMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-2 z-50 border">
+                <Link
+                  to="/profile"
+                  onClick={() => setShowUserMenu(false)}
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Meu Perfil
                 </Link>
-                
-                {/* MENU PRINCIPAL */}
-                <div className="nav-menu">
-                    <Link 
-                        to="/"
-                        className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
-                    >
-                        Início
-                    </Link>
-                    <Link 
-                        to="/categorias"
-                        className={`nav-link ${location.pathname === '/Tutoriais' ? 'active' : ''}`}
-                    >
-                        Tutoriais
-                    </Link>
-                    <Link 
-                        to="/tutoriais"
-                        className={`nav-link ${location.pathname === '/Categorias' ? 'active' : ''}`}
-                    >
-                        Categoriais
-                    </Link>
-                    <Link 
-                        to="/sobre"
-                        className={`nav-link ${location.pathname === '/sobre' ? 'active' : ''}`}
-                    >
-                        Sobre
-                    </Link>
-                    
-                    
-                    <Link 
-                        to="/paginatutorial"
-                        className={`nav-link ${location.pathname === '/paginatutorias' ? 'active' : ''}`}
-                    >
-                        Página de Tutoriais
-                    </Link>
-                </div>
-                
-                {/* BARRA DE PESQUISA */}
-                <div className="nav-search">
-                    <form onSubmit={handleSearch}>
-                        <i className="fas fa-search search-icon"></i>
-                        <input 
-                            className="Search-text"
-                            type="text" 
-                            placeholder="Buscar tutoriais" 
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </form>
-                </div>
 
-                {/* MENU DO USUÁRIO */}
-                <div className="nav-user">
-                    {isAuthenticated ? (
-                        <div className="user-menu">
-                            {/* Botão que abre/fecha o menu */}
-                            <button 
-                                className="user-button"
-                                onClick={() => setShowUserMenu(!showUserMenu)}
-                            >
-                                <div className="user-avatar">
-                                    <i className="fas fa-user"></i>
-                                </div>
-                                <span className="user-name">{user?.name}</span>
-                                <i className={`fas fa-chevron-down ${showUserMenu ? 'rotated' : ''}`}></i>
-                            </button>
-                            
-                            {/* DROPDOWN DO USUÁRIO */}
-                            {showUserMenu && (
-                                <div className="user-dropdown">
-                                    {/* Info básica do usuário */}
-                                    <div className="user-info">
-                                        <div className="user-avatar-large">
-                                            <i className="fas fa-user"></i>
-                                        </div>
-                                        <div className="user-details">
-                                            <h4>{user?.name}</h4>
-                                            <p>{user?.email}</p>
-                                            <span className={`user-role user-role-${user?.role}`}>
-                                                {user?.role}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    
-                                    {/* Ações do usuário */}
-                                    <div className="user-actions">
-                                        <Link 
-                                            to="/profile" 
-                                            className="user-action"
-                                            onClick={() => setShowUserMenu(false)}
-                                        >
-                                            <i className="fas fa-user-cog"></i>
-                                            Meu Perfil
-                                        </Link>
-                                        
-                                        {/* Apenas roles específicos veem o Editor Visual */}
-                                        {(user?.role === 'admin' || user?.role === 'super_admin' || user?.role === 'editor') && (
-                                            <Link 
-                                                to="/editor" 
-                                                className="user-action"
-                                                onClick={() => setShowUserMenu(false)}
-                                            >
-                                                <i className="fas fa-edit"></i>
-                                                Editor Visual
-                                            </Link>
-                                        )}
-                                        
-                                        {/* Apenas admin/super_admin veem Administração */}
-                                        {user?.role === 'admin' || user?.role === 'super_admin' ? (
-                                            <Link 
-                                                to="/admin" 
-                                                className="user-action"
-                                                onClick={() => setShowUserMenu(false)}
-                                            >
-                                                <i className="fas fa-cog"></i>
-                                                Administração
-                                            </Link>
-                                        ) : null}
-                                        
-                                        {/* Botão de logout */}
-                                        <button 
-                                            className="user-action logout"
-                                            onClick={handleLogout}
-                                        >
-                                            <i className="fas fa-sign-out-alt"></i>
-                                            Sair
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    ) : (
-                        // Se não autenticado, mostra botões de login/cadastro
-                        <div className="auth-buttons">
-                            <Link to="/login" className="btn btn-ghost">
-                                Entrar
-                            </Link>
-                            <Link to="/register" className="btn btn-primry">
-                               
-                            </Link>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </nav>
-    );
+                {(user?.role === 'admin' ||
+                  user?.role === 'super_admin' ||
+                  user?.role === 'editor') && (
+                  <Link
+                    to="/editor"
+                    onClick={() => setShowUserMenu(false)}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Editor Visual
+                  </Link>
+                )}
+
+                {(user?.role === 'admin' || user?.role === 'super_admin') && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setShowUserMenu(false)}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Administração
+                  </Link>
+                )}
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                >
+                  Sair
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            className="hidden md:flex bg-indigo-600 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-indigo-700 transition"
+          >
+            Entrar
+          </Link>
+        )}
+
+        {/* ☰ Menu mobile */}
+        <button
+          onClick={() => setMenuOpen(true)}
+          className="md:hidden text-gray-700"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </header>
+  );
 };
 
 export default Navbar;

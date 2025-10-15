@@ -30,9 +30,9 @@ import Abc from '../components/abc/abc';
 import Heroteste from '../components/Heroteste/Heroteste';
 import Searchbar from '../components/Searchbar/Searchbar';
 import Portfolio1 from '../components/Portfolio1/Portfolio1';
-import Insights from '../components/Insights/Insights';
-import Index from '../components/Page/Page';
-import Page from '../components/Page/Page';
+import CourseDetail from '../components/Courses/CousesDetail';
+import Courses from '../components/Courses/Courses';
+
 
 
 
@@ -70,8 +70,9 @@ function HomePage() {
   
       
        <SpotlightPreview />
-  
+
      <Videocase />
+    
    
 
      <Lukospay />

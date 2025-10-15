@@ -4,58 +4,42 @@ import { useAuth } from '../../../contexts/AuthContext';
 import './Navbar.css';
 
 const Navbar = () => {
-    // Estado para controlar se a navbar está com efeito de scroll
     const [isScrolled, setIsScrolled] = useState(false);
-
-    // Estado para armazenar o termo de busca digitado
     const [searchTerm, setSearchTerm] = useState('');
-
-    // Estado para exibir/esconder o menu do usuário
     const [showUserMenu, setShowUserMenu] = useState(false);
 
-    // Hooks do React Router
-    const navigate = useNavigate();   // usado para redirecionar páginas
-    const location = useLocation();   // pega o caminho atual da URL
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    // Contexto de autenticação (usuário logado, logout, etc.)
     const { user, logout, isAuthenticated } = useAuth();
 
-    // 📌 Efeito: verifica se o usuário rolou a página
     useEffect(() => {
         const handleScroll = () => {
-            const scrollTop = window.pageYOffset;
-            setIsScrolled(scrollTop > 100); // ativa scrolled quando passa 100px
+            setIsScrolled(window.pageYOffset > 100);
         };
-
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // 📌 Função: lida com a busca
     const handleSearch = (e) => {
-        e.preventDefault(); // evita recarregar a página
+        e.preventDefault();
         if (searchTerm.trim()) {
-            // redireciona para a rota de busca passando o termo
             navigate(`/busca?q=${encodeURIComponent(searchTerm)}`);
         }
     };
 
-    // 📌 Função: logout do usuário
     const handleLogout = () => {
-        logout(); // dispara função de logout do contexto
-        setShowUserMenu(false); // fecha o menu
-        navigate('/'); // redireciona para home
+        logout();
+        setShowUserMenu(false);
+        navigate('/');
     };
 
-    // 📌 Efeito: fecha o menu do usuário quando clica fora
     useEffect(() => {
         const handleClickOutside = (event) => {
-            // se clicar fora do menu, ele fecha
             if (showUserMenu && !event.target.closest('.user-menu')) {
                 setShowUserMenu(false);
             }
         };
-
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, [showUserMenu]);
@@ -71,59 +55,7 @@ const Navbar = () => {
                     </div>
                     <span className="nav-brand-name">Tutoriais Lukos</span>
                 </Link>
-                
-                {/* MENU PRINCIPAL */}
-                <div className="nav-menu">
-                    <Link 
-                        to="/"
-                        className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
-                    >
-                        Início
-                    </Link>
-                    <Link 
-                        to="/categorias"
-                        className={`nav-link ${location.pathname === '/Tutoriais' ? 'active' : ''}`}
-                    >
-                        Tutoriais
-                    </Link>
-                    <Link 
-                        to="/FaturaWeb"
-                        className={`nav-link ${location.pathname === '/FaturaWeb' ? 'active' : ''}`}
-                    >
-                        Fatura Web
-                    </Link>
-                    <Link 
-                        to="/Dashboard"
-                        className={`nav-link ${location.pathname === '/Dashboard' ? 'active' : ''}`}
-                    >
-                        Dashboard
-                    </Link>
-                     <Link 
-                        to="/Retaguarda"
-                        className={`nav-link ${location.pathname === '/Retaguarda' ? 'active' : ''}`}
-                    >
-                        Retaguarda
-                    </Link>
-                     <Link 
-                        to="/PDV "
-                        className={`nav-link ${location.pathname === '/PDV pista' ? 'active' : ''}`}
-                    >
-                        PDV 
-                    </Link>
-                     <Link 
-                        to="/Prevenda"
-                        className={`nav-link ${location.pathname === '/sobre' ? 'active' : ''}`}
-                    >
-                        Pré Venda
-                    </Link>
-                    <Link 
-                        to="/paginatutorial"
-                        className={`nav-link ${location.pathname === '/paginatutorias' ? 'active' : ''}`}
-                    >
-                        Página de Tutoriais
-                    </Link>
-                </div>
-                
+
                 {/* BARRA DE PESQUISA */}
                 <div className="nav-search">
                     <form onSubmit={handleSearch}>
@@ -131,7 +63,7 @@ const Navbar = () => {
                         <input 
                             className="Search-text"
                             type="text" 
-                            placeholder="Buscar sdfsd" 
+                            placeholder="Buscar" 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -142,7 +74,6 @@ const Navbar = () => {
                 <div className="nav-user">
                     {isAuthenticated ? (
                         <div className="user-menu">
-                            {/* Botão que abre/fecha o menu */}
                             <button 
                                 className="user-button"
                                 onClick={() => setShowUserMenu(!showUserMenu)}
@@ -153,11 +84,9 @@ const Navbar = () => {
                                 <span className="user-name">{user?.name}</span>
                                 <i className={`fas fa-chevron-down ${showUserMenu ? 'rotated' : ''}`}></i>
                             </button>
-                            
-                            {/* DROPDOWN DO USUÁRIO */}
+
                             {showUserMenu && (
                                 <div className="user-dropdown">
-                                    {/* Info básica do usuário */}
                                     <div className="user-info">
                                         <div className="user-avatar-large">
                                             <i className="fas fa-user"></i>
@@ -170,8 +99,7 @@ const Navbar = () => {
                                             </span>
                                         </div>
                                     </div>
-                                    
-                                    {/* Ações do usuário */}
+
                                     <div className="user-actions">
                                         <Link 
                                             to="/profile" 
@@ -181,8 +109,7 @@ const Navbar = () => {
                                             <i className="fas fa-user-cog"></i>
                                             Meu Perfil
                                         </Link>
-                                        
-                                        {/* Apenas roles específicos veem o Editor Visual */}
+
                                         {(user?.role === 'admin' || user?.role === 'super_admin' || user?.role === 'editor') && (
                                             <Link 
                                                 to="/editor" 
@@ -193,9 +120,8 @@ const Navbar = () => {
                                                 Editor Visual
                                             </Link>
                                         )}
-                                        
-                                        {/* Apenas admin/super_admin veem Administração */}
-                                        {user?.role === 'admin' || user?.role === 'super_admin' ? (
+
+                                        {(user?.role === 'admin' || user?.role === 'super_admin') && (
                                             <Link 
                                                 to="/admin" 
                                                 className="user-action"
@@ -204,9 +130,8 @@ const Navbar = () => {
                                                 <i className="fas fa-cog"></i>
                                                 Administração
                                             </Link>
-                                        ) : null}
-                                        
-                                        {/* Botão de logout */}
+                                        )}
+
                                         <button 
                                             className="user-action logout"
                                             onClick={handleLogout}
@@ -216,16 +141,12 @@ const Navbar = () => {
                                         </button>
                                     </div>
                                 </div>
-                                
-                                
                             )}
                         </div>
                     ) : (
-                        // Se não autenticado, mostra engrenagem discreta
                         <Link to="/login" className="auth-gear">
                             <i className="fas fa-cog"></i>
                         </Link>
-                      
                     )}
                 </div>
             </div>

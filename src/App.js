@@ -46,9 +46,9 @@ function App() {
       <TutorialProvider>
         <Router>
           <div className="App">
-            
+              <Navbarcategoria />
             <Navbar />
-            <Navbarcategoria />
+          
             <main>
               <Routes>
                 {/* Rotas públicas */}

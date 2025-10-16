@@ -32,6 +32,7 @@ import Searchbar from '../components/Searchbar/Searchbar';
 import Portfolio1 from '../components/Portfolio1/Portfolio1';
 import CourseDetail from '../components/Courses/CousesDetail';
 import Courses from '../components/Courses/Courses';
+import HeroTutorial from '../components/HeroTutorial/HeroTutorial';
 
 
 
@@ -84,6 +85,7 @@ function HomePage() {
        <Divisor />  
    
      <Example />
+     <HeroTutorial />
      <Busca />
     
    

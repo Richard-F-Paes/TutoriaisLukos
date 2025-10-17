@@ -1,26 +1,68 @@
-/* src/pages/PaginaTutorial.css */
+/* src/pages/PaginaTutorial.css - RESPONSIVO MOBILE-FIRST */
 
 .tutorial-container {
     display: flex;
-    gap: 5rem;
-    padding: 120rem;
-    align-items: flex-start;
-    margin-left: 50px;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-6) var(--space-4);
+    align-items: stretch;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .tutorial-container .tutorial-main {
-    flex: 1; /* Permite que o componente TutorialMain ocupe o espaço restante */;
+    flex: 1;
+    width: 100%;
+    min-width: 0;
 }
 
 .tutorial-container .tutorial-progress {
-    flex-basis: 300px; /* Define uma largura fixa para o componente Progresso */
-    flex-shrink: 0; /* Impede que ele encolha */
+    width: 100%;
+    flex-shrink: 0;
 }
 
-/* Adicione regras de responsividade para telas menores */
-@media (max-width: 1024px) {
+/* ===== RESPONSIVIDADE MOBILE-FIRST ===== */
+
+/* Mobile: 320px - 767px */
+@media (max-width: 767px) {
     .tutorial-container {
-        flex-direction: column;
-        align-items: center;
+        padding: var(--space-4) var(--space-3);
+        gap: var(--space-4);
+    }
+}
+
+/* Tablet: 768px - 1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .tutorial-container {
+        padding: var(--space-8) var(--space-5);
+        gap: var(--space-6);
+    }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+    .tutorial-container {
+        flex-direction: row;
+        padding: var(--space-10) var(--space-6);
+        gap: var(--space-8);
+        align-items: flex-start;
+    }
+    
+    .tutorial-container .tutorial-progress {
+        flex-basis: 300px;
+        width: auto;
+    }
+}
+
+/* Desktop Large: 1280px+ */
+@media (min-width: 1280px) {
+    .tutorial-container {
+        padding: var(--space-12) var(--space-8);
+        gap: var(--space-10);
+    }
+    
+    .tutorial-container .tutorial-progress {
+        flex-basis: 350px;
     }
 }

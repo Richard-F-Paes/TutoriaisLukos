@@ -4,52 +4,44 @@
 
 .nbh-header {
   position: relative;
-  width: 50%;
-animation: 0.6s ease-out 0s 1 normal none running fadeInUp;
-background: white;
-border-radius: 20px;
-padding: 2rem;
-text-align: center;
-box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 20px;
-border: 1px solid rgb(241, 245, 249);
-transition: 0.4s;
-cursor: pointer;
-position: relative;
-overflow: hidden;
-margin: 0px;
-box-sizing: border-box;
-margin-left: 500px;
-margin-top: 40px;
-
-
-
+  width: 100%;
+  max-width: 1200px;
+  animation: 0.6s ease-out 0s 1 normal none running fadeInUp;
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgb(241, 245, 249);
+  transition: var(--transition-normal);
+  cursor: pointer;
+  overflow: hidden;
+  margin: var(--space-8) auto;
+  box-sizing: border-box;
 }
 
 .nbh-container {
   display: flex;
   align-items: center;
-  padding: 15px 40px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-6);
   max-width: 1200px;
-  margin: 0 auto;
-  margin-top: 20px;
+  width: 100%;
+  margin: var(--space-5) auto;
   animation: 0.6s ease-out 0s 1 normal none running fadeInUp;
-background: white;
-border-radius: 20px;
-padding: 1rem;
-text-align: center;
-box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 20px;
-border: 1px solid rgb(241, 245, 249);
-transition: 0.4s;
-cursor: pointer;
-position: relative;
-overflow: hidden;
-margin: 0px;
-box-sizing: border-box;
-display: flex;
-align-items: center;
-justify-content: center;
-
-
+  background: white;
+  border-radius: var(--radius-xl);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgb(241, 245, 249);
+  transition: var(--transition-normal);
+  cursor: pointer;
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  box-sizing: border-box;
+  gap: var(--space-4);
 }
 
 .nbh-logo img {
@@ -90,29 +82,47 @@ justify-content: center;
 /* Menu */
 .nbh-nav ul {
   display: flex;
+  flex-wrap: nowrap;
   list-style: none;
-  gap: 30px;
-  border-radius:  ;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.nbh-nav ul::-webkit-scrollbar {
+  height: 4px;
+}
+
+.nbh-nav ul::-webkit-scrollbar-thumb {
+  background: rgba(55, 88, 249, 0.3);
+  border-radius: 4px;
 }
 
 .nbh-nav a {
   text-decoration: none;
-  color: #333;
+  color: white;
   font-weight: 500;
-  transition: 0.3s;
+  transition: var(--transition-normal);
   animation: 0.6s ease-out 0s 1 normal none running fadeInUp;
-background: #3758f9;
-border-radius: 20px;
-padding: 1rem;
-text-align: center;
-box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 20px;
-border: 1px solid rgb(241, 245, 249);
-transition: 0.4s;
-cursor: pointer;
-position: relative;
-overflow: hidden;
-margin: 0px;
-box-sizing: border-box;
+  background: #3758f9;
+  border-radius: var(--radius-xl);
+  padding: var(--space-3) var(--space-5);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgb(241, 245, 249);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  white-space: nowrap;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nbh-nav a:hover {
@@ -258,27 +268,134 @@ margin-right: 20px;
 }
 
 /* ============================
-   RESPONSIVE
+   RESPONSIVIDADE MOBILE-FIRST
    ============================ */
-@media (max-width: 992px) {
+
+/* Mobile: 320px - 767px */
+@media (max-width: 767px) {
+  .nbh-header {
+    width: calc(100% - var(--space-6));
+    padding: var(--space-4);
+    margin: var(--space-4) auto;
+  }
+  
+  .nbh-container {
+    flex-direction: column;
+    padding: var(--space-3);
+    gap: var(--space-3);
+    overflow-x: auto;
+  }
+  
+  .nbh-logo img {
+    height: 40px;
+  }
+  
   .nbh-toggler {
     display: flex;
   }
 
   .nbh-nav {
-    position: absolute;
-    top: 70px;
-    right: 40px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 20px;
-    display: none;
+    width: 100%;
+  }
+  
+  .nbh-nav ul {
     flex-direction: column;
-    gap: 15px;
+    width: 100%;
+    overflow-x: visible;
+  }
+  
+  .nbh-nav a {
+    width: 100%;
+    padding: var(--space-3);
+    font-size: var(--text-sm);
   }
 
-  .nbh-nav.open {
+  .nbh-buttons {
+    display: none;
+  }
+
+  .nbh-hero {
+    flex-direction: column;
+    padding: 0 var(--space-3);
+    margin: var(--space-8) auto;
+    text-align: center;
+  }
+  
+  .nbh-hero-text {
+    margin-right: 0;
+    padding: var(--space-4);
+    max-width: 100%;
+  }
+  
+  .nbh-hero-text h1 {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+    margin-bottom: var(--space-4);
+  }
+  
+  .nbh-hero-text p {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+  }
+  
+  .nbh-hero-actions {
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+  
+  .nbh-btn-primary {
+    width: 100%;
+    padding: var(--space-3) var(--space-6);
+  }
+
+  .nbh-hero-text, .nbh-hero-image {
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .nbh-hero-image {
+    text-align: center;
+  }
+  
+  .nbh-hero-image img {
+    margin-top: var(--space-6);
+    max-width: 100%;
+  }
+  
+  .nbh-clients-logos {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+}
+
+/* Tablet: 768px - 1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nbh-header {
+    width: calc(100% - var(--space-8));
+    padding: var(--space-5);
+    margin: var(--space-6) auto;
+  }
+  
+  .nbh-container {
+    padding: var(--space-4) var(--space-5);
+    gap: var(--space-4);
+  }
+  
+  .nbh-logo img {
+    height: 50px;
+  }
+  
+  .nbh-nav ul {
+    gap: var(--space-3);
+  }
+  
+  .nbh-nav a {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+  }
+  
+  .nbh-toggler {
     display: flex;
   }
 
@@ -288,7 +405,23 @@ margin-right: 20px;
 
   .nbh-hero {
     flex-direction: column;
+    padding: 0 var(--space-5);
+    margin: var(--space-12) auto;
     text-align: center;
+  }
+  
+  .nbh-hero-text {
+    padding: var(--space-5);
+    margin-right: 0;
+    max-width: 100%;
+  }
+  
+  .nbh-hero-text h1 {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+  }
+  
+  .nbh-hero-actions {
+    gap: var(--space-4);
   }
 
   .nbh-hero-text, .nbh-hero-image {
@@ -296,6 +429,45 @@ margin-right: 20px;
   }
 
   .nbh-hero-image img {
-    margin-top: 40px;
+    margin-top: var(--space-8);
+  }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .nbh-header {
+    width: 100%;
+    padding: var(--space-8);
+  }
+  
+  .nbh-container {
+    padding: var(--space-4) var(--space-8);
+  }
+  
+  .nbh-nav ul {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  
+  .nbh-nav a {
+    white-space: nowrap;
+  }
+
+  .nbh-hero {
+    flex-direction: row;
+    text-align: left;
+    padding: 0 var(--space-8);
+  }
+  
+  .nbh-hero-text {
+    text-align: left;
+  }
+  
+  .nbh-hero-actions {
+    justify-content: flex-start;
+  }
+  
+  .nbh-hero-text, .nbh-hero-image {
+    flex: 1 1 45%;
   }
 }

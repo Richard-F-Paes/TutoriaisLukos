@@ -457,34 +457,326 @@ a:hover {
   animation: scaleIn var(--transition-normal) ease-out;
 }
 
-/* ===== RESPONSIVIDADE ===== */
-@media (max-width: 640px) {
-  .container {
+/* ===== RESPONSIVIDADE MOBILE-FIRST ===== */
+
+/* Utilitários de Visibilidade Responsiva */
+.hidden-mobile {
+  display: none;
+}
+
+.visible-mobile {
+  display: block;
+}
+
+.hidden-tablet {
+  display: block;
+}
+
+.visible-tablet {
+  display: none;
+}
+
+.hidden-desktop {
+  display: block;
+}
+
+.visible-desktop {
+  display: none;
+}
+
+/* Espaçamento Responsivo */
+.p-responsive {
+  padding: var(--space-4);
+}
+
+.m-responsive {
+  margin: var(--space-4);
+}
+
+.gap-responsive {
+  gap: var(--space-4);
+}
+
+/* Tipografia Fluída */
+.text-responsive-xl {
+  font-size: clamp(var(--text-lg), 4vw, var(--text-3xl));
+}
+
+.text-responsive-lg {
+  font-size: clamp(var(--text-base), 3vw, var(--text-2xl));
+}
+
+.text-responsive-md {
+  font-size: clamp(var(--text-sm), 2.5vw, var(--text-xl));
+}
+
+/* Grid Responsivo Avançado */
+.grid-responsive {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+}
+
+.grid-auto-fill {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--space-6);
+}
+
+/* Flex Responsivo */
+.flex-responsive {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Container Responsivo Melhorado */
+.container-responsive {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+/* Imagens Responsivas */
+.img-responsive {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Botões Responsivos */
+.btn-responsive {
+  width: 100%;
+  min-height: 44px; /* Touch target mínimo */
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-base);
+  justify-content: center;
+}
+
+/* Cards Responsivos */
+.card-responsive {
+  background-color: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-6);
+  transition: all var(--transition-normal);
+}
+
+/* Overflow Handling */
+.overflow-responsive {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* ===== BREAKPOINTS MOBILE-FIRST ===== */
+
+/* Base: 320px - 767px (Mobile) */
+@media (max-width: 767px) {
+  .container,
+  .container-responsive {
     padding: 0 var(--space-3);
   }
   
-  .grid-cols-2,
-  .grid-cols-3,
-  .grid-cols-4 {
+  .grid-responsive {
     grid-template-columns: 1fr;
+    gap: var(--space-4);
   }
   
-  .btn {
+  .flex-responsive {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  
+  .btn-responsive {
     width: 100%;
-    justify-content: center;
+    padding: var(--space-4) var(--space-6);
+  }
+  
+  .card-responsive {
+    padding: var(--space-4);
+  }
+  
+  .p-responsive {
+    padding: var(--space-3);
+  }
+  
+  .m-responsive {
+    margin: var(--space-3);
+  }
+  
+  .gap-responsive {
+    gap: var(--space-3);
+  }
+  
+  /* Ocultar elementos em mobile */
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  .visible-mobile {
+    display: block !important;
   }
 }
 
-@media (min-width: 641px) and (max-width: 768px) {
-  .grid-cols-3,
-  .grid-cols-4 {
+/* Tablet: 768px - 1023px */
+@media (min-width: 768px) {
+  .container,
+  .container-responsive {
+    padding: 0 var(--space-6);
+  }
+  
+  .grid-responsive {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
+  
+  .flex-responsive {
+    flex-direction: row;
+    gap: var(--space-6);
+  }
+  
+  .btn-responsive {
+    width: auto;
+    min-width: 120px;
+  }
+  
+  .card-responsive {
+    padding: var(--space-6);
+  }
+  
+  /* Mostrar elementos em tablet */
+  .hidden-tablet {
+    display: none !important;
+  }
+  
+  .visible-tablet {
+    display: block !important;
+  }
+  
+  .visible-mobile {
+    display: none !important;
+  }
+  
+  /* Grid auto-fit para tablet */
+  .grid-auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+  
+  .grid-auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
-  .grid-cols-4 {
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .container,
+  .container-responsive {
+    padding: 0 var(--space-8);
+  }
+  
+  .grid-responsive {
     grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-8);
+  }
+  
+  .flex-responsive {
+    flex-direction: row;
+    gap: var(--space-8);
+  }
+  
+  .btn-responsive {
+    width: auto;
+    min-width: 140px;
+  }
+  
+  .card-responsive {
+    padding: var(--space-8);
+  }
+  
+  .p-responsive {
+    padding: var(--space-8);
+  }
+  
+  .m-responsive {
+    margin: var(--space-8);
+  }
+  
+  .gap-responsive {
+    gap: var(--space-8);
+  }
+  
+  /* Mostrar elementos em desktop */
+  .hidden-desktop {
+    display: none !important;
+  }
+  
+  .visible-desktop {
+    display: block !important;
+  }
+  
+  .visible-tablet {
+    display: none !important;
+  }
+  
+  /* Grid otimizado para desktop */
+  .grid-auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+  
+  .grid-auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+/* Desktop Large: 1280px+ */
+@media (min-width: 1280px) {
+  .container,
+  .container-responsive {
+    max-width: 1400px;
+    padding: 0 var(--space-10);
+  }
+  
+  .grid-responsive {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-10);
+  }
+  
+  .flex-responsive {
+    gap: var(--space-10);
+  }
+  
+  .card-responsive {
+    padding: var(--space-10);
+  }
+  
+  .p-responsive {
+    padding: var(--space-10);
+  }
+  
+  .m-responsive {
+    margin: var(--space-10);
+  }
+  
+  .gap-responsive {
+    gap: var(--space-10);
+  }
+  
+  /* Grid otimizado para desktop large */
+  .grid-auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  }
+  
+  .grid-auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   }
 }
 

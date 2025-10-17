@@ -9,9 +9,9 @@ background: linear-gradient(180deg, #161C2D 0%, #111827 100%);
   text-align: center;
 }
 
-/* Ajuste para compensar a navbar fixa */
+/* Ajuste para compensar a navbar fixa e menu de categorias */
 body {
-  padding-top: 80px;
+  padding-top: 140px; /* navbar 80px + menu categorias 60px */
 }
 
 /* ========================================
@@ -20,12 +20,12 @@ body {
 
 @media (max-width: 768px) {
   body {
-    padding-top: 120px;
+    padding-top: 180px; /* navbar mobile 120px + menu categorias 60px */
   }
 }
 
 @media (max-width: 480px) {
   body {
-    padding-top: 140px;
+    padding-top: 200px; /* navbar mobile pequeno 140px + menu categorias 60px */
   }
 }

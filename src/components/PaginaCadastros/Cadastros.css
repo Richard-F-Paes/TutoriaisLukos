@@ -35,11 +35,12 @@
 /* Grid responsivo para tutoriais */
 .tutorials-grid {
     display: grid;
-    grid-template-columns: repeat(4, 350px); /* 4 cards lado a lado */
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
     justify-content: center;
-    
-    
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 /* Card individual de tutorial */

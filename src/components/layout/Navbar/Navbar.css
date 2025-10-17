@@ -184,12 +184,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 700px;
+    width: 100%;
+    max-width: 700px;
     font-size: 0.9rem;
     background: rgba(255, 255, 255, 0.9);
     color: #333;
     transition: all 0.3s ease;
-    margin-right: 230px;
+    margin-right: 0;
 }
 
 .Search-text:focus {
@@ -439,56 +440,246 @@
 }
 
 /* ========================================
-   RESPONSIVIDADE DA NAVBAR
+   RESPONSIVIDADE MOBILE-FIRST DA NAVBAR
    ======================================== */
 
-/* Tablets */
-@media (max-width: 768px) {
+/* Hamburger Menu para Mobile */
+.nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-hamburger:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.hamburger-line {
+    width: 24px;
+    height: 2px;
+    background: #ffffff;
+    margin: 3px 0;
+    transition: all 0.3s ease;
+    border-radius: 1px;
+}
+
+.nav-hamburger.active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.nav-hamburger.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-hamburger.active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Menu Mobile Overlay */
+.nav-mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-mobile-overlay.active {
+    opacity: 1;
+}
+
+.nav-mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background: linear-gradient(135deg, #5a008f 40%, #6c2396 60%);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    transition: right 0.3s ease;
+    padding: 2rem 1.5rem;
+    overflow-y: auto;
+}
+
+.nav-mobile-menu.active {
+    right: 0;
+}
+
+.nav-mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.nav-mobile-brand-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-family: 'Times New Roman', serif;
+}
+
+.nav-mobile-close {
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.nav-mobile-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-mobile-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-mobile-link {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-mobile-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #d4b3ff;
+}
+
+.nav-mobile-search {
+    margin: 2rem 0;
+}
+
+.nav-mobile-search input {
+    width: 100%;
+    padding: 1rem;
+    padding-left: 3rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    font-size: 1rem;
+}
+
+.nav-mobile-search input:focus {
+    outline: none;
+    border-color: #d4b3ff;
+    box-shadow: 0 0 0 3px rgba(212, 179, 255, 0.2);
+}
+
+.nav-mobile-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 1.2rem;
+}
+
+/* ===== BREAKPOINTS RESPONSIVOS ===== */
+
+/* Mobile: 320px - 767px */
+@media (max-width: 767px) {
     .nav-container {
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.5rem;
+        padding: 8px 16px;
+        min-height: 70px;
     }
     
-    .nav-menu {
-        gap: 1rem;
+    .nav-brand {
+        gap: 0.75rem;
     }
     
     .nav-brand-icon {
-        width: 80px;
-        height: 80px;
+        width: 40px;
+        height: 40px;
     }
     
     .nav-logo-image {
-        width: 100px;
-        height: 100px;
+        width: 45px;
+        height: 45px;
     }
     
     .nav-brand-name {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
     
-    .auth-gear {
-        width: 28px;
-        height: 28px;
+    .nav-menu {
+        display: none;
+    }
+    
+    .nav-hamburger {
+        display: flex;
+    }
+    
+    .nav-search {
+        order: 3;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .nav-search form {
+        width: 100%;
+    }
+    
+    .Search-text {
+        width: 100%;
+        max-width: none;
+        font-size: 1rem;
+        padding: 1rem;
+        padding-left: 3rem;
+    }
+    
+    .nav-user {
         margin-left: auto;
     }
     
-    .auth-gear i {
-        font-size: 0.8rem;
+    .auth-gear {
+        width: 32px;
+        height: 32px;
     }
     
-    .search-input {
-        width: 100%;
- height: px;
- line-height: 28px;
- padding: 0 1rem;
- padding-left: 2.5rem;
- border: 2px solid transparent;
- border-radius: 8px;
- outline: none;
- background-color: #f3f3f4;
- color: #0d00ff;
- transition: .3s ease;
+    .auth-gear i {
+        font-size: 1rem;
     }
     
     .user-name {
@@ -496,51 +687,128 @@
     }
     
     .user-dropdown {
-        min-width: 250px;
+        min-width: 280px;
+        right: -20px;
     }
 }
 
-/* Mobile */
-@media (max-width: 480px) {
-    .nav-brand {
-        font-size: 1.2rem;
+/* Tablet: 768px - 1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .nav-container {
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 12px 20px;
+        min-height: 80px;
     }
     
     .nav-brand-icon {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
     }
     
     .nav-logo-image {
-        width: 80px;
-        height: 80px;
+        width: 55px;
+        height: 55px;
     }
     
     .nav-brand-name {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
     }
     
     .nav-menu {
-        flex-wrap: wrap;
-        justify-content: center;
+        gap: 1.5rem;
+        font-size: 0.9rem;
     }
     
-    .search-input {
-        width: 200px;
+    .nav-hamburger {
+        display: none;
     }
     
-    .auth-gear {
-        width: 26px;
-        height: 26px;
-        margin-left: auto;
+    .nav-mobile-overlay,
+    .nav-mobile-menu {
+        display: none !important;
     }
     
-    .auth-gear i {
-        font-size: 0.7rem;
+    .nav-search {
+        flex: 1;
+        max-width: 400px;
+        margin: 0 1rem;
+    }
+    
+    .Search-text {
+        max-width: 400px;
+        font-size: 0.9rem;
+    }
+    
+    .user-name {
+        display: block;
+        max-width: 100px;
     }
     
     .user-dropdown {
-        min-width: 220px;
-        right: -10px;
+        min-width: 260px;
     }
 }
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+    .nav-container {
+        flex-wrap: nowrap;
+        gap: 2rem;
+        padding: 10px 20px;
+        min-height: 70px;
+    }
+    
+    .nav-brand {
+        gap: 1.5rem;
+    }
+    
+    .nav-brand-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .nav-logo-image {
+        width: 53px;
+        height: 53px;
+    }
+    
+    .nav-brand-name {
+        font-size: 1.8rem;
+    }
+    
+    .nav-menu {
+        gap: 2rem;
+        display: flex;
+    }
+    
+    .nav-hamburger {
+        display: none;
+    }
+    
+    .nav-mobile-overlay,
+    .nav-mobile-menu {
+        display: none !important;
+    }
+    
+    .nav-search {
+        flex: 1;
+        max-width: 700px;
+        margin: 0 2rem;
+    }
+    
+    .Search-text {
+        max-width: 700px;
+        font-size: 0.9rem;
+    }
+    
+    .user-name {
+        display: block;
+        max-width: 120px;
+    }
+    
+    .user-dropdown {
+        min-width: 280px;
+    }
+}
+

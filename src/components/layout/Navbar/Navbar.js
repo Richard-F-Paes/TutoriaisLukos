@@ -7,6 +7,7 @@ const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [showUserMenu, setShowUserMenu] = useState(false);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -31,7 +32,17 @@ const Navbar = () => {
     const handleLogout = () => {
         logout();
         setShowUserMenu(false);
+        setShowMobileMenu(false);
         navigate('/');
+    };
+
+    const toggleMobileMenu = () => {
+        setShowMobileMenu(!showMobileMenu);
+        setShowUserMenu(false);
+    };
+
+    const closeMobileMenu = () => {
+        setShowMobileMenu(false);
     };
 
     useEffect(() => {
@@ -55,6 +66,17 @@ const Navbar = () => {
                     </div>
                     <span className="nav-brand-name">Tutoriais Lukos</span>
                 </Link>
+
+                {/* HAMBURGER MENU */}
+                <button 
+                    className={`nav-hamburger ${showMobileMenu ? 'active' : ''}`}
+                    onClick={toggleMobileMenu}
+                    aria-label="Menu"
+                >
+                    <span className="hamburger-line"></span>
+                    <span className="hamburger-line"></span>
+                    <span className="hamburger-line"></span>
+                </button>
 
                 {/* BARRA DE PESQUISA */}
                 <div className="nav-search">
@@ -149,6 +171,115 @@ const Navbar = () => {
                         </Link>
                     )}
                 </div>
+            </div>
+
+            {/* MOBILE MENU OVERLAY */}
+            {showMobileMenu && (
+                <div 
+                    className={`nav-mobile-overlay ${showMobileMenu ? 'active' : ''}`}
+                    onClick={closeMobileMenu}
+                ></div>
+            )}
+
+            {/* MOBILE MENU */}
+            <div className={`nav-mobile-menu ${showMobileMenu ? 'active' : ''}`}>
+                <div className="nav-mobile-header">
+                    <Link to="/" className="nav-mobile-brand" onClick={closeMobileMenu}>
+                        <div className="nav-brand-icon">
+                            <img src="Logo512.png" alt="Logo" className="nav-logo-image" />
+                        </div>
+                        <span className="nav-mobile-brand-name">Tutoriais Lukos</span>
+                    </Link>
+                    <button 
+                        className="nav-mobile-close"
+                        onClick={closeMobileMenu}
+                        aria-label="Fechar menu"
+                    >
+                        <i className="fas fa-times"></i>
+                    </button>
+                </div>
+
+                {/* MOBILE SEARCH */}
+                <div className="nav-mobile-search">
+                    <form onSubmit={handleSearch}>
+                        <i className="fas fa-search nav-mobile-search-icon"></i>
+                        <input 
+                            type="text" 
+                            placeholder="Buscar tutoriais..." 
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </form>
+                </div>
+
+                {/* MOBILE NAVIGATION LINKS */}
+                <nav className="nav-mobile-links">
+                    <Link to="/" className="nav-mobile-link" onClick={closeMobileMenu}>
+                        <i className="fas fa-home"></i>
+                        Início
+                    </Link>
+                    <Link to="/tutoriais" className="nav-mobile-link" onClick={closeMobileMenu}>
+                        <i className="fas fa-book"></i>
+                        Tutoriais
+                    </Link>
+                    <Link to="/categorias" className="nav-mobile-link" onClick={closeMobileMenu}>
+                        <i className="fas fa-folder"></i>
+                        Categorias
+                    </Link>
+                    <Link to="/sobre" className="nav-mobile-link" onClick={closeMobileMenu}>
+                        <i className="fas fa-info-circle"></i>
+                        Sobre
+                    </Link>
+                </nav>
+
+                {/* MOBILE USER SECTION */}
+                {isAuthenticated ? (
+                    <div className="nav-mobile-links" style={{ marginTop: '2rem', borderTop: '1px solid rgba(255, 255, 255, 0.2)', paddingTop: '1rem' }}>
+                        <div style={{ padding: '1rem', color: '#ffffff', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                            <div style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.5rem' }}>{user?.name}</div>
+                            <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>{user?.email}</div>
+                        </div>
+                        
+                        <Link to="/profile" className="nav-mobile-link" onClick={closeMobileMenu}>
+                            <i className="fas fa-user-cog"></i>
+                            Meu Perfil
+                        </Link>
+
+                        {(user?.role === 'admin' || user?.role === 'super_admin' || user?.role === 'editor') && (
+                            <Link to="/editor" className="nav-mobile-link" onClick={closeMobileMenu}>
+                                <i className="fas fa-edit"></i>
+                                Editor Visual
+                            </Link>
+                        )}
+
+                        {(user?.role === 'admin' || user?.role === 'super_admin') && (
+                            <Link to="/admin" className="nav-mobile-link" onClick={closeMobileMenu}>
+                                <i className="fas fa-cog"></i>
+                                Administração
+                            </Link>
+                        )}
+
+                        <button 
+                            className="nav-mobile-link"
+                            onClick={handleLogout}
+                            style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', color: '#ff6b6b' }}
+                        >
+                            <i className="fas fa-sign-out-alt"></i>
+                            Sair
+                        </button>
+                    </div>
+                ) : (
+                    <div className="nav-mobile-links" style={{ marginTop: '2rem', borderTop: '1px solid rgba(255, 255, 255, 0.2)', paddingTop: '1rem' }}>
+                        <Link to="/login" className="nav-mobile-link" onClick={closeMobileMenu}>
+                            <i className="fas fa-sign-in-alt"></i>
+                            Entrar
+                        </Link>
+                        <Link to="/register" className="nav-mobile-link" onClick={closeMobileMenu}>
+                            <i className="fas fa-user-plus"></i>
+                            Cadastrar
+                        </Link>
+                    </div>
+                )}
             </div>
         </nav>
     );

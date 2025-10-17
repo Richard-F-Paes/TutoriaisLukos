@@ -20,7 +20,7 @@ export default function FileManager() {
     setIsLoading(true);
     setError(null);
     try {
-      // Simular carregamento de arquivos sem MCP
+      // Simular carregamento de arquivos
       await new Promise(resolve => setTimeout(resolve, 800)); // Simular delay
       setFiles([
         { name: "components", type: "directory", path: "src/components" },
@@ -55,7 +55,7 @@ export default function FileManager() {
     setIsLoading(true);
     setError(null);
     try {
-      // Simular criação de arquivo sem MCP
+      // Simular criação de arquivo
       await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay
       setNewFileName("");
       setShowCreateFile(false);
@@ -76,7 +76,7 @@ export default function FileManager() {
     setIsLoading(true);
     setError(null);
     try {
-      // Simular exclusão de arquivo sem MCP
+      // Simular exclusão de arquivo
       await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay
       if (selectedFile && selectedFile.path === file.path) {
         setSelectedFile(null);
@@ -97,7 +97,7 @@ export default function FileManager() {
     setIsLoading(true);
     setError(null);
     try {
-      // Simular salvamento de arquivo sem MCP
+      // Simular salvamento de arquivo
       await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay
       setIsEditing(false);
       loadFiles();

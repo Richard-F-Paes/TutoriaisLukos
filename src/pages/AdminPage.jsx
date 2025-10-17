@@ -20,7 +20,7 @@ export default function AdminPage() {
     setIsLoading(true);
     setError(null);
     try {
-      // Simular carregamento de tutoriais sem MCP
+      // Simular carregamento de tutoriais
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay
       setTutorials([
         {

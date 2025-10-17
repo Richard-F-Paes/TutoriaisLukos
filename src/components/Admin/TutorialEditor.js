@@ -93,28 +93,18 @@ export default function TutorialEditor({ tutorials, onTutorialCreated, onTutoria
 
     try {
       if (editingTutorial) {
-        // Atualizar tutorial existente
-        const result = await mcp.call("updateTutorial", {
-          id: editingTutorial.id,
-          updates: formData
-        });
+        // Simular atualização de tutorial
+        await new Promise(resolve => setTimeout(resolve, 800)); // Simular delay
         
-        if (result.error) {
-          setError(result.error);
-        } else {
-          onTutorialUpdated({ ...editingTutorial, ...formData });
-          resetForm();
-        }
+        onTutorialUpdated({ ...editingTutorial, ...formData });
+        resetForm();
       } else {
-        // Criar novo tutorial
-        const result = await mcp.call("createTutorial", formData);
+        // Simular criação de tutorial
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay
         
-        if (result.error) {
-          setError(result.error);
-        } else {
-          onTutorialCreated({ id: result.tutorialId, ...formData });
-          resetForm();
-        }
+        const tutorialId = Date.now().toString();
+        onTutorialCreated({ id: tutorialId, ...formData });
+        resetForm();
       }
     } catch (error) {
       console.error("Erro ao salvar tutorial:", error);

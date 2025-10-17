@@ -24,7 +24,7 @@ export default function TutorialList({ tutorials, isLoading, onTutorialDeleted, 
 
     setDeletingId(tutorialId);
     try {
-      // Simular exclusão sem MCP
+      // Simular exclusão
       await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay
       onTutorialDeleted(tutorialId);
     } catch (error) {

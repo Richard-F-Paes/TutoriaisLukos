@@ -1,4 +1,4 @@
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+// HeadlessUI removido - usando implementação customizada com hover e click fix
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Link, useLocation } from 'react-router-dom';
 import ReactDOM from 'react-dom';
@@ -61,6 +61,9 @@ const PortalMenuContent = ({ buttonRef, children, className, isOpen }) => {
 
 export default function Navbarcateria() {
   const location = useLocation();
+  const [openMenus, setOpenMenus] = useState({});
+  const [fixedMenus, setFixedMenus] = useState({});
+  const timeoutsRef = useRef({});
 
   const menuButtonClasses = 'category-dropdown-button';
   const menuItemClasses = (active, path) =>
@@ -70,6 +73,99 @@ export default function Navbarcateria() {
 
   // Criar refs para cada botão de menu
   const menuRefs = useRef({});
+
+  // Função para limpar todos os timeouts
+  const clearAllTimeouts = () => {
+    Object.values(timeoutsRef.current).forEach(timeout => {
+      if (timeout) clearTimeout(timeout);
+    });
+    timeoutsRef.current = {};
+  };
+
+  // Função para fechar todos os menus instantaneamente
+  const closeAllMenus = () => {
+    clearAllTimeouts();
+    setOpenMenus({});
+  };
+
+  // Funções para controlar hover e click
+  const handleMouseEnter = (menuLabel) => {
+    // Limpar todos os timeouts e fechar outros menus instantaneamente
+    clearAllTimeouts();
+    
+    // Fechar todos os outros menus instantaneamente
+    setOpenMenus(prev => {
+      const newState = {};
+      Object.keys(prev).forEach(key => {
+        if (key !== menuLabel) {
+          newState[key] = false;
+        }
+      });
+      return newState;
+    });
+    
+    if (!fixedMenus[menuLabel]) {
+      setOpenMenus(prev => ({ ...prev, [menuLabel]: true }));
+    }
+  };
+
+  const handleMouseLeave = (menuLabel) => {
+    if (!fixedMenus[menuLabel]) {
+      // Limpar timeout anterior se existir
+      if (timeoutsRef.current[menuLabel]) {
+        clearTimeout(timeoutsRef.current[menuLabel]);
+      }
+      
+      // Criar novo timeout de 1 segundo
+      timeoutsRef.current[menuLabel] = setTimeout(() => {
+        setOpenMenus(prev => ({ ...prev, [menuLabel]: false }));
+        delete timeoutsRef.current[menuLabel];
+      }, 1000);
+    }
+  };
+
+  const handleClick = (menuLabel) => {
+    // Limpar todos os timeouts e fechar outros menus instantaneamente
+    clearAllTimeouts();
+    
+    // Fechar todos os outros menus instantaneamente
+    setOpenMenus(prev => {
+      const newState = {};
+      Object.keys(prev).forEach(key => {
+        if (key !== menuLabel) {
+          newState[key] = false;
+        }
+      });
+      return newState;
+    });
+    
+    setFixedMenus(prev => ({ ...prev, [menuLabel]: !prev[menuLabel] }));
+    setOpenMenus(prev => ({ ...prev, [menuLabel]: !prev[menuLabel] }));
+  };
+
+  const handleClickOutside = () => {
+    clearAllTimeouts();
+    setFixedMenus({});
+    setOpenMenus({});
+  };
+
+  // Adicionar listener para cliques fora e cleanup
+  useEffect(() => {
+    const handleDocumentClick = (e) => {
+      const isInsideMenu = e.target.closest('.category-dropdown');
+      if (!isInsideMenu) {
+        handleClickOutside();
+      }
+    };
+
+    document.addEventListener('click', handleDocumentClick);
+    
+    // Cleanup: limpar timeouts quando componente for desmontado
+    return () => {
+      document.removeEventListener('click', handleDocumentClick);
+      clearAllTimeouts();
+    };
+  }, []);
 
   const menus = [
     {
@@ -122,45 +218,58 @@ export default function Navbarcateria() {
         </Link>
 
         {/* Dropdowns */}
-        {menus.map((menu) => (
-          <Menu as="div" className="category-dropdown" key={menu.label}>
-            {({ open }) => (
-              <>
-                <MenuButton 
-                  ref={(el) => {
-                    if (el) {
-                      menuRefs.current[menu.label] = el;
-                    }
-                  }}
-                  className={menuButtonClasses}
-                >
-                  {menu.label}
-                  <ChevronDownIcon aria-hidden="true" className="category-dropdown-icon" />
-                </MenuButton>
+        {menus.map((menu) => {
+          const isOpen = openMenus[menu.label] || false;
+          const isFixed = fixedMenus[menu.label] || false;
+          
+          return (
+            <div 
+              key={menu.label}
+              className="category-dropdown"
+              onMouseEnter={() => handleMouseEnter(menu.label)}
+              onMouseLeave={() => handleMouseLeave(menu.label)}
+            >
+              <button
+                ref={(el) => {
+                  if (el) {
+                    menuRefs.current[menu.label] = el;
+                  }
+                }}
+                className={menuButtonClasses}
+                onClick={() => handleClick(menu.label)}
+                aria-expanded={isOpen}
+                aria-haspopup="menu"
+              >
+                {menu.label}
+                <ChevronDownIcon aria-hidden="true" className="category-dropdown-icon" />
+              </button>
 
-                <MenuItems static>
-                  <PortalMenuContent 
-                    buttonRef={{ current: menuRefs.current[menu.label] }}
-                    className="category-dropdown-menu"
-                    isOpen={open}
-                  >
-                    <div className="py-1">
-                      {menu.items.map((item) => (
-                        <MenuItem key={item.to}>
-                          {({ active }) => (
-                            <Link to={item.to} className={menuItemClasses(active, item.to)}>
-                              {item.label}
-                            </Link>
-                          )}
-                        </MenuItem>
-                      ))}
-                    </div>
-                  </PortalMenuContent>
-                </MenuItems>
-              </>
-            )}
-          </Menu>
-        ))}
+              <PortalMenuContent 
+                buttonRef={{ current: menuRefs.current[menu.label] }}
+                className="category-dropdown-menu"
+                isOpen={isOpen}
+              >
+                <div className="py-1">
+                  {menu.items.map((item) => (
+                    <Link 
+                      key={item.to} 
+                      to={item.to} 
+                      className={menuItemClasses(false, item.to)}
+                      onClick={() => {
+                        // Fechar menu ao clicar em um item
+                        clearAllTimeouts();
+                        setOpenMenus(prev => ({ ...prev, [menu.label]: false }));
+                        setFixedMenus(prev => ({ ...prev, [menu.label]: false }));
+                      }}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </PortalMenuContent>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

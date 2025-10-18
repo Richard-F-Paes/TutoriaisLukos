@@ -5,12 +5,13 @@ import Tutorials from '../components/tutorial/Tutorials/Tutorials';
 import BlogHeader from '../components/BlogHeader/BlogHeader';
 import HighlightsSection from '../components/HighlightsSection/HighlightsSection';
 import Page from '../components/Page/Page';
+import Videoaula from '../components/Videoaula/Videoaula';
 
 function CategoriesPage() {
   return (
     <>
     
-      <Page />
+     <Videoaula />
       <HighlightsSection />
       
     </>

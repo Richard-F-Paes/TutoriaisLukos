@@ -127,6 +127,7 @@ const Navbar = () => {
         <form onSubmit={handleSearch} className="hidden md:flex items-center bg-gray-100 px-3 py-1.5 rounded-full">
           <i className="fas fa-search text-gray-500 mr-2 text-sm"></i>
           <input
+          
             type="text"
             placeholder="Buscar..."
             className="bg-transparent outline-none text-sm text-gray-700 w-32"

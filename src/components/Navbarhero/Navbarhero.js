@@ -41,7 +41,9 @@ const Navbarhero = () => {
             <li><a href="#">Comercial</a></li>
           </ul>
         </nav>
-
+.nbh-nav a {
+    
+}
         {/* Botões */}
         <div className="nbh-buttons">
         

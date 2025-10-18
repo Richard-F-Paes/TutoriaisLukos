@@ -18,8 +18,9 @@ export default function Example() {
         </a>
         <a
           href="#"
-          className="relative ml-3 inline-flex items-center rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-gray-200 hover:bg-white/10"
+          className="relative ml-3  inline-flex items-center rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-gray-200 hover:bg-white/10"
         >
+        
           Next
         </a>
       </div>

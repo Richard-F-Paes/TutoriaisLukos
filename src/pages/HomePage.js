@@ -33,6 +33,10 @@ import Portfolio1 from '../components/Portfolio1/Portfolio1';
 import CourseDetail from '../components/Courses/CousesDetail';
 import Courses from '../components/Courses/Courses';
 import HeroTutorial from '../components/HeroTutorial/HeroTutorial';
+import Tutorialpresentacao from '../components/TutorialPresentation/TutorialPresentation';
+import CourseList from '../components/CoursesList/CoursesList';
+import Videoaula from '../components/Videoaula/Videoaula';
+import ExerciseCategories from '../components/ExerciseCategories/ExerciseCategories';
 
 
 
@@ -69,7 +73,9 @@ function HomePage() {
     <>
    
   
-      
+      <HeroTutorial />
+      <ExerciseCategories />
+     
        <SpotlightPreview />
 
      <Videocase />
@@ -79,13 +85,12 @@ function HomePage() {
      <Lukospay />
       
      <Playstore />
-     <Divisor />
-    
-      <Portfolio1 />
+ 
+        
        <Divisor />  
-   
+     
      <Example />
-     <HeroTutorial />
+    
      <Busca />
     
    

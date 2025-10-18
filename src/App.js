@@ -46,7 +46,7 @@ function App() {
       <TutorialProvider>
         <Router>
           <div className="App">
-              <Navbarcategoria />
+            
             <Navbar />
           
             <main>

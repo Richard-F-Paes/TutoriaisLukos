@@ -1,288 +1,107 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../../contexts/AuthContext';
-import './Navbar.css';
+
+import React, { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import {BookOpen, Home, Menu, X, Fuel, ShoppingCart, Settings, BarChart3, Users, HelpCircle, Phone, CreditCard} from 'lucide-react'
 
 const Navbar = () => {
-    const [isScrolled, setIsScrolled] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [showUserMenu, setShowUserMenu] = useState(false);
-    const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const location = useLocation()
 
-    const navigate = useNavigate();
-    const location = useLocation();
+  const navLinks = [
+    { path: '/', label: 'Início', icon: Home },
+    { path: '/pista', label: 'Pista', icon: Fuel },
+    { path: '/conveniencia', label: 'Conveniência', icon: ShoppingCart },
+    { path: '/retaguarda', label: 'Retaguarda', icon: Settings },
+    { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+    { path: '/lukos-pay', label: 'Lukos Pay', icon: CreditCard },
+    { path: '/sobre', label: 'Sobre', icon: Users },
+    { path: '/ajuda', label: 'Ajuda', icon: HelpCircle },
+    { path: '/contato', label: 'Contato', icon: Phone }
+  ]
 
-    const { user, logout, isAuthenticated } = useAuth();
+  const isActive = (path) => location.pathname === path
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.pageYOffset > 100);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+  return (
+    <header className="bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-100 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16 src">
+          {/* Logo */}
+          <Link to="/" className="flex items-center justify space-x-3 group"
+          >
+              {/* Logo no topo */}
+        <div className="">
+          <img src="logo.png" alt="Logo" className="w-15" />
+        </div>
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        if (searchTerm.trim()) {
-            navigate(`/busca?q=${encodeURIComponent(searchTerm)}`);
-        }
-    };
+          
+          
+      
+            <div >
+              <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent m-4 flex justify-center">
+               Tutorial
+              </h1>
+             
+            </div>
+          </Link>
 
-    const handleLogout = () => {
-        logout();
-        setShowUserMenu(false);
-        setShowMobileMenu(false);
-        navigate('/');
-    };
-
-    const toggleMobileMenu = () => {
-        setShowMobileMenu(!showMobileMenu);
-        setShowUserMenu(false);
-    };
-
-    const closeMobileMenu = () => {
-        setShowMobileMenu(false);
-    };
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (showUserMenu && !event.target.closest('.user-menu')) {
-                setShowUserMenu(false);
-            }
-        };
-        document.addEventListener('click', handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
-    }, [showUserMenu]);
-
-    return (
-        <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
-            <div className="nav-container">
-
-                {/* LOGO */}
-                <Link to="/" className="nav-brand">
-                    <div className="nav-brand-icon">
-                        <img src="Logo512.png" alt="Logo" className="nav-logo-image" />
-                    </div>
-                    <span className="nav-brand-name">Tutoriais Lukos</span>
-                </Link>
-
-                {/* HAMBURGER MENU */}
-                <button 
-                    className={`nav-hamburger ${showMobileMenu ? 'active' : ''}`}
-                    onClick={toggleMobileMenu}
-                    aria-label="Menu"
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center space-x-1">
+            {navLinks.map((link) => {
+              const Icon = link.icon
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 font-medium ${
+                    isActive(link.path)
+                      ? 'bg-gradient-to-r from-purple-600 to-purple-800 text-white shadow-lg'
+                      : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
+                  }`}
                 >
-                    <span className="hamburger-line"></span>
-                    <span className="hamburger-line"></span>
-                    <span className="hamburger-line"></span>
-                </button>
+                  <Icon className="h-4 w-4" />
+                  <span>{link.label}</span>
+                </Link>
+              )
+            })}
+          </nav>
 
-                {/* BARRA DE PESQUISA */}
-                <div className="nav-search">
-                    <form onSubmit={handleSearch}>
-                        <i className="fas fa-search search-icon"></i>
-                        <input 
-                            className="Search-text"
-                            type="text" 
-                            placeholder="Buscar" 
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </form>
-                </div>
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+          >
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
 
-                {/* MENU DO USUÁRIO */}
-                <div className="nav-user">
-                    {isAuthenticated ? (
-                        <div className="user-menu">
-                            <button 
-                                className="user-button"
-                                onClick={() => setShowUserMenu(!showUserMenu)}
-                            >
-                                <div className="user-avatar">
-                                    <i className="fas fa-user"></i>
-                                </div>
-                                <span className="user-name">{user?.name}</span>
-                                <i className={`fas fa-chevron-down ${showUserMenu ? 'rotated' : ''}`}></i>
-                            </button>
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="lg:hidden py-4 border-t border-gray-100 bg-white/95 backdrop-blur-lg">
+            <nav className="space-y-2">
+              {navLinks.map((link) => {
+                const Icon = link.icon
+                return (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium ${
+                      isActive(link.path)
+                        ? 'bg-gradient-to-r from-purple-600 to-purple-800 text-white shadow-lg'
+                        : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" />
+                    <span>{link.label}</span>
+                  </Link>
+                )
+              })}
+            </nav>
+          </div>
+        )}
+      </div>
+    </header>
+  )
+}
 
-                            {showUserMenu && (
-                                <div className="user-dropdown">
-                                    <div className="user-info">
-                                        <div className="user-avatar-large">
-                                            <i className="fas fa-user"></i>
-                                        </div>
-                                        <div className="user-details">
-                                            <h4>{user?.name}</h4>
-                                            <p>{user?.email}</p>
-                                            <span className={`user-role user-role-${user?.role}`}>
-                                                {user?.role}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="user-actions">
-                                        <Link 
-                                            to="/profile" 
-                                            className="user-action"
-                                            onClick={() => setShowUserMenu(false)}
-                                        >
-                                            <i className="fas fa-user-cog"></i>
-                                            Meu Perfil
-                                        </Link>
-
-                                        {(user?.role === 'admin' || user?.role === 'super_admin' || user?.role === 'editor') && (
-                                            <Link 
-                                                to="/editor" 
-                                                className="user-action"
-                                                onClick={() => setShowUserMenu(false)}
-                                            >
-                                                <i className="fas fa-edit"></i>
-                                                Editor Visual
-                                            </Link>
-                                        )}
-
-                                        {(user?.role === 'admin' || user?.role === 'super_admin') && (
-                                            <Link 
-                                                to="/admin" 
-                                                className="user-action"
-                                                onClick={() => setShowUserMenu(false)}
-                                            >
-                                                <i className="fas fa-cog"></i>
-                                                Administração
-                                            </Link>
-                                        )}
-
-                                        <button 
-                                            className="user-action logout"
-                                            onClick={handleLogout}
-                                        >
-                                            <i className="fas fa-sign-out-alt"></i>
-                                            Sair
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    ) : (
-                        <Link to="/login" className="auth-gear">
-                            <i className="fas fa-cog"></i>
-                        </Link>
-                    )}
-                </div>
-            </div>
-
-            {/* MOBILE MENU OVERLAY */}
-            {showMobileMenu && (
-                <div 
-                    className={`nav-mobile-overlay ${showMobileMenu ? 'active' : ''}`}
-                    onClick={closeMobileMenu}
-                ></div>
-            )}
-
-            {/* MOBILE MENU */}
-            <div className={`nav-mobile-menu ${showMobileMenu ? 'active' : ''}`}>
-                <div className="nav-mobile-header">
-                    <Link to="/" className="nav-mobile-brand" onClick={closeMobileMenu}>
-                        <div className="nav-brand-icon">
-                            <img src="Logo512.png" alt="Logo" className="nav-logo-image" />
-                        </div>
-                        <span className="nav-mobile-brand-name">Tutoriais Lukos</span>
-                    </Link>
-                    <button 
-                        className="nav-mobile-close"
-                        onClick={closeMobileMenu}
-                        aria-label="Fechar menu"
-                    >
-                        <i className="fas fa-times"></i>
-                    </button>
-                </div>
-
-                {/* MOBILE SEARCH */}
-                <div className="nav-mobile-search">
-                    <form onSubmit={handleSearch}>
-                        <i className="fas fa-search nav-mobile-search-icon"></i>
-                        <input 
-                            type="text" 
-                            placeholder="Buscar tutoriais..." 
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </form>
-                </div>
-
-                {/* MOBILE NAVIGATION LINKS */}
-                <nav className="nav-mobile-links">
-                    <Link to="/" className="nav-mobile-link" onClick={closeMobileMenu}>
-                        <i className="fas fa-home"></i>
-                        Início
-                    </Link>
-                    <Link to="/tutoriais" className="nav-mobile-link" onClick={closeMobileMenu}>
-                        <i className="fas fa-book"></i>
-                        Tutoriais
-                    </Link>
-                    <Link to="/categorias" className="nav-mobile-link" onClick={closeMobileMenu}>
-                        <i className="fas fa-folder"></i>
-                        Categorias
-                    </Link>
-                    <Link to="/sobre" className="nav-mobile-link" onClick={closeMobileMenu}>
-                        <i className="fas fa-info-circle"></i>
-                        Sobre
-                    </Link>
-                </nav>
-
-                {/* MOBILE USER SECTION */}
-                {isAuthenticated ? (
-                    <div className="nav-mobile-links" style={{ marginTop: '2rem', borderTop: '1px solid rgba(255, 255, 255, 0.2)', paddingTop: '1rem' }}>
-                        <div style={{ padding: '1rem', color: '#ffffff', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                            <div style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.5rem' }}>{user?.name}</div>
-                            <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>{user?.email}</div>
-                        </div>
-                        
-                        <Link to="/profile" className="nav-mobile-link" onClick={closeMobileMenu}>
-                            <i className="fas fa-user-cog"></i>
-                            Meu Perfil
-                        </Link>
-
-                        {(user?.role === 'admin' || user?.role === 'super_admin' || user?.role === 'editor') && (
-                            <Link to="/editor" className="nav-mobile-link" onClick={closeMobileMenu}>
-                                <i className="fas fa-edit"></i>
-                                Editor Visual
-                            </Link>
-                        )}
-
-                        {(user?.role === 'admin' || user?.role === 'super_admin') && (
-                            <Link to="/admin" className="nav-mobile-link" onClick={closeMobileMenu}>
-                                <i className="fas fa-cog"></i>
-                                Administração
-                            </Link>
-                        )}
-
-                        <button 
-                            className="nav-mobile-link"
-                            onClick={handleLogout}
-                            style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', color: '#ff6b6b' }}
-                        >
-                            <i className="fas fa-sign-out-alt"></i>
-                            Sair
-                        </button>
-                    </div>
-                ) : (
-                    <div className="nav-mobile-links" style={{ marginTop: '2rem', borderTop: '1px solid rgba(255, 255, 255, 0.2)', paddingTop: '1rem' }}>
-                        <Link to="/login" className="nav-mobile-link" onClick={closeMobileMenu}>
-                            <i className="fas fa-sign-in-alt"></i>
-                            Entrar
-                        </Link>
-                        <Link to="/register" className="nav-mobile-link" onClick={closeMobileMenu}>
-                            <i className="fas fa-user-plus"></i>
-                            Cadastrar
-                        </Link>
-                    </div>
-                )}
-            </div>
-        </nav>
-    );
-};
-
-export default Navbar;
+export default Navbar

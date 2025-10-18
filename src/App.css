@@ -9,10 +9,7 @@ background: linear-gradient(180deg, #161C2D 0%, #111827 100%);
   text-align: center;
 }
 
-/* Ajuste para compensar a navbar fixa e menu de categorias */
-body {
-  padding-top: 140px; /* navbar 80px + menu categorias 60px */
-}
+/* Ajuste para compensar a navbar fixa */
 
 /* ========================================
    RESPONSIVIDADE GLOBAL

@@ -37,6 +37,7 @@ import Tutorialpresentacao from '../components/TutorialPresentation/TutorialPres
 import CourseList from '../components/CoursesList/CoursesList';
 import Videoaula from '../components/Videoaula/Videoaula';
 import ExerciseCategories from '../components/ExerciseCategories/ExerciseCategories';
+import VideoDetail from '../components/VideoDetail/VideoDetail';
 
 
 
@@ -75,7 +76,7 @@ function HomePage() {
   
       <HeroTutorial />
       <ExerciseCategories />
-     
+  
        <SpotlightPreview />
 
      <Videocase />

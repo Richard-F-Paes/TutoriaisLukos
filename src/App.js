@@ -33,6 +33,8 @@ import FaturaWeb from './pages/FaturaWeb';
 import Home from './pages/Homedesigner/Home';
 import Homedesigner from './pages/Homedesigner/Home';
 import Navbarcategoria from './components/Navbarcategoria/Navbarcategoria';
+import Lukospay from './components/Lukospay/Lukospay';
+import Lukospos from './pages/Lukospos';
 
 
 
@@ -66,6 +68,7 @@ function App() {
                 <Route path="/PDV" element={<PDV />} />
                 <Route path="/prevenda" element={<Prevenda />} />
                 <Route path="/FaturaWeb" element={<FaturaWeb />} />
+                <Route path="/lukos-pay" element={<Lukospos />} />
                 
                 
                 {/* Rotas administrativas */}

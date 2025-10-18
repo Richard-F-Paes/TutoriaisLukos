@@ -5,7 +5,7 @@ import Featureshowcase from '../components/FeatureShowcase/FeatureShowcase';
 
 import Videocase from '../components/Videocase/Videocase';
 
-import Lukospay from '../components/Lukospay/Lukos';
+import Lukospay from '../components/Lukospay/Lukospay';
 
 
 import { SpotlightPreview } from '../components/SpotlightPreview/SpotlightPreview';
@@ -77,22 +77,8 @@ function HomePage() {
       <HeroTutorial />
       <ExerciseCategories />
   
-       <SpotlightPreview />
-
-     <Videocase />
+       
     
-   
-
-     <Lukospay />
-      
-     <Playstore />
- 
-        
-       <Divisor />  
-     
-     <Example />
-    
-     <Busca />
     
    
      

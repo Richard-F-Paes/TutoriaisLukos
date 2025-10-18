@@ -1,6 +1,6 @@
 
 import React from 'react'
-import {Fuel, ShoppingCart, BookOpen, ArrowDown} from 'lucide-react'
+import {Fuel, ShoppingCart, BookOpen, ArrowDown, LayoutDashboard, CreditCard } from 'lucide-react'
 
 const HeroTutorial = () => {
   return (
@@ -56,7 +56,7 @@ const HeroTutorial = () => {
               <BookOpen className="h-6 w-6 text-green-600" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Sistema Geral</h3>
-            <p className="text-sm text-gray-600">Configurações e relatórios do sistema</p>
+            <p className="text-sm text-gray-600">Configurações e relatórios do sistema</p>F
           </div>
         </div>
         
@@ -65,7 +65,7 @@ const HeroTutorial = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all duration-300">
             <div className="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Fuel className="h-6 w-6 text-blue-600" />
+              <LayoutDashboard className="h-6 w-6 text-green-600" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Retaguarda</h3>
             <p className="text-sm text-gray-600">Gestão completa das operações de combustível</p>
@@ -73,7 +73,7 @@ const HeroTutorial = () => {
           
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all duration-300">
             <div className="bg-purple-100 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <ShoppingCart className="h-6 w-6 text-purple-600" />
+              <LayoutDashboard className="h-6 w-6 text-red-600"  />
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Dashboard</h3>
             <p className="text-sm text-gray-600">Vendas e gestão de produtos da loja</p>
@@ -81,7 +81,7 @@ const HeroTutorial = () => {
           
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all duration-300">
             <div className="bg-green-100 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <BookOpen className="h-6 w-6 text-green-600" />
+              <CreditCard className="h-6 w-6 text-blue-900" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Lukos Pay</h3>
             <p className="text-sm text-gray-600">Configurações e relatórios do sistema</p>

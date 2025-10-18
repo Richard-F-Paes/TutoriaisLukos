@@ -13,13 +13,13 @@ const ExerciseCategories = () => {
     {
       id: 2,
       name: 'PDV',
-      image: 'CaixaPDV.png',
+      image: 'https://i.pinimg.com/1200x/59/74/0c/59740c01a792b5cd02b9ab0a819915f1.jpg',
       exercises: 15
     },
     {
       id: 3,
       name: 'Dashboard',
-      image: 'Dashboard.png',
+      image: 'https://i.pinimg.com/1200x/14/06/bd/1406bd2f617ebb1513d22693038a259b.jpg',
       exercises: 18
     },
     {

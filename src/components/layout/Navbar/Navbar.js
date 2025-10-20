@@ -33,7 +33,7 @@ const Navbar = () => {
           
           
       
-            <div >
+            <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent m-4 flex justify-center">
                Tutorial
               </h1>

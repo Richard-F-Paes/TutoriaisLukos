@@ -9,7 +9,7 @@ export default defineConfig({
   // ADICIONADO: Configuração base para o GitHub Pages
   // O valor DEVE ser o nome exato do seu repositório, com barras.
   // =================================================================
-  base: "/tutorial-lukos-react/",
+  base: "/TutoriaisLukos/",
 
   plugins: [react(), tailwindcss()],
   resolve: {

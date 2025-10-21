@@ -10,7 +10,7 @@ const Navbar = () => {
   const navLinks = [
     { path: '/', label: 'Início', icon: Home },
     { path: '/pista', label: 'Pista', icon: Fuel },
-    { path: '/conveniencia', label: 'Conveniência', icon: ShoppingCart },
+    { path: '/Conveniencia', label: 'Conveniência', icon: ShoppingCart },
     { path: '/retaguarda', label: 'Retaguarda', icon: Settings },
     { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
     { path: '/lukos-pay', label: 'Lukos Pay', icon: CreditCard },

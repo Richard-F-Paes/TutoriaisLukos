@@ -35,6 +35,9 @@ import Homedesigner from './pages/Homedesigner/Home';
 import Navbarcategoria from './components/Navbarcategoria/Navbarcategoria';
 import Lukospay from './components/Lukospay/Lukospay';
 import Lukospos from './pages/Lukospos';
+import conveniencia from './pages/Conveniencia';
+import Conveniencia from './pages/Conveniencia';
+import Pista from './pages/Pista';
 
 
 
@@ -69,6 +72,13 @@ function App() {
                 <Route path="/prevenda" element={<Prevenda />} />
                 <Route path="/FaturaWeb" element={<FaturaWeb />} />
                 <Route path="/lukos-pay" element={<Lukospos />} />
+                <Route path="/Conveniencia" element={<Conveniencia />} />
+                <Route path="/pista" element={<Pista />} />
+             
+                
+
+
+                
                 
                 
                 {/* Rotas administrativas */}

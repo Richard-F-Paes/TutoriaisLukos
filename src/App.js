@@ -38,6 +38,8 @@ import Lukospos from './pages/Lukospos';
 import conveniencia from './pages/Conveniencia';
 import Conveniencia from './pages/Conveniencia';
 import Pista from './pages/Pista';
+import GeradorSenha from './pages/Dashboard/GeradorSenha';
+import PrecoCombustivel from './pages/Dashboard/PrecoCombustivel';
 
 
 
@@ -77,8 +79,9 @@ function App() {
              
                 
 
-
-                
+                {/* Rotas Dashboard */}
+                <Route path="/pages/GeradorSenha" element={<GeradorSenha />} />
+                <Route path="/pages/PrecoCombustivel" element={<PrecoCombustivel />} />                    
                 
                 
                 {/* Rotas administrativas */}

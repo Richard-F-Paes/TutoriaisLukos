@@ -132,7 +132,7 @@ const CategoryGrid = ({
                     </div>
                   </div>
                   <Link
-                    to={`/video/${item.id}`}
+                    to={item.link}
                     className="block text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                   >
                     Gerenciar

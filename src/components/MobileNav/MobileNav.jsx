@@ -53,7 +53,7 @@ export default function BottomNavModern() {
 
         {/* Menu flutuante */}
         {openMenu && (
-          <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex flex-col items-center space-y-3">
+          <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 grid grid-cols-2 gap-3 bg-white p-4  w-[450px] rounded-xl shadow-lg">
             {floatingItems.map((item) => (
               <button
                 key={item.id}

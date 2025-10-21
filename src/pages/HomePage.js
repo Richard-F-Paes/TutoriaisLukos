@@ -40,6 +40,7 @@ import ExerciseCategories from '../components/ExerciseCategories/ExerciseCategor
 import InteractiveLesson from '../components/InteractiveLesson/InteractiveLesson';
 import Categories from '../components/Categoriasdostutoriais/Categoriaisdostutoriais';
 import TutorialDetailPage from './TutorialDetailPage';
+import MobileNav from '../components/MobileNav/MobileNav';
 
 
 
@@ -81,6 +82,8 @@ function HomePage() {
       <HeroTutorial />
       <ExerciseCategories />
       <InteractiveLesson />
+      <MobileNav />
+      
       
      
      

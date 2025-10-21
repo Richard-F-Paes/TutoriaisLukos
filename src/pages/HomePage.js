@@ -39,6 +39,7 @@ import Videoaula from '../components/Videoaula/Videoaula';
 import ExerciseCategories from '../components/ExerciseCategories/ExerciseCategories';
 import InteractiveLesson from '../components/InteractiveLesson/InteractiveLesson';
 import Categories from '../components/Categoriasdostutoriais/Categoriaisdostutoriais';
+import TutorialDetailPage from './TutorialDetailPage';
 
 
 
@@ -76,9 +77,11 @@ function HomePage() {
   return (
     <>
    
-  
+
       <HeroTutorial />
       <ExerciseCategories />
+      <InteractiveLesson />
+      
      
      
        

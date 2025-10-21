@@ -38,18 +38,15 @@ const InteractiveLesson = () => {
     // ... Seus objetos de passo (mantidos idênticos)
     {
       id: 0,
-      title: 'Acesso ao Sistema e Login',
-      duration: '3:00',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=0&end=180',
+      title: 'Insira o CPF do cliente no campo "CNPJ/CPF" e aperte a tecla "TAB"',
+      duration: '',
+      videoUrl: 'https://www.youtube.com/embed/ZDu8o37BwH0',
       image:
-        'https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://lh3.googleusercontent.com/sitesv/AICyYdYjdNdfMCoT6sSvdi-Q9Q6HToJNdT4VwKbaK7rVKtcSFHBrVRkEuXC9ImmtWP09cizjkX_nqJQ5mtTcqzDIL9kUkIvBWSka9-B-37DhjC9F6F2ijNTVFa3mycfdvSPvZVzhrnio2160GdWX_8Jaa9PLO0JeBDVRFbiHWQJpPrLfk93yCXaqqotzDLmm5uEkMq3FXFi2ijngwZTnM-jImBd0xAh195CM3gyi=w1280',
       description: 'Faça login no sistema de retaguarda e navegue até o módulo de produtos.',
       instructions: [
-        'Abra o navegador e acesse o sistema de retaguarda da empresa',
-        'Digite seu usuário e senha nos campos correspondentes',
-        'Clique em "Entrar" para acessar o sistema',
-        'No menu principal, localize e clique em "Gestão de Produtos"',
-        'Verifique se você está no módulo correto observando o título da página',
+        'Insira o CPF do cliente no campo "CNPJ/CPF" e aperte a tecla "TAB".',
+       
       ],
       tips: [
         'Sempre use suas credenciais pessoais, nunca compartilhe com colegas',
@@ -66,16 +63,13 @@ const InteractiveLesson = () => {
       id: 1,
       title: 'Navegação para Novo Produto',
       duration: '2:30',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=180&end=330',
+      videoUrl: '',
       image:
-        'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://lh3.googleusercontent.com/sitesv/AICyYda-pgCCDDrvdnfLQ589q8nDkOPkoXc31CHw5IJ386HLHfLNp14-v1GsNtWfIYF3iFmV0ydnGjilUp061MpqFgJdNwNrNGxWqssm8fjcxo85EgOEcuhhRoglQqFY7G4HOQRKSCq2-uvIo_bYLBiW-ZFNiTjFkoDfYmtt2ew8g5EEr9t8bMgxftoVntSXnr4C2fuc7_tts0dK3GhSoBsGnxCq8Ix-a3onssZ8K4Y=w1280',
       description: 'Localize e acesse a tela de cadastro de novo produto.',
       instructions: [
-        'Na tela principal de Gestão de Produtos, localize o botão "Novo Produto"',
-        'Clique no botão verde "Novo Produto" no canto superior direito',
-        'Aguarde o carregamento da tela de cadastro',
-        'Verifique se todos os campos estão vazios e prontos para preenchimento',
-        'Observe a estrutura do formulário antes de começar',
+        'Selecione "Física" em "Tipo de Pessoa" > preencha os campo "Razão Social/Nome" e "Fantasia" > Salvar"',
+      
       ],
       tips: [
         'O botão "Novo Produto" só aparece se você tiver permissão de cadastro',
@@ -92,17 +86,13 @@ const InteractiveLesson = () => {
       id: 2,
       title: 'Preenchimento de Dados Básicos',
       duration: '5:00',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=330&end=630',
+      videoUrl: '',
       image:
-        'https://images.pexels.com/photos/3184432/pexels-photo-3184432.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://lh3.googleusercontent.com/sitesv/AICyYdbc9atDs3xYnoaFdo3UjcNDyopcE8ZoNiQQTb1X54GSpZVCCzoFCTlc76SWvVZHkReVBEbnBKm1Lptb-3LGrKbSzheztEHHvmC-K2EC4B0ubOo15XEr9oCOs3DH_rei4HMv1DbBrQS4d-KrIVJEiZerWcwzzvvSIt1v-Cm8rHiOVdRrk8Px2bQIzOOZXfU6yzQN8mxEJ6hUfH65TogMKz0eGRD4FyjsyeB_Vqg=w1280',
       description: 'Preencha as informações básicas do produto: nome, descrição e categoria.',
       instructions: [
-        'No campo "Nome do Produto", digite o nome completo e claro',
-        'Preencha a "Descrição" com detalhes relevantes do produto',
-        'Selecione a "Categoria" apropriada no menu suspenso',
-        'Escolha a "Subcategoria" correspondente',
-        'Digite o "Código de Barras" se disponível',
-        'Defina a "Marca" do produto',
+        'Aba Endereços > Novo > Informe o "CEP" do cliente, e aperte a tecla "TAB" > Salvar',
+     
       ],
       tips: [
         'Use nomes descritivos que facilitem a busca posterior',
@@ -121,17 +111,13 @@ const InteractiveLesson = () => {
       id: 3,
       title: 'Configuração de Preços e Estoque',
       duration: '4:15',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=630&end=885',
+      videoUrl: '',
       image:
-        'https://images.pexels.com/photos/3760263/pexels-photo-3760263.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://lh3.googleusercontent.com/sitesv/AICyYdYsovDwpN0lAXaHNXfZOgERWJFLHqu_G05RB8AjR3zbism9lBSVR8mfXu2HvN8CTvz0fIdgs1PY0WT8-kYJ9sKH0MiKrEVFG02CAPt_H4CN8wLS8-Ca2V44bkm_iJqyI8MamAmJar2uBXmGBRXUOH69DvN17zdNL9XIcxU36FpVzXchRP1RSTFev4Ime-fO0li8Mlp1rDoSCw9TnQN5SgqUybyp_lCZf451=w1280',
       description: 'Configure preços, margem de lucro e informações de estoque.',
       instructions: [
-        'Digite o "Preço de Custo" sem incluir impostos',
-        'Defina a "Margem de Lucro" em percentual',
-        'O sistema calculará automaticamente o "Preço de Venda"',
-        'Insira a "Quantidade em Estoque" atual',
-        'Configure o "Estoque Mínimo" para alertas',
-        'Selecione a "Unidade de Medida" (peça, kg, litro, etc.)',
+        'Aba "Unidades Permitidas" > Selecione a unidade em que o cliente terá permissão para consumir > Clique na setinha para a direita e prontinho!',
+  
       ],
       tips: [
         'Sempre use vírgula para separar decimais, não ponto',
@@ -150,17 +136,13 @@ const InteractiveLesson = () => {
       id: 4,
       title: 'Upload de Imagens e Finalização',
       duration: '3:30',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=885&end=1095',
+      videoUrl: '',
       image:
-        'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://lh3.googleusercontent.com/sitesv/AICyYdbc9atDs3xYnoaFdo3UjcNDyopcE8ZoNiQQTb1X54GSpZVCCzoFCTlc76SWvVZHkReVBEbnBKm1Lptb-3LGrKbSzheztEHHvmC-K2EC4B0ubOo15XEr9oCOs3DH_rei4HMv1DbBrQS4d-KrIVJEiZerWcwzzvvSIt1v-Cm8rHiOVdRrk8Px2bQIzOOZXfU6yzQN8mxEJ6hUfH65TogMKz0eGRD4FyjsyeB_Vqg=w1280',
       description: 'Adicione imagens do produto e finalize o cadastro.',
       instructions: [
         'Clique em "Adicionar Imagem" na seção de fotos',
-        'Selecione uma imagem de boa qualidade do produto',
-        'Aguarde o upload e verifique se a imagem apareceu corretamente',
-        'Adicione até 3 imagens diferentes do produto',
-        'Marque uma imagem como "Principal" para exibição',
-        'Revise todos os dados preenchidos antes de salvar',
+   
       ],
       tips: [
         'Use imagens com resolução mínima de 800x600 pixels',
@@ -175,35 +157,7 @@ const InteractiveLesson = () => {
         'Não definir uma imagem principal',
       ],
     },
-    {
-      id: 5,
-      title: 'Validação e Salvamento',
-      duration: '2:30',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=1095&end=1245',
-      image:
-        'https://images.pexels.com/photos/3184317/pexels-photo-3184317.jpeg?auto=compress&cs=tinysrgb&w=800',
-      description: 'Valide todas as informações e salve o produto no sistema.',
-      instructions: [
-        'Clique no botão "Validar Dados" para verificar erros',
-        'Corrija qualquer erro apontado pelo sistema',
-        'Revise mais uma vez todos os campos preenchidos',
-        'Clique em "Salvar Produto" para finalizar o cadastro',
-        'Aguarde a confirmação de que o produto foi salvo',
-        'Anote o código do produto gerado pelo sistema',
-      ],
-      tips: [
-        'O sistema sempre valida antes de salvar',
-        'Campos obrigatórios são marcados com asterisco (*)',
-        'O código do produto é gerado automaticamente',
-        'Após salvar, o produto já fica disponível para venda',
-      ],
-      commonMistakes: [
-        'Não aguardar a validação completa',
-        'Ignorar mensagens de erro do sistema',
-        'Não anotar o código do produto gerado',
-        'Sair da tela antes da confirmação de salvamento',
-      ],
-    },
+ 
   ]
 
   const currentStepData = steps[currentStep]
@@ -429,9 +383,9 @@ const InteractiveLesson = () => {
             </div>
 
             {/* Step Content */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-900">
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6 w-[1100px]">
+              <div className="flex items-center justify-center mb-4">
+                <h2 className="text-2xl font-bold text-gray-900 ">
                   {currentStepData.title}
                 </h2>
                 <span className="text-sm text-gray-500">
@@ -444,11 +398,11 @@ const InteractiveLesson = () => {
               </p>
 
               {/* Step Image */}
-              <div className="mb-6">
+              <div className="flex justify-center">
                 <img
                   src={currentStepData.image}
                   alt={currentStepData.title}
-                  className="w-full h-64 object-cover rounded-lg"
+                  className="w-[600px] h-70 object-cover rounded-lg"
                 />
               </div>
 
@@ -519,76 +473,7 @@ const InteractiveLesson = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
-            {/* Tips */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <button
-                onClick={() => setShowTips(!showTips)}
-                className="w-full flex items-center justify-between text-lg font-bold text-gray-900 mb-4"
-              >
-                Dicas Importantes
-                <ArrowRight
-                  className={`h-5 w-5 transition-transform ${
-                    showTips ? 'rotate-90' : ''
-                  }`}
-                />
-              </button>
-
-              {showTips && (
-                <ul className="space-y-3">
-                  {currentStepData.tips.map((tip, index) => (
-                    <li key={index} className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">{tip}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {/* Common Mistakes */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                Erros Comuns
-              </h3>
-              <ul className="space-y-3">
-                {currentStepData.commonMistakes.map((mistake, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-red-500 mr-2 mt-1">•</span>
-                    <span className="text-gray-700">{mistake}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Tutorial Summary */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                Resumo do Tutorial
-              </h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Instrutor:</span>
-                  <span className="font-medium">{tutorial.instructor}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Duração Total:</span>
-                  <span className="font-medium">{tutorial.duration}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Etapas:</span>
-                  <span className="font-medium">{steps.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Progresso:</span>
-                  <span className="font-medium">
-                    {Math.round((completedSteps.length / steps.length) * 100)}%
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>

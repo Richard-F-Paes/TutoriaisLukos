@@ -23,11 +23,11 @@ const CategoryGrid = ({
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mt-12  mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{title}</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">{subtitle}</p>
+        <div className="text-center mb-12 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 h-60 ro flex items-center rounded-xl flex-col text-center justify-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">{title}</h1>
+          <p className="text-xl text-blue-100 max-w-3xl mx-auto">{subtitle}</p>
         </div>
 
         {/* Highlight Section */}

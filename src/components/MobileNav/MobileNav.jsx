@@ -5,7 +5,6 @@ export default function BottomNavModern() {
   const [active, setActive] = useState("home");
   const [openMenu, setOpenMenu] = useState(false);
 
-  // Menu inferior principal
   const menuItems = [
     { id: "home", label: "Início", icon: <Home size={22} /> },
     { id: "search", label: "Buscar", icon: <Fuel size={22} /> },
@@ -13,7 +12,6 @@ export default function BottomNavModern() {
     { id: "profile", label: "Perfil", icon: <BarChart size={22} /> },
   ];
 
-  // Menu flutuante central (ícones + nome)
   const floatingItems = [
     { id: "pista", label: "Pista", icon: <Home size={20} /> },
     { id: "conveniencia", label: "Conveniencia", icon: <Fuel size={20} /> },
@@ -25,7 +23,7 @@ export default function BottomNavModern() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-md flex justify-around items-center h-16 z-50 rounded-t-2xl">
+    <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-md flex justify-around items-center h-16 z-50 rounded-t-2xl px-2 sm:px-6">
       {/* Ícones laterais esquerda */}
       {menuItems.slice(0, 2).map((item) => (
         <button
@@ -53,11 +51,11 @@ export default function BottomNavModern() {
 
         {/* Menu flutuante */}
         {openMenu && (
-          <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 grid grid-cols-2 gap-3 bg-white p-4  w-[450px] rounded-xl shadow-lg">
+          <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 bg-white p-4 w-[90vw] sm:w-[450px] rounded-xl shadow-lg max-w-[450px]">
             {floatingItems.map((item) => (
               <button
                 key={item.id}
-                className="bg-white text-blue-600 px-4 py-2 rounded-lg shadow flex items-center space-x-2 hover:bg-blue-50 transition"
+                className="bg-white text-blue-600 px-2 sm:px-4 py-2 rounded-lg shadow flex items-center space-x-2 hover:bg-blue-50 transition text-xs sm:text-sm"
                 onClick={() => {
                   alert(`${item.label} clicada!`);
                   setOpenMenu(false);

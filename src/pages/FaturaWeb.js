@@ -24,8 +24,7 @@ import Page from '../components/Page/Page';
 function Faturaweb() {
   return (
     <>
-      <Page />
-        <BlogHeader />
+    
 
         
       

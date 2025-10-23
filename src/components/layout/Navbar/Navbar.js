@@ -14,19 +14,22 @@ const Navbar = () => {
     { path: '/retaguarda', label: 'Retaguarda', icon: Settings },
     { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
     { path: '/lukos-pay', label: 'Lukos Pay', icon: CreditCard },
-    { path: '/sobre', label: 'Sobre', icon: Users },
+    { path: '/Pré-Venda', label: 'Pré-Venda', icon: Users },
+    { path: '/FaturaWeb', label: 'Fatura Web', icon: Users },
     
   ]
 
   const isActive = (path) => location.pathname === path
 
   return (
-    <header className=" flex justify-center bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-100 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className=" sm flex justify-center bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-100 sticky top-0 z-50  ">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div className="flex justify-between items-center h-16 src">
+          
           {/* Logo */}
           <Link to="/" className="flex items-center justify space-x-3 group"
-          >
+           >
+            
               {/* Logo no topo */}
        
 

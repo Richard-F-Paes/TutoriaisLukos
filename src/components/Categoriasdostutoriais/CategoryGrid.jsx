@@ -23,9 +23,9 @@ const CategoryGrid = ({
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mt-12  mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-8xl mt-12   mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 h-60 ro flex items-center rounded-xl flex-col text-center justify-center">
+        <div className="text-center mb-12 bg-gradient-to-r from-blue-600  via-blue-700 to-blue-800 h-60  ro flex items-center rounded-xl flex-col text-center justify-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">{title}</h1>
           <p className="text-xl text-blue-100 max-w-3xl mx-auto">{subtitle}</p>
         </div>
@@ -102,7 +102,7 @@ const CategoryGrid = ({
         </p>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 xl:p-12   gap-6">
           {filteredData.map((item) => {
             const Icon = item.icon;
             return (
@@ -135,7 +135,7 @@ const CategoryGrid = ({
                     to={item.link}
                     className="block text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                   >
-                    Gerenciar
+                    Ver Tutorial
                   </Link>
                 </div>
               </div>

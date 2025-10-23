@@ -14,7 +14,8 @@ function Dashboard() {
     icon: Key,   
     color: "from-indigo-500 to-indigo-700", 
     description: "Gerenciamento de clientes, fornecedores e usuários do sistema.",
-    link: "/pages/GeradorSenha"  // 🔗 link interno
+    link: "/pages/GeradorSenha",  // 🔗 link interno
+    features: ["Dashboard", "Dashboard", "Dashboard"],
   },
   { 
     id: 2, 

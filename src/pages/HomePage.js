@@ -42,6 +42,7 @@ import Categories from '../components/Categoriasdostutoriais/Categoriaisdostutor
 import TutorialDetailPage from './TutorialDetailPage';
 import MobileNav from '../components/MobileNav/MobileNav';
 import CardTutoriais from '../components/CardTutoriais/CardTutoriais';
+import InputSearch from '../components/InputSearch/InputSearch';
 
 
 
@@ -79,9 +80,9 @@ function HomePage() {
   return (
     <>
    
-
+      <InputSearch />
       <HeroTutorial />
-      <ExerciseCategories />
+
       <CardTutoriais />
       <MobileNav />
 

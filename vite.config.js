@@ -6,10 +6,10 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   // =================================================================
-  // ADICIONADO: Configuração base para o GitHub Pages
-  // O valor DEVE ser o nome exato do seu repositório, com barras.
+  // Configuração base - removida para desenvolvimento local
+  // Para produção, descomente a linha abaixo:
+  // base: "/TutoriaisLukos/",
   // =================================================================
-  base: "/TutoriaisLukos/",
 
   plugins: [react(), tailwindcss()],
   resolve: {

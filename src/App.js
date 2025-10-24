@@ -17,6 +17,8 @@ import CategoryPage from './pages/CategoryPage';
 import TutorialsPage from './pages/TutorialsPage';
 import TutorialDetailPage from './pages/TutorialDetailPage';
 import TutorialPage from './pages/TutorialPage';
+import TutorialsHomePage from './pages/TutorialsHomePage';
+import CategoryTutorialsPage from './pages/CategoryTutorialsPage';
 import AboutPage from './pages/AboutPage';
 import SearchPage from './pages/SearchPage';
 import LoginPage from './pages/LoginPage';
@@ -40,6 +42,11 @@ import Conveniencia from './pages/Conveniencia';
 import Pista from './pages/Pista';
 import GeradorSenha from './pages/Dashboard/GeradorSenha';
 import PrecoCombustivel from './pages/Dashboard/PrecoCombustivel';
+import CadastrosPage from './pages/CadastrosPage';
+import RetaguardaTutorialsPage from './pages/RetaguardaTutorialsPage';
+import ConvenienciaTutorialsPage from './pages/ConvenienciaTutorialsPage';
+import DashboardTutorialsPage from './pages/DashboardTutorialsPage';
+import PistaTutorialsPage from './pages/PistaTutorialsPage';
 
 
 
@@ -60,6 +67,17 @@ function App() {
               <Routes>
                 {/* Rotas públicas */}
                 <Route path="/" element={<HomePage />} />
+                
+                {/* Rotas dos Tutoriais Lukos */}
+                <Route path="/tutoriais" element={<TutorialsHomePage />} />
+                <Route path="/categoria/:category" element={<CategoryTutorialsPage />} />
+                <Route path="/tutorial/:tutorialId" element={<TutorialPage />} />
+                
+                {/* Rotas Hierárquicas */}
+                <Route path="/cadastros" element={<CadastrosPage />} />
+                <Route path="/retaguarda-tutoriais" element={<RetaguardaTutorialsPage />} />
+                
+                {/* Rotas antigas (mantidas para compatibilidade) */}
                 <Route path="/Retaguarda" element={<CategoriesPage />} />
                 <Route path="/categoria/:id" element={<CategoryPage />} />
                 <Route path="/Fatura Web" element={<TutorialsPage />} />
@@ -76,13 +94,16 @@ function App() {
                 <Route path="/lukos-pay" element={<Lukospos />} />
                 <Route path="/Conveniencia" element={<Conveniencia />} />
                 <Route path="/pista" element={<Pista />} />
-             
-                
 
                 {/* Rotas Dashboard */}
                 <Route path="/pages/GeradorSenha" element={<GeradorSenha />} />
                 <Route path="/pages/PrecoCombustivel" element={<PrecoCombustivel />} />                    
                 
+                {/* Rotas de Tutoriais por Seção */}
+                <Route path="/retaguarda-tutoriais" element={<RetaguardaTutorialsPage />} />
+                <Route path="/conveniencia-tutoriais" element={<ConvenienciaTutorialsPage />} />
+                <Route path="/dashboard-tutoriais" element={<DashboardTutorialsPage />} />
+                <Route path="/pista-tutoriais" element={<PistaTutorialsPage />} />
                 
                 {/* Rotas administrativas */}
                 <Route path="/admin" element={<AdminPage />} />

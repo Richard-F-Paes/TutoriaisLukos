@@ -9,10 +9,11 @@ const Navbar = () => {
 
   const navLinks = [
     { path: '/', label: 'Início', icon: Home },
-    { path: '/pista', label: 'Pista', icon: Fuel },
-    { path: '/Conveniencia', label: 'Conveniência', icon: ShoppingCart },
-    { path: '/retaguarda', label: 'Retaguarda', icon: Settings },
-    { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+    { path: '/tutoriais', label: 'Tutoriais', icon: BookOpen },
+    { path: '/pista-tutoriais', label: 'Pista', icon: Fuel },
+    { path: '/conveniencia-tutoriais', label: 'Conveniência', icon: ShoppingCart },
+    { path: '/retaguarda-tutoriais', label: 'Retaguarda', icon: Settings },
+    { path: '/dashboard-tutoriais', label: 'Dashboard', icon: BarChart3 },
     { path: '/lukos-pay', label: 'Lukos Pay', icon: CreditCard },
     { path: '/Pré-Venda', label: 'Pré-Venda', icon: Users },
     { path: '/FaturaWeb', label: 'Fatura Web', icon: Users },

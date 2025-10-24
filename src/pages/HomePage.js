@@ -82,7 +82,7 @@ function HomePage() {
    
       <InputSearch />
       <HeroTutorial />
-
+      
       <CardTutoriais />
       <MobileNav />
 

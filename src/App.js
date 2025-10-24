@@ -21,6 +21,7 @@ import TutorialsHomePage from './pages/TutorialsHomePage';
 import CategoryTutorialsPage from './pages/CategoryTutorialsPage';
 import AboutPage from './pages/AboutPage';
 import SearchPage from './pages/SearchPage';
+import GlobalSearch from './components/GlobalSearch/GlobalSearch';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';

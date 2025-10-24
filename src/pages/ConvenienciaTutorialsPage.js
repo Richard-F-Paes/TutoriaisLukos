@@ -46,175 +46,40 @@ import {
   ShoppingCart,
   Store,
   Package2,
-  TrendingDown
+  TrendingDown,
+  Monitor,
+  PieChart,
+  Activity,
+  Gauge,
+  Zap as ZapIcon,
+  CheckCircle2,
+  X,
+  FileX,
+  Printer,
+  Percent,
+  Archive
 } from 'lucide-react'
+import { getTutorialsByCategory } from '../data/lukosTutorials'
 
 const ConvenienciaTutorialsPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
 
-  const tutorials = [
-    // LOJA
-    {
-      id: 'venda-produtos-loja',
-      title: 'Venda de Produtos na Loja',
-      category: 'Loja',
-      subcategory: 'Vendas',
-      difficulty: 'Iniciante',
-      icon: ShoppingCart,
-      color: 'from-green-500 to-green-700',
-      videoUrl: '',
-      description: 'Processo completo de venda de produtos na loja de conveniência.',
-      instructions: [
-        {
-          step: 1,
-          title: 'Acesso ao PDV Loja',
-          description: 'Acesse o sistema PDV > Loja e configure o terminal',
-          duration: '1 min',
-          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=29',
-          tips: 'Verifique conexão com sistema e confirme operador',
-          focusArea: 'Acesso ao sistema'
-        },
-        {
-          step: 2,
-          title: 'Seleção de Produtos',
-          description: 'Selecione os produtos desejados pelo código de barras ou busca',
-          duration: '2 min',
-          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=30',
-          tips: 'Use leitor de código de barras e confirme produtos selecionados',
-          focusArea: 'Seleção de produtos'
-        },
-        {
-          step: 3,
-          title: 'Identificação do Cliente',
-          description: 'Identifique o cliente e configure forma de pagamento',
-          duration: '3 min',
-          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=31',
-          tips: 'Digite CPF/CNPJ se necessário e selecione forma de pagamento',
-          focusArea: 'Identificação do cliente'
-        },
-        {
-          step: 4,
-          title: 'Processamento da Venda',
-          description: 'Processe a venda e confirme os valores antes de finalizar',
-          duration: '3 min',
-          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=32',
-          tips: 'Revise valores totais e confirme dados do cliente',
-          focusArea: 'Processamento'
-        },
-        {
-          step: 5,
-          title: 'Finalização e Cupom',
-          description: 'Finalize a venda e emita o cupom fiscal',
-          duration: '2 min',
-          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=33',
-          tips: 'Emita cupom fiscal e confirme pagamento',
-          focusArea: 'Finalização'
-        }
-      ],
-      tips: [
-        'Sempre verifique preços antes da venda',
-        'Confirme dados do cliente quando necessário',
-        'Emita cupom fiscal corretamente',
-        'Valide forma de pagamento',
-        'Mantenha controle de estoque atualizado'
-      ],
-      commonMistakes: [
-        'Preços não atualizados',
-        'Dados do cliente incorretos',
-        'Cupom fiscal não emitido',
-        'Forma de pagamento não confirmada',
-        'Estoque não atualizado'
-      ],
-      resources: [
-        { name: 'Manual Loja', type: 'pdf', size: '2.0 MB' },
-        { name: 'Códigos de Barras', type: 'xlsx', size: '150 KB' }
-      ]
-    },
+  // Buscar tutoriais da Loja do arquivo lukosTutorials.js
+  const allTutorials = getTutorialsByCategory('PDV')
+  const tutorials = allTutorials.filter(tutorial => tutorial.subcategory === 'Loja')
 
-    // ESTOQUE
-    {
-      id: 'gestao-estoque-conveniencia',
-      title: 'Gestão de Estoque - Conveniência',
-      category: 'Estoque',
-      subcategory: 'Controle',
-      difficulty: 'Intermediário',
-      icon: Package2,
-      color: 'from-blue-500 to-blue-700',
-      videoUrl: '',
-      description: 'Como gerenciar o estoque da loja de conveniência.',
-      instructions: [
-        {
-          step: 1,
-          title: 'Acesso ao Controle de Estoque',
-          description: 'Acesse o menu Retaguarda > Estoque > Consulta Estoque',
-          duration: '2 min',
-          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=34',
-          tips: 'Verifique permissões de acesso e confirme unidade operacional',
-          focusArea: 'Acesso ao sistema'
-        },
-        {
-          step: 2,
-          title: 'Consulta de Produtos',
-          description: 'Consulte produtos por categoria, departamento ou código',
-          duration: '3 min',
-          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=35',
-          tips: 'Use filtros para busca e verifique níveis de estoque',
-          focusArea: 'Consulta de produtos'
-        },
-        {
-          step: 3,
-          title: 'Controle de Validade',
-          description: 'Monitore produtos próximos do vencimento',
-          duration: '4 min',
-          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=36',
-          tips: 'Configure alertas de validade e monitore produtos críticos',
-          focusArea: 'Controle de validade'
-        },
-        {
-          step: 4,
-          title: 'Reposição Automática',
-          description: 'Configure reposição automática para produtos essenciais',
-          duration: '5 min',
-          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=37',
-          tips: 'Configure pontos de reposição e defina quantidades mínimas',
-          focusArea: 'Reposição automática'
-        },
-        {
-          step: 5,
-          title: 'Relatórios de Estoque',
-          description: 'Gere relatórios de movimentação e análise de estoque',
-          duration: '3 min',
-          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=38',
-          tips: 'Gere relatório de movimentação e analise produtos mais vendidos',
-          focusArea: 'Relatórios'
-        }
-      ],
-      tips: [
-        'Monitore níveis de estoque regularmente',
-        'Configure alertas de validade',
-        'Use reposição automática para produtos essenciais',
-        'Analise relatórios de movimentação',
-        'Mantenha estoque mínimo adequado'
-      ],
-      commonMistakes: [
-        'Não monitorar níveis de estoque',
-        'Ignorar alertas de validade',
-        'Reposição automática mal configurada',
-        'Não analisar relatórios',
-        'Estoque mínimo inadequado'
-      ],
-      resources: [
-        { name: 'Manual Estoque', type: 'pdf', size: '2.5 MB' },
-        { name: 'Planilha Controle', type: 'xlsx', size: '200 KB' }
-      ]
+  // Criar categorias baseadas nos tutoriais encontrados
+  const subcategories = [...new Set(tutorials.map(tutorial => tutorial.subcategory))]
+  const categories = subcategories.map(subcategory => {
+    const count = tutorials.filter(tutorial => tutorial.subcategory === subcategory).length
+    return {
+      name: subcategory,
+      icon: subcategory === 'Loja' ? ShoppingCart : ZapIcon,
+      color: subcategory === 'Loja' ? 'from-green-500 to-green-700' : 'from-orange-500 to-orange-700',
+      count: count
     }
-  ]
-
-  const categories = [
-    { name: 'Loja', icon: Store, color: 'from-green-500 to-green-700', count: 1 },
-    { name: 'Estoque', icon: Package2, color: 'from-blue-500 to-blue-700', count: 1 }
-  ]
+  })
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -230,7 +95,7 @@ const ConvenienciaTutorialsPage = () => {
   }
 
   const filteredTutorials = selectedCategory 
-    ? tutorials.filter(tutorial => tutorial.category === selectedCategory)
+    ? tutorials.filter(tutorial => tutorial.subcategory === selectedCategory)
     : tutorials
 
   return (
@@ -335,7 +200,7 @@ const ConvenienciaTutorialsPage = () => {
                       {tutorial.difficulty}
                     </span>
                     <span className="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-gray-900 bg-opacity-70 text-white text-xs font-semibold flex items-center">
-                      <Clock className="w-3 h-3 mr-1" /> {tutorial.instructions.reduce((total, inst) => total + parseInt(inst.duration), 0)} min
+                      <Clock className="w-3 h-3 mr-1" /> {tutorial.duration}
                     </span>
                   </div>
                   <div className="p-6">
@@ -356,7 +221,7 @@ const ConvenienciaTutorialsPage = () => {
                       <div className="flex items-center">
                         <Star className="w-4 h-4 text-yellow-400 mr-1" />
                         <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                          {tutorial.instructions.length} passos
+                          {tutorial.steps.length} passos
                         </span>
                       </div>
                     </div>
@@ -385,7 +250,10 @@ const ConvenienciaTutorialsPage = () => {
             </div>
             <div className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-700' : 'bg-white shadow-lg'}`}>
               <div className="text-3xl font-bold text-purple-500 mb-2">
-                {filteredTutorials.reduce((total, tutorial) => total + tutorial.instructions.reduce((sum, inst) => sum + parseInt(inst.duration), 0), 0)}
+                {filteredTutorials.reduce((total, tutorial) => {
+                  const duration = tutorial.duration.replace(' min', '')
+                  return total + parseInt(duration)
+                }, 0)}
               </div>
               <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Minutos de Conteúdo</div>
             </div>

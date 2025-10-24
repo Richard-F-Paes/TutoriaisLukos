@@ -702,33 +702,34 @@ const InteractiveLesson = ({
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className={`sticky top-0 z-50 px-8 py-6 backdrop-blur-2xl border-b ${
+        className={`sticky top-0 z-50 px-4 sm:px-8 py-4 sm:py-6 backdrop-blur-2xl border-b ${
           isDarkMode 
             ? 'bg-gray-900/80 border-white/20 shadow-2xl shadow-black/40' 
             : 'bg-white/80 border-gray-200/50 shadow-2xl shadow-gray-900/10'
         }`}
       >
-        <div className="flex items-center justify-center max-w-6xl mx-auto">
-          <div className="flex items-center gap-6">
+        <div className="flex items-center justify-between max-w-6xl mx-auto">
+          {/* Logo e título - responsivo */}
+          <div className="flex items-center gap-3 sm:gap-6 flex-1 min-w-0">
             <motion.div 
               whileHover={{ scale: 1.05, rotate: 5 }}
               whileTap={{ scale: 0.95 }}
-              className={`w-16 h-16 rounded-3xl flex items-center justify-center text-white text-3xl relative overflow-hidden cursor-pointer group ${
+              className={`w-12 h-12 sm:w-16 sm:h-16 rounded-3xl flex items-center justify-center text-white text-3xl relative overflow-hidden cursor-pointer group ${
                 isDarkMode 
                   ? 'bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 shadow-2xl shadow-indigo-500/40' 
                   : 'bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 shadow-2xl shadow-blue-500/40'
               }`}
             >
-              <GraduationCap className="w-8 h-8" />
+              <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8" />
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             </motion.div>
             
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0 flex-1">
               <motion.h1 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
-                className={`text-2xl font-bold m-0 tracking-wide bg-gradient-to-r bg-clip-text text-transparent ${
+                className={`text-lg sm:text-2xl font-bold m-0 tracking-wide bg-gradient-to-r bg-clip-text text-transparent truncate ${
                   isDarkMode 
                     ? 'from-white to-gray-300' 
                     : 'from-gray-900 to-gray-600'
@@ -740,7 +741,7 @@ const InteractiveLesson = ({
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
-                className={`text-sm m-0 ${
+                className={`text-xs sm:text-sm m-0 truncate ${
                   isDarkMode ? 'text-gray-400' : 'text-gray-500'
                 }`}
               >
@@ -749,7 +750,8 @@ const InteractiveLesson = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* Badges - ocultos no mobile */}
+          <div className="hidden lg:flex items-center gap-4">
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -804,12 +806,13 @@ const InteractiveLesson = ({
             </motion.div>
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* Controles - sempre visíveis */}
+          <div className="flex items-center gap-2 sm:gap-4">
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowSidebarState(!showSidebarState)}
-              className={`w-14 h-14 rounded-2xl backdrop-blur-sm cursor-pointer flex items-center justify-center text-xl border-2 transition-all duration-300 group ${
+              className={`w-10 h-10 sm:w-14 sm:h-14 rounded-2xl backdrop-blur-sm cursor-pointer flex items-center justify-center text-xl border-2 transition-all duration-300 group ${
                 isDarkMode 
                   ? 'bg-white/10 border-white/20 text-gray-300 hover:bg-white/20 hover:border-white/30 hover:shadow-lg hover:shadow-white/10' 
                   : 'bg-gray-100/80 border-gray-200/50 text-gray-600 hover:bg-gray-200/80 hover:border-gray-300/50 hover:shadow-lg hover:shadow-gray-900/10'
@@ -820,14 +823,14 @@ const InteractiveLesson = ({
                 transition={{ duration: 0.3 }}
                 className="group-hover:scale-110 transition-transform duration-300"
               >
-                {showSidebarState ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {showSidebarState ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
               </motion.span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05, rotate: 15, y: -2 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className={`w-14 h-14 rounded-2xl backdrop-blur-sm cursor-pointer flex items-center justify-center text-xl border-2 transition-all duration-300 group ${
+              className={`w-10 h-10 sm:w-14 sm:h-14 rounded-2xl backdrop-blur-sm cursor-pointer flex items-center justify-center text-xl border-2 transition-all duration-300 group ${
                 isDarkMode 
                   ? 'bg-white/10 border-white/20 text-gray-300 hover:bg-white/20 hover:border-white/30 hover:shadow-lg hover:shadow-white/10' 
                   : 'bg-gray-100/80 border-gray-200/50 text-gray-600 hover:bg-gray-200/80 hover:border-gray-300/50 hover:shadow-lg hover:shadow-gray-900/10'
@@ -838,7 +841,7 @@ const InteractiveLesson = ({
                 transition={{ duration: 0.3 }}
                 className="group-hover:scale-110 transition-transform duration-300"
               >
-                {isDarkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+                {isDarkMode ? <Sun className="w-5 h-5 sm:w-6 sm:h-6" /> : <Moon className="w-5 h-5 sm:w-6 sm:h-6" />}
               </motion.span>
             </motion.button>
           </div>
@@ -870,29 +873,29 @@ const InteractiveLesson = ({
       </motion.header>
 
       {/* SIDEBAR HORIZONTAL NO TOPO */}
-      <section className={`px-8 py-8 backdrop-blur-xl border-b ${
+      <section className={`px-4 sm:px-8 py-4 sm:py-8 backdrop-blur-xl border-b ${
         isDarkMode 
           ? 'bg-gray-900/95 border-white/10' 
           : 'bg-white/95 border-black/10'
       }`}>
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center mb-6">
+          <div className="flex items-center mb-4 sm:mb-6">
             <div className={`p-2 rounded-xl mr-3 ${
               isDarkMode 
                 ? 'bg-indigo-500/10' 
                 : 'bg-indigo-500/10'
             }`}>
-              <BookOpen className={`w-5 h-5 ${
+              <BookOpen className={`w-4 h-4 sm:w-5 sm:h-5 ${
                 isDarkMode ? 'text-indigo-400' : 'text-indigo-600'
               }`} />
             </div>
-            <h3 className={`text-lg font-semibold tracking-wide ${
+            <h3 className={`text-sm sm:text-lg font-semibold tracking-wide ${
               isDarkMode ? 'text-gray-100' : 'text-gray-900'
             }`}>
-              Passos do Tutorial ({completedSteps.length}/{filteredSteps.length})
+              Passos ({completedSteps.length}/{filteredSteps.length})
             </h3>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             {filteredSteps.map((step, index) => {
               const isCompleted = completedSteps.includes(index)
               const isCurrent = currentStep === index
@@ -907,7 +910,7 @@ const InteractiveLesson = ({
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setCurrentStep(index)}
-                  className={`p-4 rounded-2xl cursor-pointer relative overflow-hidden backdrop-blur-sm transition-all duration-300 group min-w-[200px] ${
+                  className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl cursor-pointer relative overflow-hidden backdrop-blur-sm transition-all duration-300 group w-full sm:w-auto sm:min-w-[200px] ${
                     isCurrent 
                       ? (isDarkMode 
                           ? 'border-2 border-indigo-400/60 bg-gradient-to-r from-indigo-500/20 to-purple-500/10 shadow-xl shadow-indigo-500/30' 
@@ -928,8 +931,8 @@ const InteractiveLesson = ({
                           : 'bg-gradient-to-r from-black/1 to-transparent')
                   }`}></div>
                   
-                  <div className="flex items-center gap-3 relative z-10">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                  <div className="flex items-center gap-2 sm:gap-3 relative z-10">
+                    <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold ${
                       isCompleted 
                         ? (isDarkMode 
                             ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30' 
@@ -942,30 +945,30 @@ const InteractiveLesson = ({
                               ? 'bg-white/10 text-gray-400' 
                               : 'bg-black/10 text-gray-500')
                     }`}>
-                      {isCompleted ? <CheckCircle className="w-4 h-4" /> : index + 1}
+                      {isCompleted ? <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" /> : index + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className={`text-sm font-semibold m-0 mb-1 tracking-normal truncate ${
+                      <h4 className={`text-xs sm:text-sm font-semibold m-0 mb-1 tracking-normal truncate ${
                         isDarkMode ? 'text-gray-100' : 'text-gray-900'
                       }`}>
                         {step.title}
                       </h4>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-xs px-2 py-1 rounded-lg border flex items-center gap-1 ${
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <span className={`text-xs px-1 sm:px-2 py-1 rounded-lg border flex items-center gap-1 ${
                           isDarkMode 
                             ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' 
                             : 'text-emerald-600 bg-emerald-500/10 border-emerald-500/20'
                         }`}>
-                          <Clock className="w-3 h-3" />
-                          {step.duration}
+                          <Clock className="w-2 h-2 sm:w-3 sm:h-3" />
+                          <span className="hidden sm:inline">{step.duration}</span>
                         </span>
                         {isFavorite && (
-                          <span className={`text-xs px-2 py-1 rounded-lg border flex items-center gap-1 ${
+                          <span className={`text-xs px-1 sm:px-2 py-1 rounded-lg border flex items-center gap-1 ${
                             isDarkMode 
                               ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' 
                               : 'text-yellow-600 bg-yellow-500/10 border-yellow-500/20'
                           }`}>
-                            <Star className="w-3 h-3 fill-current" />
+                            <Star className="w-2 h-2 sm:w-3 sm:h-3 fill-current" />
                           </span>
                         )}
                       </div>
@@ -981,13 +984,13 @@ const InteractiveLesson = ({
       {/* CONTEÚDO PRINCIPAL */}
       <main className="min-h-[calc(100vh-120px)]">
         {/* ÁREA PRINCIPAL CENTRALIZADA */}
-        <div className="max-w-6xl mx-auto px-8 py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-4 sm:py-8">
             {/* PLAYER DE VÍDEO PROFISSIONAL */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className={`rounded-3xl overflow-hidden mb-8 relative ${
+              className={`rounded-2xl sm:rounded-3xl overflow-hidden mb-6 sm:mb-8 relative ${
                 isDarkMode 
                   ? 'bg-gray-900/95 border border-white/10 shadow-2xl shadow-black/40' 
                   : 'bg-white/95 border border-black/10 shadow-2xl shadow-black/10'
@@ -1002,19 +1005,19 @@ const InteractiveLesson = ({
               
               <div className="relative z-20">
                 {/* VÍDEO OU IMAGEM */}
-                <div className="relative bg-black rounded-t-3xl">
+                <div className="relative bg-black rounded-t-2xl sm:rounded-t-3xl">
                   {currentStepData?.videoUrl && currentStepData.videoUrl !== '' ? (
                     <iframe
                       src={currentStepData.videoUrl}
                       title="Tutorial Video"
                       width="100%"
-                      height="450"
-                      className="rounded-t-3xl"
+                      height="250"
+                      className="rounded-t-2xl sm:rounded-t-3xl sm:h-[450px]"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     ></iframe>
                   ) : (
-                    <div className="relative w-full h-[450px] rounded-t-3xl overflow-hidden">
+                    <div className="relative w-full h-[250px] sm:h-[450px] rounded-t-2xl sm:rounded-t-3xl overflow-hidden">
                       <img
                         src={currentStepData?.image || "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=450&fit=crop&crop=center"}
                         alt={currentStepData?.title || "Tutorial Image"}
@@ -1024,67 +1027,67 @@ const InteractiveLesson = ({
                         }}
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                      <div className="absolute top-4 right-4">
-                        <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
-                          <BookOpen className="w-6 h-6 text-white" />
+                      <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
+                        <div className="bg-white/20 backdrop-blur-sm rounded-full p-2 sm:p-3">
+                          <BookOpen className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                         </div>
                       </div>
                     </div>
                   )}
                   
                   {/* CUSTOM VIDEO CONTROLS OVERLAY */}
-                  <div className={`absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent transition-opacity duration-300 flex items-end p-6 ${
+                  <div className={`absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent transition-opacity duration-300 flex items-end p-3 sm:p-6 ${
                     showVideoControls ? 'opacity-100' : 'opacity-0'
                   }`}>
                     <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 sm:gap-4">
                         <motion.button 
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 text-white hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center group"
+                          className="bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-3 text-white hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center group"
                         >
-                          {isVideoPlaying ? <Pause className="w-6 h-6 group-hover:scale-110 transition-transform" /> : <Play className="w-6 h-6 group-hover:scale-110 transition-transform" />}
+                          {isVideoPlaying ? <Pause className="w-4 h-4 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" /> : <Play className="w-4 h-4 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />}
                         </motion.button>
                         <motion.button 
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           onClick={() => setIsMuted(!isMuted)}
-                          className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 text-white hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center group"
+                          className="bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-3 text-white hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center group"
                         >
-                          {isMuted ? <VolumeX className="w-6 h-6 group-hover:scale-110 transition-transform" /> : <Volume2 className="w-6 h-6 group-hover:scale-110 transition-transform" />}
+                          {isMuted ? <VolumeX className="w-4 h-4 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" /> : <Volume2 className="w-4 h-4 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />}
                         </motion.button>
                       </div>
                       <motion.button 
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 text-white hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center group"
+                        className="bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-3 text-white hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center group"
                       >
-                        <Maximize className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                        <Maximize className="w-4 h-4 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
                       </motion.button>
                     </div>
                   </div>
                 </div>
                 
                 {/* CONTROLES DO VÍDEO */}
-                <div className={`p-6 backdrop-blur-sm border-t ${
+                <div className={`p-3 sm:p-6 backdrop-blur-sm border-t ${
                   isDarkMode 
                     ? 'bg-gray-900/80 border-white/10' 
                     : 'bg-white/80 border-black/10'
                 }`}>
-                  <div className="flex justify-between items-center mb-4">
-                    <div className={`px-4 py-2 rounded-full text-sm font-medium ${
+                  <div className="flex justify-between items-center mb-3 sm:mb-4">
+                    <div className={`px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium ${
                       isDarkMode 
                         ? 'bg-black/80 text-white' 
                         : 'bg-black/80 text-white'
                     } backdrop-blur-sm`}>
                       Passo {currentStep + 1} de {filteredSteps.length}
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex gap-2 sm:gap-4">
                       <motion.button
                         whileHover={{ scale: 1.1, rotate: 10 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => toggleFavorite(currentStep)}
-                        className={`rounded-2xl w-16 h-16 flex items-center justify-center text-2xl backdrop-blur-sm border-2 transition-all duration-300 group ${
+                        className={`rounded-xl sm:rounded-2xl w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center text-2xl backdrop-blur-sm border-2 transition-all duration-300 group ${
                           favoriteSteps.includes(currentStep) 
                             ? (isDarkMode 
                                 ? 'bg-gradient-to-br from-yellow-500 to-orange-500 text-white border-yellow-400/50 shadow-xl shadow-yellow-500/30' 
@@ -1095,7 +1098,7 @@ const InteractiveLesson = ({
                         }`}
                       >
                         <span className="group-hover:scale-110 transition-transform duration-300">
-                          <Star className={`w-6 h-6 ${favoriteSteps.includes(currentStep) ? 'fill-current' : ''}`} />
+                          <Star className={`w-4 h-4 sm:w-6 sm:h-6 ${favoriteSteps.includes(currentStep) ? 'fill-current' : ''}`} />
                         </span>
                       </motion.button>
                     </div>
@@ -1109,17 +1112,17 @@ const InteractiveLesson = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className={`rounded-xl p-6 mb-8 shadow-lg ${
+              className={`rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg ${
                 isDarkMode ? 'bg-gray-800' : 'bg-white'
               }`}
             >
-              <div className="text-center mb-8">
-                <h2 className={`text-3xl font-bold m-0 mb-4 tracking-wide ${
+              <div className="text-center mb-6 sm:mb-8">
+                <h2 className={`text-xl sm:text-3xl font-bold m-0 mb-3 sm:mb-4 tracking-wide ${
                   isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}>
                   {currentStepData?.title || 'Nenhum passo selecionado'}
                 </h2>
-                <p className={`text-lg m-0 leading-relaxed tracking-normal ${
+                <p className={`text-sm sm:text-lg m-0 leading-relaxed tracking-normal ${
                   isDarkMode ? 'text-gray-300' : 'text-gray-600'
                 }`}>
                   {currentStepData?.description || 'Selecione uma categoria para ver os passos disponíveis.'}
@@ -1127,7 +1130,7 @@ const InteractiveLesson = ({
               </div>
 
               {/* NAVEGAÇÃO */}
-              <div className={`flex justify-between items-center pt-6 border-t ${
+              <div className={`flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0 pt-4 sm:pt-6 border-t ${
                 isDarkMode 
                   ? 'border-white/20' 
                   : 'border-gray-200/50'
@@ -1136,7 +1139,7 @@ const InteractiveLesson = ({
                   disabled={currentStep === 0}
                   whileHover={currentStep === 0 ? {} : { scale: 1.05, y: -2 }}
                   whileTap={currentStep === 0 ? {} : { scale: 0.95 }}
-                  className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 border-2 tracking-wide ${
+                  className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 border-2 tracking-wide text-sm sm:text-base w-full sm:w-auto justify-center ${
                     currentStep === 0 
                       ? 'bg-gray-200/50 text-gray-400 cursor-not-allowed border-gray-200/50' 
                       : (isDarkMode 
@@ -1145,15 +1148,16 @@ const InteractiveLesson = ({
                   }`}
                   onClick={handlePrevStep}
                 >
-                  <SkipBack className="w-5 h-5" />
-                  Passo Anterior
+                  <SkipBack className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="hidden sm:inline">Passo Anterior</span>
+                  <span className="sm:hidden">Anterior</span>
                 </motion.button>
                 
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => markStepAsCompleted(currentStep)}
-                  className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 border-2 tracking-wide ${
+                  className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 border-2 tracking-wide text-sm sm:text-base w-full sm:w-auto justify-center ${
                     completedSteps.includes(currentStep) 
                       ? (isDarkMode 
                           ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border-emerald-400/50 shadow-xl shadow-emerald-500/30' 
@@ -1165,11 +1169,15 @@ const InteractiveLesson = ({
                 >
                   {completedSteps.includes(currentStep) ? (
                     <>
-                      <CheckCircle className="w-5 h-5" />
-                      Concluído
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span className="hidden sm:inline">Concluído</span>
+                      <span className="sm:hidden">✓ Concluído</span>
                     </>
                   ) : (
-                    'Marcar como Concluído'
+                    <>
+                      <span className="hidden sm:inline">Marcar como Concluído</span>
+                      <span className="sm:hidden">Marcar Concluído</span>
+                    </>
                   )}
                 </motion.button>
                 
@@ -1177,7 +1185,7 @@ const InteractiveLesson = ({
                   disabled={currentStep === filteredSteps.length - 1}
                   whileHover={currentStep === filteredSteps.length - 1 ? {} : { scale: 1.05, y: -2 }}
                   whileTap={currentStep === filteredSteps.length - 1 ? {} : { scale: 0.95 }}
-                  className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 border-2 tracking-wide ${
+                  className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 border-2 tracking-wide text-sm sm:text-base w-full sm:w-auto justify-center ${
                     currentStep === filteredSteps.length - 1 
                       ? 'bg-gray-200/50 text-gray-400 cursor-not-allowed border-gray-200/50' 
                       : (isDarkMode 
@@ -1186,8 +1194,9 @@ const InteractiveLesson = ({
                   }`}
                   onClick={handleNextStep}
                 >
-                  Próximo Passo
-                  <SkipForward className="w-5 h-5" />
+                  <span className="hidden sm:inline">Próximo Passo</span>
+                  <span className="sm:hidden">Próximo</span>
+                  <SkipForward className="w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.button>
               </div>
             </motion.div>

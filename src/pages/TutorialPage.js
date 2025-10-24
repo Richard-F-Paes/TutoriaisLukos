@@ -49,7 +49,10 @@ const TutorialPage = () => {
       'Relatórios avançados e análises'
     ],
     equipment: 'Computador com acesso à internet, Sistema Lukos instalado',
-    totalTime: tutorial.steps.reduce((total, step) => total + step.duration, 0),
+    totalTime: (tutorial.steps || tutorial.instructions || []).reduce((total, step) => {
+      const duration = typeof step.duration === 'string' ? parseInt(step.duration.replace(' min', '')) : step.duration
+      return total + duration
+    }, 0),
     precautions: [
       'Faça backup dos dados antes de qualquer alteração',
       'Teste em ambiente de desenvolvimento primeiro',
@@ -66,7 +69,7 @@ const TutorialPage = () => {
   }
 
   // Criar steps individuais para cada passo do tutorial
-  const steps = tutorial.steps.map((step, index) => ({
+  const steps = (tutorial.steps || tutorial.instructions || []).map((step, index) => ({
     id: `${tutorial.id}-step-${index + 1}`,
     title: step.title,
     category: tutorial.category,
@@ -77,8 +80,8 @@ const TutorialPage = () => {
     instructions: [step], // Cada step é uma instrução individual
     tips: step.tips || tutorial.tips,
     commonMistakes: tutorial.commonMistakes,
-    timeMarkers: tutorial.steps.map((s, i) => ({
-      time: s.duration,
+    timeMarkers: (tutorial.steps || tutorial.instructions || []).map((s, i) => ({
+      time: typeof s.duration === 'string' ? parseInt(s.duration.replace(' min', '')) : s.duration,
       title: s.title,
       description: s.description
     })),

@@ -249,7 +249,13 @@ img {
   }
   
   .btn {
-    min-width: 160px;
+    min-width: 180px;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    min-height: 48px;
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.025em;
   }
   
   .card {
@@ -283,6 +289,14 @@ img {
 @media (min-width: 1280px) {
   .container {
     padding: 0 2.5rem;
+  }
+  
+  .btn {
+    min-width: 200px;
+    padding: 1.125rem 2.25rem;
+    font-size: 1.0625rem;
+    min-height: 52px;
+    border-radius: 14px;
   }
   
   .grid {

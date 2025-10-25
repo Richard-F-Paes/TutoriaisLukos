@@ -26,27 +26,23 @@ const Navbar = () => {
   return (
     <>
       <header className=" sm flex justify-center bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-100 sticky top-0 z-50  ">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
-          <div className="flex justify-between items-center h-16 src">
+        <div className="max-w-8xl mx-auto px-6 sm:px-8 lg:px-12 ">
+          <div className="flex justify-center items-center h-20 src">
             
             {/* Logo */}
-            <Link to="/" className="flex items-center justify space-x-3 group"
-             >
-              
-                {/* Logo no topo */}
-         
-
-            
-            
-        
-              <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent m-4 flex justify-center">
-                 Tutorial
-                </h1>
-               
-              </div>
+            <Link to="/" className="flex items-center justify-center space-x-6 group hover:scale-105 transition-all duration-300">
+              <img
+                src="logo.png"
+                alt="Logo Tutorial Lukos"
+                className="w-12 h-12 group-hover:opacity-80 transition-all duration-300"
+              />
+          
             </Link>
-
+            <div className="flex justify-baseline items-baseline">
+            <h1 className="text-[20px] m-8 font-bold bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:via-purple-600 group-hover:to-purple-700 transition-all duration-500 ease-in-out ">
+                Tutorial Lukos
+              </h1>
+            </div>
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-1">
               {navLinks.map((link) => {

@@ -213,28 +213,99 @@
 @media (min-width: 1024px) {
     .btn {
         width: auto;
-        padding: var(--space-4) var(--space-8);
-        font-size: var(--text-sm);
-        min-height: 44px;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        min-height: 48px;
+        border-radius: 12px;
+        font-weight: 600;
+        letter-spacing: 0.025em;
     }
     
     .btn-primary {
-        padding: var(--space-4) var(--space-8);
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        min-height: 48px;
     }
     
     .btn-secondary {
-        padding: var(--space-4) var(--space-8);
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        min-height: 48px;
     }
     
     .btn-large {
-        padding: var(--space-5) var(--space-10);
-        font-size: var(--text-lg);
-        min-height: 52px;
+        padding: 1.25rem 2.5rem;
+        font-size: 1.125rem;
+        min-height: 56px;
+        border-radius: 16px;
     }
     
     .btn-medium {
-        padding: var(--space-3) var(--space-6);
-        font-size: var(--text-sm);
+        padding: 0.875rem 1.75rem;
+        font-size: 0.875rem;
         min-height: 44px;
+    }
+    
+    .btn-small {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.75rem;
+        min-height: 36px;
+        border-radius: 8px;
+    }
+    
+    .btn-cta {
+        padding: 1.25rem 2.5rem;
+        font-size: 1.125rem;
+        min-height: 56px;
+        border-radius: 16px;
+    }
+}
+
+/* Desktop Large: 1280px+ */
+@media (min-width: 1280px) {
+    .btn {
+        padding: 1.125rem 2.25rem;
+        font-size: 1.0625rem;
+        min-height: 52px;
+        border-radius: 14px;
+    }
+    
+    .btn-primary {
+        padding: 1.125rem 2.25rem;
+        font-size: 1.0625rem;
+        min-height: 52px;
+    }
+    
+    .btn-secondary {
+        padding: 1.125rem 2.25rem;
+        font-size: 1.0625rem;
+        min-height: 52px;
+    }
+    
+    .btn-large {
+        padding: 1.5rem 3rem;
+        font-size: 1.25rem;
+        min-height: 64px;
+        border-radius: 18px;
+    }
+    
+    .btn-medium {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        min-height: 48px;
+    }
+    
+    .btn-small {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.875rem;
+        min-height: 40px;
+        border-radius: 10px;
+    }
+    
+    .btn-cta {
+        padding: 1.5rem 3rem;
+        font-size: 1.25rem;
+        min-height: 64px;
+        border-radius: 18px;
     }
 }

@@ -1530,12 +1530,23 @@ const RetaguardaTutorialsPage = () => {
           </button>
         </div>
 
-        <h1 className={`text-5xl font-extrabold mb-6 text-center ${isDarkMode ? 'text-white' : 'bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600'}`}>
-          Retaguarda - Tutoriais Completos
-        </h1>
-        <p className={`text-xl text-center mb-12 max-w-3xl mx-auto ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          Explore todos os tutoriais da Retaguarda do Sistema Lukos organizados por módulo.
-        </p>
+    {/* Layout com título principal e conteúdo à esquerda, imagem à direita */}
+        <div className="flex flex-row bg-white rounded-3xl p-8 items-center justify-between gap-8 mb-16">
+          {/* Texto à esquerda */}
+          <div className="flex-1 text-left">
+            <h1 className={`text-5xl text-center flex items-baseline font-extrabold mb-6 ${isDarkMode ? 'text-white' : 'bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600'}`}>
+              Retaguarda - Tutoriais Completos
+            </h1>
+            <p className={`text-xl text-center mt-4 mb-8 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Explore todos os tutoriais da Retaguarda do Sistema Lukos organizados por módulo.
+            </p>
+          </div>
+          
+          {/* Imagem à direita */}
+          <div className="flex-1 flex justify-center">
+            <img src="Laptop.png" alt="Retaguarda" className="w-[400px] max-w-full" />
+          </div>
+        </div>
 
         {/* Seção de Categorias */}
         <section className="mb-16">

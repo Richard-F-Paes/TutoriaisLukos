@@ -758,51 +758,6 @@ const InteractiveLesson = ({
               transition={{ delay: 0.4 }}
               className="flex items-center gap-3"
             >
-              <motion.div 
-                whileHover={{ scale: 1.05 }}
-                transition={{ delay: 0.3 }}
-                className={`px-3 py-1 rounded-full border ${
-                  isDarkMode 
-                    ? 'bg-emerald-500/10 border-emerald-500/20' 
-                    : 'bg-emerald-500/10 border-emerald-500/20'
-                }`}
-              >
-                <span className={`text-xs font-medium ${
-                  isDarkMode ? 'text-emerald-400' : 'text-emerald-600'
-                }`}>
-                  {tutorialData.rating} ⭐
-                </span>
-              </motion.div>
-              <motion.div 
-                whileHover={{ scale: 1.05 }}
-                transition={{ delay: 0.3 }}
-                className={`px-3 py-1 rounded-full border ${
-                  isDarkMode 
-                    ? 'bg-emerald-500/10 border-emerald-500/20' 
-                    : 'bg-emerald-500/10 border-emerald-500/20'
-                }`}
-              >
-                <span className={`text-xs font-medium ${
-                  isDarkMode ? 'text-emerald-400' : 'text-emerald-600'
-                }`}>
-                  ({tutorialData.studentsCount} alunos)
-                </span>
-              </motion.div>
-              <motion.div 
-                whileHover={{ scale: 1.05 }}
-                transition={{ delay: 0.3 }}
-                className={`px-3 py-1 rounded-full border ${
-                  isDarkMode 
-                    ? 'bg-emerald-500/10 border-emerald-500/20' 
-                    : 'bg-emerald-500/10 border-emerald-500/20'
-                }`}
-              >
-                <span className={`text-xs font-medium ${
-                  isDarkMode ? 'text-emerald-400' : 'text-emerald-600'
-                }`}>
-                  {tutorialData.difficulty}
-                </span>
-              </motion.div>
             </motion.div>
           </div>
 
@@ -895,7 +850,7 @@ const InteractiveLesson = ({
               Passos ({completedSteps.length}/{filteredSteps.length})
             </h3>
           </div>
-          <div className="flex flex-wrap gap-2 sm:gap-3">
+          <div className="flex flex-wrap gap-2 sm:gap-3 ">
             {filteredSteps.map((step, index) => {
               const isCompleted = completedSteps.includes(index)
               const isCurrent = currentStep === index
@@ -1021,7 +976,7 @@ const InteractiveLesson = ({
                       <img
                         src={currentStepData?.image || "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=450&fit=crop&crop=center"}
                         alt={currentStepData?.title || "Tutorial Image"}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover rounded-t-2xl sm:rounded-t-3xl"
                         onError={(e) => {
                           e.target.src = "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=450&fit=crop&crop=center";
                         }}
@@ -1068,11 +1023,34 @@ const InteractiveLesson = ({
                   </div>
                 </div>
                 
+                {/* TÍTULO DO TUTORIAL */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  className={`rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg ${
+                    isDarkMode ? 'bg-gray-800' : 'bg-white'
+                  }`}
+                >
+                  <div className="text-center mb-6 sm:mb-8">
+                    <h2 className={`text-xl sm:text-3xl font-bold m-0 mb-3 sm:mb-4 tracking-wide ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {currentStepData?.title || 'Nenhum passo selecionado'}
+                    </h2>
+                    <p className={`text-sm sm:text-lg m-0 leading-relaxed tracking-normal ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>
+                      {currentStepData?.description || 'Descrição não disponível'}
+                    </p>
+                  </div>
+                </motion.div>
+
                 {/* CONTROLES DO VÍDEO */}
-                <div className={`p-3 sm:p-6 backdrop-blur-sm border-t ${
+                <div className={`p-3 sm:p-6 backdrop-blur-sm ${
                   isDarkMode 
-                    ? 'bg-gray-900/80 border-white/10' 
-                    : 'bg-white/80 border-black/10'
+                    ? 'bg-gray-900/80' 
+                    : 'bg-white/80'
                 }`}>
                   <div className="flex justify-between items-center mb-3 sm:mb-4">
                     <div className={`px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium ${
@@ -1082,6 +1060,71 @@ const InteractiveLesson = ({
                     } backdrop-blur-sm`}>
                       Passo {currentStep + 1} de {filteredSteps.length}
                     </div>
+                    
+                    {/* BOTÕES DE NAVEGAÇÃO */}
+                    <div className="flex gap-8 sm:gap-3 w-[800px] justify-between h-14 ">
+                      <motion.button
+                        disabled={currentStep === 0}
+                        whileHover={currentStep === 0 ? {} : { scale: 1.05, y: -2 }}
+                        whileTap={currentStep === 0 ? {} : { scale: 0.95 }}
+                        className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 border text-xs sm:text-sm justify-center ${
+                          currentStep === 0 
+                            ? 'bg-gray-200/50 text-gray-400 cursor-not-allowed border-gray-200/50' 
+                            : (isDarkMode 
+                                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-500/50 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl hover:shadow-blue-500/30' 
+                                : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-500/50 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl hover:shadow-blue-500/30')
+                        }`}
+                        onClick={handlePrevStep}
+                      >
+                        <SkipBack className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">Anterior</span>
+                      </motion.button>
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => markStepAsCompleted(currentStep)}
+                        className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 border text-xs sm:text-sm justify-center ${
+                          completedSteps.includes(currentStep) 
+                            ? (isDarkMode 
+                                ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border-emerald-400/50 shadow-xl shadow-emerald-500/30' 
+                                : 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border-emerald-400/50 shadow-xl shadow-emerald-500/30')
+                            : (isDarkMode 
+                                ? 'bg-gradient-to-r from-gray-600 to-gray-700 text-white border-gray-500/50 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:shadow-gray-500/30' 
+                                : 'bg-gradient-to-r from-gray-600 to-gray-700 text-white border-gray-500/50 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:shadow-gray-500/30')
+                        }`}
+                      >
+                        {completedSteps.includes(currentStep) ? (
+                          <>
+                            <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                            <span className="hidden sm:inline">Concluído</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="hidden sm:inline">Marcar</span>
+                            <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                          </>
+                        )}
+                      </motion.button>
+                      
+                      <motion.button
+                        disabled={currentStep === filteredSteps.length - 1}
+                        whileHover={currentStep === filteredSteps.length - 1 ? {} : { scale: 1.05, y: -2 }}
+                        whileTap={currentStep === filteredSteps.length - 1 ? {} : { scale: 0.95 }}
+                        className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 border text-xs sm:text-sm justify-center ${
+                          currentStep === filteredSteps.length - 1 
+                            ? 'bg-gray-200/50 text-gray-400 cursor-not-allowed border-gray-200/50' 
+                            : (isDarkMode 
+                                ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white border-emerald-500/50 hover:from-emerald-700 hover:to-green-700 hover:shadow-xl hover:shadow-emerald-500/30' 
+                                : 'bg-gradient-to-r from-emerald-600 to-green-600 text-white border-emerald-500/50 hover:from-emerald-700 hover:to-green-700 hover:shadow-xl hover:shadow-emerald-500/30')
+                        }`}
+                        onClick={handleNextStep}
+                      >
+                        <span className="hidden sm:inline">Próximo</span>
+                        <SkipForward className="w-3 h-3 sm:w-4 sm:h-4" />
+                      </motion.button>
+                    </div>
+                    
                     <div className="flex gap-2 sm:gap-4">
                       <motion.button
                         whileHover={{ scale: 1.1, rotate: 10 }}
@@ -1107,99 +1150,6 @@ const InteractiveLesson = ({
               </div>
             </motion.div>
 
-            {/* TÍTULO DO TUTORIAL */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className={`rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg ${
-                isDarkMode ? 'bg-gray-800' : 'bg-white'
-              }`}
-            >
-              <div className="text-center mb-6 sm:mb-8">
-                <h2 className={`text-xl sm:text-3xl font-bold m-0 mb-3 sm:mb-4 tracking-wide ${
-                  isDarkMode ? 'text-white' : 'text-gray-900'
-                }`}>
-                  {currentStepData?.title || 'Nenhum passo selecionado'}
-                </h2>
-                <p className={`text-sm sm:text-lg m-0 leading-relaxed tracking-normal ${
-                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>
-                  {currentStepData?.description || 'Selecione uma categoria para ver os passos disponíveis.'}
-                </p>
-              </div>
-
-              {/* NAVEGAÇÃO */}
-              <div className={`flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0 pt-4 sm:pt-6 border-t ${
-                isDarkMode 
-                  ? 'border-white/20' 
-                  : 'border-gray-200/50'
-              }`}>
-                <motion.button
-                  disabled={currentStep === 0}
-                  whileHover={currentStep === 0 ? {} : { scale: 1.05, y: -2 }}
-                  whileTap={currentStep === 0 ? {} : { scale: 0.95 }}
-                  className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 border-2 tracking-wide text-sm sm:text-base w-full sm:w-auto justify-center ${
-                    currentStep === 0 
-                      ? 'bg-gray-200/50 text-gray-400 cursor-not-allowed border-gray-200/50' 
-                      : (isDarkMode 
-                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-500/50 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl hover:shadow-blue-500/30' 
-                          : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-500/50 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl hover:shadow-blue-500/30')
-                  }`}
-                  onClick={handlePrevStep}
-                >
-                  <SkipBack className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="hidden sm:inline">Passo Anterior</span>
-                  <span className="sm:hidden">Anterior</span>
-                </motion.button>
-                
-                <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => markStepAsCompleted(currentStep)}
-                  className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 border-2 tracking-wide text-sm sm:text-base w-full sm:w-auto justify-center ${
-                    completedSteps.includes(currentStep) 
-                      ? (isDarkMode 
-                          ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border-emerald-400/50 shadow-xl shadow-emerald-500/30' 
-                          : 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border-emerald-400/50 shadow-xl shadow-emerald-500/30')
-                      : (isDarkMode 
-                          ? 'bg-gradient-to-r from-gray-600 to-gray-700 text-white border-gray-500/50 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:shadow-gray-500/30' 
-                          : 'bg-gradient-to-r from-gray-600 to-gray-700 text-white border-gray-500/50 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:shadow-gray-500/30')
-                  }`}
-                >
-                  {completedSteps.includes(currentStep) ? (
-                    <>
-                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span className="hidden sm:inline">Concluído</span>
-                      <span className="sm:hidden">✓ Concluído</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="hidden sm:inline">Marcar como Concluído</span>
-                      <span className="sm:hidden">Marcar Concluído</span>
-                    </>
-                  )}
-                </motion.button>
-                
-                <motion.button
-                  disabled={currentStep === filteredSteps.length - 1}
-                  whileHover={currentStep === filteredSteps.length - 1 ? {} : { scale: 1.05, y: -2 }}
-                  whileTap={currentStep === filteredSteps.length - 1 ? {} : { scale: 0.95 }}
-                  className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 border-2 tracking-wide text-sm sm:text-base w-full sm:w-auto justify-center ${
-                    currentStep === filteredSteps.length - 1 
-                      ? 'bg-gray-200/50 text-gray-400 cursor-not-allowed border-gray-200/50' 
-                      : (isDarkMode 
-                          ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white border-emerald-500/50 hover:from-emerald-700 hover:to-green-700 hover:shadow-xl hover:shadow-emerald-500/30' 
-                          : 'bg-gradient-to-r from-emerald-600 to-green-600 text-white border-emerald-500/50 hover:from-emerald-700 hover:to-green-700 hover:shadow-xl hover:shadow-emerald-500/30')
-                  }`}
-                  onClick={handleNextStep}
-                >
-                  <span className="hidden sm:inline">Próximo Passo</span>
-                  <span className="sm:hidden">Próximo</span>
-                  <SkipForward className="w-4 h-4 sm:w-5 sm:h-5" />
-                </motion.button>
-              </div>
-            </motion.div>
         </div>
       </main>
       </div>

@@ -101,6 +101,7 @@ const ConvenienciaTutorialsPage = () => {
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
+      
       <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm border-b border-gray-200`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -117,6 +118,7 @@ const ConvenienciaTutorialsPage = () => {
                 Tutoriais de Conveniência
               </h1>
             </div>
+            
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
               className={`p-2 rounded-lg ${isDarkMode ? 'bg-gray-700 text-yellow-400' : 'bg-gray-100 text-gray-600'} hover:bg-gray-200 transition-colors`}
@@ -128,8 +130,27 @@ const ConvenienciaTutorialsPage = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Layout com título principal e conteúdo à esquerda, imagem à direita */}
+        <div className="flex flex-row bg-white rounded-3xl p-8 items-center justify-between gap-8 mb-16">
+          {/* Texto à esquerda */}
+          <div className="flex-1 text-left">
+            <h1 className={`text-5xl text-center flex items-baseline font-extrabold mb-6 ${isDarkMode ? 'text-white' : 'bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600'}`}>
+              Tutoriais de Conveniência
+            </h1>
+            <p className={`text-xl text-center mt-4 mb-8 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Explore todos os tutoriais da Conveniência do Sistema Lukos organizados por módulo.
+            </p>
+          </div>
+          
+          {/* Imagem à direita */}
+          <div className="flex-1 flex justify-center">
+            <img src="store.png" alt="Conveniência" className="w-[400px] max-w-full" />
+          </div>
+        </div>
+
         {/* Categories */}
         <div className="mb-8">
+          
           <h2 className={`text-2xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             Categorias
           </h2>
@@ -235,6 +256,7 @@ const ConvenienciaTutorialsPage = () => {
         {/* Stats */}
         <section className={`rounded-2xl p-8 ${isDarkMode ? 'bg-gray-800' : 'bg-gradient-to-r from-blue-50 to-purple-50'}`}>
           <h2 className={`text-2xl font-bold mb-6 text-center ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+            
             {selectedCategory ? `Estatísticas de ${selectedCategory}` : 'Estatísticas dos Tutoriais'}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

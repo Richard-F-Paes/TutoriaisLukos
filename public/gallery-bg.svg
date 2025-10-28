@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1920 2082.4" style="enable-background:new 0 0 1920 2082.4;" xml:space="preserve">
+<style type="text/css">
+	.st0{filter:url(#Filter_0);}
+	.st1{fill:url(#SVGID_1_);}
+	.st2{fill:#7569DE;}
+	.st3{fill:#FFCA2A;}
+</style>
+<filter  filterUnits="userSpaceOnUse" height="2684px" id="Filter_0" width="1930px" x="0px" y="0px">
+	<feOffset  dx="0" dy="26" in="SourceAlpha"></feOffset>
+	<feGaussianBlur  result="blurOut" stdDeviation="15.745"></feGaussianBlur>
+	<feFlood  flood-color="rgb(241, 43, 70)" result="floodOut"></feFlood>
+	<feComposite  in="floodOut" in2="blurOut" operator="atop"></feComposite>
+	<feComponentTransfer>
+		<feFuncA  slope=".3" type="linear"></feFuncA>
+	</feComponentTransfer>
+	<feMerge>
+		<feMergeNode></feMergeNode>
+		<feMergeNode  in="SourceGraphic"></feMergeNode>
+	</feMerge>
+</filter>
+<g class="st0">
+	
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0.7364" y1="1875.5177" x2="0.2364" y2="1875.0177" gradientTransform="matrix(2542.0886 0 0 -4030.2974 -105.0286 7558215)">
+		<stop  offset="0" style="stop-color:#FF4B64"/>
+		<stop  offset="1" style="stop-color:#F12B46"/>
+	</linearGradient>
+	<path class="st1" d="M418.6-1947.9c0,0,1233.3,995,1346.4,1084.5c68,53.8,217.6,175.7,279.4,329c63.7,158.2,196.5,293.8,247.6,358
+		c14,17.5,121.4,288.9,134.9,412.3c11.5,104.4,12.7,638,6.3,696c-54.5,498.8-244.8,1857.2-477.2,688.9
+		C1684.1,254,507.7,1646.8,3.9,723C-166.2,411-86.5,53.8-85.6,50.5C30-358.5,418.6-1947.9,418.6-1947.9z"/>
+</g>
+<path class="st2" d="M2006.5,1440.2c-41.4,82.4-170,86.1-219.6,8.2c-50-78.7,5.5-165.3,93.9-173c78.7-6.9,160.5,73,130.8,153.2
+	C2010.1,1432.6,2008.4,1436.5,2006.5,1440.2z"/>
+</svg>

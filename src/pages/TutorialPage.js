@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Home } from 'lucide-react'
-import InteractiveLesson from '../components/InteractiveLesson/InteractiveLesson'
+import { Home } from 'lucide-react'
+import TutorialPlayer from '../components/TutorialPlayer/TutorialPlayer'
 import { getTutorialById } from '../data/lukosTutorials'
 import { getRetaguardaTutorialById } from '../data/retaguardaTutorials'
 
@@ -99,60 +99,23 @@ const TutorialPage = () => {
     resources: tutorial.resources
   }))
 
-  const categories = ['Todos', tutorial.category]
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header com navegação */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <Link 
-                to="/"
-                className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-600 transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar
-              </Link>
-              <div className="h-6 w-px bg-gray-300"></div>
-              <div>
-                <h1 className="text-lg font-semibold text-gray-900">{tutorial.title}</h1>
-                <p className="text-sm text-gray-500">{tutorial.category} • {tutorial.difficulty}</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                {tutorial.duration}
-              </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                {tutorial.difficulty}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Componente InteractiveLesson */}
-      <InteractiveLesson
-        tutorialData={tutorialData}
-        steps={steps}
-        categories={categories}
-        initialStep={0}
-        showSidebar={true}
-        showDarkMode={true}
-        onStepChange={(stepIndex, stepData) => {
-          console.log('Step changed:', stepIndex, stepData)
-        }}
-        onStepComplete={(stepIndex, isCompleted, completedSteps) => {
-          console.log('Step completed:', stepIndex, isCompleted, completedSteps)
-        }}
-        onFavoriteToggle={(stepIndex, isFavorite, favoriteSteps) => {
-          console.log('Favorite toggled:', stepIndex, isFavorite, favoriteSteps)
-        }}
-        className="tutorial-page"
-      />
-    </div>
+    <TutorialPlayer
+      steps={steps.map((step) => ({
+        id: step.id,
+        title: step.title,
+        description: step.description,
+        videoUrl: step.videoUrl,
+        image: step.image,
+        tips: Array.isArray(step.tips) ? step.tips : (step.tips ? [step.tips] : [])
+      }))}
+      title={tutorial.title}
+      author={tutorialData.instructor}
+      likes="2500"
+      category={tutorial.category}
+      difficulty={tutorial.difficulty}
+      initialStep={0}
+    />
   )
 }
 

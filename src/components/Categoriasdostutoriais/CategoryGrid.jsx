@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, Filter, Package, Target } from "lucide-react";
+import { Search, Filter, Package, Target, Menu, X, Home, Grid3x3, BookOpen, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const CategoryGrid = ({
@@ -11,6 +11,14 @@ const CategoryGrid = ({
 }) => {
   const [selectedCategory, setSelectedCategory] = useState("Todas");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isNavMenuOpen, setIsNavMenuOpen] = useState(false);
+
+  const navLinks = [
+    { path: '/', icon: Home, label: 'Início' },
+    { path: '/conveniencia', icon: Grid3x3, label: 'Conveniência' },
+    { path: '/retaguarda', icon: BookOpen, label: 'Retaguarda' },
+    { path: '/gerador-senha', icon: Settings, label: 'Gerador de Senha' },
+  ];
 
   const filteredData = data.filter((item) => {
     const matchesCategory =
@@ -23,7 +31,55 @@ const CategoryGrid = ({
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-8xl mt-12   mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Menu Lateral de Navegação */}
+      {isNavMenuOpen && (
+        <div className="fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/50 lg:bg-transparent" onClick={() => setIsNavMenuOpen(false)}></div>
+          <div className="absolute left-0 top-0 h-full w-64 bg-white border-r border-gray-200 pt-[70px] z-50">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-6 lg:hidden">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                    <img src="/logo.png" alt="" className="w-6 h-6" />
+                  </div>
+                  <span className="text-xl font-semibold text-black">Lukos</span>
+                </div>
+                <button onClick={() => setIsNavMenuOpen(false)} className="p-2 rounded-full hover:bg-gray-100">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <nav className="space-y-2">
+                {navLinks.map((link) => {
+                  const IconComponent = link.icon;
+                  return (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      onClick={() => setIsNavMenuOpen(false)}
+                      className="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition-colors"
+                    >
+                      <IconComponent className="w-6 h-6" />
+                      <span className="text-black">{link.label}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-8xl mt-12 mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Botão Menu */}
+        <div className="mb-4">
+          <button
+            onClick={() => setIsNavMenuOpen(true)}
+            className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
         {/* Header */}
         <div className="text-center mb-12 bg-gradient-to-r from-blue-600  via-blue-700 to-blue-800 h-60  ro flex items-center rounded-xl flex-col text-center justify-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">{title}</h1>

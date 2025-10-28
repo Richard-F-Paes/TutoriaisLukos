@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 939.4 586.1" style="enable-background:new 0 0 939.4 586.1;" xml:space="preserve">
+	<defs>
+	<filter filterUnits="userSpaceOnUse" id="Filter_0" x="0px" y="0px" width="2712px" height="1937px"  >
+		<feOffset in="SourceAlpha" dx="0" dy="46" />
+		<feGaussianBlur result="blurOut" stdDeviation="12.124" />
+		<feFlood flood-color="rgb(255, 114, 70)" result="floodOut" />
+		<feComposite operator="atop" in="floodOut" in2="blurOut" />
+		<feComponentTransfer><feFuncA type="linear" slope="0.2"/></feComponentTransfer>
+		<feMerge>
+			<feMergeNode/>
+			<feMergeNode in="SourceGraphic"/>
+		</feMerge>
+	</filter>
+
+	<linearGradient id="gradient_1" x1="25.882%" x2="100%" y1="0%" y2="96.593%">
+		<!--<stop offset="0%" stop-color="#ffb546" stop-opacity="0.6" />-->
+		<stop offset="50%" stop-color="#f06143" stop-opacity="1" />
+		<stop offset="100%" stop-color="#ff8a46" stop-opacity="1" />
+	</linearGradient>
+
+</defs>
+<g>
+	<g filter="url(#Filter_0)">
+		<path fill="url(#gradient_1)" d="M4.3,217.3C34.4,76,153.9-11.7,301.4,1.3c72.3,6.4,475.5,123.2,475.5,123.2c129.3,17.6,176.5,144.9,159,274.1
+			s-95.8,246.1-209.4,155.2c0,0-126.2-128.4-371.8-10.1C176.6,629.6-32.8,391.1,4.3,217.3z"/>
+	</g>
+</g>
+</svg>

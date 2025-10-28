@@ -48,6 +48,9 @@ import RetaguardaTutorialsPage from './pages/RetaguardaTutorialsPage';
 import ConvenienciaTutorialsPage from './pages/ConvenienciaTutorialsPage';
 import DashboardTutorialsPage from './pages/DashboardTutorialsPage';
 import PistaTutorialsPage from './pages/PistaTutorialsPage';
+import Pesquisa from './components/Pesquisa/Pesquisa';
+import TutorialPlayerTest from './pages/TutorialPlayerTest';
+import Teste from './components/teste/teste';
 
 
 
@@ -61,13 +64,14 @@ function App() {
       <TutorialProvider>
         <Router>
           <div className="App">
-            
+            <Pesquisa />
             <Navbar />
           
             <main>
               <Routes>
                 {/* Rotas públicas */}
                 <Route path="/" element={<HomePage />} />
+                <Route path="/teste" element={<Teste />} />
                 
                 {/* Rotas dos Tutoriais Lukos */}
                 <Route path="/tutoriais" element={<TutorialsHomePage />} />
@@ -105,6 +109,7 @@ function App() {
                 <Route path="/conveniencia-tutoriais" element={<ConvenienciaTutorialsPage />} />
                 <Route path="/dashboard-tutoriais" element={<DashboardTutorialsPage />} />
                 <Route path="/pista-tutoriais" element={<PistaTutorialsPage />} />
+                <Route path="/test-player" element={<TutorialPlayerTest />} />
                 
                 {/* Rotas administrativas */}
                 <Route path="/admin" element={<AdminPage />} />

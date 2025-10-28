@@ -28,11 +28,14 @@ function Conveniencia() {
 
   return (
     <Categoriaisdostutoriais
+    
       title="Conveniência"
       subtitle="Visualize os principais módulos e funcionalidades"
       categories={categorias}
       data={dados}
+    
     />
+    
   );
 }
 

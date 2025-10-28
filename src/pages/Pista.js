@@ -29,8 +29,8 @@ function Pista() {
 
   return (
     <Categoriaisdostutoriais
-      title="Conveniência"
-      subtitle="Visualize os principais módulos e funcionalidades"
+      title="Pista"
+      subtitle="Visualize os principais módulos e funcionalidades da pista"
       categories={categorias}
       data={dados}
     />

@@ -42,12 +42,24 @@ import {
   ArrowLeft,
   Zap,
   Sun,
-  Moon
+  Moon,
+  Menu,
+  X,
+  Home,
+  Grid3x3
 } from 'lucide-react'
 
 const RetaguardaTutorialsPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
+  const [isNavMenuOpen, setIsNavMenuOpen] = useState(false)
+
+  const navLinks = [
+    { path: '/', icon: Home, label: 'Início' },
+    { path: '/conveniencia', icon: Grid3x3, label: 'Conveniência' },
+    { path: '/retaguarda', icon: BookOpen, label: 'Retaguarda' },
+    { path: '/gerador-senha', icon: Settings, label: 'Gerador de Senha' },
+  ]
 
   const tutorials = [
     // CADASTROS
@@ -1509,9 +1521,63 @@ const RetaguardaTutorialsPage = () => {
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'} py-12`}>
+      {/* Menu Lateral de Navegação */}
+      {isNavMenuOpen && (
+        <div className="fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/50 lg:bg-transparent" onClick={() => setIsNavMenuOpen(false)}></div>
+          <div className={`absolute left-0 top-0 h-full w-64 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border-r ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} pt-[70px] z-50`}>
+            <div className="p-4">
+              <div className="hidden lg:block mb-6">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                    <img src="/logo.png" alt="" className="w-6 h-6" />
+                  </div>
+                  <span className="text-xl font-semibold">Lukos</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between mb-6 lg:hidden">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                    <img src="/logo.png" alt="" className="w-6 h-6" />
+                  </div>
+                  <span className="text-xl font-semibold">Lukos</span>
+                </div>
+                <button onClick={() => setIsNavMenuOpen(false)} className={`p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <nav className="space-y-2">
+                {navLinks.map((link) => {
+                  const IconComponent = link.icon;
+                  return (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      onClick={() => setIsNavMenuOpen(false)}
+                      className={`flex items-center space-x-3 px-4 py-3 rounded-xl ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} transition-colors`}
+                    >
+                      <IconComponent className="w-6 h-6" />
+                      <span>{link.label}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header com botão de tema */}
         <div className="flex justify-between items-center mb-8">
+          <button
+            onClick={() => setIsNavMenuOpen(true)}
+            className={`p-3 rounded-full ${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-100 hover:bg-gray-200'} transition-colors duration-200`}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
           <Link
             to="/tutoriais"
             className={`inline-flex items-center ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'} transition-colors duration-200`}

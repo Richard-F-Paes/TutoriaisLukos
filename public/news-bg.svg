@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1920 1671.8" style="enable-background:new 0 0 1920 1671.8;" xml:space="preserve">
+
+	<defs>
+        <filter filterUnits="userSpaceOnUse" id="Filter_0" x="0px" y="0px" width="2080px" height="1949px"  >
+            <feOffset in="SourceAlpha" dx="0" dy="26" />
+            <feGaussianBlur result="blurOut" stdDeviation="15.745" />
+            <feFlood flood-color="rgb(66, 143, 255)" result="floodOut" />
+            <feComposite operator="atop" in="floodOut" in2="blurOut" />
+            <feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
+            <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+
+    </defs>
+<g filter="url(#Filter_0)">
+	<path class="st0" fill="#428fff" d="M-316.6-1286c0,0,1399.3,427.8,1527.3,465.8c77,22.8,246.9,75.6,335.4,173.3c91.4,100.8,247,167.9,309.2,202.5
+		c17,9.5,171.7,182.9,207.2,270.5c30,74.1,126.3,467.1,130.3,511.4c34.9,381.1,88.4,1429.5-350,626
+		c-513-940-1430.4,377.9-2094.2-178.2c-224.2-187.8-208.9-470.8-208.5-473.5C-418.4-18.3-316.6-1286-316.6-1286z"/>
+</g>
+</svg>

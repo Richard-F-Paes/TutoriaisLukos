@@ -6,6 +6,7 @@ import {
   Sun, Moon, Menu, X, PlayCircle, Image as ImageIcon, BookOpen, 
   Clock, CheckCircle, MoreVertical, Bell, Settings, Home, Grid3x3
 } from 'lucide-react';
+import VideoTutorialSidebar from '../VideoTutorials/VideoTutorialSidebar';
 
 const TutorialPlayer = ({ 
   steps = [], 
@@ -13,7 +14,8 @@ const TutorialPlayer = ({
   author = 'Instrutor', 
   likes = '0', 
   category = 'Desenvolvimento', 
-  difficulty = 'Intermediário' 
+  difficulty = 'Intermediário',
+  onLastStepFinish = null
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -56,6 +58,12 @@ const TutorialPlayer = ({
         setCompletedSteps([...completedSteps, currentStep]);
       }
       setCurrentStep(currentStep + 1);
+    } else if (currentStep === steps.length - 1 && onLastStepFinish) {
+      // Está no último step e há callback definido
+      if (!completedSteps.includes(currentStep)) {
+        setCompletedSteps([...completedSteps, currentStep]);
+      }
+      onLastStepFinish();
     }
   };
 
@@ -155,53 +163,13 @@ const TutorialPlayer = ({
         </div>
       </header>
 
-      {/* Menu Lateral de Navegação */}
+      {/* Menu Lateral de Navegação com VideoTutorialSidebar */}
       {isNavMenuOpen && (
-        <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/50 lg:bg-transparent" onClick={() => setIsNavMenuOpen(false)}></div>
-          <div className={`absolute left-0 top-0 h-full w-64 ${cardBg} border-r ${borderColor} pt-[70px] z-50`}>
-            <div className="p-4">
-              <div className="hidden lg:block mb-6">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                    <img src="logo.png" alt="" className="w-6 h-6" />
-                  </div>
-                  <span className="text-xl font-semibold">Lukos</span>
-                </div>
-              </div>
-              
-              {/* Botão de fechar apenas mobile */}
-              <div className="flex items-center justify-between mb-6 lg:hidden">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                    <img src="logo.png" alt="" className="w-6 h-6" />
-                  </div>
-                  <span className="text-xl font-semibold">Lukos</span>
-                </div>
-                <button onClick={() => setIsNavMenuOpen(false)} className={`p-2 rounded-full ${hoverBg}`}>
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              
-              <nav className="space-y-2">
-                {navLinks.map((link) => {
-                  const IconComponent = link.icon;
-                  return (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      onClick={() => setIsNavMenuOpen(false)}
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-xl ${hoverBg} transition-colors`}
-                    >
-                      <IconComponent className="w-6 h-6" />
-                      <span>{link.label}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
-            </div>
-          </div>
-        </div>
+        <VideoTutorialSidebar 
+          isOpen={true}
+          onViewChange={() => setIsNavMenuOpen(false)}
+          currentView="home"
+        />
       )}
 
       <div className="flex max-w-screen-2xl mx-auto">
@@ -329,9 +297,14 @@ const TutorialPlayer = ({
                 )}
               </button>
 
-              <button onClick={nextStep} disabled={currentStep === steps.length - 1} className={`flex items-center space-x-2 px-3 py-2 sm:px-4 ${isDarkMode ? 'bg-[#272727] hover:bg-[#3f3f3f]' : 'bg-gray-100 hover:bg-gray-200'} rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}>
-                <span className="text-sm">{currentStep === steps.length - 1 ? 'Finalizado' : 'Próximo'}</span>
-                {currentStep < steps.length - 1 && <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />}
+              <button 
+                onClick={nextStep} 
+                className={`flex items-center space-x-2 px-3 py-2 sm:px-4 ${isDarkMode ? 'bg-[#272727] hover:bg-[#3f3f3f]' : 'bg-gray-100 hover:bg-gray-200'} rounded-full transition-colors`}
+              >
+                <span className="text-sm">
+                  {currentStep === steps.length - 1 && onLastStepFinish ? 'Próximo Tutorial' : currentStep === steps.length - 1 ? 'Finalizado' : 'Próximo'}
+                </span>
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>

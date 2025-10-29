@@ -51,6 +51,8 @@ import PistaTutorialsPage from './pages/PistaTutorialsPage';
 import Pesquisa from './components/Pesquisa/Pesquisa';
 import TutorialPlayerTest from './pages/TutorialPlayerTest';
 import Teste from './components/teste/teste';
+import VideoTutorialsPage from './pages/VideoTutorialsPage';
+import VideoTutorialDetailPage from './pages/VideoTutorialDetailPage';
 
 
 
@@ -72,6 +74,8 @@ function App() {
                 {/* Rotas públicas */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/teste" element={<Teste />} />
+                <Route path="/video-tutoriais" element={<VideoTutorialsPage />} />
+                <Route path="/video-tutorial/:id" element={<VideoTutorialDetailPage />} />
                 
                 {/* Rotas dos Tutoriais Lukos */}
                 <Route path="/tutoriais" element={<TutorialsHomePage />} />

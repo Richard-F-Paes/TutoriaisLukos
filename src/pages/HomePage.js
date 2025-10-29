@@ -43,6 +43,7 @@ import TutorialDetailPage from './TutorialDetailPage';
 import MobileNav from '../components/MobileNav/MobileNav';
 import CardTutoriais from '../components/CardTutoriais/CardTutoriais';
 import InputSearch from '../components/InputSearch/InputSearch';
+import VideoTutorialsPage from './VideoTutorialsPage';
 
 
 
@@ -83,7 +84,7 @@ function HomePage() {
       <InputSearch />
       <HeroTutorial />
       
-      <CardTutoriais />
+      <VideoTutorialsPage />
       <MobileNav />
 
       

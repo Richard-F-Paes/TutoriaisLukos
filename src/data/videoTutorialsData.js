@@ -4,6 +4,8 @@ export const tutorials = [
   {
     id: 1,
     title: 'Como Cadastrar Produtos no Sistema',
+    icon: 'Package',
+    color: 'from-purple-500 to-pink-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '125.4K',
@@ -14,6 +16,8 @@ export const tutorials = [
   {
     id: 2,
     title: 'Tutorial Completo do Sistema Lukos',
+    icon: 'BookOpen',
+    color: 'from-indigo-500 to-purple-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '198.2K',
@@ -24,6 +28,8 @@ export const tutorials = [
   {
     id: 3,
     title: 'Operação Avançada no PDV',
+    icon: 'Settings',
+    color: 'from-violet-500 to-purple-700',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '142.9K',
@@ -36,6 +42,8 @@ export const tutorials = [
   {
     id: 4,
     title: 'Configurando Bombas de Combustível',
+    icon: 'Fuel',
+    color: 'from-orange-500 to-red-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '89.2K',
@@ -46,6 +54,8 @@ export const tutorials = [
   {
     id: 5,
     title: 'Configurar Preços Dinâmicos na Pista',
+    icon: 'DollarSign',
+    color: 'from-amber-500 to-orange-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '81.6K',
@@ -56,6 +66,8 @@ export const tutorials = [
   {
     id: 6,
     title: 'Venda de Combustíveis no Modo Pista',
+    icon: 'ShoppingCart',
+    color: 'from-red-500 to-orange-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '134.6K',
@@ -63,11 +75,79 @@ export const tutorials = [
     publishedAt: 'há 4 dias',
     category: 'Pista'
   },
+  // PISTA - PDV PISTA
+  ...Array.from({ length: 16 }, (_, i) => ({
+    id: 66 + i,
+    title: [
+      'Aferição',
+      'Medição de Tanque',
+      'Venda de Produtos',
+      'Efetuar um Serviço',
+      'Lançar Sangria',
+      'Lançar Despesa/Pagamento',
+      'Lançar Recebimento',
+      'Cancelar Venda',
+      'Cancelar Cupom',
+      'Consultar Vendas',
+      'Reimprimir Cupom',
+      'Encerrar o Turno',
+      'Desconto',
+      'Desconto no Item',
+      'Abrir Gaveta',
+      'Relatório Parcial de Caixa'
+    ][i],
+    icon: [
+      'Gauge',
+      'Droplet',
+      'ShoppingCart',
+      'Wrench',
+      'TrendingDown',
+      'MinusCircle',
+      'PlusCircle',
+      'XCircle',
+      'FileX',
+      'Search',
+      'Printer',
+      'Lock',
+      'Percent',
+      'Tag',
+      'Box',
+      'FileBarChart'
+    ][i],
+    color: [
+      'from-blue-500 to-cyan-600',
+      'from-teal-500 to-blue-600',
+      'from-green-500 to-emerald-600',
+      'from-purple-500 to-indigo-600',
+      'from-red-500 to-rose-600',
+      'from-orange-500 to-amber-600',
+      'from-emerald-500 to-green-600',
+      'from-pink-500 to-rose-600',
+      'from-gray-500 to-slate-600',
+      'from-indigo-500 to-purple-600',
+      'from-violet-500 to-purple-600',
+      'from-slate-500 to-gray-600',
+      'from-yellow-500 to-orange-600',
+      'from-cyan-500 to-blue-600',
+      'from-amber-500 to-yellow-600',
+      'from-blue-600 to-indigo-700'
+    ][i],
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [1, 2, 3, 1, 2, 4, 1, 3, 2, 1, 2, 3, 1, 4, 2, 3][i] + ' dias',
+    category: 'Pista',
+    subcategory: 'PDV Pista'
+  })),
+  
   
   // CONVENIENCIA
   {
     id: 7,
     title: 'Gestão de Estoque da Conveniência',
+    icon: 'Warehouse',
+    color: 'from-blue-500 to-cyan-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '156.7K',
@@ -78,6 +158,8 @@ export const tutorials = [
   {
     id: 8,
     title: 'Movimentação de Produtos Conveniência',
+    icon: 'ArrowLeftRight',
+    color: 'from-cyan-500 to-blue-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '95.3K',
@@ -85,6 +167,69 @@ export const tutorials = [
     publishedAt: 'há 4 dias',
     category: 'Conveniencia'
   },
+  
+  // CONVENIENCIA - PDV LOJA
+  ...Array.from({ length: 15 }, (_, i) => ({
+    id: 82 + i,
+    title: [
+      'Código Rápido',
+      'Venda de Produtos Loja',
+      'Efetuar um Serviço Loja',
+      'Lançar Sangria Loja',
+      'Lançar Despesa/Pagamento Loja',
+      'Lançar Recebimento Loja',
+      'Cancelar Venda Loja',
+      'Cancelar Cupom Loja',
+      'Consultar Vendas Loja',
+      'Reimprimir Cupom Loja',
+      'Encerrar o Turno Loja',
+      'Desconto Loja',
+      'Desconto no Item Loja',
+      'Abrir Gaveta Loja',
+      'Relatório Parcial de Caixa Loja'
+    ][i],
+    icon: [
+      'Zap',
+      'ShoppingBag',
+      'Wrench',
+      'TrendingDown',
+      'MinusCircle',
+      'PlusCircle',
+      'XCircle',
+      'FileX',
+      'Search',
+      'Printer',
+      'Lock',
+      'Percent',
+      'Tag',
+      'Box',
+      'FileBarChart'
+    ][i],
+    color: [
+      'from-blue-600 to-indigo-700',
+      'from-green-600 to-emerald-700',
+      'from-purple-600 to-indigo-700',
+      'from-red-600 to-rose-700',
+      'from-orange-600 to-amber-700',
+      'from-emerald-600 to-green-700',
+      'from-pink-600 to-rose-700',
+      'from-gray-600 to-slate-700',
+      'from-indigo-600 to-purple-700',
+      'from-violet-600 to-purple-700',
+      'from-slate-600 to-gray-700',
+      'from-yellow-600 to-orange-700',
+      'from-cyan-600 to-blue-700',
+      'from-amber-600 to-yellow-700',
+      'from-blue-700 to-indigo-800'
+    ][i],
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [1, 2, 3, 1, 2, 4, 1, 3, 2, 1, 2, 3, 1, 4, 2][i] + ' dias',
+    category: 'Conveniencia',
+    subcategory: 'PDV Loja'
+  })),
   
   // RETAGUARDA - CADASTROS - CLIENTE
   ...Array.from({ length: 5 }, (_, i) => ({
@@ -517,26 +662,205 @@ export const tutorials = [
     subcategory: 'Ferramentas'
   })),
   
-  // RETAGUARDA - RELATÓRIOS
-  ...Array.from({ length: 8 }, (_, i) => ({
+  // RETAGUARDA - RELATÓRIOS (os tutoriais serão filtrados pelas subcategorias)
+  // Relatórios Comercial
+  ...Array.from({ length: 3 }, (_, i) => ({
     id: 900 + i,
     title: [
-      'Relatórios Comercial',
-      'Relatórios Financeiro',
-      'Relatórios Frente de Caixa',
-      'Relatórios Produtos',
-      'Relatórios Fiscal',
-      'Relatórios Entradas',
-      'Outros Relatórios',
-      'Busca Relatório'
+      'Relatórios Comercial - Visão Geral',
+      'Relatórios Comercial - Vendas por Período',
+      'Relatórios Comercial - Análise de Clientes'
     ][i],
+    icon: 'TrendingUp',
+    color: 'from-blue-500 to-indigo-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
-    publishedAt: 'há ' + [2, 3, 1, 4, 2, 1, 3, 2][i] + ' dias',
+    publishedAt: 'há ' + [2, 3, 1][i] + ' dias',
     category: 'Retaguarda',
-    subcategory: 'Relatórios'
+    subcategory: 'Relatórios',
+    subSubcategory: 'Comercial'
+  })),
+  
+  // Relatórios Financeiro
+  ...Array.from({ length: 3 }, (_, i) => ({
+    id: 903 + i,
+    title: [
+      'Relatórios Financeiro - Fluxo de Caixa',
+      'Relatórios Financeiro - Contas a Pagar',
+      'Relatórios Financeiro - Contas a Receber'
+    ][i],
+    icon: 'DollarSign',
+    color: 'from-green-500 to-emerald-600',
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [1, 2, 4][i] + ' dias',
+    category: 'Retaguarda',
+    subcategory: 'Relatórios',
+    subSubcategory: 'Financeiro'
+  })),
+  
+  // Relatórios Frente de Caixa
+  ...Array.from({ length: 3 }, (_, i) => ({
+    id: 906 + i,
+    title: [
+      'Relatórios Frente de Caixa - Movimentação Diária',
+      'Relatórios Frente de Caixa - Resumo de Caixa',
+      'Relatórios Frente de Caixa - Formas de Pagamento'
+    ][i],
+    icon: 'ShoppingCart',
+    color: 'from-orange-500 to-amber-600',
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [3, 1, 2][i] + ' dias',
+    category: 'Retaguarda',
+    subcategory: 'Relatórios',
+    subSubcategory: 'Frente de Caixa'
+  })),
+  
+  // Relatórios Produtos
+  ...Array.from({ length: 3 }, (_, i) => ({
+    id: 909 + i,
+    title: [
+      'Relatórios Produtos - Estoque',
+      'Relatórios Produtos - Vendas por Produto',
+      'Relatórios Produtos - Rotatividade'
+    ][i],
+    icon: 'Package',
+    color: 'from-purple-500 to-pink-600',
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [2, 4, 1][i] + ' dias',
+    category: 'Retaguarda',
+    subcategory: 'Relatórios',
+    subSubcategory: 'Produtos'
+  })),
+  
+  // Relatórios Fiscal
+  ...Array.from({ length: 3 }, (_, i) => ({
+    id: 912 + i,
+    title: [
+      'Relatórios Fiscal - NF-e Emitidas',
+      'Relatórios Fiscal - Impostos',
+      'Relatórios Fiscal - Apuração'
+    ][i],
+    icon: 'FileText',
+    color: 'from-red-500 to-rose-600',
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [1, 3, 2][i] + ' dias',
+    category: 'Retaguarda',
+    subcategory: 'Relatórios',
+    subSubcategory: 'Fiscal'
+  })),
+  
+  // Relatórios Entradas
+  ...Array.from({ length: 3 }, (_, i) => ({
+    id: 915 + i,
+    title: [
+      'Relatórios Entradas - Notas Fiscais',
+      'Relatórios Entradas - Histórico de Compras',
+      'Relatórios Entradas - Análise de Fornecedores'
+    ][i],
+    icon: 'Upload',
+    color: 'from-cyan-500 to-blue-600',
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [4, 2, 1][i] + ' dias',
+    category: 'Retaguarda',
+    subcategory: 'Relatórios',
+    subSubcategory: 'Entradas'
+  })),
+  
+  // Relatórios Outros
+  ...Array.from({ length: 3 }, (_, i) => ({
+    id: 918 + i,
+    title: [
+      'Relatórios Outros - Personalizados',
+      'Relatórios Outros - Exportação',
+      'Relatórios Outros - Configurações'
+    ][i],
+    icon: 'MoreHorizontal',
+    color: 'from-gray-500 to-slate-600',
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [3, 1, 2][i] + ' dias',
+    category: 'Retaguarda',
+    subcategory: 'Relatórios',
+    subSubcategory: 'Outros'
+  })),
+  
+  // Relatórios Favoritos
+  ...Array.from({ length: 3 }, (_, i) => ({
+    id: 921 + i,
+    title: [
+      'Gerenciar Relatórios Favoritos',
+      'Acessar Relatórios Favoritos',
+      'Configurar Relatórios Favoritos'
+    ][i],
+    icon: 'Heart',
+    color: 'from-pink-500 to-rose-600',
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [2, 1, 3][i] + ' dias',
+    category: 'Retaguarda',
+    subcategory: 'Relatórios',
+    subSubcategory: 'Favoritos'
+  })),
+  
+  // Relatórios Tarefas e Alertas
+  ...Array.from({ length: 3 }, (_, i) => ({
+    id: 924 + i,
+    title: [
+      'Tarefas e Alertas - Configuração',
+      'Tarefas e Alertas - Visualização',
+      'Tarefas e Alertas - Notificações'
+    ][i],
+    icon: 'Bell',
+    color: 'from-yellow-500 to-orange-600',
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [1, 4, 2][i] + ' dias',
+    category: 'Retaguarda',
+    subcategory: 'Relatórios',
+    subSubcategory: 'Tarefas e Alertas'
+  })),
+  
+  // Relatórios Busca Relatório
+  ...Array.from({ length: 3 }, (_, i) => ({
+    id: 927 + i,
+    title: [
+      'Buscar Relatórios no Sistema',
+      'Filtrar Relatórios Avançado',
+      'Navegar por Relatórios'
+    ][i],
+    icon: 'Search',
+    color: 'from-indigo-500 to-purple-600',
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [3, 2, 1][i] + ' dias',
+    category: 'Retaguarda',
+    subcategory: 'Relatórios',
+    subSubcategory: 'Busca Relatório'
   })),
   
   // RETAGUARDA - FIDELIDADE
@@ -585,6 +909,8 @@ export const tutorials = [
   {
     id: 28,
     title: 'Acessando Relatórios do Dashboard',
+    icon: 'BarChart3',
+    color: 'from-green-500 to-emerald-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '94.1K',
@@ -595,6 +921,8 @@ export const tutorials = [
   {
     id: 29,
     title: 'Gráficos e Análises em Tempo Real',
+    icon: 'TrendingUp',
+    color: 'from-emerald-500 to-teal-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '68.2K',
@@ -607,6 +935,8 @@ export const tutorials = [
   {
     id: 30,
     title: 'Configurando Pagamentos Lukos Pay',
+    icon: 'CreditCard',
+    color: 'from-pink-500 to-rose-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '67.8K',
@@ -617,6 +947,8 @@ export const tutorials = [
   {
     id: 31,
     title: 'Integração com Aplicativos de Pagamento',
+    icon: 'Smartphone',
+    color: 'from-rose-500 to-pink-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '82.4K',
@@ -629,6 +961,8 @@ export const tutorials = [
   {
     id: 32,
     title: 'Criando Propostas de Pré-Venda',
+    icon: 'FileText',
+    color: 'from-cyan-500 to-blue-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '103.5K',
@@ -639,6 +973,8 @@ export const tutorials = [
   {
     id: 33,
     title: 'Gerenciando Orçamentos de Pré-Venda',
+    icon: 'ClipboardList',
+    color: 'from-blue-500 to-cyan-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '56.7K',
@@ -647,10 +983,41 @@ export const tutorials = [
     category: 'Pre-Venda'
   },
   
+  // PRE-VENDA - SUBCATEGORIAS
+  ...Array.from({ length: 4 }, (_, i) => ({
+    id: 96 + i,
+    title: [
+      'Pré-Venda - Comandas',
+      'Pré-Venda - Caixa',
+      'Pré-Venda - Site',
+      'Pré-Venda - Windows'
+    ][i],
+    icon: [
+      'Receipt',
+      'Calculator',
+      'Globe',
+      'Monitor'
+    ][i],
+    color: [
+      'from-cyan-600 to-blue-700',
+      'from-blue-600 to-indigo-700',
+      'from-teal-600 to-cyan-700',
+      'from-indigo-600 to-purple-700'
+    ][i],
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [2, 3, 1, 4][i] + ' dias',
+    category: 'Pre-Venda'
+  })),
+  
   // FATURA WEB
   {
     id: 34,
     title: 'Emitindo NF-e no Fatura Web',
+    icon: 'Globe',
+    color: 'from-yellow-500 to-amber-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '58.2K',
@@ -661,13 +1028,47 @@ export const tutorials = [
   {
     id: 35,
     title: 'Cancelamento e Correção de Notas Fiscais',
+    icon: 'FileX',
+    color: 'from-amber-500 to-yellow-600',
     thumbnail: '/logo.png',
     channel: 'Lukos Tutoriais',
     views: '71.5K',
     duration: '20:30',
     publishedAt: 'há 1 semana',
     category: 'Fatura Web'
-  }
+  },
+  
+  // FATURA WEB - TUTORIAIS ADICIONAIS
+  ...Array.from({ length: 5 }, (_, i) => ({
+    id: 100 + i,
+    title: [
+      'Fatura WEB',
+      'Se cadastrando no Fatura Web',
+      'Requisição de abastecimento WEB',
+      'Cadastro de Frota WEB',
+      'Gerar código de liberação'
+    ][i],
+    icon: [
+      'Globe',
+      'UserPlus',
+      'Truck',
+      'Car',
+      'Key'
+    ][i],
+    color: [
+      'from-yellow-600 to-amber-700',
+      'from-amber-600 to-yellow-700',
+      'from-orange-600 to-red-700',
+      'from-red-600 to-orange-700',
+      'from-amber-700 to-yellow-800'
+    ][i],
+    thumbnail: '/logo.png',
+    channel: 'Lukos Tutoriais',
+    views: `${Math.floor(Math.random() * 100) + 50}K`,
+    duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+    publishedAt: 'há ' + [2, 3, 1, 4, 2][i] + ' dias',
+    category: 'Fatura Web'
+  }))
 ];
 
 export default tutorials;

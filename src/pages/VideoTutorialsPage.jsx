@@ -33,8 +33,8 @@ const VideoTutorialsPage = () => {
     setSelectedSubcategory(subcategory);
     setSelectedSubSubcategory(subSubcategory || '');
     
-    // Se for Cadastros ou Produtos, mostrar sub-subcategorias primeiro
-    if ((subcategory === 'Cadastros' || subcategory === 'Produtos') && !subSubcategory) {
+    // Se for Cadastros, Produtos ou Relatórios, mostrar sub-subcategorias primeiro
+    if ((subcategory === 'Cadastros' || subcategory === 'Produtos' || subcategory === 'Relatórios') && !subSubcategory) {
       setCurrentView('subcategory-subcats');
     } else if (subSubcategory) {
       setCurrentView('subsubcategory');

@@ -51,7 +51,7 @@ const Navbar = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-8 py-4 md:py-6 shadow transition-all duration-300 
-      ${isScrolled ? 'bg-white/90 backdrop-blur-md shadow-lg' : 'bg-white'} 
+      ${isScrolled ? 'bg-white shadow-lg' : 'bg-white'} 
       max-w-8xl rounded-full mx-auto mt-4`}
     >
       {/* LOGO */}
@@ -59,7 +59,7 @@ const Navbar = () => {
         <img
           src="logo.png"
           alt="Logo Tutorial Lukos"
-          className="w-10 h-10 group-hover:opacity-80 transition-all duration-300"
+          className="w-10 h-10"
         />
         <span className="text-gray-900 font-bold text-lg bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:via-purple-600 group-hover:to-purple-700 transition-all duration-500 ease-in-out">
           Tutorial Lukos
@@ -69,7 +69,7 @@ const Navbar = () => {
       {/* MENU PRINCIPAL */}
       <nav
         id="menu"
-        className={`max-md:absolute max-md:top-0 max-md:left-0 max-md:overflow-hidden flex flex-col md:flex-row items-center justify-center gap-8 text-gray-900 text-sm font-medium bg-white/70 backdrop-blur-lg transition-[width] duration-300
+        className={`max-md:absolute max-md:top-0 max-md:left-0 max-md:overflow-hidden flex flex-col md:flex-row items-center justify-center gap-8 text-gray-900 text-sm font-medium bg-white transition-[width] duration-300
           ${menuOpen ? 'max-md:w-full max-md:h-full' : 'max-md:w-0 max-md:h-0'}
         `}
       >

@@ -1,9 +1,68 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Clock, Eye, BookOpen, Fuel, ShoppingBag, Settings, BarChart3, CreditCard, FileText, Globe } from 'lucide-react';
+import { 
+  Play, Clock, Eye, BookOpen, Fuel, ShoppingBag, Settings, BarChart3, CreditCard, FileText, Globe,
+  Gauge, Droplet, ShoppingCart, Wrench, TrendingDown, MinusCircle, PlusCircle, XCircle, FileX, Search,
+  Printer, Lock, Percent, Tag, Box, FileBarChart, Package, Warehouse, ArrowLeftRight, DollarSign,
+  TrendingUp, Smartphone, ClipboardList, Zap, Receipt, Calculator, Monitor, UserPlus, Truck, Car, Key,
+  Upload, MoreHorizontal, Heart, Bell
+} from 'lucide-react';
 
 const VideoTutorialCard = ({ tutorial }) => {
-  // Mapear categorias para ícones
+  // Mapear nomes de ícones para componentes
+  const getIconComponent = (iconName) => {
+    const iconMap = {
+      // Ícones de categoria padrão
+      'BookOpen': BookOpen,
+      'Fuel': Fuel,
+      'ShoppingBag': ShoppingBag,
+      'Settings': Settings,
+      'BarChart3': BarChart3,
+      'CreditCard': CreditCard,
+      'FileText': FileText,
+      'Globe': Globe,
+      // Ícones personalizados da Pista PDV
+      'Gauge': Gauge,
+      'Droplet': Droplet,
+      'ShoppingCart': ShoppingCart,
+      'Wrench': Wrench,
+      'TrendingDown': TrendingDown,
+      'MinusCircle': MinusCircle,
+      'PlusCircle': PlusCircle,
+      'XCircle': XCircle,
+      'FileX': FileX,
+      'Search': Search,
+      'Printer': Printer,
+      'Lock': Lock,
+      'Percent': Percent,
+      'Tag': Tag,
+      'Box': Box,
+      'FileBarChart': FileBarChart,
+      // Novos ícones para outros tutoriais
+      'Package': Package,
+      'Warehouse': Warehouse,
+      'ArrowLeftRight': ArrowLeftRight,
+      'DollarSign': DollarSign,
+      'TrendingUp': TrendingUp,
+      'Smartphone': Smartphone,
+      'ClipboardList': ClipboardList,
+      'Zap': Zap,
+      'Receipt': Receipt,
+      'Calculator': Calculator,
+      'Monitor': Monitor,
+      'UserPlus': UserPlus,
+      'Truck': Truck,
+      'Car': Car,
+      'Key': Key,
+      'Upload': Upload,
+      'MoreHorizontal': MoreHorizontal,
+      'Heart': Heart,
+      'Bell': Bell,
+    };
+    return iconMap[iconName] || BookOpen;
+  };
+
+  // Mapear categorias para ícones padrão
   const getCategoryIcon = (category) => {
     const iconMap = {
       'Tutoriais': BookOpen,
@@ -33,15 +92,18 @@ const VideoTutorialCard = ({ tutorial }) => {
     return colorMap[category] || 'from-gray-600 to-gray-800';
   };
 
+  // Usar ícone personalizado se disponível, senão usar ícone da categoria
+  const TutorialIcon = tutorial.icon ? getIconComponent(tutorial.icon) : getCategoryIcon(tutorial.category);
   const CategoryIcon = getCategoryIcon(tutorial.category);
-  const categoryColor = getCategoryColor(tutorial.category);
+  // Usar cor personalizada se disponível, senão usar cor da categoria
+  const categoryColor = tutorial.color || getCategoryColor(tutorial.category);
 
   return (
     <Link to={`/video-tutorial/${tutorial.id}`}>
     <div className="bg-[#181818] rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
       <div className="relative">
         <div className={`w-full h-48 bg-gradient-to-br ${categoryColor} rounded-t-lg flex items-center justify-center`}>
-          <CategoryIcon size={64} className="text-white opacity-90" />
+          <TutorialIcon size={64} className="text-white opacity-90" />
         </div>
         <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
           {tutorial.duration}

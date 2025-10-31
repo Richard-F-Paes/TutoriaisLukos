@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Package, TrendingUp, ShoppingBag, DollarSign, FileSpreadsheet, Settings, BarChart3, Star, Phone, UserCheck, Building, MapPin, UserPlus, DollarSign as PriceIcon, Calendar, Tag, Gift, Receipt, Percent, FileText, Barcode, Fuel, CreditCard, Layers, Upload, Grid, Wrench } from 'lucide-react';
+import { Users, Package, TrendingUp, ShoppingBag, DollarSign, FileSpreadsheet, Settings, BarChart3, Star, Phone, UserCheck, Building, MapPin, UserPlus, DollarSign as PriceIcon, Calendar, Tag, Gift, Receipt, Percent, FileText, Barcode, Fuel, CreditCard, Layers, Upload, Grid, Wrench, Search, Bell } from 'lucide-react';
 
 const VideoTutorialSubcategories = ({ onSubcategorySelect, category, parentSubcategory = null }) => {
   // Sub-subcategorias dentro de Cadastros
@@ -112,9 +112,10 @@ const VideoTutorialSubcategories = ({ onSubcategorySelect, category, parentSubca
       {
         name: 'Relatórios',
         icon: BarChart3,
-        count: 8,
+        count: 30,
         color: 'from-blue-500 to-blue-700',
-        description: 'Relatórios gerenciais'
+        description: 'Relatórios gerenciais',
+        hasSubcategories: true
       },
       {
         name: 'Fidelidade',
@@ -132,6 +133,80 @@ const VideoTutorialSubcategories = ({ onSubcategorySelect, category, parentSubca
       }
     ]
   };
+
+  // Sub-subcategorias dentro de Relatórios
+  const relatoriosSubcategories = [
+    {
+      name: 'Comercial',
+      icon: TrendingUp,
+      count: 3,
+      color: 'from-blue-500 to-indigo-600',
+      description: 'Relatórios comerciais'
+    },
+    {
+      name: 'Financeiro',
+      icon: DollarSign,
+      count: 3,
+      color: 'from-green-500 to-emerald-600',
+      description: 'Relatórios financeiros'
+    },
+    {
+      name: 'Frente de Caixa',
+      icon: ShoppingBag,
+      count: 3,
+      color: 'from-orange-500 to-amber-600',
+      description: 'Relatórios de frente de caixa'
+    },
+    {
+      name: 'Produtos',
+      icon: Package,
+      count: 3,
+      color: 'from-purple-500 to-pink-600',
+      description: 'Relatórios de produtos'
+    },
+    {
+      name: 'Fiscal',
+      icon: FileText,
+      count: 3,
+      color: 'from-red-500 to-rose-600',
+      description: 'Relatórios fiscais'
+    },
+    {
+      name: 'Entradas',
+      icon: Upload,
+      count: 3,
+      color: 'from-cyan-500 to-blue-600',
+      description: 'Relatórios de entradas'
+    },
+    {
+      name: 'Outros',
+      icon: Settings,
+      count: 3,
+      color: 'from-gray-500 to-slate-600',
+      description: 'Outros relatórios'
+    },
+    {
+      name: 'Favoritos',
+      icon: Star,
+      count: 3,
+      color: 'from-pink-500 to-rose-600',
+      description: 'Relatórios favoritos'
+    },
+    {
+      name: 'Tarefas e Alertas',
+      icon: Bell,
+      count: 3,
+      color: 'from-yellow-500 to-orange-600',
+      description: 'Tarefas e alertas dos relatórios'
+    },
+    {
+      name: 'Busca Relatório',
+      icon: Search,
+      count: 3,
+      color: 'from-indigo-500 to-purple-600',
+      description: 'Buscar relatórios'
+    }
+  ];
 
   // Sub-subcategorias dentro de Produtos
   const produtosSubcategories = [
@@ -205,6 +280,42 @@ const VideoTutorialSubcategories = ({ onSubcategorySelect, category, parentSubca
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
         {cadastrosSubcategories.map((subcategory) => (
+          <div
+            key={subcategory.name}
+            onClick={() => onSubcategorySelect(category, parentSubcategory, subcategory.name)}
+            className="group cursor-pointer transform transition-all duration-200 hover:scale-105 hover:shadow-lg"
+          >
+            <div className="bg-[#181818] rounded-xl p-6 border border-[#272727] hover:border-[#383838] transition-all duration-200">
+              <div className={`w-16 h-16 rounded-lg bg-gradient-to-br ${subcategory.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200`}>
+                <subcategory.icon size={32} className="text-white" />
+              </div>
+              
+              <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                {subcategory.name}
+              </h3>
+              
+              <p className="text-gray-400 text-sm mb-3 leading-relaxed">
+                {subcategory.description}
+              </p>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-400">
+                  {subcategory.count} tutoriais
+                </span>
+                <div className="w-2 h-2 rounded-full bg-green-500 group-hover:bg-blue-500 transition-colors"></div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Se estamos mostrando sub-subcategorias de Relatórios
+  if (parentSubcategory === 'Relatórios') {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+        {relatoriosSubcategories.map((subcategory) => (
           <div
             key={subcategory.name}
             onClick={() => onSubcategorySelect(category, parentSubcategory, subcategory.name)}

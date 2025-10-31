@@ -6,8 +6,7 @@ const HeroTutorial = () => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 py-20 px-4 sm:px-6 lg:px-8">
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-      assName="relative max-w-7xl mx-auto text-center"
-      <div cl>
+      <div className="relative max-w-7xl mx-auto text-center">
         <div className="mb-8">
           <div className="flex justify-center space-x-4 mb-6">
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-2xl shadow-lg transform rotate-12 hover:rotate-6 transition-transform duration-300">
@@ -56,7 +55,7 @@ const HeroTutorial = () => {
               <BookOpen className="h-6 w-6 text-green-600" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Sistema Geral</h3>
-            <p className="text-sm text-gray-600">Configurações e relatórios do sistema</p>F
+            <p className="text-sm text-gray-600">Configurações e relatórios do sistema</p>
           </div>
         </div>
         

@@ -173,10 +173,10 @@ const TutorialPlayer = ({
       )}
 
       <div className="flex max-w-screen-2xl mx-auto">
-        <main className={`flex-1 flex justify-center ${isSidebarOpen ? 'mr-0 lg:mr-96' : ''} transition-all duration-300`}>
-          <div className="p-2 sm:p-4 max-w-4xl w-full">
+        <main className={`flex-1 flex flex-col justify-center items-center ${isSidebarOpen ? 'mr-0 lg:mr-96' : ''} transition-all duration-300 min-h-[calc(100vh-5rem)]`}>
+          <div className="p-2 sm:p-3 max-w-4xl w-full mx-auto">
             {currentStepData && (
-              <div ref={containerRef} className="relative bg-black rounded-xl overflow-hidden mb-4">
+              <div ref={containerRef} className="relative bg-black rounded-xl overflow-hidden mb-2">
                 <div className="aspect-video relative">
                   {stepType === 'video' && currentStepData.videoUrl ? (
                     <iframe
@@ -250,58 +250,30 @@ const TutorialPlayer = ({
               </div>
             )}
 
-            {currentStepData && (
-              <div className={`${cardBg} rounded-xl p-4 mb-4`}>
-                <div className="flex items-center space-x-4 mb-3 text-sm font-medium">
-                  <span>{completedSteps.length}/{steps.length} etapas</span>
-                  <span>{Math.round(getProgressPercentage())}% concluído</span>
-                  <span className={`px-2 py-1 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
-                    {category}
-                  </span>
-                </div>
-                
-                <p className={`${textSecondary} mb-3 line-clamp-3`}>
-                  {currentStepData.description}
-                </p>
+            {/* Card de descrição/progresso removido conforme solicitação do usuário */}
 
-                {currentStepData.tips && currentStepData.tips.length > 0 && (
-                  <div className="mb-3">
-                    <h4 className="font-semibold mb-2">💡 Dicas importantes</h4>
-                    <div className="space-y-1">
-                      {currentStepData.tips.map((tip, index) => (
-                        <div key={index} className={`text-sm ${textSecondary} flex items-start space-x-2`}>
-                          <span className="text-blue-500 mt-1">•</span>
-                          <span>{tip}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div className="flex justify-between items-center gap-2 flex-wrap">
-              <button onClick={prevStep} disabled={currentStep === 0} className={`flex items-center space-x-2 px-3 py-2 sm:px-4 ${isDarkMode ? 'bg-[#272727] hover:bg-[#3f3f3f]' : 'bg-gray-100 hover:bg-gray-200'} rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}>
+            <div className="flex justify-between items-center gap-3 flex-wrap">
+              <button onClick={prevStep} disabled={currentStep === 0} className={`w-full sm:w-auto justify-center flex items-center space-x-2 px-5 py-3 sm:px-6 ${isDarkMode ? 'bg-[#272727] hover:bg-[#3f3f3f]' : 'bg-gray-100 hover:bg-gray-200'} rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base font-medium`}>
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="text-sm">Anterior</span>
+                <span>Anterior</span>
               </button>
 
-              <button onClick={() => markStepComplete(currentStep)} disabled={completedSteps.includes(currentStep)} className={`px-3 py-2 sm:px-6 sm:py-2 rounded-full font-medium transition-colors text-sm sm:text-base ${completedSteps.includes(currentStep) ? (isDarkMode ? 'bg-green-900/30 text-green-300' : 'bg-green-100 text-green-700') : 'bg-red-600 hover:bg-red-700 text-white'}`}>
+              <button onClick={() => markStepComplete(currentStep)} disabled={completedSteps.includes(currentStep)} className={`w-full sm:w-auto px-5 py-3 sm:px-6 sm:py-3 rounded-full font-semibold transition-colors text-sm sm:text-base ${completedSteps.includes(currentStep) ? (isDarkMode ? 'bg-green-900/30 text-green-300' : 'bg-green-100 text-green-700') : 'bg-red-600 hover:bg-red-700 text-white'}`}>
                 {completedSteps.includes(currentStep) ? (
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span>Concluído</span>
                   </div>
                 ) : (
-                  <span className="hidden sm:inline">Marcar como Concluído</span>
+                  <span>Marcar como Concluído</span>
                 )}
               </button>
 
               <button 
                 onClick={nextStep} 
-                className={`flex items-center space-x-2 px-3 py-2 sm:px-4 ${isDarkMode ? 'bg-[#272727] hover:bg-[#3f3f3f]' : 'bg-gray-100 hover:bg-gray-200'} rounded-full transition-colors`}
+                className={`w-full sm:w-auto justify-center flex items-center space-x-2 px-5 py-3 sm:px-6 ${isDarkMode ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-900'} rounded-full transition-colors font-semibold`}
               >
-                <span className="text-sm">
+                <span>
                   {currentStep === steps.length - 1 && onLastStepFinish ? 'Próximo Tutorial' : currentStep === steps.length - 1 ? 'Finalizado' : 'Próximo'}
                 </span>
                 <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />

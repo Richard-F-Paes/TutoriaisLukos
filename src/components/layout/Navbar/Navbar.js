@@ -25,7 +25,7 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="sm flex justify-center bg-gray-100/90 backdrop-blur-lg shadow-md border-b border-gray-200 sticky top-0 z-50">
+      <header className="sm flex justify-center bg-gray-100 backdrop-blur-lg shadow-md border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-8xl mx-auto px-6 sm:px-8 lg:px-12">
           <div className="flex justify-center items-center h-16">
             {/* Desktop Navigation */}

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authService } from '../services/authService';
+import authService from '../infrastructure/auth/authService';
 
 const AuthContext = createContext();
 
@@ -20,13 +20,16 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const token = localStorage.getItem('token');
+        // Verificar sessionStorage primeiro, depois localStorage (para compatibilidade)
+        const token = sessionStorage.getItem('token') || localStorage.getItem('token');
         if (token) {
           const userData = await authService.verifyToken(token);
           setUser(userData);
         }
       } catch (error) {
         console.error('Erro ao verificar token:', error);
+        // Limpar tokens inválidos
+        sessionStorage.removeItem('token');
         localStorage.removeItem('token');
       } finally {
         setLoading(false);
@@ -36,16 +39,17 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
-  // Login
-  const login = async (email, password) => {
+  // Login - Aceita username ou email
+  const login = async (username, password) => {
     try {
       setLoading(true);
       setError(null);
       
-      const response = await authService.login(email, password);
+      const response = await authService.login(username, password);
       const { user: userData, token } = response;
       
-      localStorage.setItem('token', token);
+      // Salvar token em sessionStorage (mais seguro que localStorage)
+      sessionStorage.setItem('token', token);
       setUser(userData);
       
       return { success: true, user: userData };
@@ -57,41 +61,28 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Registro
+  // Registro - Removido (não necessário para equipe pequena)
+  // Apenas login é necessário
   const register = async (userData) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await authService.register(userData);
-      const { user: newUser, token } = response;
-      
-      localStorage.setItem('token', token);
-      setUser(newUser);
-      
-      return { success: true, user: newUser };
-    } catch (error) {
-      setError(error.message);
-      return { success: false, error: error.message };
-    } finally {
-      setLoading(false);
-    }
+    setError('Registro não disponível. Entre em contato com o administrador.');
+    return { success: false, error: 'Registro não disponível' };
   };
 
   // Logout
   const logout = () => {
-    localStorage.removeItem('token');
+    authService.logout();
     setUser(null);
     setError(null);
   };
 
-  // Atualizar perfil
+  // Atualizar perfil - Simplificado (apenas atualiza estado local)
   const updateProfile = async (profileData) => {
     try {
       setLoading(true);
       setError(null);
       
-      const updatedUser = await authService.updateProfile(profileData);
+      // Atualizar apenas no estado local (sem backend ainda)
+      const updatedUser = { ...user, ...profileData };
       setUser(updatedUser);
       
       return { success: true, user: updatedUser };
@@ -103,38 +94,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Alterar senha
+  // Alterar senha - Não implementado (gerenciado por admin)
   const changePassword = async (currentPassword, newPassword) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      await authService.changePassword(currentPassword, newPassword);
-      
-      return { success: true };
-    } catch (error) {
-      setError(error.message);
-      return { success: false, error: error.message };
-    } finally {
-      setLoading(false);
-    }
+    setError('Alteração de senha não disponível. Entre em contato com o administrador.');
+    return { success: false, error: 'Alteração de senha não disponível' };
   };
 
-  // Recuperar senha
+  // Recuperar senha - Não implementado (equipe pequena)
   const resetPassword = async (email) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      await authService.resetPassword(email);
-      
-      return { success: true };
-    } catch (error) {
-      setError(error.message);
-      return { success: false, error: error.message };
-    } finally {
-      setLoading(false);
-    }
+    setError('Recuperação de senha não disponível. Entre em contato com o administrador.');
+    return { success: false, error: 'Recuperação de senha não disponível' };
   };
 
   // Verificar se usuário tem permissão

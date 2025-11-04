@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from './useAuth';
+import { useAuth } from '../contexts/AuthContext';
+import { PERMISSIONS } from '../shared/constants';
 
 // Hook personalizado para gerenciamento de permissões
 export function usePermissions() {

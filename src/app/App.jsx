@@ -51,7 +51,7 @@ import GlobalSearch from '../presentation/components/GlobalSearch/GlobalSearch';
 import RetaguardaTutorial from '../presentation/components/tutorial/RetaguardaTutorial/RetaguardaTutorial';
 import Navbarcategoria from '../presentation/components/Navbarcategoria/Navbarcategoria';
 import Lukospay from '../presentation/components/Lukospay/Lukospay';
-import Pesquisa from '../presentation/components/Pesquisa/Pesquisa';
+
 
 
 
@@ -64,7 +64,7 @@ function App() {
     <AppProviders>
       <Router>
         <div className="App">
-          <Pesquisa />
+          
           <Navbar />
         
           <main>

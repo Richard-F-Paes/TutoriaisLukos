@@ -1,274 +1,264 @@
+import React, { useState } from 'react';
+import { Clock, Users, Star, CheckCircle2, Play } from 'lucide-react';
+import Button from '../../ui/Button/Button';
+import { Card, CardContent } from '../../ui/card/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs/tabs';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../ui/accordion/accordion';
+import { Progress } from '../../ui/progress/progress';
+import { Badge } from '../../ui/badge/badge';
 
-import React from 'react'
-import { useParams } from 'react-router-dom'
-import {Star, Clock, Users, Award, Play, CheckCircle, User} from 'lucide-react'
 
-const CourseDetail = () => {
-  const { id } = useParams()
+/* ------------------ Componentes internos ------------------ */
 
-  // Mock data - em uma aplicação real, isso viria de uma API
+const ERROR_IMG_SRC =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODgiIGhlaWdodD0iODgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIuMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIzLjciPjxyZWN0IHg9IjE2IiB5PSIxNiIgd2lkdGg9IjU2IiBoZWlnaHQ9IjU2IiByeD0iNiIvPjxwYXRoIGQ9Im0xNiA1OCAxNi0xOCAzMiAzMiIvPjxjaXJjbGUgY3g9IjUzIiBjeT0iMzUiIHI9IjciLz48L3N2Zz4KCg==';
+
+function ImageWithFallback(props) {
+  const [didError, setDidError] = useState(false);
+  const { src, alt, style, className, ...rest } = props;
+
+  const handleError = () => setDidError(true);
+
+  return didError ? (
+    <div
+      className={`inline-block bg-gray-100 text-center align-middle ${className ?? ''}`}
+      style={style}
+    >
+      <div className="flex items-center justify-center w-full h-full">
+        <img src={ERROR_IMG_SRC} alt="Error loading image" {...rest} data-original-url={src} />
+      </div>
+    </div>
+  ) : (
+    <img src={src} alt={alt} className={className} style={style} {...rest} onError={handleError} />
+  );
+}
+
+function VideoPlayer({ videoUrl, title }) {
+  return (
+    <div className="w-full">
+      <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
+        <iframe
+          className="w-full h-full"
+          src={videoUrl}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    </div>
+  );
+}
+
+function LessonItem({ title, duration, completed, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center gap-3 p-4 rounded-lg transition-colors text-left ${
+        active ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+      }`}
+    >
+      <div className={`flex-shrink-0 ${completed ? 'text-green-600' : 'text-gray-400'}`}>
+        {completed ? <CheckCircle2 className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className={active ? 'text-blue-600' : 'text-gray-900'}>{title}</p>
+        <p className="text-sm text-gray-600">{duration}</p>
+      </div>
+    </button>
+  );
+}
+
+/* ------------------ CourseDetail principal ------------------ */
+
+export function CourseDetail({ courseId, onNavigate }) {
+  const [currentLesson, setCurrentLesson] = useState(0);
+  const [showPlayer, setShowPlayer] = useState(false);
+
   const course = {
-    id: 1,
-    title: "React.js Completo - Do Zero ao Avançado",
-    instructor: {
-      name: "Ana Silva",
-      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150",
-      bio: "Desenvolvedora Frontend com 8 anos de experiência em React.js",
-      courses: 12,
-      students: 15000
-    },
-    price: "R$ 199,90",
-    originalPrice: "R$ 299,90",
-    rating: 4.9,
-    students: 1250,
-    duration: "40h",
-    level: "Intermediário",
-    category: "Frontend",
-    image: "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?auto=compress&cs=tinysrgb&w=800",
-    description: "Aprenda React.js desde os conceitos básicos até técnicas avançadas. Este curso abrangente vai te ensinar tudo que você precisa para se tornar um desenvolvedor React profissional.",
+    id: courseId,
+    title: 'Tutorial Completo do Sistema PDV',
+    description:
+      'Aprenda a usar todas as funcionalidades do sistema PDV para pista de combustível e conveniência com tutoriais passo a passo.',
+    image:
+      'https://lh3.googleusercontent.com/sitesv/AAzXCke4_mHhycFfaKgW2Qy4C6xQLbxgB1jqwsJrOmflgcfhs__i-xeyXYldeN0QqBxZzEiOVEbWeZOzd2MqWw8-U1zKF7vBUZ6_lppF-Ii3IbwxjmHuMJZF_nVbxiBYkWWAF70iLCHZLAmzXE29DSVliQjooE1CQU7icH9-d2otFc2fPcZbaJO2kXv4pvigPG22Wqy4VcmLwXlUMJqNeO8MMI3_-8t7ikrd5Pqs=w1280',
+    
+    level: 'Iniciante',
+   
+    modules: [
+      {
+        title: 'Módulo 1: Introdução ao Sistema PDV',
+        duration: '2h 40min',
+        lessons: [
+          { title: 'Introdução ao Sistema PDV', duration: '15min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: true },
+          { title: 'Configuração Inicial do Sistema', duration: '25min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: true },
+          { title: 'Navegação e Interface Principal', duration: '30min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+          { title: 'Perfis de Usuário e Permissões', duration: '35min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+          { title: 'Configurações Básicas do PDV', duration: '55min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+        ],
+      },
+      {
+        title: 'Módulo 2: Operações de Venda',
+        duration: '3h 35min',
+        lessons: [
+          { title: 'Realizando Vendas no PDV', duration: '20min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+          { title: 'Gestão de Produtos e Estoque', duration: '30min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+          { title: 'Formas de Pagamento', duration: '45min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+          { title: 'Cupons Fiscais e Impressão', duration: '40min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+          { title: 'Cancelamento e Devolução de Vendas', duration: '35min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+          { title: 'Relatórios de Vendas', duration: '45min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+        ],
+      },
+      {
+        title: 'Módulo 3: Pista de Combustível',
+        duration: '2h 50min',
+        lessons: [
+          { title: 'Configuração das Bombas', duration: '30min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+          { title: 'Abastecimento e Controle de Tanques', duration: '35min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+          { title: 'Gestão de Preços de Combustível', duration: '25min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+          { title: 'Relatórios de Combustível', duration: '40min', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', completed: false },
+        ],
+      },
+    ],
     whatYouWillLearn: [
-      "Fundamentos do React",
-      "Componentes funcionais e hooks",
-      "Gerenciamento de estado com Redux",
-      "Roteamento com React Router",
-      "Testes com Jest e React Testing Library",
-      "Deploy e otimização de performance"
+      'Configurar e usar o sistema PDV completo',
+      'Realizar vendas e operações de conveniência',
+      'Gerenciar pista de combustível e bombas',
+      'Configurar produtos, preços e estoque',
+      'Emitir cupons fiscais e relatórios',
+      'Gerenciar usuários e permissões do sistema',
     ],
-    curriculum: [
-      {
-        module: "Cadastro",
-        lessons: [
-          { title: "Cadastro", duration: "15min", completed: false },
-          { title: "Configurando o ambiente", duration: "20min", completed: false },
-          { title: "Primeiro componente", duration: "25min", completed: false }
-        ]
-      },
-      {
-        module: "Módulo 2: Componentes e Props",
-        lessons: [
-          { title: "Criando componentes", duration: "30min", completed: false },
-          { title: "Props e PropTypes", duration: "25min", completed: false },
-          { title: "Composição de componentes", duration: "35min", completed: false }
-        ]
-      },
-      {
-        module: "Módulo 3: Estado e Hooks",
-        lessons: [
-          { title: "useState Hook", duration: "40min", completed: false },
-          { title: "useEffect Hook", duration: "45min", completed: false },
-          { title: "Hooks customizados", duration: "50min", completed: false }
-        ]
-      }
+    requirements: [
+      'Acesso ao sistema PDV Lukos',
+      'Computador com Windows',
+      'Conexão com internet',
+      'Conhecimento básico de informática',
     ],
-    reviews: [
-      {
-        name: "João Pedro",
-        rating: 5,
-        comment: "Excelente curso! A Ana explica muito bem e os exemplos são práticos.",
-        date: "2024-01-15"
-      },
-      {
-        name: "Maria Santos",
-        rating: 5,
-        comment: "Melhor curso de React que já fiz. Muito didático e completo.",
-        date: "2024-01-10"
-      }
-    ]
-  }
+  };
+
+  const completedLessons = course.modules.flatMap(m => m.lessons).filter(l => l.completed).length;
+  const totalLessons = course.modules.flatMap(m => m.lessons).length;
+  const progress = (completedLessons / totalLessons) * 100;
+
+  const allLessons = course.modules.flatMap((module, moduleIndex) =>
+    module.lessons.map((lesson, lessonIndex) => ({
+      ...lesson,
+      moduleIndex,
+      lessonIndex,
+    }))
+  );
+
+  const handleLessonClick = (moduleIndex, lessonIndex) => {
+    const lessonIndex2 =
+      course.modules.slice(0, moduleIndex).reduce((acc, mod) => acc + mod.lessons.length, 0) + lessonIndex;
+    setCurrentLesson(lessonIndex2);
+    setShowPlayer(true);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-900 to-purple-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <div className="mb-4">
-                <span className="px-3 py-1 bg-blue-600 text-white text-sm rounded-full">
-                  {course.category}
-                </span>
-              </div>
-              
-              <h1 className="text-3xl md:text-4xl font-bold mb-4">{course.title}</h1>
-              <p className="text-xl text-blue-100 mb-6">{course.description}</p>
-              
-              <div className="flex flex-wrap items-center gap-6 text-sm">
-                <div className="flex items-center">
-                  <Star className="h-5 w-5 text-yellow-400 fill-current mr-2" />
-                  <span className="font-semibold">{course.rating}</span>
-                  <span className="text-blue-200 ml-1">({course.students} alunos)</span>
-                </div>
-                <div className="flex items-center">
-                  <Clock className="h-5 w-5 mr-2" />
-                  <span>{course.duration} de conteúdo</span>
-                </div>
-                <div className="flex items-center">
-                  <Award className="h-5 w-5 mr-2" />
-                  <span>{course.level}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center mt-6">
-                <img
-                  src={course.instructor.avatar}
-                  alt={course.instructor.name}
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <p className="font-semibold">Instrutor: {course.instructor.name}</p>
-                  <p className="text-blue-200 text-sm">{course.instructor.bio}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Card de Compra */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl shadow-xl p-6 text-gray-900">
-                <img
-                  src={course.image}
-                  alt={course.title}
-                  className="w-full h-48 object-cover rounded-lg mb-6"
-                />
-                
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-3xl font-bold text-blue-600">{course.price}</span>
-                    <span className="text-lg text-gray-500 line-through">{course.originalPrice}</span>
+      {showPlayer ? (
+        <div className="bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-4">
+            <Button variant="outline" onClick={() => setShowPlayer(false)} className="mb-4 flex justify-start align-start">
+              ← Voltar para Visão Geral
+            </Button>
+            <div className="grid lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <VideoPlayer videoUrl={allLessons[currentLesson].videoUrl} title={allLessons[currentLesson].title} />
+                <div className="mt-6">
+                  <h2 className="mb-2">{allLessons[currentLesson].title}</h2>
+                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                    <span>{allLessons[currentLesson].duration}</span>
+                    <span>•</span>
+                    <span>
+                      Aula {currentLesson + 1} de {totalLessons}
+                    </span>
                   </div>
-                  <p className="text-green-600 font-semibold">33% de desconto</p>
-                </div>
-
-                <button className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors mb-4">
-                  Comprar Agora
-                </button>
-
-                <button className="w-full border-2 border-blue-600 text-blue-600 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors mb-6">
-                  Adicionar ao Carrinho
-                </button>
-
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                    <span>Acesso vitalício</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                    <span>Certificado de conclusão</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                    <span>Suporte do instrutor</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                    <span>30 dias de garantia</span>
+                  <Progress value={progress} className="mb-4" />
+                  <p className="text-sm text-gray-600">
+                    {completedLessons} de {totalLessons} aulas concluídas ({Math.round(progress)}%)
+                  </p>
+                  <div className="flex gap-4 mt-6">
+                    <Button onClick={() => setCurrentLesson(Math.max(0, currentLesson - 1))} disabled={currentLesson === 0}>
+                      Aula Anterior
+                    </Button>
+                    <Button
+                      onClick={() => setCurrentLesson(Math.min(totalLessons - 1, currentLesson + 1))}
+                      disabled={currentLesson === totalLessons - 1}
+                    >
+                      Próxima Aula
+                    </Button>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            {/* O que você vai aprender */}
-            <div className="bg-white rounded-xl shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">O que você vai aprender</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {course.whatYouWillLearn.map((item, index) => (
-                  <div key={index} className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Currículo */}
-            <div className="bg-white rounded-xl shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Conteúdo do Tutorial</h2>
-              <div className="space-y-4">
-                {course.curriculum.map((module, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg">
-                    <div className="p-4 bg-gray-50 border-b border-gray-200">
-                      <h3 className="font-semibold text-gray-900">{module.module}</h3>
-                      <p className="text-sm text-gray-600">{module.lessons.length} aulas</p>
-                    </div>
-                    <div className="divide-y divide-gray-200">
-                      {module.lessons.map((lesson, lessonIndex) => (
-                        <div key={lessonIndex} className="p-4 flex items-center justify-between">
-                          <div className="flex items-center">
-                            <Play className="h-4 w-4 text-gray-400 mr-3" />
-                            <span className="text-gray-700">{lesson.title}</span>
-                          </div>
-                          <span className="text-sm text-gray-500">{lesson.duration}</span>
-                        </div>
+              <div className="lg:col-span-1">
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="mb-4">Conteúdo do Curso</h3>
+                    <div className="space-y-2 max-h-[600px] overflow-y-auto">
+                      {allLessons.map((lesson, index) => (
+                        <LessonItem
+                          key={index}
+                          title={lesson.title}
+                          duration={lesson.duration}
+                          completed={lesson.completed}
+                          active={currentLesson === index}
+                          onClick={() => setCurrentLesson(index)}
+                        />
                       ))}
                     </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Avaliações */}
-            <div className="bg-white rounded-xl shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Avaliações dos alunos</h2>
-              <div className="space-y-6">
-                {course.reviews.map((review, index) => (
-                  <div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
-                    <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                        <User className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">{review.name}</p>
-                        <div className="flex items-center">
-                          {[...Array(review.rating)].map((_, i) => (
-                            <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
-                          ))}
-                          <span className="text-sm text-gray-500 ml-2">{review.date}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-gray-700">{review.comment}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Sidebar do Instrutor */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-md p-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Sobre o instrutor</h3>
-              <div className="text-center mb-6">
-                <img
-                  src={course.instructor.avatar}
-                  alt={course.instructor.name}
-                  className="w-24 h-24 rounded-full mx-auto mb-4"
-                />
-                <h4 className="text-lg font-semibold text-gray-900">{course.instructor.name}</h4>
-                <p className="text-gray-600">{course.instructor.bio}</p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 text-center">
-                <div>
-                  <p className="text-2xl font-bold text-blue-600">{course.instructor.courses}</p>
-                  <p className="text-sm text-gray-600">Cursos</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-blue-600">{course.instructor.students.toLocaleString()}</p>
-                  <p className="text-sm text-gray-600">Alunos</p>
-                </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <>
+          <section className="bg-gray-900 text-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                  <Badge className="mb-4">{course.level}</Badge>
+                  <h1 className="text-white mb-4">{course.title}</h1>
+                  <p className="text-gray-300 mb-6">{course.description}</p>
+                  <div className="flex flex-wrap items-center gap-6 text-sm mb-6">
+                    <div className="flex items-center gap-2">
+                      <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                      <span>{course.rating} avaliação</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Users className="w-5 h-5" />
+                      <span>{course.students} </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-5 h-5" />
+                      <span>{course.duration} de conteúdo</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <Button size="lg" onClick={() => setShowPlayer(true)}>
+                      <Play className="w-5 h-5 mr-2" />
+                      Começar Tutorial
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="bg-transparent text-white border-white hover:bg-white hover:text-gray-900"
+                    >
+                      Adicionar à Lista
+                    </Button>
+                  </div>
+                </div>
+                <div>
+                  <ImageWithFallback src={course.image} alt={course.title} className="rounded-lg shadow-2xl" />
+                </div>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
     </div>
-  )
+  );
 }
-
-export default CourseDetail
+export default CourseDetail;

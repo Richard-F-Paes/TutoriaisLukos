@@ -17,6 +17,7 @@ import TutorialsPage from '../presentation/pages/public/TutorialsPage';
 import TutorialDetailPage from '../presentation/pages/public/TutorialDetailPage';
 import TutorialPage from '../presentation/pages/public/TutorialPage';
 import TutorialsHomePage from '../presentation/pages/public/TutorialsHomePage';
+import Tutorials from '../presentation/pages/public/Tutorials';
 import CategoryTutorialsPage from '../presentation/pages/public/CategoryTutorialsPage';
 import AboutPage from '../presentation/pages/public/AboutPage';
 import SearchPage from '../presentation/pages/public/SearchPage';
@@ -75,7 +76,7 @@ function App() {
                 <Route path="/video-tutorial/:id" element={<VideoTutorialDetailPage />} />
                 
                 {/* Rotas dos Tutoriais Lukos */}
-                <Route path="/tutoriais" element={<TutorialsHomePage />} />
+                <Route path="/tutoriais" element={<Tutorials />} />
                 <Route path="/categoria/:category" element={<CategoryTutorialsPage />} />
                 <Route path="/tutorial/:tutorialId" element={<TutorialPage />} />
                 

@@ -11,15 +11,15 @@ export const retaguardaTutorials = {
     difficulty: 'Iniciante',
     duration: '10min',
     description: 'Cadastro completo de clientes com CPF, CNPJ e informações de faturamento.',
-    image: 'https://via.placeholder.com/400x250?text=Cadastro+de+Clientes',
-    videoUrl: 'https://example.com/video1.mp4',
+    image: 'https://i.pinimg.com/1200x/ba/e9/ae/bae9ae971edabdd45bbdd94ecabe0416.jpg',
+    videoUrl: 'https://www.youtube.com/embed/sjWk3XpdH3s?si=Zv2L029tcGpfA30W',
     steps: [
       {
         step: 1,
         title: 'Acessar Cadastro de Clientes',
         description: 'Navegue até o módulo de cadastros e selecione "Cadastro de Clientes"',
         duration: 120,
-        image: 'https://via.placeholder.com/300x200?text=Passo+1',
+        image: 'https://lh3.googleusercontent.com/sitesv/AAzXCke8c4DXrSxWRzjlvj5T2oEUtBjN-ldLFwqiTOCYcjR9H9axwGdKolxySmjdW3q_ozE0uuG3lmgbMZNl5J5kciTvqsM3fUyRWP1UHDzW6-q-k_n4tGCl7YvUUC09ExBP9F77Xa2TyPy7vKrDiRAZQmXfH2V7XGY6pVazv1B4neiUDohQn9aNIV96ElYKcY5oNkEIDRjsxtpS_aRAXX7mdpPJers3BVqcpHdB=w1280',
         tips: 'Certifique-se de ter todas as informações do cliente em mãos',
         focusArea: 'Navegação no sistema'
       },
@@ -28,7 +28,7 @@ export const retaguardaTutorials = {
         title: 'Preencher Dados Básicos',
         description: 'Preencha nome, CPF/CNPJ e dados de contato do cliente',
         duration: 300,
-        image: 'https://via.placeholder.com/300x200?text=Passo+2',
+        image: 'https://lh3.googleusercontent.com/sitesv/AAzXCkfLHZNuk3ohLBQr_eA3kUbmA-00_YGq2dMlgom1lySs-eeCj5VIUtfdbmy-kTeX0rLjYWtNznw2Yh48yzaPQtAicpDei8bD6mq2EyKZHvjC9YrR4pjTcI74wAcjK6n_xQE1kIhgE9mFsrO7osMM84fISCWOGQX4-H0Yv3_vPIJAX3mE8sbOAXb04p60WNwVoDFR2Asi0bnHLv2a2RtXEfjjSodDEX5q2bWTQPo=w1280',
         tips: 'Verifique se o CPF/CNPJ está correto antes de salvar',
         focusArea: 'Validação de dados'
       },
@@ -37,7 +37,7 @@ export const retaguardaTutorials = {
         title: 'Configurar Informações de Faturamento',
         description: 'Configure dados de faturamento e limites de crédito',
         duration: 180,
-        image: 'https://via.placeholder.com/300x200?text=Passo+3',
+        image: 'https://lh3.googleusercontent.com/sitesv/AAzXCkdfcaolbYC5YZkJtQEVbhjj4aKNp0LsRCvz7ysfN7FvRUItsJ0Ldokn1TIAJAyqKzkBpKigzAYMr-XeUZUJOoAHB-V1hMN-8yuImnGy9XXUdaTEf4nittZM-UpgUWN-fGTjZItSxEKIjuzDrlCSokyNbhjw83pYv3uSyN1F_HrxulfI19MeRjacx7scg-EQ7KFVNWJsxnNCJuv-2_phbRFcNV7WoufXR470yAk=w1280',
         tips: 'Defina limites apropriados baseados no histórico do cliente',
         focusArea: 'Configuração financeira'
       }
@@ -81,15 +81,15 @@ export const retaguardaTutorials = {
     difficulty: 'Iniciante',
     duration: '9min',
     description: 'Gestão de funcionários, grupos de comissão e fornecedores.',
-    image: 'https://via.placeholder.com/400x250?text=Cadastro+de+Funcionarios',
+    image: 'https://lh3.googleusercontent.com/sitesv/AAzXCke8c4DXrSxWRzjlvj5T2oEUtBjN-ldLFwqiTOCYcjR9H9axwGdKolxySmjdW3q_ozE0uuG3lmgbMZNl5J5kciTvqsM3fUyRWP1UHDzW6-q-k_n4tGCl7YvUUC09ExBP9F77Xa2TyPy7vKrDiRAZQmXfH2V7XGY6pVazv1B4neiUDohQn9aNIV96ElYKcY5oNkEIDRjsxtpS_aRAXX7mdpPJers3BVqcpHdB=w1280',
     videoUrl: 'https://example.com/video2.mp4',
     steps: [
       {
         step: 1,
-        title: 'Acessar Cadastro de Funcionários',
+        title: 'Insira o CPF do cliente no campo "CNPJ/CPF" e aperte a tecla "TAB" ',
         description: 'Navegue até o módulo de cadastros e selecione "Funcionários"',
         duration: 120,
-        image: 'https://via.placeholder.com/300x200?text=Passo+1',
+        image: 'https://lh3.googleusercontent.com/sitesv/AAzXCke8c4DXrSxWRzjlvj5T2oEUtBjN-ldLFwqiTOCYcjR9H9axwGdKolxySmjdW3q_ozE0uuG3lmgbMZNl5J5kciTvqsM3fUyRWP1UHDzW6-q-k_n4tGCl7YvUUC09ExBP9F77Xa2TyPy7vKrDiRAZQmXfH2V7XGY6pVazv1B4neiUDohQn9aNIV96ElYKcY5oNkEIDRjsxtpS_aRAXX7mdpPJers3BVqcpHdB=w1280',
         tips: 'Tenha em mãos todos os documentos do funcionário',
         focusArea: 'Navegação no sistema'
       },
@@ -98,16 +98,16 @@ export const retaguardaTutorials = {
         title: 'Preencher Dados Pessoais',
         description: 'Preencha nome, CPF, RG e dados pessoais do funcionário',
         duration: 240,
-        image: 'https://via.placeholder.com/300x200?text=Passo+2',
+        image: 'https://lh3.googleusercontent.com/sitesv/AAzXCkfLHZNuk3ohLBQr_eA3kUbmA-00_YGq2dMlgom1lySs-eeCj5VIUtfdbmy-kTeX0rLjYWtNznw2Yh48yzaPQtAicpDei8bD6mq2EyKZHvjC9YrR4pjTcI74wAcjK6n_xQE1kIhgE9mFsrO7osMM84fISCWOGQX4-H0Yv3_vPIJAX3mE8sbOAXb04p60WNwVoDFR2Asi0bnHLv2a2RtXEfjjSodDEX5q2bWTQPo=w1280',
         tips: 'Verifique se todos os documentos estão válidos',
         focusArea: 'Validação de documentos'
       },
       {
         step: 3,
-        title: 'Configurar IdentFid',
+        title: 'Configurar ',
         description: 'Configure o IdentFid e grupos de comissão',
         duration: 180,
-        image: 'https://via.placeholder.com/300x200?text=Passo+3',
+        image: 'https://lh3.googleusercontent.com/sitesv/AAzXCkdfcaolbYC5YZkJtQEVbhjj4aKNp0LsRCvz7ysfN7FvRUItsJ0Ldokn1TIAJAyqKzkBpKigzAYMr-XeUZUJOoAHB-V1hMN-8yuImnGy9XXUdaTEf4nittZM-UpgUWN-fGTjZItSxEKIjuzDrlCSokyNbhjw83pYv3uSyN1F_HrxulfI19MeRjacx7scg-EQ7KFVNWJsxnNCJuv-2_phbRFcNV7WoufXR470yAk=w1280',
         tips: 'O IdentFid é único para cada funcionário',
         focusArea: 'Configuração de acesso'
       }
@@ -220,9 +220,9 @@ export const retaguardaTutorials = {
     subcategory: 'Unidades',
     difficulty: 'Intermediário',
     duration: '11min',
-    description: 'Gestão de unidades operacionais, contadores e abastecimentos.',
+    description: 'Gestão de unidades operacionais, contadores e abastecimentos. Aprenda a configurar e gerenciar unidades operacionais no sistema Lukos.',
     image: 'https://via.placeholder.com/400x250?text=Unidades+Operacionais',
-    videoUrl: 'https://example.com/video4.mp4',
+    videoUrl: 'https://www.youtube.com/embed/sjWk3XpdH3s?si=Zv2L029tcGpfA30W',
     steps: [
       {
         step: 1,

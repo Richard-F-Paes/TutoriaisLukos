@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Home } from 'lucide-react'
-import TutorialPlayer from '../../components/videos/TutorialPlayer/TutorialPlayer'
+import { CourseDetail } from '../../components/content/Courses/CousesDetail'
 import { getTutorialById } from '../../../shared/data/__mocks__/lukosTutorials.js'
 import { getRetaguardaTutorialById } from '../../../shared/data/__mocks__/retaguardaTutorials.js'
 
@@ -31,91 +31,105 @@ const TutorialPage = () => {
     )
   }
 
-  // Converter dados do tutorial para o formato do InteractiveLesson
-  const tutorialData = {
+  // Converter dados do tutorial para o formato do CourseDetail
+  const convertDuration = (duration) => {
+    if (!duration) return '0min'
+    if (typeof duration === 'number') {
+      const hours = Math.floor(duration / 60)
+      const minutes = duration % 60
+      return hours > 0 ? `${hours}h ${minutes}min` : `${minutes}min`
+    }
+    return duration
+  }
+
+  // Converter steps para módulos e lições
+  const convertStepsToModules = (steps) => {
+    if (!steps || steps.length === 0) return []
+    
+    // Se houver muitos steps, dividir em módulos
+    if (steps.length > 5) {
+      const moduleSize = Math.ceil(steps.length / 3)
+      const modules = []
+      
+      for (let i = 0; i < steps.length; i += moduleSize) {
+        const moduleSteps = steps.slice(i, i + moduleSize)
+        const totalDuration = moduleSteps.reduce((acc, step) => {
+          const dur = typeof step.duration === 'number' ? step.duration : parseInt(step.duration?.replace(' min', '') || '0')
+          return acc + dur
+        }, 0)
+        
+        modules.push({
+          title: `Módulo ${Math.floor(i / moduleSize) + 1}: ${moduleSteps[0]?.title || 'Conteúdo'}`,
+          duration: convertDuration(totalDuration),
+          lessons: moduleSteps.map(step => ({
+            title: step.title,
+            description: step.description || '',
+            duration: convertDuration(step.duration),
+            // Se o step tem imagem própria, não usar videoUrl do tutorial (para exibir a imagem)
+            videoUrl: step.videoUrl || (step.image ? '' : tutorial.videoUrl || ''),
+            image: step.image || tutorial.image || '',
+            tips: step.tips || '',
+            completed: step.completed || false
+          }))
+        })
+      }
+      
+      return modules
+    }
+    
+    // Se houver poucos steps, criar um único módulo
+    const totalDuration = steps.reduce((acc, step) => {
+      const dur = typeof step.duration === 'number' ? step.duration : parseInt(step.duration?.replace(' min', '') || '0')
+      return acc + dur
+    }, 0)
+    
+    return [{
+      title: 'Conteúdo do Tutorial',
+      duration: convertDuration(totalDuration),
+      lessons: steps.map(step => ({
+        title: step.title,
+        description: step.description || '',
+        duration: convertDuration(step.duration),
+        // Se o step tem imagem própria, não usar videoUrl do tutorial (para exibir a imagem)
+        videoUrl: step.videoUrl || (step.image ? '' : tutorial.videoUrl || ''),
+        image: step.image || tutorial.image || '',
+        tips: step.tips || '',
+        completed: step.completed || false
+      }))
+    }]
+  }
+
+  // Calcular duração total
+  const totalDuration = (tutorial.steps || tutorial.instructions || []).reduce((total, step) => {
+    const duration = typeof step.duration === 'number' ? step.duration : parseInt(step.duration?.replace(' min', '') || '0')
+    return total + duration
+  }, 0)
+
+  const courseData = {
+    id: tutorial.id,
     title: tutorial.title,
-    instructor: 'Equipe Lukos - Suporte Técnico',
-    duration: tutorial.duration,
+    description: tutorial.description,
+    image: tutorial.image || 'https://via.placeholder.com/800x450?text=' + encodeURIComponent(tutorial.title),
+    level: tutorial.difficulty || 'Iniciante',
     rating: 4.9,
-    studentsCount: 2500,
-    difficulty: tutorial.difficulty,
-    category: tutorial.category,
-    benefits: [
+    students: '2.5k',
+    duration: convertDuration(totalDuration) || tutorial.duration || '10min',
+    modules: convertStepsToModules(tutorial.steps || tutorial.instructions || []),
+    whatYouWillLearn: tutorial.tips || [
       'Domínio completo do sistema Lukos',
       'Aumento da produtividade operacional',
-      'Redução de erros e otimização de processos',
-      'Gestão eficiente de postos e lojas',
-      'Controle total de estoque e vendas',
-      'Relatórios avançados e análises'
+      'Redução de erros e otimização de processos'
     ],
-    equipment: 'Computador com acesso à internet, Sistema Lukos instalado',
-    totalTime: (tutorial.steps || tutorial.instructions || []).reduce((total, step) => {
-      const duration = typeof step.duration === 'string' ? parseInt(step.duration.replace(' min', '')) : step.duration
-      return total + duration
-    }, 0),
-    precautions: [
-      'Faça backup dos dados antes de qualquer alteração',
-      'Teste em ambiente de desenvolvimento primeiro',
-      'Consulte a documentação oficial',
-      'Entre em contato com suporte em caso de dúvidas',
-      'Mantenha o sistema sempre atualizado'
-    ],
-    contraindications: [
-      'Usuários sem treinamento básico em sistemas',
-      'Ambiente de produção sem backup',
-      'Sistemas com versões desatualizadas',
-      'Sem acesso à internet para atualizações'
+    requirements: [
+      'Acesso ao sistema Lukos',
+      'Computador com Windows',
+      'Conexão com internet',
+      'Conhecimento básico de informática'
     ]
   }
 
-  // Criar steps individuais para cada passo do tutorial
-  const steps = (tutorial.steps || tutorial.instructions || []).map((step, index) => ({
-    id: `${tutorial.id}-step-${index + 1}`,
-    title: step.title,
-    category: tutorial.category,
-    difficulty: tutorial.difficulty,
-    image: step.image || tutorial.image,
-    videoUrl: tutorial.videoUrl,
-    description: step.description,
-    instructions: [step], // Cada step é uma instrução individual
-    tips: step.tips || tutorial.tips,
-    commonMistakes: tutorial.commonMistakes,
-    timeMarkers: (tutorial.steps || tutorial.instructions || []).map((s, i) => ({
-      time: typeof s.duration === 'string' ? parseInt(s.duration.replace(' min', '')) : s.duration,
-      title: s.title,
-      description: s.description
-    })),
-    quiz: {
-      questions: [
-        {
-          id: 1,
-          question: `Qual é o primeiro passo para ${step.title.toLowerCase()}?`,
-          options: ['Validar dados', 'Configurar sistema', 'Testar funcionalidade', 'Documentar processo'],
-          correct: 0,
-          explanation: 'Sempre valide os dados antes de prosseguir com qualquer operação.'
-        }
-      ]
-    },
-    resources: tutorial.resources
-  }))
-
   return (
-    <TutorialPlayer
-      steps={steps.map((step) => ({
-        id: step.id,
-        title: step.title,
-        description: step.description,
-        videoUrl: step.videoUrl,
-        image: step.image,
-        tips: Array.isArray(step.tips) ? step.tips : (step.tips ? [step.tips] : [])
-      }))}
-      title={tutorial.title}
-      author={tutorialData.instructor}
-      likes="2500"
-      category={tutorial.category}
-      difficulty={tutorial.difficulty}
-      initialStep={0}
-    />
+    <CourseDetail course={courseData} />
   )
 }
 

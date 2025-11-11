@@ -14,8 +14,8 @@ const VideoShowcase = () => {
       views: "12.5k",
       likes: "892",
       category: "Overview",
-      thumbnail: "https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=800",
-      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      thumbnail: "https://img.youtube.com/vi/sjWk3XpdH3s/maxresdefault.jpg",
+      videoUrl: "https://www.youtube.com/embed/sjWk3XpdH3s?si=Zv2L029tcGpfA30W",
       highlights: [
         "Interface moderna e intuitiva",
         "PDV integrado com bombas",
@@ -31,8 +31,8 @@ const VideoShowcase = () => {
       views: "8.2k",
       likes: "654",
       category: "PDV",
-      thumbnail: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800",
-      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      thumbnail: "https://img.youtube.com/vi/XY2OcTZqvqs/maxresdefault.jpg",
+      videoUrl: "https://www.youtube.com/embed/XY2OcTZqvqs?si=z-_ga6EOq1PrQ2by",
       highlights: [
         "Processo de venda simplificado",
         "Múltiplas formas de pagamento",
@@ -48,8 +48,8 @@ const VideoShowcase = () => {
       views: "6.8k",
       likes: "423",
       category: "Relatórios",
-      thumbnail: "https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=800",
-      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      thumbnail: "https://img.youtube.com/vi/fz5Q0HNVsDE/maxresdefault.jpg",
+      videoUrl: "https://www.youtube.com/embed/fz5Q0HNVsDE",
       highlights: [
         "Dashboards em tempo real",
         "Análise de vendas por período",
@@ -90,7 +90,7 @@ const VideoShowcase = () => {
     <section id="videos" className="py-20 bg-white text-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">
+          <h2 className="text-4xl font-bold mb-4 text-gray-900">
             Veja o Lukos ERP em Ação
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -103,41 +103,32 @@ const VideoShowcase = () => {
           <div className="lg:col-span-2">
             <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl">
               <div className="aspect-video relative">
-                <img 
-                  src={currentVideo.thumbnail}
-                  alt={currentVideo.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <button 
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 group"
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-8 h-8 text-white" />
-                    ) : (
-                      <Play className="w-8 h-8 text-white ml-1" />
-                    )}
-                  </button>
-                </div>
-                
-                {/* Video Controls */}
-                <div className="absolute bottom-4 left-4 right-4">
-                  <div className="bg-black/50 backdrop-blur-sm rounded-lg p-3">
-                    <div className="flex items-center space-x-4">
-                      <button className="text-white hover:text-blue-400 transition-colors">
-                        <Play className="w-5 h-5" />
+                {isPlaying ? (
+                  <iframe
+                    src={`${currentVideo.videoUrl}&autoplay=1`}
+                    title={currentVideo.title}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                ) : (
+                  <>
+                    <img 
+                      src={currentVideo.thumbnail}
+                      alt={currentVideo.title}
+                      className="w-full h-full object-cover absolute inset-0"
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <button 
+                        onClick={() => setIsPlaying(true)}
+                        className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 group"
+                      >
+                        <Play className="w-8 h-8 text-white ml-1" />
                       </button>
-                      <div className="flex-1 bg-white/20 rounded-full h-1">
-                        <div className="bg-blue-500 h-1 rounded-full w-1/3"></div>
-                      </div>
-                      <div className="flex items-center space-x-2 text-white text-sm">
-                        <Volume2 className="w-4 h-4" />
-                        <Maximize className="w-4 h-4" />
-                      </div>
                     </div>
-                  </div>
-                </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -215,12 +206,12 @@ const VideoShowcase = () => {
                         : 'bg-white hover:bg-gray-100 border border-gray-200'
                     }`}
                   >
-                    <div className="flex space-x-3">
-                      <div className="relative flex-shrink-0">
+                    <div className="flex space-x-3 items-center">
+                      <div className="relative flex-shrink-0 w-32 h-20 overflow-hidden rounded-lg">
                         <img 
                           src={video.thumbnail}
                           alt={video.title}
-                          className="w-20 h-12 object-cover rounded-lg"
+                          className="w-full h-full object-cover object-center rounded-lg absolute inset-0"
                         />
                         <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center">
                           <Play className="w-4 h-4 text-white" />
@@ -261,17 +252,7 @@ const VideoShowcase = () => {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center mt-16">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8">
-            <h3 className="text-2xl font-bold mb-4">Quer Ver uma Demo Personalizada?</h3>
-            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              Agende uma demonstração exclusiva do Lukos ERP com foco nas necessidades específicas do seu posto
-            </p>
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-              Agendar Demo Gratuita
-            </button>
-          </div>
-        </div>
+ 
       </div>
     </section>
   );

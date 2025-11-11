@@ -6,15 +6,19 @@ import MobileNav from '../../components/layout/MobileNav/MobileNav/MobileNav';
 import VideoShowcase from '../../components/videos/VideoShowcase/VideoShowcase';
 import { CourseDetail } from '../../components/content/Courses/CousesDetail';
 
+import CustomSection from '../../components/custom/CustomSection/CustomSection';
+
 
 function HomePage() {
   return (
     <>
       <HeroTutorial />
       <MobileNav />
-      <VideoShowcase />
-      <CourseDetail />
+      <VideoShowcase />  
+      <CustomSection />
     
+     
+   
     </>
   );
 }

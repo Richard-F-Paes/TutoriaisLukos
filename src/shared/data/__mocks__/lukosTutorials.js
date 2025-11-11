@@ -133,9 +133,9 @@ export const lukosTutorials = {
       {
         step: 1,
         title: 'Acessar Cadastro',
-        description: 'Acesse o menu Retaguarda > Cadastros > Clientes',
+        description: 'Insira o CPF do cliente no campo "CNPJ/CPF" e aperte a tecla "TAB".',
         duration: '2 min',
-        image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=1',
+        image: 'https://lh3.googleusercontent.com/sitesv/AAzXCkdpUrhpLgfGuYIaYKapGEnrPeoqHo9MQmV7ZPDx-sTqf2uNgoEzWwdqsTcdDfebh4F6IACFVP8hebmVbhv5ibpBHnL8WgyKy3r5dD7KIVZ_U-btwnqdlUtGuwIi94VQ1O9xRlFXk81hu8SWLtzOVJ_dHXwaBtXK-67xTbITo3_1W30Y-_AQmwTUvwrWzyYRCylwBTWWsmiT3989KAcE4gvalELPCjLST-vr=w1280',
         tips: 'Use credenciais de administrador',
         focusArea: 'Acesso ao sistema'
       },
@@ -144,7 +144,7 @@ export const lukosTutorials = {
         title: 'Preencher Dados',
         description: 'Digite nome, CPF e dados de contato',
         duration: '5 min',
-        image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=2',
+        image: 'https://lh3.googleusercontent.com/sitesv/AAzXCkdkOLVUlWqn55ULnOtOl9JUYf_ks5jA9xgBb6SWPU8N8mKwEIRghVNsvKVbK0mICU9fG5Wy6FuNatY6eAht-yKjEBu3hvxmW_3E80WalNhkIp1-0aGhsO-iU4YLiJwN4N-Bg6vrssSM5XC21F5lHPI53wv7iaEas-BCDZc431oSZXC2vvRpKRjMi8mO9ERyQsO9MhFxu0bIw8dE7i--74EjMF7TPauCMYYG6o0=w1280',
         tips: 'Verifique CPF antes de salvar',
         focusArea: 'Preenchimento'
       },
@@ -153,7 +153,7 @@ export const lukosTutorials = {
         title: 'Salvar Cadastro',
         description: 'Confirme dados e salve o cadastro',
         duration: '3 min',
-        image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center&v=3',
+        image: 'https://lh3.googleusercontent.com/sitesv/AAzXCkeybronSH04kSR_6J_dmdMP2jYwwKQ1AAnCYrcnA9MyrWxh_g1lYHNyKMEGcC2tEZ3rBYZXf1UlDcu01kKqf9s3CA2YoQy01KFQV_MZSaErSuxjJZv3wQk3uDmvUh1wsmL39z4k2axU1P88SDEx0tjuPaNr6aOoC-RxoKeV8PIThPb51WTEIfagKUUd3dEMt_SnPBH4H29X2qURfESC2o9lhD3ffWfGQPzfM6o=w1280',
         tips: 'Confirme todos os dados antes de salvar',
         focusArea: 'Finalização'
       }

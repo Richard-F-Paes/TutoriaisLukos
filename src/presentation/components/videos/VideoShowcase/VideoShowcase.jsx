@@ -14,7 +14,7 @@ const VideoShowcase = () => {
       views: "12.5k",
       likes: "892",
       category: "Overview",
-      thumbnail: "https://img.youtube.com/vi/sjWk3XpdH3s/maxresdefault.jpg",
+      thumbnail: "https://img.youtube.com/vi/fz5Q0HNVsDE/maxresdefault.jpg",
       videoUrl: "https://www.youtube.com/embed/sjWk3XpdH3s?si=Zv2L029tcGpfA30W",
       highlights: [
         "Interface moderna e intuitiva",

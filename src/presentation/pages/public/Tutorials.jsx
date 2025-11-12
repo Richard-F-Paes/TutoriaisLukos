@@ -30,7 +30,7 @@ const tutorialCategories = [
     title: "Dashboard",
     description: "Painel de controle completo de vendas, pagamentos e relatórios",
     icon: Fuel,
-    color: "orange",
+    color: "indigo",
     tutorials: 6,
     duration: "35 min",
     image: "https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1074",
@@ -41,7 +41,7 @@ const tutorialCategories = [
     title: "Pré-Venda",
     description: "Orçamentos, pedidos e gestão de vendas externas",
     icon: Fuel,
-    color: "amber",
+    color: "indigo",
     tutorials: 10,
     duration: "55 min",
     image: "https://images.unsplash.com/photo-1556745757-8d76bdb6984b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1073",
@@ -52,7 +52,7 @@ const tutorialCategories = [
     title: "PDV - Módulo Financeiro",
     description: "Controle completo de vendas, pagamentos e relatórios",
     icon: Fuel,
-    color: "green",
+    color: "indigo",
     tutorials: 9,
     duration: "50 min",
     image: "https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&w=800",
@@ -63,7 +63,7 @@ const tutorialCategories = [
     title: "Fatura Web",
     description: "Controle completo de vendas, pagamentos e relatórios",
     icon: Fuel,
-    color: "teal",
+    color: "indigo",
     tutorials: 7,
     duration: "40 min",
     image: "https://plus.unsplash.com/premium_photo-1678139620956-cbd87b6ba3d0?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170",
@@ -74,7 +74,7 @@ const tutorialCategories = [
     title: "PDV-Smart POS",
     description: "Controle completo de vendas, pagamentos e relatórios",
     icon: Fuel,
-    color: "purple",
+    color: "indigo",
     tutorials: 7,
     duration: "40 min",
     image: "https://images.unsplash.com/photo-1556742521-9713bf272865?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687",
@@ -85,7 +85,7 @@ const tutorialCategories = [
     title: "Conveniência",
     description: "Controle completo de estoque, produtos e relatórios",
     icon: Fuel,
-    color: "teal",
+    color: "indigo",
     tutorials: 7,
     duration: "40 min",
     image: "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170",
@@ -108,7 +108,7 @@ const Tutorials = () => {
   };
 
   return (
-    <div className="pt-20 min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className=" min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

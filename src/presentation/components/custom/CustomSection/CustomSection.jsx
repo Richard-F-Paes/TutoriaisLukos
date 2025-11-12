@@ -44,15 +44,7 @@ const CustomSection = ({
                         {/* Logo e Texto */}
                         <div className="flex items-center space-x-8 justify-center w-full">
                             <div className="flex items-start">
-                                <img 
-                                    src={bannerLogo} 
-                                    alt="Lukos Logo" 
-                                    className="w-12 h-12 object-contain"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.nextSibling.style.display = 'flex';
-                                    }}
-                                />
+                               
                                 <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg hidden">
                                     <svg 
                                         className="w-8 h-8 text-blue-600" 
@@ -64,8 +56,8 @@ const CustomSection = ({
                                 </div>
                             </div>
                             {/* Text */}
-                            <div className="text-white">
-                                <h2 className="text-lg md:text-xl font-semibold">
+                            <div className="text-white ">
+                                <h2 className="text-lg md:text-xl font-semibold flex items-center justify-center">
                                     {bannerTitle}
                                 </h2>
                             </div>

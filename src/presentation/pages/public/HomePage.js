@@ -7,15 +7,33 @@ import VideoShowcase from '../../components/videos/VideoShowcase/VideoShowcase';
 import { CourseDetail } from '../../components/content/Courses/CousesDetail';
 
 import CustomSection from '../../components/custom/CustomSection/CustomSection';
+import FeaturesSection from '../../components/custom/FeaturesSection/FeaturesSection';
+import LandingHero from '../../components/custom/LandingHero/LandingHero';
+import TeamSection from '../../components/custom/TeamSection/TeamSection';
+import TrainingScheduler from '../../components/custom/TrainingScheduler/TrainingScheduler';
+import ServicesSection from '../../components/custom/ServicesSection/ServicesSection';
+import TrainingSection from '../../components/custom/TrainingSection/TrainingSection';
+import { Chatbot } from '../../components/custom/Chatbot/Chatbot';
 
 
 function HomePage() {
   return (
     <>
+      <LandingHero />
       <HeroTutorial />
+      <TrainingSection />
       <MobileNav />
       <VideoShowcase />  
+      <ServicesSection />
+      <TeamSection />
+     
+      <TrainingScheduler />
       <CustomSection />
+      <Chatbot />
+   
+    
+     
+      
     
      
    

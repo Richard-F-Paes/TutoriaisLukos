@@ -11,7 +11,7 @@ export default function TrainingSection() {
             <img 
               src="https://images.pexels.com/photos/8867263/pexels-photo-8867263.jpeg" 
               alt="Suporte Técnico" 
-              className="w-full h-[500px] rounded-2xl object-cover shadow-lg mr-14" 
+              className="w-full h-[500px]   mr-14" 
             />
           </div>
 
@@ -42,8 +42,8 @@ export default function TrainingSection() {
             </p>
 
             {/* Lista de benefícios */}
-            <ul className="space-y-4 pt-4">
-              <li className="flex items-start gap-3">
+            <ul className="space-y-4 pt-4 ">
+              <li className="flex items-start gap-3 flex items-center justify-  ">
                 <CheckCircle className="text-green-500 flex-shrink-0 mt-1" size={24} />
                 <span className="text-gray-700 text-lg">Atendimento 24/7</span>
               </li>

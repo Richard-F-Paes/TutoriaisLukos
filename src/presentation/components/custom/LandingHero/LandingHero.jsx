@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { Link } from 'react-router-dom';
 export default function LandingHero() {
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -83,9 +83,11 @@ export default function LandingHero() {
                             </svg>
                           
                         </button>
+                        <Link to="/Nova-pagina">
                         <button className="border border-slate-600 active:scale-95 hover:bg-white/10 transition text-slate-600 rounded-lg px-8 h-11">
-                            Home
+                            Sobre nós
                         </button>
+                        </Link>
                     </div>
                     
                   

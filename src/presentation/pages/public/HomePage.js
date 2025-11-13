@@ -26,7 +26,6 @@ function HomePage() {
       <VideoShowcase />  
       <ServicesSection />
       <TeamSection />
-     
       <TrainingScheduler />
       <CustomSection />
       <Chatbot />

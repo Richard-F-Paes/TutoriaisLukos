@@ -13,11 +13,11 @@ function PageNavbar() {
   };
   
   const navItems = [
-    { label: 'Blog', hasDropdown: true, key: 'solucoes' },
-    { label: 'IA', hasDropdown: true, key: 'jornadas' },
-    { label: 'Sobre nós', href: '/cases', hasDropdown: false },
-    { label: 'Serviços', href: '/insights', hasDropdown: true, key: 'insights' },
-    { label: 'Contato', href: '/contato', isButton: true, hasDropdown: false },
+    { label: 'Blog', hasDropdown: true, key: 'solucoes', href: '/blog', },
+    { label: 'IA', hasDropdown: true, key: 'jornadas', href: '/ia' },
+    { label: 'Sobre nós', href: '/sobre', hasDropdown: false, href: '/sobre' },
+    { label: 'Serviços', href: '/servicos', hasDropdown: true, key: 'insights' },
+    { label: 'Contato', href: '/contato', isButton: true, hasDropdown: false, href: '/contato' },
   ];
 
   return (

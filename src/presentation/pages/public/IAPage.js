@@ -16,7 +16,7 @@ function IAPage() {
               <div className="absolute inset-0 bg-black opacity-70 flex items-center justify-center gap-8 px-8 md:px-16 w-full h-full">
                 {/* Imagem LUKIA à esquerda */}
                 <div className="flex-shrink-0 hidden md:block">
-                  <img src="LUK.png" alt="LUKIA" className="w-full max-w-[700px] h-auto object-contain opacity-100 " />
+                  <img src="lu.png" alt="LUKIA" className="w-full max-w-[700px] h-auto object-contain opacity-100 " />
                 </div>
                 
                 {/* Texto à direita */}

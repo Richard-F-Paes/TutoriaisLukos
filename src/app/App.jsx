@@ -45,6 +45,8 @@ import VideoTutorialDetailPage from '../presentation/pages/public/VideoTutorialD
 import NovaPagina from '../presentation/pages/public/NovaPagina';
 import IAPage from '../presentation/pages/public/IAPage';
 import ServicosPage from '../presentation/pages/public/ServicosPage';
+import BlogPage from '../presentation/pages/public/BlogPage';
+import BlogPostDetailPage from '../presentation/pages/public/BlogPostDetailPage';
 
 // Importar páginas administrativas
 import EditorPage from '../presentation/pages/admin/EditorPage';
@@ -121,6 +123,10 @@ function App() {
                 
                 {/* Página de Serviços */}
                 <Route path="/servicos" element={<ServicosPage />} />
+                
+                {/* Página do Blog */}
+                <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/:id" element={<BlogPostDetailPage />} />
                 
                 {/* Rotas administrativas */}
                 <Route path="/admin" element={<AdminPage />} />

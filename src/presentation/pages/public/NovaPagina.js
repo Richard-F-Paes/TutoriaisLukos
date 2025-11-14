@@ -203,6 +203,110 @@ function NovaPagina() {
          
         </div>
       </div>
+
+      {/* Seção de Galeria */}
+      <section className="py-20 bg-white mt-20 rounded-3xl">
+        <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {/* Coluna 1 */}
+            <div className="space-y-4">
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+                <img 
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110" 
+                  src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0592.png" 
+                  alt="Gallery Masonry Image" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+                <img 
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110" 
+                  src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0676.png" 
+                  alt="Gallery Masonry Image" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+                <img 
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110" 
+                  src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0839.png" 
+                  alt="Gallery Masonry Image" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+            </div>
+
+            {/* Coluna 2 */}
+            <div className="space-y-4">
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+                <img 
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110" 
+                  src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0858.png" 
+                  alt="Gallery Masonry Image" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+                <img 
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110" 
+                  src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0880.png" 
+                  alt="Gallery Masonry Image" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+            </div>
+
+            {/* Coluna 3 */}
+            <div className="space-y-4">
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+                <img 
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110" 
+                  src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0971.png" 
+                  alt="Gallery Masonry Image" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+                <img 
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110" 
+                  src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_1010.png" 
+                  alt="Gallery Masonry Image" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+                <img 
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110" 
+                  src="https://lukos.com.br/wp-content/uploads/2025/01/Frame-7.png" 
+                  alt="Gallery Masonry Image" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+            </div>
+
+            {/* Coluna 4 */}
+            <div className="space-y-4">
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+                <img 
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110" 
+                  src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0592.png" 
+                  alt="Gallery Masonry Image" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+                <img 
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110" 
+                  src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0858.png" 
+                  alt="Gallery Masonry Image" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Seção de Vídeos */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white mt-20 rounded-3xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

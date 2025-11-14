@@ -43,6 +43,8 @@ import PistaTutorialsPage from '../presentation/pages/public/PistaTutorialsPage'
 import VideoTutorialsPage from '../presentation/pages/public/VideoTutorialsPage';
 import VideoTutorialDetailPage from '../presentation/pages/public/VideoTutorialDetailPage';
 import NovaPagina from '../presentation/pages/public/NovaPagina';
+import IAPage from '../presentation/pages/public/IAPage';
+import ServicosPage from '../presentation/pages/public/ServicosPage';
 
 // Importar páginas administrativas
 import EditorPage from '../presentation/pages/admin/EditorPage';
@@ -113,6 +115,12 @@ function App() {
                 
                 {/* Nova Página */}
                 <Route path="/nova-pagina" element={<NovaPagina />} />
+                
+                {/* Página de IA */}
+                <Route path="/ia" element={<IAPage />} />
+                
+                {/* Página de Serviços */}
+                <Route path="/servicos" element={<ServicosPage />} />
                 
                 {/* Rotas administrativas */}
                 <Route path="/admin" element={<AdminPage />} />

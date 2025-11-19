@@ -1,7 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Calendar, Clock, User, ArrowLeft, Tag, Share2 } from 'lucide-react';
+import { Calendar, Clock, User, ArrowLeft, Tag, Share2, BookOpen } from 'lucide-react';
 import PageNavbar from '../../components/layout/PageNavbar/PageNavbar';
+import { Card, CardContent } from '../../components/ui/card/card';
+
+// Componente ImageWithFallback
+const ERROR_IMG_SRC = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODgiIGhlaWdodD0iODgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIuMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIzLjciPjxyZWN0IHg9IjE2IiB5PSIxNiIgd2lkdGg9IjU2IiBoZWlnaHQ9IjU2IiByeD0iNiIvPjxwYXRoIGQ9Im0xNiA1OCAxNi0xOCAzMiAzMiIvPjxjaXJjbGUgY3g9IjUzIiBjeT0iMzUiIHI9IjciLz48L3N2Zz4KCg==';
+
+function ImageWithFallback(props) {
+  const [didError, setDidError] = useState(false);
+  const { src, alt, style, className, ...rest } = props;
+
+  const handleError = () => setDidError(true);
+
+  return didError ? (
+    <div
+      className={`inline-block bg-gray-100 text-center align-middle ${className ?? ''}`}
+      style={style}
+    >
+      <div className="flex items-center justify-center w-full h-full">
+        <img src={ERROR_IMG_SRC} alt="Error loading image" {...rest} data-original-url={src} />
+      </div>
+    </div>
+  ) : (
+    <img src={src} alt={alt} className={className} style={style} {...rest} onError={handleError} />
+  );
+}
 
 function BlogPostDetailPage() {
   const { id } = useParams();
@@ -11,13 +35,20 @@ function BlogPostDetailPage() {
   const blogPosts = {
     1: {
       id: 1,
-      title: 'Como o ERP da Lukos Tecnologia pode transformar a gestão do seu posto?',
-      excerpt: 'Com o ERP da Lukos, seu posto ganha eficiência, controle e competitividade. Consulte-nos.',
+      title: '',
+      excerpt: `A Lukos é uma empresa especializada em soluções de PDV e ERP para postos de combustíveis e lojas de conveniência, oferecendo tecnologia completa para gestão, automação e controle operacional.
+
+Iniciamos nossa trajetória com o propósito de simplificar a rotina dos postos, trazendo ferramentas que unificam processos, aumentam a eficiência e garantem mais segurança nas operações. Com uma equipe experiente no segmento, evoluímos constantemente para atender às necessidades reais do mercado.
+
+Ao longo dos anos, nossa plataforma se tornou referência, atendendo empresas em todo o país e contribuindo para uma gestão mais inteligente, ágil e integrada. Nosso compromisso é continuar inovando e proporcionando a melhor experiência possível para nossos clientes.
+
+Acreditamos que tecnologia de qualidade transforma negócios. Por isso, seguimos investindo no aprimoramento de nossos sistemas, suporte técnico e recursos que realmente fazem diferença no dia a dia de quem trabalha com postos e conveniências.`,
       author: 'Equipe LUKOS',
       date: '15 de Janeiro, 2025',
       readTime: '5 min',
       category: 'Tecnologia',
-      image: 'https://images.pexels.com/photos/6169057/pexels-photo-6169057.jpeg',
+      image: '/Blog.jpg',
+      image2: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=1172&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Imagem para a segunda seção
       content: `
         <p>O mercado de postos de combustíveis está cada vez mais competitivo, e a gestão eficiente tornou-se fundamental para o sucesso do negócio. O ERP da Lukos Tecnologia oferece uma solução completa e integrada que pode transformar completamente a forma como você gerencia seu posto.</p>
         
@@ -46,7 +77,7 @@ function BlogPostDetailPage() {
       date: '12 de Janeiro, 2025',
       readTime: '7 min',
       category: 'Gestão',
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      image: '',
       content: `
         <p>Na Lukos Tecnologia, entendemos a importância de oferecer soluções modernas e acessíveis para gestão de postos de combustíveis. Nosso ERP é simples, prático e 100% gerenciado pelo WhatsApp, facilitando o acesso e uso diário.</p>
         
@@ -168,28 +199,20 @@ function BlogPostDetailPage() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
       <PageNavbar />
       
       {/* Hero Section */}
-      <section className="relative -mt-[90px] flex items-center justify-center">
-        <img 
-          src={post.image}
-          alt={post.title} 
-          className="w-full h-[500px] object-cover shadow-lg brightness-75 relative -mt-[10px]" 
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80"></div>
-        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16">
-          <div className="max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-1 px-3 py-1 bg-purple-600 text-white text-xs font-semibold rounded-full mb-4">
+      <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20 -mt-[90px] pt-32">
+        <div className="">
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-1 px-3 py-1 bg-white/20 text-white text-xs font-semibold rounded-full mb-4">
               <Tag className="w-3 h-3" />
               {post.category}
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-2xl">
-              {post.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-4 text-white/90 text-sm">
+            <h1 className="text-white mb-6">{post.title}</h1>
+            <div className="flex flex-wrap items-center justify-center gap-4 text-blue-100 text-sm">
               <div className="flex items-center gap-1">
                 <User className="w-4 h-4" />
                 <span>{post.author}</span>
@@ -207,41 +230,98 @@ function BlogPostDetailPage() {
         </div>
       </section>
 
-      {/* Main Content */}
-      <div className="mt-[-10px] pt-16 pb-16 bg-white relative px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Botão Voltar */}
-          <Link
-            to="/blog"
-            className="inline-flex items-center gap-2 text-purple-600 font-semibold hover:text-purple-700 transition-colors mb-8"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Voltar para o Blog
-          </Link>
-
-          {/* Conteúdo do Post */}
-          <article className="prose prose-lg max-w-none">
-            <div 
-              className="text-gray-700 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
-          </article>
-
-          {/* Compartilhar */}
-          <div className="mt-12 pt-8 border-t border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-gray-900 mb-2">Compartilhe este post</p>
-                <div className="flex items-center gap-3">
-                  <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
-                    <Share2 className="w-5 h-5 text-gray-600" />
-                  </button>
-                </div>
+      {/* Image and Content Section */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <ImageWithFallback
+                src={post.image}
+                alt={post.title || 'Imagem do post'}
+                className="rounded-lg shadow-xl w-full h-[400px] object-cover"
+              />  
+            </div>
+            <div>
+              <Link
+                to="/blog"
+                className="inline-flex items-center gap-2 text-purple-600 font-semibold hover:text-purple-700 transition-colors mb-6"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Voltar para o Blog
+              </Link>
+              {post.title && <h2 className="mb-6 text-gray-600">{post.title}</h2>}
+              <div className="text-gray-600 leading-relaxed space-y-4 text-black ">
+                {post.excerpt.split('\n\n').map((paragraph, index) => (
+                  paragraph.trim() && (
+                    <p key={index} className="mb-4 text-black text-start">
+                      {paragraph.trim()}
+                    </p>
+                  )
+                ))}
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Image and Content Section - Inverted */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="mb-6 text-gray-600">Nossa História</h2>
+              <div className="text-gray-600 leading-relaxed space-y-4 text-black">
+                {post.excerpt.split('\n\n').map((paragraph, index) => (
+                  paragraph.trim() && (
+                    <p key={index} className="mb-4 text-black text-start">
+                      {paragraph.trim()}
+                    </p>
+                  )
+                ))}
+              </div>
+            </div>
+            <div>
+              <ImageWithFallback
+                src={post.image2 || post.image}
+                alt={post.title || 'Imagem do post'}
+                className="rounded-lg shadow-xl w-full h-[400px] object-cover"
+              />  
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card>
+            <CardContent className="p-8">
+              <article className="prose prose-lg max-w-none">
+                <div 
+                  className="text-gray-600 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
+              </article>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Share Section */}
+      <section className="py-20 bg-gray-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <BookOpen className="w-16 h-16 text-purple-600 mx-auto mb-6" />
+          <h2 className="mb-6 text-gray-600">Compartilhe este conteúdo</h2>
+          <p className="text-gray-600 mb-6">
+            Gostou deste post? Compartilhe com outros e ajude a espalhar conhecimento sobre gestão de postos de combustível.
+          </p>
+          <div className="flex items-center justify-center gap-3">
+            <button className="p-3 rounded-full bg-white hover:bg-gray-200 transition-colors shadow-lg">
+              <Share2 className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

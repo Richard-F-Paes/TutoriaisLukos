@@ -9,7 +9,10 @@ background: linear-gradient(180deg, #161C2D 0%, #111827 100%);
   text-align: center;
 }
 
-/* Ajuste para compensar a navbar fixa */
+/* Ajuste para compensar a navbar fixa (Navbarcategoria) */
+body {
+  padding-top: 70px; /* Altura aproximada da Navbarcategoria */
+}
 
 /* ========================================
    RESPONSIVIDADE GLOBAL
@@ -17,12 +20,12 @@ background: linear-gradient(180deg, #161C2D 0%, #111827 100%);
 
 @media (max-width: 768px) {
   body {
-    padding-top: 180px; /* navbar mobile 120px + menu categorias 60px */
+    padding-top: 60px; /* Altura da Navbarcategoria mobile */
   }
 }
 
 @media (max-width: 480px) {
   body {
-    padding-top: 200px; /* navbar mobile pequeno 140px + menu categorias 60px */
+    padding-top: 60px; /* Altura da Navbarcategoria mobile pequeno */
   }
 }

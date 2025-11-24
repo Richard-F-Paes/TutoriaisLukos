@@ -74,7 +74,10 @@ function App() {
       <Router>
         <div className="App">
           
-          <Navbar />
+          {/* Navbar antiga - mantida para referência futura, mas não renderizada */}
+          {/* <Navbar /> */}
+          
+          <Navbarcategoria />
         
           <main>
             <Routes>

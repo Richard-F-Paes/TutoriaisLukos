@@ -21,12 +21,12 @@ const CustomSection = ({
     },
     // Banner
     bannerTitle = "Live Lukos ERP - Demonstração do Sistema",
-    bannerLogo = "/logo.png",
+    bannerLogo = "/icons/logo.png",
     // Canal
     channelName = "Lukos Soluções em Tecnologia",
     channelHandle = "@lukos-solucoesemtecnologia8036",
     channelUrl = "https://www.youtube.com/@lukos-solucoesemtecnologia8036",
-    channelLogo = "/logo.png",
+    channelLogo = "/icons/logo.png",
     // Status
     isLive = true,
     liveText = "Transmitindo agora",

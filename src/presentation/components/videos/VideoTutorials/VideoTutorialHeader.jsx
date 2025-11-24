@@ -50,7 +50,7 @@ const VideoTutorialHeader = ({ onMenuClick }) => {
           </button>
           <div className="flex items-center space-x-2">
             <img 
-              src="/LukosTube.png" 
+              src="/images/branding/LukosTube.png" 
               alt="LukosTube" 
               className="w-10 h-10 rounded"
             />

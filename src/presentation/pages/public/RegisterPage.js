@@ -70,7 +70,7 @@ function RegisterPage() {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <Link to="/" className="auth-logo">
-            <img src="/logo.png" alt="Logo" />
+            <img src="/icons/logo.png" alt="Logo" />
             <span>TutorialLukos</span>
           </Link>
           <h1>Criar nova conta</h1>

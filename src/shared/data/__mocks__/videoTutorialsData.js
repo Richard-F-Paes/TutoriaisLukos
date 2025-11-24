@@ -4,7 +4,7 @@ export const tutorials = [
   {
     id: 1,
     title: 'Como Cadastrar Produtos no Sistema',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '125.4K',
     duration: '15:30',
@@ -14,7 +14,7 @@ export const tutorials = [
   {
     id: 2,
     title: 'Tutorial Completo do Sistema Lukos',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '198.2K',
     duration: '45:00',
@@ -24,7 +24,7 @@ export const tutorials = [
   {
     id: 3,
     title: 'Operação Avançada no PDV',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '142.9K',
     duration: '33:15',
@@ -36,7 +36,7 @@ export const tutorials = [
   {
     id: 4,
     title: 'Configurando Bombas de Combustível',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '89.2K',
     duration: '22:15',
@@ -46,7 +46,7 @@ export const tutorials = [
   {
     id: 5,
     title: 'Configurar Preços Dinâmicos na Pista',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '81.6K',
     duration: '24:00',
@@ -56,7 +56,7 @@ export const tutorials = [
   {
     id: 6,
     title: 'Venda de Combustíveis no Modo Pista',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '134.6K',
     duration: '22:45',
@@ -68,7 +68,7 @@ export const tutorials = [
   {
     id: 7,
     title: 'Gestão de Estoque da Conveniência',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '156.7K',
     duration: '18:45',
@@ -78,7 +78,7 @@ export const tutorials = [
   {
     id: 8,
     title: 'Movimentação de Produtos Conveniência',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '95.3K',
     duration: '17:30',
@@ -96,7 +96,7 @@ export const tutorials = [
       'Status do Cliente',
       'Classificação do Tipo de Cliente'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -115,7 +115,7 @@ export const tutorials = [
       'Criar Grupo de Comissão',
       'Cadastrar funcionário como fornecedor'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -133,7 +133,7 @@ export const tutorials = [
       'Cadastro de fornecedor por CNPJ',
       'Cadastro de fornecedor por CPF'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -151,7 +151,7 @@ export const tutorials = [
       'Cadastro de Contador',
       'Abastecimentos em Espera'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -169,7 +169,7 @@ export const tutorials = [
       'Cadastro de vendedor por CNPJ',
       'Cadastro de vendedor por CPF'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -191,7 +191,7 @@ export const tutorials = [
       'Ajustes de Bico/Canal',
       'Ajustar o preço dos produtos'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -208,7 +208,7 @@ export const tutorials = [
       'Ajustes de Bico/Canal',
       'Ajustar o preço dos produtos'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -222,7 +222,7 @@ export const tutorials = [
   {
     id: 202,
     title: 'Agendamento Litros',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -239,7 +239,7 @@ export const tutorials = [
       'Cadastro de Produtos - Sem Código de Barras',
       'Cadastro de Produtos - Com Código de Barras'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -257,7 +257,7 @@ export const tutorials = [
       'Cadastro de promoção',
       'Cadastro de produtos com várias embalagens'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -274,7 +274,7 @@ export const tutorials = [
       'Atacarejo',
       'Regra Fiscal'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -292,7 +292,7 @@ export const tutorials = [
       'Comissão por grupo',
       'Comissão em produto específico'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -311,7 +311,7 @@ export const tutorials = [
       'Código ANP',
       'Corujão'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -329,7 +329,7 @@ export const tutorials = [
       'Lacres',
       'Cadastro de Bomba'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -352,7 +352,7 @@ export const tutorials = [
       'Vale Ducha',
       'Cadastro de Produtos'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -374,7 +374,7 @@ export const tutorials = [
       'Tabela Especial',
       'Configuração de Meta de Venda'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -395,7 +395,7 @@ export const tutorials = [
       'Entrada expressa de produtos',
       'Entrada expressa de combustível'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -434,7 +434,7 @@ export const tutorials = [
       'Cadastro de Conta Corrente',
       'Cadastro de Categorias e Subcategorias'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -458,7 +458,7 @@ export const tutorials = [
       'Saída não fiscal',
       'Reposição Automática'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -483,7 +483,7 @@ export const tutorials = [
       'Simulador de Impostos',
       'Gerenciador de NF-e'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -508,7 +508,7 @@ export const tutorials = [
       'Conciliação PicPay',
       'Conciliação'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -530,7 +530,7 @@ export const tutorials = [
       'Outros Relatórios',
       'Busca Relatório'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -554,7 +554,7 @@ export const tutorials = [
       'Fidelidade Cliente',
       'Mensagens Personalizadas'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -572,7 +572,7 @@ export const tutorials = [
       'Mensagens WhatsApp',
       'Fidelidade por Funcionário'
     ][i],
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: `${Math.floor(Math.random() * 100) + 50}K`,
     duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
@@ -585,7 +585,7 @@ export const tutorials = [
   {
     id: 28,
     title: 'Acessando Relatórios do Dashboard',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '94.1K',
     duration: '12:20',
@@ -595,7 +595,7 @@ export const tutorials = [
   {
     id: 29,
     title: 'Gráficos e Análises em Tempo Real',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '68.2K',
     duration: '14:45',
@@ -607,7 +607,7 @@ export const tutorials = [
   {
     id: 30,
     title: 'Configurando Pagamentos Lukos Pay',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '67.8K',
     duration: '19:55',
@@ -617,7 +617,7 @@ export const tutorials = [
   {
     id: 31,
     title: 'Integração com Aplicativos de Pagamento',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '82.4K',
     duration: '19:20',
@@ -629,7 +629,7 @@ export const tutorials = [
   {
     id: 32,
     title: 'Criando Propostas de Pré-Venda',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '103.5K',
     duration: '28:30',
@@ -639,7 +639,7 @@ export const tutorials = [
   {
     id: 33,
     title: 'Gerenciando Orçamentos de Pré-Venda',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '56.7K',
     duration: '16:10',
@@ -651,7 +651,7 @@ export const tutorials = [
   {
     id: 34,
     title: 'Emitindo NF-e no Fatura Web',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '58.2K',
     duration: '16:40',
@@ -661,7 +661,7 @@ export const tutorials = [
   {
     id: 35,
     title: 'Cancelamento e Correção de Notas Fiscais',
-    thumbnail: '/logo.png',
+    thumbnail: '/icons/logo.png',
     channel: 'Lukos Tutoriais',
     views: '71.5K',
     duration: '20:30',

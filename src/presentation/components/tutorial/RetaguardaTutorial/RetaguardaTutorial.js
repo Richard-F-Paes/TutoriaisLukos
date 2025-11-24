@@ -79,7 +79,7 @@ const RetaguardaTutorial = () => {
                 {/* Cabeçalho da seção */}
                 <div className="section-header">
                     <div className="section-badge">
-                        <img src="/logo.png" alt="Logo Tutorial Lukos" className="nav-logo" />
+                        <img src="/icons/logo.png" alt="Logo Tutorial Lukos" className="nav-logo" />
                         <span>Tutorial Lukos</span>
                     </div>
                     <h2 className="section-title">Tutoriais Especializados</h2>

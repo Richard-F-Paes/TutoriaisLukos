@@ -40,7 +40,7 @@ const CategoryGrid = ({
               <div className="flex items-center justify-between mb-6 lg:hidden">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                    <img src="/logo.png" alt="" className="w-6 h-6" />
+                    <img src="/icons/logo.png" alt="" className="w-6 h-6" />
                   </div>
                   <span className="text-xl font-semibold text-black">Lukos</span>
                 </div>

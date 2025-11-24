@@ -127,7 +127,7 @@ const TutorialPlayer = ({
               <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
             <div className="flex items-center space-x-2">
-            <img src="/LukosTube.png" alt="" className="object-cover w-10" />
+            <img src="/images/branding/LukosTube.png" alt="" className="object-cover w-10" />
               <span className="text-lg sm:text-xl font-semibold hidden md:block">Lukos</span>
             </div>
           </div>
@@ -211,7 +211,7 @@ const TutorialPlayer = ({
                 <div className="flex items-center justify-between flex-wrap gap-2 sm:gap-4">
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-3">
-                   <img src="/LukosTube.png" alt="" className="object-cover w-20" />
+                   <img src="/images/branding/LukosTube.png" alt="" className="object-cover w-20" />
                       <div>
                         <div className="font-semibold">{author}</div>
                         <div className={`text-sm ${textSecondary}`}>1.2M inscritos</div>

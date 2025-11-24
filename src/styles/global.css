@@ -414,3 +414,14 @@ a, button, .clickable {
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+/* ========================================
+   WAVE DIVIDER
+   ======================================== */
+
+.div-wave {
+  width: 100%;
+  height: 200px;
+  background: #3b82f6;
+  clip-path: path("M0,80 C150,150 350,0 500,80 L500,00 L0,0 Z");
+}

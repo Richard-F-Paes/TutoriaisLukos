@@ -47,6 +47,9 @@ import IAPage from '../presentation/pages/public/IAPage';
 import ServicosPage from '../presentation/pages/public/ServicosPage';
 import BlogPage from '../presentation/pages/public/BlogPage';
 import BlogPostDetailPage from '../presentation/pages/public/BlogPostDetailPage';
+import BlogPostsPage from '../presentation/pages/public/BlogPostsPage';
+import BlogPostPage from '../presentation/pages/public/BlogPostPage';
+import AppsPage from '../presentation/pages/public/AppsPage';
 
 // Importar páginas administrativas
 import EditorPage from '../presentation/pages/admin/EditorPage';
@@ -127,6 +130,11 @@ function App() {
                 {/* Página do Blog */}
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/blog/:id" element={<BlogPostDetailPage />} />
+                <Route path="/blog-posts" element={<BlogPostsPage />} />
+                <Route path="/artigo/:id" element={<BlogPostPage />} />
+                
+                {/* Página de Aplicativos */}
+                <Route path="/apps" element={<AppsPage />} />
                 
                 {/* Rotas administrativas */}
                 <Route path="/admin" element={<AdminPage />} />

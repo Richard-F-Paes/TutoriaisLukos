@@ -1,0 +1,12 @@
+.div-wave {
+  width: 100vw;
+  height: 200px;
+  background: #3b82f6;
+  clip-path: polygon(0 40%, 30% 75%, 70% 0%, 100% 40%, 100% 0%, 0 0%);
+  margin: 0;
+  padding: 0;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+

@@ -53,15 +53,16 @@ npm start
 
 4. **Acesse no navegador**
 ```
-http://localhost:3000
+http://localhost:5173
 ```
+(Nota: O projeto usa Vite, que por padrão roda na porta 5173)
 
 ## 📦 Scripts Disponíveis
 
-- `npm start` - Executa em modo desenvolvimento
+- `npm start` ou `npm run dev` - Executa em modo desenvolvimento
 - `npm run build` - Cria build para produção
+- `npm run preview` - Visualiza o build de produção
 - `npm test` - Executa os testes
-- `npm run eject` - Ejecta configurações do CRA
 
 ## 🎨 Componentes Principais
 
@@ -111,13 +112,19 @@ O projeto é totalmente responsivo com breakpoints otimizados:
 
 ## 📚 Documentação
 
-Para informações detalhadas sobre:
-- Estrutura dos componentes
-- Sistema de CSS
-- Personalização
-- Manutenção
+A documentação completa está organizada na pasta [`docs/`](./docs/):
 
-Consulte o [MANUAL.md](./MANUAL.md)
+### 📖 Guias de Uso
+- **[Como Adicionar/Editar Tutoriais](./docs/guias/adicionar-tutoriais.md)** - Guia completo para criar e editar tutoriais
+- **[Como Ajustar Imagens e Visual](./docs/guias/ajustar-imagens-visual.md)** - Personalização de imagens, cores e estilos
+- **[Sistema de Tutoriais](./docs/guias/sistema-tutoriais.md)** - Visão geral do sistema e funcionalidades
+
+### 🏢 Módulos
+- **[Dashboard](./docs/modulos/dashboard.md)** - Tutoriais do Dashboard e Relatórios
+- **[Retaguarda](./docs/modulos/retaguarda.md)** - Tutoriais da Retaguarda
+- **[Tutoriais Completos](./docs/modulos/tutoriais-completos.md)** - Visão geral de todos os tutoriais
+
+📑 **[Ver índice completo da documentação](./docs/README.md)**
 
 ## 🎨 Personalização
 
@@ -148,9 +155,11 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ## 📞 Suporte
 
 Para dúvidas ou suporte:
-- Abra uma [issue](../../issues)
-- Consulte a [documentação](./MANUAL.md)
-- Entre em contato com a equipe
+- **Telefone**: (11) 4858-8429
+- **Email**: suporte@lukos.com.br
+- **Atendimento**: Segunda a sexta-feira das 08h30 às 17h30
+- Consulte a [documentação completa](./docs/README.md)
+- Abra uma [issue](../../issues) para reportar problemas
 
 ---
 

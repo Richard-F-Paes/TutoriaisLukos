@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, User, ArrowRight, BookOpen, Tag, Brain, Check, Play, CheckCircle2, Users, Code, Terminal, Database, Cloud, Smartphone, Layout, FileText, CreditCard, Gift, Wallet, Receipt } from 'lucide-react';
+import { Calendar, Clock, User, ArrowRight, BookOpen, Tag, FileText, Cloud, CreditCard, Gift, Smartphone, Wallet, Receipt } from 'lucide-react';
 import PageNavbar from '../../components/layout/PageNavbar/PageNavbar';
-import TechnologyCards from '../../components/custom/TechnologyCards/TechnologyCards';
 
 // Componente Feature2 adaptado
 const Feature2 = ({
@@ -27,7 +26,7 @@ const Feature2 = ({
 };
 
 function BlogPage() {
-  // Dados de tecnologias
+  // Dados de tecnologias originais
   const technologies = [
     { name: 'Faturamento Express', icon: FileText, color: 'bg-blue-100 text-blue-600' },
     { name: 'Banco de Dados na Nuvem', icon: Cloud, color: 'bg-green-100 text-green-600' },
@@ -42,14 +41,14 @@ function BlogPage() {
   const blogPosts = [
     {
       id: 1,
-      title: 'LUKOS Tecnologia',
+      title: 'Blog ',
       excerpt: 'Fique atualizado sobre o mercado de Postos de combustíveis no Brasil.',
       author: 'Equipe LUKOS',
       date: 'Blog LUKOS',
       readTime: 'Blog   ',
       category: 'Blog LUKOS',
-      image: 'https://images.pexels.com/photos/6169057/pexels-photo-6169057.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&fit=crop',
-      link: '/blog/1',
+      image: 'https://images.pexels.com/photos/4472873/pexels-photo-4472873.jpeg',
+      link: '/blog-posts',
     },
     {
       id: 2,
@@ -59,7 +58,7 @@ function BlogPage() {
       date: 'IA da LUKOS',
       readTime: 'IA da LUKOS',
       category: 'IA da LUKOS',
-      image: 'https://plus.unsplash.com/premium_photo-1683121710572-7723bd2e235d?q=80&w=800&h=400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      image: 'https://plus.unsplash.com/premium_photo-1683120963435-6f9355d4a776?q=80&w=663&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       link: '/ia',
     },
     {
@@ -81,7 +80,7 @@ function BlogPage() {
       date: 'Equipe CS LUKOS',
       readTime: 'Equipe CS LUKOS',
       category: 'Equipe CS LUKOS',
-      image: 'https://lukos.com.br/wp-content/uploads/2025/01/Frame-7.png',
+      image: 'https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?q=80&w=1147&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       link: '/equipe',
     },
     {
@@ -146,13 +145,116 @@ function BlogPage() {
             </div>
           </div>
         </div>
+        
+        {/* Elementos de Navegação */}
+        <div className="absolute bottom-0 left-0 right-0 z-20" style={{ height: '100px' }}>
+          {/* Pontos de Navegação */}
+          <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex items-center gap-3 z-30">
+            <div className="w-3 h-3 rounded-full bg-white"></div>
+            <div className="w-3 h-3 rounded-full border-2 border-white"></div>
+            <div className="w-3 h-3 rounded-full border-2 border-white"></div>
+          </div>
+          
+          {/* Indicador de Scroll (Seta para baixo) */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-30">
+            <svg 
+              className="w-6 h-6 text-white"
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+        </div>
+        
+        {/* Scroll SVG - Hero Section */}
+        <div className="scroll scroll-gray-new absolute bottom-0 left-0 right-0 z-10">
+          <a href="#">
+            <svg 
+              version="1.1" 
+              id="Layer_1" 
+              xmlns="http://www.w3.org/2000/svg" 
+              xmlnsXlink="http://www.w3.org/1999/xlink" 
+              x="0px" 
+              y="0px" 
+              viewBox="0 0 505.7 70.1" 
+              style={{enableBackground: 'new 0 0 505.7 70.1'}} 
+              xmlSpace="preserve"
+            >
+              <title>curve-hollow-grey-out</title>
+             
+            </svg>
+          </a>
+        </div>
+        
+        {/* Div jumbotron-footer por cima */}
+        <div className="jumbotron-footer jumbotron-footer-new jumbotron-footer-gray" style={{
+          position: 'absolute',
+          bottom: '-2px',
+          width: '100%',
+          left: '0px',
+          zIndex: 999,
+          overflow: 'hidden',
+          border: '0px solid',
+          boxSizing: 'border-box'
+        }}>
+          <style>{`
+            .jumbotron-footer::after {
+              background: rgb(245, 245, 245) !important;
+              content: "";
+              position: absolute;
+              height: 100%;
+              width: 51%;
+              top: 0px;
+              z-index: 45;
+              left: 0px;
+              margin-left: -245px;
+            }
+            .jumbotron-footer::before {
+              background: rgb(245, 245, 245) !important;
+              content: "";
+              position: absolute;
+              height: 100%;
+              width: 51%;
+              top: 0px;
+              z-index: 45;
+              right: 0px;
+              margin-right: -245px;
+            }
+          `}</style>
+        </div>
       </section>
+      
       <section className="relative -mt-[90px] flex items-center justify-center">
               <img 
                 src="https://images.pexels.com/photos/6803551/pexels-photo-6803551.jpeg" 
                 alt="Inteligência Artificial" 
                 className="w-full h-[800px] object-cover shadow-lg brightness-90 relative " 
               />
+              
+              {/* Scroll SVG */}
+              <div className="scroll scroll-gray-new">
+                <a href="#">
+                  <svg 
+                    version="1.1" 
+                    id="Layer_1" 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    xmlnsXlink="http://www.w3.org/1999/xlink" 
+                    x="0px" 
+                    y="0px" 
+                    viewBox="0 0 505.7 70.1" 
+                    style={{enableBackground: 'new 0 0 505.7 70.1'}} 
+                    xmlSpace="preserve"
+                  >
+                    <title>curve-hollow-grey-out</title>
+                    <path 
+                      className="d-block" 
+                      d="M351,32.6c-55.9,30.1-71.4,32.7-98.2,32.7s-42.3-2.6-98.2-32.7S28,0,28,0H0v70.1h28h449.6h28.1V0h-28.1C477.6,0,407,2.5,351,32.6z"
+                    />
+                  </svg>
+                </a>
+              </div>
                <div className="absolute inset-0 bg-black/70 flex items-center justify-center gap-8 px-8 md:px-16 w-full h-full">
                 {/* Imagem LUKIA à esquerda */}
                 <div className="flex-shrink-0 hidden md:block">
@@ -239,17 +341,29 @@ function BlogPage() {
       {/* End Features */}
         
       {/* Technologies Section - Div Separada */}
-      <div>
-        <TechnologyCards
-          badge=""
-          title="Soluções para potencializar seu negócio"
-          description=" "
-          technologies={technologies}
-          columnsMobile={2}
-          columnsTablet={4}
-          columnsDesktop={6}
-          bgColor="bg-white"
-        />
+      <div className="bg-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Grid de Cards de Tecnologias */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
+            {technologies.map((tech, index) => {
+              const Icon = tech.icon;
+              return (
+                <div key={index} className="col-span-1">
+                  <div className="card bg-transparent border-0 shadow-none hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center h-full min-h-[120px]">
+                    <div className="card-icon flex items-center justify-center p-2 pb-1 flex-shrink-0">
+                      <div className={`inline-flex items-center justify-center w-12 h-12 ${tech.color || 'bg-gray-100 text-gray-600'} rounded-lg`}>
+                        <Icon className="w-6 h-6" />
+                      </div>
+                    </div>
+                    <div className="card-body p-2 pt-1 text-center flex-1 flex items-center justify-center">
+                      <p className="card-title uppercase text-gray-900 font-semibold text-xs leading-tight">{tech.name}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Main Content Continua */}
@@ -308,72 +422,94 @@ function BlogPage() {
             `}</style>
           </section>
 
-          {/* Grid de Posts */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 mt-12 bg-white">
-            {blogPosts.map((post) => (
-              <Link
-                key={post.id}
-                to={post.link}
-                className="block"
-              >
-                <article className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group cursor-pointer h-full flex flex-col">
-                  {/* Imagem do Post */}
-                  <div className="relative h-48 overflow-hidden bg-gray-200">
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-300"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/400x200?text=LUKOS';
-                        e.target.onerror = null;
-                      }}
-                    />
-                    <div className="absolute top-4 left-4">
-                      <span className="inline-flex items-center gap-1 px-3 py-1 bg-purple-600 text-white text-xs font-semibold rounded-full">
-                        <Tag className="w-3 h-3" />
-                        {post.category}
-                      </span>
-                    </div>
-                  </div>
+          {/* Seção de Blog Posts */}
+          <section className="w-full py-16 px-4 md:px-8 bg-white">
+            <div className="max-w-7xl mx-auto">
+              {/* Header da Seção */}
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full mb-4">
+                  <BookOpen className="w-5 h-5 text-purple-600" />
+                  <span className="text-sm font-semibold text-purple-600 uppercase tracking-wide">
+                    Blog LUKOS
+                  </span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                  Conteúdos e Artigos
+                </h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Fique atualizado sobre o mercado de postos de combustíveis no Brasil e descubra como potencializar sua gestão
+                </p>
+              </div>
 
-                  {/* Conteúdo do Post */}
-                  <div className="p-6 flex-1 flex flex-col">
-                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors line-clamp-2">
-                      {post.title}
-                    </h3>
-                    <p className="text-gray-600 mb-4 line-clamp-3 flex-1">
-                      {post.excerpt}
-                    </p>
-
-                    {/* Meta informações */}
-                    <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1">
-                          <User className="w-4 h-4" />
-                          <span>{post.author}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          <span>{post.date}</span>
+              {/* Grid de Posts */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {blogPosts.map((post) => (
+                  <Link
+                    key={post.id}
+                    to={post.link}
+                    className="block group"
+                  >
+                    <article className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer h-full flex flex-col border border-gray-100">
+                      {/* Imagem do Post */}
+                      <div className="relative h-56 overflow-hidden bg-gray-200">
+                        <img
+                          src={post.image}
+                          alt={post.title}
+                          className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/400x200?text=LUKOS';
+                            e.target.onerror = null;
+                          }}
+                        />
+                        {/* Overlay gradiente na imagem */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        {/* Badge de categoria */}
+                        <div className="absolute top-4 left-4">
+                          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-full shadow-lg backdrop-blur-sm">
+                            <Tag className="w-3 h-3" />
+                            {post.category}
+                          </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        <span>{post.readTime}</span>
-                      </div>
-                    </div>
 
-                    {/* Link para ler mais */}
-                    <div className="inline-flex items-center gap-2 text-purple-600 font-semibold group-hover:text-purple-700 transition-colors group/link">
-                      Ler mais
-                      <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            ))}
-          </div>
+                      {/* Conteúdo do Post */}
+                      <div className="p-6 flex-1 flex flex-col">
+                        <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors line-clamp-2 min-h-[3.5rem]">
+                          {post.title}
+                        </h3>
+                        <p className="text-gray-600 mb-6 line-clamp-3 flex-1 text-sm leading-relaxed">
+                          {post.excerpt}
+                        </p>
+
+                        {/* Meta informações */}
+                        <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-4 pb-4 border-b border-gray-100">
+                          <div className="flex items-center gap-1.5">
+                            <User className="w-4 h-4 text-gray-400" />
+                            <span className="font-medium">{post.author}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="w-4 h-4 text-gray-400" />
+                            <span>{post.date}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="w-4 h-4 text-gray-400" />
+                            <span>{post.readTime}</span>
+                          </div>
+                        </div>
+
+                        {/* Link para ler mais */}
+                        <div className="inline-flex items-center gap-2 text-purple-600 font-semibold group-hover:text-purple-700 transition-colors group/link mt-auto">
+                          <span>Ler mais</span>
+                          <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" />
+                        </div>
+                      </div>
+                    </article>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
 
           {/* Call to Action */}
        

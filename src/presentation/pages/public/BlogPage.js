@@ -146,8 +146,30 @@ function BlogPage() {
           </div>
         </div>
         
-        {/* Scroll SVG */}
-        <div className="scroll scroll-gray-new">
+        {/* Elementos de Navegação */}
+        <div className="absolute bottom-0 left-0 right-0 z-20" style={{ height: '100px' }}>
+          {/* Pontos de Navegação */}
+          <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex items-center gap-3 z-30">
+            <div className="w-3 h-3 rounded-full bg-white"></div>
+            <div className="w-3 h-3 rounded-full border-2 border-white"></div>
+            <div className="w-3 h-3 rounded-full border-2 border-white"></div>
+          </div>
+          
+          {/* Indicador de Scroll (Seta para baixo) */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-30">
+            <svg 
+              className="w-6 h-6 text-white"
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+        </div>
+        
+        {/* Scroll SVG - Hero Section */}
+        <div className="scroll scroll-gray-new absolute bottom-0 left-0 right-0 z-10">
           <a href="#">
             <svg 
               version="1.1" 
@@ -161,14 +183,49 @@ function BlogPage() {
               xmlSpace="preserve"
             >
               <title>curve-hollow-grey-out</title>
-              <path 
-                className="d-block" 
-                d="M351,32.6c-55.9,30.1-71.4,32.7-98.2,32.7s-42.3-2.6-98.2-32.7S28,0,28,0H0v70.1h28h449.6h28.1V0h-28.1C477.6,0,407,2.5,351,32.6z"
-              />
+             
             </svg>
           </a>
         </div>
+        
+        {/* Div jumbotron-footer por cima */}
+        <div className="jumbotron-footer jumbotron-footer-new jumbotron-footer-gray" style={{
+          position: 'absolute',
+          bottom: '-2px',
+          width: '100%',
+          left: '0px',
+          zIndex: 999,
+          overflow: 'hidden',
+          border: '0px solid',
+          boxSizing: 'border-box'
+        }}>
+          <style>{`
+            .jumbotron-footer::after {
+              background: rgb(245, 245, 245) !important;
+              content: "";
+              position: absolute;
+              height: 100%;
+              width: 51%;
+              top: 0px;
+              z-index: 45;
+              left: 0px;
+              margin-left: -245px;
+            }
+            .jumbotron-footer::before {
+              background: rgb(245, 245, 245) !important;
+              content: "";
+              position: absolute;
+              height: 100%;
+              width: 51%;
+              top: 0px;
+              z-index: 45;
+              right: 0px;
+              margin-right: -245px;
+            }
+          `}</style>
+        </div>
       </section>
+      
       <section className="relative -mt-[90px] flex items-center justify-center">
               <img 
                 src="https://images.pexels.com/photos/6803551/pexels-photo-6803551.jpeg" 

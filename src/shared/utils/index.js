@@ -102,6 +102,9 @@ export const cn = (...classes) => {
     .trim();
 };
 
+// Exportar funções de rotas
+export { isTutorialRoute, shouldShowCategoryNavbar, shouldShowPageNavbar } from './routeUtils';
+
 export default {
   formatDate,
   truncate,

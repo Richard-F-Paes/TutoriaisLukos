@@ -14,6 +14,11 @@ body {
   padding-top: 70px; /* Altura aproximada da Navbarcategoria */
 }
 
+/* Remover padding-top para a rota do blog */
+body.no-padding-top {
+  padding-top: 0 !important;
+}
+
 /* ========================================
    RESPONSIVIDADE GLOBAL
    ======================================== */
@@ -22,10 +27,18 @@ body {
   body {
     padding-top: 60px; /* Altura da Navbarcategoria mobile */
   }
+  
+  body.no-padding-top {
+    padding-top: 0 !important;
+  }
 }
 
 @media (max-width: 480px) {
   body {
     padding-top: 60px; /* Altura da Navbarcategoria mobile pequeno */
+  }
+  
+  body.no-padding-top {
+    padding-top: 0 !important;
   }
 }

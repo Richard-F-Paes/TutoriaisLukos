@@ -3,7 +3,9 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import { useRef, useState, useEffect } from 'react';
+import { Moon, Sun } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useTheme } from '../../../contexts/ThemeContext';
 import './Navbarcategoria.css';
 
 // Component que renderiza conteúdo do menu via portal
@@ -64,6 +66,7 @@ export default function Navbarcateria() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   
   const [openMenus, setOpenMenus] = useState({});
   const [fixedMenus, setFixedMenus] = useState({});
@@ -231,15 +234,10 @@ export default function Navbarcateria() {
       ],
     },
     {
-      label: 'Mobile',
+      label: 'Aplicativos',
       items: [
         { label: 'Pré-venda', to: '/Prevenda' },
         { label: 'Inventário', to: '/Inventario' },
-      ],
-    },
-    {
-      label: 'POS',
-      items: [
         { label: 'Instalar Lukos Pay', to: '/POS/Instalar' },
         { label: 'Venda de Combustível', to: '/POS/VendaCombustivel' },
         { label: 'Venda de Produto', to: '/POS/VendaProduto' },
@@ -261,18 +259,21 @@ export default function Navbarcateria() {
         <Link to="/" className="category-navbar-logo">
           <img
             src="logo.png"
-            alt="Logo Tutorial Lukos"
+            alt="Logo Lukos Tecnologia"
             className="category-logo-image"
           />
-          <span className="category-logo-text">Tutorial Lukos</span>
+          <span className="category-logo-text">
+            <span className="category-logo-line">Lukos</span>
+            <span className="category-logo-line">Tecnologia</span>
+          </span>
         </Link>
 
         {/* Menu Desktop */}
         <nav className="category-navbar-menu">
           {/* Botão Início */}
           <Link
-            to="/"
-            className={`category-nav-link ${location.pathname === '/' ? 'active' : ''}`}
+            to="/tutoriais"
+            className={`category-nav-link ${location.pathname === '/tutoriais' ? 'active' : ''}`}
           >
             Início
           </Link>
@@ -330,26 +331,6 @@ export default function Navbarcateria() {
               </div>
             );
           })}
-
-          {/* Links Adicionais */}
-          <Link
-            to="/tutoriais"
-            className={`category-nav-link ${location.pathname === '/tutoriais' ? 'active' : ''}`}
-          >
-            Tutoriais
-          </Link>
-          <Link
-            to="/categorias"
-            className={`category-nav-link ${location.pathname === '/categorias' ? 'active' : ''}`}
-          >
-            Categorias
-          </Link>
-          <Link
-            to="/sobre"
-            className={`category-nav-link ${location.pathname === '/sobre' ? 'active' : ''}`}
-          >
-            Sobre
-          </Link>
         </nav>
 
         {/* Ações da direita */}
@@ -367,22 +348,21 @@ export default function Navbarcateria() {
           </form>
 
           {/* Botão de tema */}
-          <button className="category-theme-button" aria-label="Alternar tema">
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 15 15"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7.5 10.39a2.889 2.889 0 1 0 0-5.779 2.889 2.889 0 0 0 0 5.778M7.5 1v.722m0 11.556V14M1 7.5h.722m11.556 0h.723m-1.904-4.596-.511.51m-8.172 8.171-.51.511m-.001-9.192.51.51m8.173 8.171.51.511"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <button 
+            className="category-theme-button" 
+            aria-label="Alternar tema"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleTheme();
+            }}
+            title={theme === 'dark' ? 'Alternar para tema claro' : 'Alternar para tema escuro'}
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4" />
+            ) : (
+              <Moon className="w-4 h-4" />
+            )}
           </button>
 
           {/* Autenticação / Usuário */}
@@ -491,8 +471,8 @@ export default function Navbarcateria() {
         <div className="category-mobile-menu">
           <div className="category-mobile-menu-content">
             <Link
-              to="/"
-              className={`category-mobile-link ${location.pathname === '/' ? 'active' : ''}`}
+              to="/tutoriais"
+              className={`category-mobile-link ${location.pathname === '/tutoriais' ? 'active' : ''}`}
               onClick={() => setMenuOpen(false)}
             >
               Início
@@ -512,27 +492,6 @@ export default function Navbarcateria() {
                 ))}
               </div>
             ))}
-            <Link
-              to="/tutoriais"
-              className={`category-mobile-link ${location.pathname === '/tutoriais' ? 'active' : ''}`}
-              onClick={() => setMenuOpen(false)}
-            >
-              Tutoriais
-            </Link>
-            <Link
-              to="/categorias"
-              className={`category-mobile-link ${location.pathname === '/categorias' ? 'active' : ''}`}
-              onClick={() => setMenuOpen(false)}
-            >
-              Categorias
-            </Link>
-            <Link
-              to="/sobre"
-              className={`category-mobile-link ${location.pathname === '/sobre' ? 'active' : ''}`}
-              onClick={() => setMenuOpen(false)}
-            >
-              Sobre
-            </Link>
             
             {/* Busca mobile */}
             <form onSubmit={handleSearch} className="category-mobile-search">

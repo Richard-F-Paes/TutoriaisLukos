@@ -1,13 +1,16 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AppProviders } from './providers';
 import Navbar from '../presentation/components/layout/Navbar/Navbar';
 import Footer from '../presentation/components/layout/Footer/Footer';
 import ProtectedRoute from '../presentation/components/layout/ProtectedRoute/ProtectedRoute';
+import PageNavbar from '../presentation/components/layout/PageNavbar/PageNavbar';
 import '../App.css';
 import '../styles/design-system.css';
 import '../styles/pages.css';
 
+// Importar helper de rotas
+import { isTutorialRoute, shouldShowCategoryNavbar, shouldShowPageNavbar } from '../shared/utils/routeUtils';
 
 // Importar páginas públicas
 import HomePage from '../presentation/pages/public/HomePage';
@@ -18,6 +21,7 @@ import TutorialDetailPage from '../presentation/pages/public/TutorialDetailPage'
 import TutorialPage from '../presentation/pages/public/TutorialPage';
 import TutorialsHomePage from '../presentation/pages/public/TutorialsHomePage';
 import Tutorials from '../presentation/pages/public/Tutorials';
+import TutorialsUnified from '../presentation/pages/public/TutorialsUnified';
 import CategoryTutorialsPage from '../presentation/pages/public/CategoryTutorialsPage';
 import AboutPage from '../presentation/pages/public/AboutPage';
 import SearchPage from '../presentation/pages/public/SearchPage';
@@ -70,29 +74,45 @@ import Lukospay from '../presentation/components/Lukospay/Lukospay';
 
 
 
-const hideNavbarOnRoutes = ['/blog'];
-
 function AppContent() {
   const location = useLocation();
-  const shouldShowNavbar = !hideNavbarOnRoutes.includes(location.pathname);
+  const isTutorial = isTutorialRoute(location.pathname);
+  const showCategoryNavbar = shouldShowCategoryNavbar(location.pathname);
+  const showPageNavbar = shouldShowPageNavbar(location.pathname);
+  // Não mostrar PageNavbar na rota "/" (blog) pois ele está dentro do BlogPage
+  const isBlogPage = location.pathname === '/' || location.pathname === '/blog';
+
+  // Remover padding-top do body quando estiver na rota do blog
+  useEffect(() => {
+    if (isBlogPage) {
+      document.body.classList.add('no-padding-top');
+    } else {
+      document.body.classList.remove('no-padding-top');
+    }
+    // Cleanup ao desmontar
+    return () => {
+      document.body.classList.remove('no-padding-top');
+    };
+  }, [isBlogPage]);
 
   return (
     <div className="App">
+      {/* Renderizar Navbarcategoria apenas em rotas de tutoriais */}
+      {showCategoryNavbar && <Navbarcategoria />}
       
-      {/* Navbar antiga - mantida para referência futura, mas não renderizada */}
-      {/* <Navbar /> */}
-      
-      <Navbarcategoria />
+      {/* Renderizar PageNavbar apenas em rotas principais (não tutoriais e não blog) */}
+      {showPageNavbar && !isBlogPage && <PageNavbar />}
     
       <main>
         <Routes>
-                {/* Rotas públicas */}
-                <Route path="/" element={<HomePage />} />
-                <Route path="/video-tutoriais" element={<VideoTutorialsPage />} />
-                <Route path="/video-tutorial/:id" element={<VideoTutorialDetailPage />} />
+                {/* Rotas públicas principais */}
+                <Route path="/" element={<BlogPage />} />
+                <Route path="/blog" element={<Navigate to="/" replace />} />
                 
                 {/* Rotas dos Tutoriais Lukos */}
-                <Route path="/tutoriais" element={<Tutorials />} />
+                <Route path="/tutoriais" element={<TutorialsUnified />} />
+                <Route path="/video-tutoriais" element={<VideoTutorialsPage />} />
+                <Route path="/video-tutorial/:id" element={<VideoTutorialDetailPage />} />
                 <Route path="/categoria/:category" element={<CategoryTutorialsPage />} />
                 <Route path="/tutorial/:tutorialId" element={<TutorialPage />} />
                 
@@ -136,7 +156,6 @@ function AppContent() {
                 <Route path="/servicos" element={<ServicosPage />} />
                 
                 {/* Página do Blog */}
-                <Route path="/blog" element={<BlogPage />} />
                 <Route path="/blog/:id" element={<BlogPostDetailPage />} />
                 <Route path="/blog-posts" element={<BlogPostsPage />} />
                 <Route path="/artigo/:id" element={<BlogPostPage />} />

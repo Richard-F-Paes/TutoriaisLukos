@@ -9,7 +9,7 @@ const Footer = () => {
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-linen.png')] opacity-10 pointer-events-none"></div>
 
       {/* Conteúdo principal */}
-      <div className="relative max-w-6xl mx-auto flex items-center justify-around px-4 grid grid-cols-1 md:grid-cols-4 gap-6 text-sm">
+      <div className="relative max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6 text-sm justify-items-center">
         {/* Marca / Logo */}
         <div className="flex flex-col items-center justify-center text-white">
           <a
@@ -18,19 +18,19 @@ const Footer = () => {
             rel="noopener noreferrer"
             className="flex items-center justify-center mb-2 text-white"
           >
-            <img src="logo.png" alt="Logo" className="w-10 h-10 mr-2 drop-shadow-md" />
+            <img src="logo.png" alt="Logo" className="w-14 h-14 mr-2 drop-shadow-md" />
             <span className="text-lg font-bold leading-tight tracking-wide">
               Lukos <br /> Tecnologia
             </span>
           </a>
-          <p className="text-gray-300 text-xs text-center flex justify-start leading-relaxed max-w-[180px] ">
+          <p className="text-gray-300 text-xs text-center leading-relaxed max-w-[180px]">
             Soluções completas para PDV, retaguarda e conveniência.
           </p>
         </div>
 
         {/* Navegação */}
-        <div className="text-white">
-          <h3 className="font-semibold mb-2 text white text-gray-100 text-sm">Navegação</h3>
+        <div className="text-white text-center">
+          <h3 className="font-semibold mb-2 text-white text-gray-100 text-sm">Navegação</h3>
           <ul className="space-y-1 text-gray text-xs text-white">
             <li><Link to="/" className="hover:text-white transition text-white">Início</Link></li>
             <li><Link to="/categorias" className="hover:text-white transition-colors text-white">Categorias</Link></li>
@@ -39,7 +39,7 @@ const Footer = () => {
         </div>
 
         {/* Tutoriais */}
-        <div>
+        <div className="text-center">
           <h3 className="font-semibold mb-2 text-gray-100 text-sm">Tutoriais</h3>
           <ul className="space-y-1 text-gray-300 text-xs text-white">
             <li><Link to="/tutoriais" className="hover:text-white transition-colors text-white">Tutoriais</Link></li>

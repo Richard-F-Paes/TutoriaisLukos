@@ -4,6 +4,7 @@
 import React from 'react';
 import { AuthProvider } from '../contexts/AuthContext';
 import { TutorialProvider } from '../contexts/TutorialContext';
+import { ThemeProvider } from '../contexts/ThemeContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 
@@ -37,11 +38,13 @@ export function AppProviders({ children }) {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TutorialProvider>
-            {children}
-          </TutorialProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <TutorialProvider>
+              {children}
+            </TutorialProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

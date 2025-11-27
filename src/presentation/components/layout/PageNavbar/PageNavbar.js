@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown, BookOpen, Brain, Info, Briefcase, Phone, Package, BarChart3, ShoppingCart, Wallet, Truck, Store, Link as LinkIcon } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
-function PageNavbar() {
+function PageNavbar({ transparent = false }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdowns, setOpenDropdowns] = useState({});
   const [openClienteDropdown, setOpenClienteDropdown] = useState(false);
@@ -225,16 +225,20 @@ function PageNavbar() {
           }
         }
       `}</style>
-    <nav className="absolute top-0 left-0 right-0 z-50 w-full mt-12 flex items-center justify-center space-x-1 h-[60px]" style={{backgroundColor: 'transparent'}}>
+    <nav className={`absolute left-0 right-0 z-50 w-full flex items-center justify-center space-x-1 h-[60px] ${transparent ? 'top-12' : 'top-0'}`} style={{
+      background: transparent ? 'transparent' : 'linear-gradient(135deg, #1a0f2e 0%, #0d0f14 30%, #0f1419 50%, #141a1a 70%, #1a2e1f 100%)',
+      backdropFilter: transparent ? 'none' : 'blur(10px)',
+      boxShadow: transparent ? 'none' : '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
+    }}>
       <div className="container mx-auto" style={{backgroundColor: 'transparent'}}>
-        <div className="row flex items-center justify-center py-4" style={{backgroundColor: 'transparent'}}>
+        <div className={`row flex items-center justify-center ${transparent ? 'py-2' : 'py-4'}`} style={{backgroundColor: 'transparent'}}>
         {/* Logo - col-lg-2 col-1 */}
         <div className="flex-shrink-0">
           <a className="brand inline-block" href="/">
             <img 
-              width="110" 
-              height="32" 
-              className=" h-[60px] w-[80px]" 
+              width="140" 
+              height="100" 
+              className=" h-[80px] w-[100px]" 
               src="logo.png"
               alt="LUKOS"
             />

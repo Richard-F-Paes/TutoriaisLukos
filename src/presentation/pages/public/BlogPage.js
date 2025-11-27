@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, User, ArrowRight, BookOpen, Tag, FileText, Cloud, CreditCard, Gift, Smartphone, Wallet, Receipt, ShoppingCart, BarChart3, Database, Package, DollarSign, TrendingUp, ChevronLeft, ChevronRight, HelpCircle, ChevronDown, ChevronUp, CheckCircle, ArrowUp, Percent, MessageCircle, Play, X } from 'lucide-react';
-import PageNavbar from '../../components/layout/PageNavbar/PageNavbar';
 import VideoShowcase from '../../components/custom/VideoShowcase/VideoShowcase';
+import PageNavbar from '../../components/layout/PageNavbar/PageNavbar';
 
 // Componente Feature2 adaptado
 const Feature2 = ({
@@ -152,7 +152,7 @@ function BlogPage() {
   ];
 
   return (
-    <div className="bg-white min-h-screen overflow-hidden">
+    <div className="bg-white min-h-screen overflow-hidden" style={{ marginTop: 0, paddingTop: 0 }}>
       <style>{`
         @keyframes fade-in {
           from {
@@ -195,9 +195,10 @@ function BlogPage() {
       `}</style>
       
       {/* Hero Section - Estilo TOTVS Melhorado */}
-      <section className="relative min-h-[750px] md:min-h-[900px] flex items-center overflow-hidden pt-20">
-        {/* Navbar específica da página */}
-        <PageNavbar />
+      <section className="relative min-h-[750px] md:min-h-[900px] flex items-center overflow-hidden" style={{ marginTop: 0, paddingTop: 0 }}>
+        {/* Navbar dentro do hero com fundo transparente */}
+        <PageNavbar transparent={true} />
+        
         {/* Background com imagem do profissional */}
         <div 
           className="absolute inset-0 bg-cover bg-center"
@@ -218,7 +219,7 @@ function BlogPage() {
           </svg>
         </div>
         
-        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 w-full max-w-7xl"> 
+        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 w-full max-w-7xl pt-[60px]"> 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             {/* Coluna Esquerda - Texto */}
             <div className="text-white">

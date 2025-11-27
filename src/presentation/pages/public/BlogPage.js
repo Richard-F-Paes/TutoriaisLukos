@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, User, ArrowRight, BookOpen, Tag, FileText, Cloud, CreditCard, Gift, Smartphone, Wallet, Receipt } from 'lucide-react';
+import { Calendar, Clock, User, ArrowRight, BookOpen, Tag, FileText, Cloud, CreditCard, Gift, Smartphone, Wallet, Receipt, ShoppingCart, BarChart3, Database, Package, DollarSign, TrendingUp, ChevronLeft, ChevronRight, HelpCircle, ChevronDown, ChevronUp, CheckCircle, ArrowUp, Percent, MessageCircle, Play, X } from 'lucide-react';
 import PageNavbar from '../../components/layout/PageNavbar/PageNavbar';
+import VideoShowcase from '../../components/custom/VideoShowcase/VideoShowcase';
 
 // Componente Feature2 adaptado
 const Feature2 = ({
@@ -26,15 +27,68 @@ const Feature2 = ({
 };
 
 function BlogPage() {
+  // Estado para FAQ
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
+  
+  // Estado para controlar modal de vídeo
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  
+  // Configurações do vídeo
+  const videoImageUrl = 'back.png';
+  const videoId = 'W9LN83G4DCE'; // Substituir pelo ID do vídeo do YouTube da LUKOS
+
   // Dados de tecnologias originais
-  const technologies = [
-    { name: 'Faturamento Express', icon: FileText, color: 'bg-blue-100 text-blue-600' },
-    { name: 'Banco de Dados na Nuvem', icon: Cloud, color: 'bg-green-100 text-green-600' },
-    { name: 'Conciliação de cartões', icon: CreditCard, color: 'bg-emerald-100 text-emerald-600' },
-    { name: 'Programa Fidelidade', icon: Gift, color: 'bg-yellow-100 text-yellow-600' },
-    { name: 'PDV Móvel', icon: Smartphone, color: 'bg-blue-100 text-blue-700' },
-    { name: 'Recebimento por Carteiras Digitais e Criptomoedas', icon: Wallet, color: 'bg-green-100 text-green-700' },
-    { name: 'Fatura Web', icon: Receipt, color: 'bg-orange-100 text-orange-600' },
+
+  // Dados dos sistemas (carrossel)
+  const systems = [
+    {
+      id: 'erp',
+      name: 'LUKOS ERP',
+      description: 'Sistema completo de gestão empresarial para postos de combustível',
+      image: 'retaguarda.png',
+    },
+    {
+      id: 'pdv',
+      name: 'LUKOS PDV',
+      description: 'Ponto de venda integrado com ERP para vendas na pista e loja',
+      image: 'CaixaPDV.png',
+    },
+    {
+      id: 'mobile',
+      name: 'PDV Móvel',
+      description: 'Solução mobile para vendas em qualquer lugar',
+      image: 'Smartpos.jpg',
+    },
+    {
+      id: 'analytics',
+      name: 'Analytics',
+      description: 'Business Intelligence e relatórios em tempo real',
+      image: 'https://lukos.com.br/wp-content/uploads/2025/01/Group-24.png',
+    },
+  ];
+
+  // FAQ
+  const faqItems = [
+    {
+      question: 'O sistema LUKOS é adequado para postos de qualquer tamanho?',
+      answer: 'Sim, o sistema LUKOS foi desenvolvido para atender desde pequenos postos até grandes redes. Nossa tecnologia é altamente configurável e escalável, permitindo que você comece com as funcionalidades essenciais e expanda conforme seu negócio cresce.',
+    },
+    {
+      question: 'Como funciona a integração entre ERP e PDV?',
+      answer: 'A integração entre ERP e PDV é totalmente automática e em tempo real. Todas as vendas realizadas no PDV são instantaneamente registradas no ERP, atualizando estoque, financeiro e gerando relatórios. Isso elimina a necessidade de processos manuais e garante dados sempre atualizados.',
+    },
+    {
+      question: 'O sistema atende às obrigações fiscais brasileiras?',
+      answer: 'Sim, o LUKOS está sempre atualizado com a legislação fiscal brasileira. O sistema gera automaticamente todas as obrigações acessórias necessárias, como ECF, ECD, SPED Fiscal, SPED Contábil, eSocial e REINF, garantindo conformidade total com o fisco.',
+    },
+    {
+      question: 'Posso acessar o sistema de qualquer lugar?',
+      answer: 'Sim, o LUKOS é uma solução cloud, o que significa que você pode acessar de qualquer dispositivo com internet, a qualquer momento. Isso permite gestão remota completa do seu posto de combustível.',
+    },
+    {
+      question: 'Quanto tempo leva para implementar o sistema?',
+      answer: 'O tempo de implementação varia conforme o tamanho e complexidade do seu negócio. Em média, a implementação completa leva de 30 a 60 dias, incluindo migração de dados, treinamento da equipe e configuração personalizada.',
+    },
   ];
 
   // Dados de exemplo dos posts do blog
@@ -98,133 +152,101 @@ function BlogPage() {
   ];
 
   return (
-    <div className="bg-white min-h-screen">
-      {/* Navbar */}
-      <PageNavbar />
+    <div className="bg-white min-h-screen overflow-hidden">
+      <style>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+        }
+        @keyframes pulse-glow {
+          0%, 100% {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+          }
+          50% {
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.8);
+          }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.8s ease-out;
+        }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+        .animate-pulse-glow {
+          animation: pulse-glow 2s ease-in-out infinite;
+        }
+        .delay-1000 {
+          animation-delay: 1s;
+        }
+      `}</style>
       
-      {/* Hero Section */}
-      <section 
-        className="relative -mt-[100px] flex flex-col items-center justify-center overflow-visible"
-        style={{
-          backgroundImage: 'url("https://lukos.com.br/wp-content/uploads/2025/01/S-TEXTO-1.png")',
-          backgroundPosition: 'center top',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
-          minHeight: '804px',
-          width: '100%',
-          maxWidth: 'min(100%, 2000px)',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          padding: '10px',
-          position: 'relative',
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from via-black/60 to-black/70 flex flex-col items-center justify-center gap-4 w-full h-full z-10">
+      {/* Hero Section - Estilo TOTVS Melhorado */}
+      <section className="relative min-h-[750px] md:min-h-[900px] flex items-center overflow-hidden pt-20">
+        {/* Navbar específica da página */}
+        <PageNavbar />
+        {/* Background com imagem do profissional */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: 'url("https://www.totvs.com/wp-content/uploads/2025/06/hero-banner-RH.jpg.webp")',
+            backgroundPosition: 'center',
+            backgroundSize: 'cover'
+          }}
+        ></div>
         
-
-         
-          <div className="inline-flex items-center mt-[100px] gtext-center mt-[100px]ap-2 mt-[120px] px-4 py-2 bg-purple-500/100 backdrop-blur-sm rounded-full mb-4">
-
-         
-            <span className="text-sm font-semibold text-white uppercase tracking-wide">
-              Lukos tecnologia
-            </span>
-          </div>
-          <div className="w-[1200px] h-[600px] mb-[150px] text-black flex items-start justify-center flex-col ">  
-            <h2 className="text-5xl text-start font-bold text-center drop-shadow-2xl -mt-[100px] w-[500px] ml-[150px] h-[168px] flex items-center" style={{ color: '#374151' }}>
-            Potencialize a gestão do seu posto de combustível com a
-            </h2>
-            <div className="w-[500px] h-[168px]  flex items-center justify-start mt-[-55px]"> 
-              <h2 className="font-bold text-center text-9xl text-[#690093] drop-shadow-3xl mt-[90px] ml-[150px] flex items-center">
-            LUKOS 
-              </h2>
+        {/* Overlay roxo com degradê suave */}
+        <div className="absolute inset-0 "></div>
+        
+        {/* Forma abstrata azul escura fluindo */}
+        <div className="absolute top-0 right-0 w-2/3 h-full opacity-30 pointer-events-none">
+          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path d="M100,0 Q80,30 70,50 T50,80 Q30,90 0,100 L0,0 Z" fill="#1e3a8a" />
+          </svg>
+        </div>
+        
+        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 w-full max-w-7xl"> 
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            {/* Coluna Esquerda - Texto */}
+            <div className="text-white">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl text-white uppercase font-bold mb-6 leading-tight">
+               <div className="w-full max-w-3xl">
+                <p className="m-0 mt-0 mb-0 text-3xl border-0 w-full max-w-3xl text-start box-border translate-x-0 translate-y-0 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100" style={{fontFamily: 'TOTVS !important'}}>
+                 Lukos tecnologia para postos de combustível
+                </p></div>
+              </h1>
+              
+              <div className="text-lg md:text-xl lg:text-2xl text-white mb-8 leading-relaxed" style={{maxWidth: '560px'}}>
+                <p className="w-full max-w-3xl text-start">
+                Com mais de 10 anos de experiência, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência.
+                </p>
+              </div>
+            
             </div>
-          </div>
-        </div>
+            
+           
+
         
-        {/* Elementos de Navegação */}
-        <div className="absolute bottom-0 left-0 right-0 z-20" style={{ height: '100px' }}>
-          {/* Pontos de Navegação */}
-          <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex items-center gap-3 z-30">
-            <div className="w-3 h-3 rounded-full bg-white"></div>
-            <div className="w-3 h-3 rounded-full border-2 border-white"></div>
-            <div className="w-3 h-3 rounded-full border-2 border-white"></div>
           </div>
-          
-          {/* Indicador de Scroll (Seta para baixo) */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-30">
-            <svg 
-              className="w-6 h-6 text-white"
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-          </div>
-        </div>
-        
-        {/* Scroll SVG - Hero Section */}
-        <div className="scroll scroll-gray-new absolute bottom-0 left-0 right-0 z-10">
-          <a href="#">
-            <svg 
-              version="1.1" 
-              id="Layer_1" 
-              xmlns="http://www.w3.org/2000/svg" 
-              xmlnsXlink="http://www.w3.org/1999/xlink" 
-              x="0px" 
-              y="0px" 
-              viewBox="0 0 505.7 70.1" 
-              style={{enableBackground: 'new 0 0 505.7 70.1'}} 
-              xmlSpace="preserve"
-            >
-              <title>curve-hollow-grey-out</title>
-             
-            </svg>
-          </a>
-        </div>
-        
-        {/* Div jumbotron-footer por cima */}
-        <div className="jumbotron-footer jumbotron-footer-new jumbotron-footer-gray" style={{
-          position: 'absolute',
-          bottom: '-2px',
-          width: '100%',
-          left: '0px',
-          zIndex: 999,
-          overflow: 'hidden',
-          border: '0px solid',
-          boxSizing: 'border-box'
-        }}>
-          <style>{`
-            .jumbotron-footer::after {
-              background: rgb(245, 245, 245) !important;
-              content: "";
-              position: absolute;
-              height: 100%;
-              width: 51%;
-              top: 0px;
-              z-index: 45;
-              left: 0px;
-              margin-left: -245px;
-            }
-            .jumbotron-footer::before {
-              background: rgb(245, 245, 245) !important;
-              content: "";
-              position: absolute;
-              height: 100%;
-              width: 51%;
-              top: 0px;
-              z-index: 45;
-              right: 0px;
-              margin-right: -245px;
-            }
-          `}</style>
         </div>
       </section>
+
+
+   
+
       
       <section className="relative -mt-[90px] flex items-center justify-center">
               <img 
@@ -262,7 +284,7 @@ function BlogPage() {
                 </div>
                 
                 {/* Texto à direita */}
-                <div className="flex-1 flex flex-col items-start justify-center gap-4 w-[500px] h-[500px]">
+                <div className="flex-1 flex flex-col items-center  justify-center gap-4 w-[500px] h-[500px]">
                   <h2 className="text-white text-4xl md:text-6xl font-bold text-left drop-shadow-lg">Conheça mais sobre a LUKOS</h2>
                   <p className="text-white/90 text-lg md:text-xl text-left leading-relaxed drop-shadow-md">
                   Com mais de 10 anos de experiência, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência com soluções completas e personalizadas. Nosso ERP eficiente é a escolha de centenas de empresas, otimizando milhões de transações mensais com segurança e precisão.
@@ -271,7 +293,11 @@ function BlogPage() {
                   </p>
                 </div>
               </div>
+
+              
+              
             </section>
+             
             
 
 
@@ -291,7 +317,7 @@ function BlogPage() {
 
             {/* Título */}
             <h2 className="text-4xl md:text-5xl font-bold text-gray-700 leading-tight text-start ">
-            Seu posto automatizado por IA
+            Seu posto automatizado por <span className="text-[#c44cf4]">IA</span>
             </h2>
 
             {/* Descrição */}
@@ -303,11 +329,11 @@ function BlogPage() {
           </div>
 
           {/* Imagem à direita */}
-          <div className="w-[800px] h-[400px] md:w-[300px] ">
+          <div className="w-[800px] h-[400px] md:w-[300px] flex items-center justify-center ">
             <img 
-              src="https://lukos.com.br/wp-content/uploads/2025/01/Group-24.png" 
+              src="IA.png" 
               alt="Treinamentos CS" 
-              className="w-full h- object-cover ml-[-140px] " 
+              className="w-full h-[400px] object-cover ml-[-140px] ml-[-80px] flex items-center justify-center mb-[50px]" 
             />
           </div>
         </div>
@@ -330,8 +356,11 @@ function BlogPage() {
                 
                 {/* Texto à direita */}
                 <div className="flex-1 flex flex-col items-start justify-center gap-4 max-w-3xl">
-                  <img src="/DEPOIMENTOS.png"
-                  alt="Depoimento" className="w-full max-w-[650px] h-auto object-contain opacity-100 relative" />
+                  <img 
+                    src="/DEPOIMENTOS.png"
+                    alt="Depoimento" 
+                    className="w-full max-w-[650px] h-auto object-contain opacity-100 relative" 
+                  />
                 </div>
               </div>
             </section>
@@ -340,87 +369,156 @@ function BlogPage() {
 
       {/* End Features */}
         
-      {/* Technologies Section - Div Separada */}
-      <div className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Grid de Cards de Tecnologias */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
-            {technologies.map((tech, index) => {
-              const Icon = tech.icon;
-              return (
-                <div key={index} className="col-span-1">
-                  <div className="card bg-transparent border-0 shadow-none hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center h-full min-h-[120px]">
-                    <div className="card-icon flex items-center justify-center p-2 pb-1 flex-shrink-0">
-                      <div className={`inline-flex items-center justify-center w-12 h-12 ${tech.color || 'bg-gray-100 text-gray-600'} rounded-lg`}>
-                        <Icon className="w-6 h-6" />
-                      </div>
-                    </div>
-                    <div className="card-body p-2 pt-1 text-center flex-1 flex items-center justify-center">
-                      <p className="card-title uppercase text-gray-900 font-semibold text-xs leading-tight">{tech.name}</p>
+      {/* Seção de Depoimentos */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden  ">
+          <div className="pb-4 mt-12">
+            <article className="w-full">
+              <h2 className="text-3xl md:text-3xl lg:text-3xl font-bold uppercase text-center text-gray-900 mb-4">
+                As empresas que movem o país, confiam na <strong className="text-[#00D4FF]">LUKOS</strong>
+              </h2>
+            </article>
+          </div>
+
+          <div className=" flex justify-center items-center">
+            {/* Card com imagem e botão de vídeo - col-lg-6 col-12 */}
+            <div className="w-[800px] h-[500px] ">
+              <div className="relative group cursor-pointer overflow-hidden rounded-[40px] shadow-xl h-full" onClick={() => setIsVideoModalOpen(true)}>
+                {/* Card Image */}
+                <div className="relative w-full h-full overflow-hidden bg-gray-100">
+                  <img 
+                    src={videoImageUrl} 
+                    alt="Vídeo LUKOS" 
+                    className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors duration-300"></div>
+                  
+                  {/* Texto vertical "LUKOS" na borda direita */}
+                  <div className="absolute right-0 top-0 bottom-0 flex items-center justify-center pr-2 md:pr-4 z-10 pointer-events-none">
+                    <div 
+                      className="text-purple-500/40 text-3xl md:text-4xl lg:text-5xl font-bold uppercase"
+                      style={{ 
+                        writingMode: 'vertical-rl',
+                        textOrientation: 'upright',
+                        letterSpacing: '0.15em'
+                      }}
+                    >
+                      LUKOS
                     </div>
                   </div>
+                  
+                  {/* Card Body - Link com conteúdo */}
+                  <a 
+                    href="#" 
+                    onClick={(e) => { e.preventDefault(); setIsVideoModalOpen(true); }}
+                    className="absolute inset-0 flex items-center justify-center h-full z-10 no-underline"
+                  >
+                    <div className="">
+                      <div className="flex flex-col items-center justify-center w-full ">
+                        {/* Ícone de play */}
+                        <div className="mb-3">
+                          <div className="bg-white rounded-full p-4 md:p-6 group-hover:bg-white transition-all duration-300 group-hover:scale-110 shadow-2xl inline-block">
+                            <Play className="w-10 h-10 md:w-14 md:h-14 text-[#690093] ml-1" fill="#690093" />
+                          </div>
+                        </div>
+                        
+                        {/* Texto "Assista ao Vídeo" */}
+                   
+                      </div>
+                    </div>
+                  </a>
                 </div>
-              );
-            })}
+              </div>
+            </div>
+
+            {/* Texto descritivo - col-lg-6 col-12 pl-lg-5 pl-3 pt-lg-0 pt-4 d-flex align-items-center */}
+         
           </div>
         </div>
-      </div>
+      {/* Seção FAQ - Adaptada da TOTVS */}
+      <section className="bg-gray-50 py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Perguntas Frequentes
+            </h2>
+            <p className="text-lg text-gray-600">
+              Tire suas dúvidas sobre o sistema LUKOS
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {faqItems.map((item, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg shadow-md overflow-hidden"
+              >
+                <button
+                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                  className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors"
+                >
+                  <span className="font-semibold text-gray-900 text-lg pr-4">
+                    {item.question}
+                  </span>
+                  {openFaqIndex === index ? (
+                    <ChevronUp className="w-5 h-5 text-[#690093] flex-shrink-0" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-[#690093] flex-shrink-0" />
+                  )}
+                </button>
+                {openFaqIndex === index && (
+                  <div className="px-6 pb-6 text-gray-700 leading-relaxed">
+                    {item.answer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        {/* Background com gradiente roxo/violeta */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]"></div>
+        
+        {/* Container */}
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            {/* Título */}
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+              Transforme a gestão do seu posto de combustível
+            </h2>
+            
+            {/* Descrição */}
+            <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto mb-8 leading-relaxed">
+              Com o LUKOS ERP e PDV, você tem controle total sobre vendas, estoque, financeiro e operações. 
+              Automatize processos, reduza custos e tome decisões mais inteligentes com relatórios em tempo real.
+            </p>
+            
+            {/* Botão CTA */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <a
+                href="/contato"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#690093] font-bold text-lg rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
+                Começar agora
+                <ArrowRight className="w-5 h-5" />
+              </a>
+              <a
+                href="/demonstracao"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-transparent border-2 border-white text-white font-bold text-lg rounded-lg hover:bg-white/10 transition-all duration-300"
+              >
+                Solicitar demonstração
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Main Content Continua */}
       <div className="">
         <div className="max-w-7xl mx-auto flex items-center justify-center flex-col">
 
-          {/* Brand Slider Section */}
-          <section 
-            className="relative overflow-hidden z-[1] w-[2000px] h-[200px] "
-            style={{
-              backgroundImage: 'url("https://gratech.coevs.com/assets/general/images/DDzFTPgp6U8QdcTjLGcT.jpg")',
-              paddingTop: '100px',
-              paddingBottom: '100px',
-              paddingLeft: '0px',
-              paddingRight: '0px',
-              backgroundPosition: 'center center',
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: 'cover',
-              boxSizing: 'border-box',
-              margin: '0px',
-              outline: 'none',
-            }}
-          >
-            {/* Overlay preto */}
-            <div className="absolute inset-0 bg-black/80 z-0"></div>
-            
-            {/* Container */}
-            <div className="container mx-auto px-4 relative z-10">
-              {/* Brand Slider */}
-              <div className="brand__slider overflow-hidden">
-              
-                
-              </div>
-            </div>
-
-            {/* CSS for Animation */}
-            <style>{`
-              @keyframes scroll {
-                0% {
-                  transform: translateX(0);
-                }
-                100% {
-                  transform: translateX(-50%);
-                }
-              }
-              .brand__slider-wrapper {
-                animation: scroll 30s linear infinite;inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-primary text-primary-foreground mb-4
-              }
-              .brand__slider-wrapper:hover {
-                animation-play-state: paused;
-              }
-              .brand__slider {
-                width: 100%;
-                overflow: hidden;
-              }
-            `}</style>
-          </section>
 
           {/* Seção de Blog Posts */}
           <section className="w-full py-16 px-4 md:px-8 bg-white">

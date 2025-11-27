@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AppProviders } from './providers';
 import Navbar from '../presentation/components/layout/Navbar/Navbar';
 import Footer from '../presentation/components/layout/Footer/Footer';
@@ -50,6 +50,8 @@ import BlogPostDetailPage from '../presentation/pages/public/BlogPostDetailPage'
 import BlogPostsPage from '../presentation/pages/public/BlogPostsPage';
 import BlogPostPage from '../presentation/pages/public/BlogPostPage';
 import AppsPage from '../presentation/pages/public/AppsPage';
+import VerPage from '../presentation/pages/public/VerPage';
+import ApresentacaoSistemasPage from '../presentation/pages/public/ApresentacaoSistemasPage';
 
 // Importar páginas administrativas
 import EditorPage from '../presentation/pages/admin/EditorPage';
@@ -68,19 +70,22 @@ import Lukospay from '../presentation/components/Lukospay/Lukospay';
 
 
 
-function App() {
+const hideNavbarOnRoutes = ['/blog'];
+
+function AppContent() {
+  const location = useLocation();
+  const shouldShowNavbar = !hideNavbarOnRoutes.includes(location.pathname);
+
   return (
-    <AppProviders>
-      <Router>
-        <div className="App">
-          
-          {/* Navbar antiga - mantida para referência futura, mas não renderizada */}
-          {/* <Navbar /> */}
-          
-          <Navbarcategoria />
-        
-          <main>
-            <Routes>
+    <div className="App">
+      
+      {/* Navbar antiga - mantida para referência futura, mas não renderizada */}
+      {/* <Navbar /> */}
+      
+      <Navbarcategoria />
+    
+      <main>
+        <Routes>
                 {/* Rotas públicas */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/video-tutoriais" element={<VideoTutorialsPage />} />
@@ -139,6 +144,13 @@ function App() {
                 {/* Página de Aplicativos */}
                 <Route path="/apps" element={<AppsPage />} />
                 
+                {/* Página de Visualização */}
+                <Route path="/ver" element={<VerPage />} />
+                
+                {/* Página de Apresentação dos Sistemas */}
+                <Route path="/apresentacao-sistemas" element={<ApresentacaoSistemasPage />} />
+                <Route path="/sistemas" element={<ApresentacaoSistemasPage />} />
+                
                 {/* Rotas administrativas */}
                 <Route path="/admin" element={<AdminPage />} />
                 
@@ -167,10 +179,18 @@ function App() {
                 />
                 
               </Routes>
-            </main>
-            <Footer />
-          </div>
-        </Router>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <AppProviders>
+      <Router>
+        <AppContent />
+      </Router>
     </AppProviders>
   );
 }

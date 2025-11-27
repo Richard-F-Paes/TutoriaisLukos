@@ -51,7 +51,7 @@ const Navbar = () => {
                 )
               })}
             </nav>
-
+                
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}

@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, Search, Moon } from 'lucide-react';
+import { Menu, X, ChevronDown, BookOpen, Brain, Info, Briefcase, Phone, Package, BarChart3, ShoppingCart, Wallet, Truck, Store, Link as LinkIcon } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 function PageNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdowns, setOpenDropdowns] = useState({});
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [openClienteDropdown, setOpenClienteDropdown] = useState(false);
+  const [openLanguageMenu, setOpenLanguageMenu] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.dropdown-container')) {
+        setOpenDropdowns({});
+        setOpenClienteDropdown(false);
+        setOpenLanguageMenu(false);
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const toggleDropdown = (key) => {
@@ -25,191 +28,689 @@ function PageNavbar() {
       [key]: !prev[key]
     }));
   };
-  
-  const navItems = [
-    { label: 'Blog', hasDropdown: false, key: 'solucoes', href: '/blog', },
-    { label: 'IA', hasDropdown: false, key: 'jornadas', href: '/ia' },
-    { label: 'Sobre nós', href: '/sobre', hasDropdown: false, href: '/sobre' },
-    { label: 'Serviços', href: '/servicos', hasDropdown: false, key: 'insights' },
-    { label: 'Contato', href: '/contato', isButton: true, hasDropdown: false, href: '/contato' },
+
+  const menuItems = [
+    { 
+      label: 'Blog', 
+      hasDropdown: false, 
+      key: 'blog', 
+      href: '/blog',
+      icon: BookOpen
+    },
+    { 
+      label: 'Tutoriais',
+      hasDropdown: false,
+      key: 'tutoriais',
+      href: '/tutoriais',
+      icon: BookOpen
+    },
+    { 
+      label: 'IA', 
+      hasDropdown: false, 
+      key: 'ia', 
+      href: '/ia',
+      icon: Brain
+    },
+    { 
+      label: 'Produtos', 
+      hasDropdown: true, 
+      key: 'produtos',
+      icon: Package,
+      isCardDropdown: true,
+      submenu: [
+        { 
+          label: 'Sistema ERP', 
+          href: '/sistemas/erp',
+          icon: BarChart3,
+          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_sistema_ERP_3_bc9518527d.png',
+          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_sistema_ERP_290ccde0c6.svg',
+          description: 'Organizar e automatizar seu negócio'
+        },
+        { 
+          label: 'Hub de Integração', 
+          href: '/sistemas/integracao',
+          icon: LinkIcon,
+          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_hubdeintegracao_3_5ed34c0eab.png',
+          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_hubintegracao_9476475530.svg',
+          description: 'Conectar canais e vender sem limites'
+        },
+        { 
+          label: 'Sistema PDV', 
+          href: '/sistemas/pdv',
+          icon: ShoppingCart,
+          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_sistema_PDV_4_075449fb07.png',
+          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_sistema_PDV_4988fe51a6.svg',
+          description: 'Vender na loja física com sistema integrado'
+        },
+        { 
+          label: 'Conta Digital', 
+          href: '/sistemas/conta-digital',
+          icon: Wallet,
+          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_contadigital_3_d89e2f5be3.png',
+          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_contadigital_944c930267.svg',
+          description: 'Receber, pagar e movimentar'
+        },
+        { 
+          label: 'Envios', 
+          href: '/sistemas/envios',
+          icon: Truck,
+          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_envios_3_eb2be13c58.png',
+          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_envios_3c51f2fdbd.svg',
+          description: 'Economizar em fretes e acelerar entregas'
+        },
+        { 
+          label: 'Ecommerce', 
+          href: '/sistemas/ecommerce',
+          icon: Store,
+          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_ecommerce_3_fc023b46f5.png',
+          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_ecommerce_577508512a.svg',
+          description: 'Criar um site exclusivo para sua marca'
+        },
+        { 
+          label: 'Loja', 
+          href: '/sistemas/loja',
+          icon: Store,
+          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_loja_3_png_5f76f66412.png',
+          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_loja_43c1ec5482.svg',
+          description: 'Ranquear seus produtos nos marketplaces'
+        },
+        { 
+          label: 'Agentes de IA', 
+          href: '/sistemas/agentes-ia',
+          icon: Brain,
+          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_agentes_IA_cfcfde18db.png',
+          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_agentes_IA_2565782604.svg',
+          description: 'Comandar seu ERP com inteligência artificial'
+        },
+      ]
+    },
+    { 
+      label: 'Sobre nós', 
+      hasDropdown: false, 
+      key: 'sobre', 
+      href: '/sobre',
+      icon: Info
+    },
+    { 
+      label: 'Serviços', 
+      hasDropdown: true, 
+      key: 'servicos',
+      icon: Briefcase,
+      submenu: [
+        { label: 'ERP', href: '/sistemas/erp' },
+        { label: 'PDV', href: '/sistemas/pdv' },
+        { label: 'Analytics', href: '/sistemas/analytics' },
+        { label: 'Inteligência Artificial', href: '/ia' },
+      ]
+    },
   ];
 
   return (
-    <nav className={`bg-white w-[1300px] h-[75px] mt-6 flex items-center justify-center rounded-full shadow-lg sticky top-0 z-50 max-w-8xl mx-auto px-6 sm:px-8 lg:px-12 transition-all duration-300 ${isScrolled ? 'py-4' : ''}`}>
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <a href="/">
-            <div className="flex items-center space-x-2 py-2 mr-8">
-              <img 
-                src="logo.png" 
-                alt="Lukos"   
-                className="w-1 h-12 transition-all duration-200 ease-in-out" 
-                style={{ height: '50px', width: '55px' }}
-              />
-            </div>
+    <>
+      <style>{`
+        .product-description {
+          color: rgb(0, 22, 71);
+          font-family: "Plus Jakarta Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 20px;
+          box-sizing: border-box;
+          padding: 0px;
+          margin: 0px;
+          text-rendering: geometricprecision;
+          scroll-behavior: smooth;
+        }
+        
+        @media screen and (min-width: 1081px) and (max-width: 1239px) {
+          .product-description {
+            font-size: 11.8px;
+          }
+        }
+        
+        @media (min-width: 1240px) and (max-width: 1359px) {
+          .product-description {
+            font-size: 12.3px;
+          }
+        }
+        
+        @media screen and (max-width: 380px) {
+          .product-description {
+            font-size: 12px;
+          }
+        }
+        
+        .product-card {
+          box-sizing: border-box;
+          padding: 0px;
+          margin: 0px;
+          text-rendering: geometricprecision;
+          scroll-behavior: smooth;
+          font-family: "Plus Jakarta Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          transition: transform 0.3s ease-in-out;
+          width: 151px;
+        }
+        
+        .product-card:hover {
+          transform: scale(1.013);
+        }
+        
+        @media screen and (min-width: 1081px) and (max-width: 1239px) {
+          .product-card {
+            width: 124px;
+          }
+        }
+        
+        @media (min-width: 1240px) and (max-width: 1359px) {
+          .product-card {
+            width: 138px;
+          }
+        }
+        
+        @media screen and (max-width: 380px) {
+          .product-card {
+            width: fit-content;
+          }
+        }
+        
+        @media screen and (max-width: 1080px) {
+          .product-card {
+            -webkit-box-align: center;
+            align-items: center;
+            flex-direction: row;
+            width: 350px;
+          }
+        }
+      `}</style>
+    <nav className="absolute top-0 left-0 right-0 z-50 w-full mt-12 flex items-center justify-center space-x-1 h-[60px]" style={{backgroundColor: 'transparent'}}>
+      <div className="container mx-auto" style={{backgroundColor: 'transparent'}}>
+        <div className="row flex items-center justify-center py-4" style={{backgroundColor: 'transparent'}}>
+        {/* Logo - col-lg-2 col-1 */}
+        <div className="flex-shrink-0">
+          <a className="brand inline-block" href="/">
+            <img 
+              width="110" 
+              height="32" 
+              className=" h-[60px] w-[80px]" 
+              src="logo.png"
+              alt="LUKOS"
+            />
           </a>
+        </div>
 
-          {/* Mobile menu button */}
+        {/* Menu Desktop - col-lg-6 */}
+        <div className="hidden lg:flex px-0 justify-center">
+          <nav className="nav-primary">
+            <ul className="nav flex items-center justify-center space-x-1 h-[60px]">
+              {menuItems.map((item) => {
+                if (item.hasDropdown) {
+                  const Icon = item.icon;
+                  return (
+                    <li key={item.key} className="menu-item relative dropdown-container">
+                      <button
+                        onClick={() => toggleDropdown(item.key)}
+                        className="flex items-center gap-1 px-3 py-2 text-xl font-medium text-white hover:text-[#00D4FF] transition-colors"
+                      >
+                        <Icon className="h-4 w-4" />
+                        {item.label}
+                        <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${openDropdowns[item.key] ? 'rotate-180' : ''}`} />
+                      </button>
+                      
+                      {openDropdowns[item.key] && item.hasDropdown && (
+                        <>
+                          {item.isCardDropdown ? (
+                            <div className="sub-menu absolute top-full mt-4 bg-white rounded-2xl shadow-2xl z-50 p-6 border border-gray-200" style={{ left: '70%', transform: 'translateX(-50%)', width: '100%', minWidth: '2000px' }}>
+                              <div className="flex flex-wrap gap-4 justify-center items-center mx-auto">
+                                {item.submenu.map((subItem, index) => {
+                                  const SubIcon = subItem.icon || Package;
+                                  return (
+                                    <div
+                                      key={index}
+                                      id={`submenu-produtos-${index}`}
+                                      tabIndex={0}
+                                      role="button"
+                                      aria-label={`Produto ${subItem.label} `}
+                                      className="product-card rounded-lg overflow-hidden border border-gray-200"
+                                      onClick={() => window.location.href = subItem.href}
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                          e.preventDefault();
+                                          window.location.href = subItem.href;
+                                        }
+                                      }}
+                                    >
+                                      <figure className="relative" style={{ width: '100%', height: '200px', margin: 0, marginBottom: '8px' }}>
+                                        <img 
+                                          alt={`Produto de destaque ${subItem.label} `}
+                                          loading="lazy"
+                                          width={index === 6 ? 166 : 165}
+                                          height="280"
+                                          decoding="async"
+                                          data-nimg="1"
+                                          className="product-img"
+                                          style={{ color: 'transparent', width: '100%', height: '100%', objectFit: 'cover' }}
+                                          src={subItem.image || 'BANNER-HOME-1.png'}
+                                        />
+                                        <div 
+                                          className="product-img-overlay" 
+                                          style={{ 
+                                            background: 'linear-gradient(0deg, rgb(0, 22, 71) -10%, transparent 45%)',
+                                            borderRadius: '0px 0px 10px 10px',
+                                            bottom: '0px',
+                                            boxSizing: 'border-box',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '8px',
+                                            height: '100%',
+                                            justifyContent: 'flex-end',
+                                            padding: '20px 10px',
+                                            position: 'absolute',
+                                            transition: 'background-size 0.3s ease-in-out',
+                                            width: '100%',
+                                            margin: '0px',
+                                            textRendering: 'geometricprecision',
+                                            scrollBehavior: 'smooth',
+                                            fontFamily: '"Plus Jakarta Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+                                            zIndex: 10
+                                          }}
+                                        >
+                                          {subItem.iconImage ? (
+                                            <img 
+                                              alt={`Icone ${subItem.label}`}
+                                              loading="lazy"
+                                              width={index === 0 ? 24 : index === 3 ? 25 : index === 7 ? 24 : 25}
+                                              height={index === 3 ? 25 : 24}
+                                              decoding="async"
+                                              data-nimg="1"
+                                              className="product-icon"
+                                              style={{ color: 'transparent' }}
+                                              src={subItem.iconImage}
+                                            />
+                                          ) : (
+                                            <div>
+                                              <SubIcon className="w-6 h-6 text-white drop-shadow-2xl" />
+                                            </div>
+                                          )}
+                                          <p className="product-title" style={{ color: 'white', fontWeight: 'bold', fontSize: '14px', textAlign: 'center', margin: 0 }}>
+                                            {subItem.label}
+                                          </p>
+                                        </div>
+                                      </figure>
+                                      <p className="product-description" style={{ textAlign: 'center' }}>
+                                        {subItem.description}
+                                      </p>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ) : (
+                            <ul className="sub-menu absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-50 py-2 border border-gray-200">
+                              {item.submenu.map((subItem, index) => (
+                            <li key={index} className="menu-item">
+                              {subItem.hasSubmenu ? (
+                                <div className="relative">
+                                  <button
+                                    onClick={() => toggleDropdown(`${item.key}-${index}`)}
+                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#a44dff] transition-colors"
+                                  >
+                                    {subItem.label}
+                                    <ChevronDown className={`ml-1 h-3 w-3 inline transition-transform ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} />
+                                  </button>
+                                  {openDropdowns[`${item.key}-${index}`] && (
+                                    <ul className="sub-menu absolute left-full top-0 ml-2 w-56 bg-white rounded-lg shadow-xl z-50 py-2 border border-gray-200">
+                                      {subItem.submenu.map((subSubItem, subIndex) => (
+                                        <li key={subIndex}>
+                                          <a
+                                            href={subSubItem.href}
+                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#a44dff] transition-colors"
+                                          >
+                                            {subSubItem.label}
+                                          </a>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
+                              ) : (
+                                <a
+                                  href={subItem.href}
+                                  target={subItem.external ? "_blank" : undefined}
+                                  rel={subItem.external ? "noopener noreferrer" : undefined}
+                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#a44dff] transition-colors"
+                                >
+                                  {subItem.label}
+                                </a>
+                              )}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </>
+                      )}
+                    </li>
+                  );
+                } else {
+                  const Icon = item.icon;
+                  const active = location.pathname === item.href;
+                  return (
+                    <li key={item.key} className="menu-item relative">
+                      <a 
+                        href={item.href}
+                        className={`flex items-center gap-1 px-3 py-2 text-xl font-medium transition-colors ${
+                          active 
+                            ? 'text-[#00D4FF]' 
+                            : 'text-white hover:text-[#00D4FF]'
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {item.label}
+                      </a>
+                      {active && (
+                        <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-5 h-0.5 bg-[#00D4FF] rounded-full"></span>
+                      )}
+                    </li>
+                  );
+                }
+              })}
+            </ul>
+          </nav>
+        </div>
+
+        {/* Botões Direita - col-lg-4 */}
+        <div className="hidden lg:flex items-center space-x-3">
+          {/* Botão Contato */}
+          <div className="btn-group dropdown dropdown-container">
+            <a href="/contato">
+              <button
+                className="btn btn-xs btn-blue px-4 py-2 bg-[#00D4FF] text-white text-base font-medium rounded hover:bg-[#00B8E6] transition-colors flex items-center gap-2"
+                type="button"
+              >
+                <Phone className="h-4 w-4" />
+                Contato
+              </button>
+            </a>
+          </div>
+
+
+          {/* Seletor de Idioma */}
+          <div className="btn-group dropdown dropdown-container relative">
+           
+
+            {openLanguageMenu && (
+              <ul className="langs-drop absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-50 py-2 border border-gray-200">
+                <li>
+                  <a
+                    href="https://es.totvs.com/"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    <figure className="m-0 mr-2">
+                      <img
+                        src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-es_9fac6f20.jpg.webp"
+                        alt="Linguagem ES-ES"
+                        className="w-6 h-4 object-cover rounded"
+                      />
+                    </figure>
+                    <span className="text">ES</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://en.totvs.com/"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    <figure className="m-0 mr-2">
+                      <img
+                        src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-en_19a7eea0.png.webp"
+                        alt="Linguagem EN-EN"
+                        className="w-6 h-4 object-cover rounded"
+                      />
+                    </figure>
+                    <span className="text">EN</span>
+                  </a>
+                </li>
+              </ul>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="col-2 md:hidden text-right flex-shrink-0">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden flex items-center justify-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
-            aria-label="Toggle mobile menu"
+            className="navbar-toggler hamburger flex flex-col justify-center items-center w-8 h-8 space-y-1"
+            type="button"
           >
-            {isMenuOpen ? <X className="h-6 w-6 text-black" /> : <Menu className="h-6 w-6 text-black" />}
+            <span className={`block w-6 h-0.5 bg-white transition-all ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+            <span className={`block w-6 h-0.5 bg-white transition-all ${isMenuOpen ? 'opacity-0' : ''}`}></span>
+            <span className={`block w-6 h-0.5 bg-white transition-all ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
           </button>
+        </div>
+      </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => {
-              if (item.isButton) {
-                return (
-                  <div key={item.label} className="relative">
-                    <a href={item.href}>
-                      <button className="px-3 py-2 text-sm font-medium rounded-md transition-colors text-white hover:bg-blue-700 shadow-sm bg-[#0b57f4]">
-                        {item.label}
-                      </button>
-                    </a>
-                  </div>
-                );
-              }
-
-              if (item.hasDropdown) {
-                return (
-                  <div key={item.label} className="relative">
-                    <button
-                      onClick={() => toggleDropdown(item.key)}
-                      className="px-3 py-2 text-sm font-medium rounded-md transition-colors hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center text-black"
-                    >
-                      {item.label}
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    </button>
-                  </div>
-                );
-              }
-
-              return (
-                <div key={item.label} className="relative">
-                  <a 
-                    href={item.href} 
-                    target={item.external ? "_blank" : undefined}
-                    rel={item.external ? "noopener noreferrer" : undefined}
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="nav-primary-mobile lg:hidden bg-white rounded-lg shadow-xl mt-4 p-4">
+          <nav className="menu-principal-container">
+            <ul className="nav nav-mobile space-y-2">
+              {menuItems.map((item) => (
+                <li key={item.key} className="menu-item">
+                  <button
+                    onClick={() => toggleDropdown(item.key)}
+                    className="w-full text-left flex items-center justify-between px-4 py-3 text-gray-700 hover:text-[#a44dff] transition-colors"
                   >
-                    <button className="px-3 py-2 text-sm font-medium rounded-md transition-colors text-black hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800">
-                      {item.label}
-                    </button>
-                  </a>
-                </div>
-              );
-            })}
+                    {item.label}
+                    <ChevronDown className={`h-4 w-4 transition-transform ${openDropdowns[item.key] ? 'rotate-180' : ''}`} />
+                  </button>
+                  {openDropdowns[item.key] && item.hasDropdown && (
+                    <>
+                      {item.isCardDropdown ? (
+                        <div className="sub-menu pl-4 mt-2">
+                          <div className="grid grid-cols-2 gap-3">
+                            {item.submenu.map((subItem, index) => {
+                              const SubIcon = subItem.icon || Package;
+                              return (
+                                <div
+                                  key={index}
+                                  id={`submenu-produtos-mobile-${index}`}
+                                  tabIndex={0}
+                                  role="button"
+                                  aria-label={`Produto ${subItem.label} `}
+                                  className="product-card rounded-lg overflow-hidden border border-gray-200"
+                                  onClick={() => window.location.href = subItem.href}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      window.location.href = subItem.href;
+                                    }
+                                  }}
+                                >
+                                  <figure className="relative" style={{ width: '100%', height: '150px', margin: 0, marginBottom: '8px' }}>
+                                    <img 
+                                      alt={`Produto de destaque ${subItem.label} `}
+                                      loading="lazy"
+                                      width={index === 6 ? 166 : 165}
+                                      height="200"
+                                      decoding="async"
+                                      data-nimg="1"
+                                      className="product-img"
+                                      style={{ color: 'transparent', width: '100%', height: '100%', objectFit: 'cover' }}
+                                      src={subItem.image || 'BANNER-HOME-1.png'}
+                                    />
+                                    <div 
+                                      className="product-img-overlay" 
+                                      style={{ 
+                                        background: 'linear-gradient(0deg, rgb(0, 22, 71) -10%, transparent 45%)',
+                                        borderRadius: '0px 0px 10px 10px',
+                                        bottom: '0px',
+                                        boxSizing: 'border-box',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '8px',
+                                        height: '100%',
+                                        justifyContent: 'flex-end',
+                                        padding: '20px 10px',
+                                        position: 'absolute',
+                                        transition: 'background-size 0.3s ease-in-out',
+                                        width: '100%',
+                                        margin: '0px',
+                                        textRendering: 'geometricprecision',
+                                        scrollBehavior: 'smooth',
+                                        fontFamily: '"Plus Jakarta Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+                                        zIndex: 10
+                                      }}
+                                    >
+                                      {subItem.iconImage ? (
+                                        <img 
+                                          alt={`Icone ${subItem.label}`}
+                                          loading="lazy"
+                                          width={index === 1 || index === 2 || index === 3 || index === 4 || index === 5 || index === 6 ? 25 : 24}
+                                          height={index === 3 ? 25 : 24}
+                                          decoding="async"
+                                          data-nimg="1"
+                                          className="product-icon"
+                                          style={{ color: 'transparent' }}
+                                          src={subItem.iconImage}
+                                        />
+                                      ) : (
+                                        <div>
+                                          <SubIcon className="w-5 h-5 text-white drop-shadow-2xl" />
+                                        </div>
+                                      )}
+                                      <p className="product-title" style={{ color: 'white', fontWeight: 'bold', fontSize: '12px', textAlign: 'center', margin: 0 }}>
+                                        {subItem.label}
+                                      </p>
+                                    </div>
+                                  </figure>
+                                  <p className="product-description" style={{ textAlign: 'center' }}>
+                                    {subItem.description}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        <ul className="sub-menu pl-4 space-y-1 mt-1">
+                          {item.submenu.map((subItem, index) => (
+                            <li key={index} className="menu-item">
+                              {subItem.hasSubmenu ? (
+                                <div>
+                                  <button
+                                    onClick={() => toggleDropdown(`${item.key}-${index}`)}
+                                    className="w-full text-left flex items-center justify-between px-4 py-2 text-sm text-gray-600 hover:text-[#a44dff] transition-colors"
+                                  >
+                                    {subItem.label}
+                                    <ChevronDown className={`h-3 w-3 transition-transform ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} />
+                                  </button>
+                                  {openDropdowns[`${item.key}-${index}`] && (
+                                    <ul className="sub-menu pl-4 space-y-1 mt-1">
+                                      {subItem.submenu.map((subSubItem, subIndex) => (
+                                        <li key={subIndex}>
+                                          <a
+                                            href={subSubItem.href}
+                                            className="block px-4 py-2 text-sm text-gray-600 hover:text-[#a44dff] transition-colors"
+                                          >
+                                            {subSubItem.label}
+                                          </a>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
+                              ) : (
+                                <a
+                                  href={subItem.href}
+                                  target={subItem.external ? "_blank" : undefined}
+                                  rel={subItem.external ? "noopener noreferrer" : undefined}
+                                  className="block px-4 py-2 text-sm text-gray-600 hover:text-[#a44dff] transition-colors"
+                                >
+                                  {subItem.label}
+                                </a>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
           </nav>
-            
-          {/* Action Buttons */}
-          <div className="hidden md:flex items-center space-x-2 ml-auto">
-            <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus:ring-1 focus:ring-blue-200 disabled:pointer-events-none disabled:opacity-50 text-gray-700 h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
-              <Search className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+
+          <div className="menu-info text-center mt-6 space-y-3">
+            <button className="btn btn-sm btn-blue w-full px-4 py-2 bg-[#00D4FF] text-white text-sm font-medium rounded hover:bg-[#00B8E6] transition-colors">
+              Contato
             </button>
-            <button 
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus:ring-1 focus:ring-blue-200 disabled:pointer-events-none disabled:opacity-50 text-gray-700 h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
-              aria-label="Switch to dark mode"
-            >
-              <Moon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-            </button>
-            {/* Social Media Icons */}
-            <div className="flex items-center gap-2">
-              <a 
-                href="https://www.instagram.com/lukostecnologia/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                aria-label="Instagram"
+
+            <div className="btn-group dropdown dropdown-container relative">
+              <button
+                onClick={() => setOpenClienteDropdown(!openClienteDropdown)}
+                className="btn btn-sm btn-white-outline w-full px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-50 transition-colors flex items-center justify-center"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 7.5C11.11 7.5 10.24 7.76392 9.49993 8.25839C8.75991 8.75285 8.18314 9.45566 7.84254 10.2779C7.50195 11.1002 7.41283 12.005 7.58647 12.8779C7.7601 13.7508 8.18868 14.5526 8.81802 15.182C9.44736 15.8113 10.2492 16.2399 11.1221 16.4135C11.995 16.5872 12.8998 16.4981 13.7221 16.1575C14.5443 15.8169 15.2471 15.2401 15.7416 14.5001C16.2361 13.76 16.5 12.89 16.5 12C16.4988 10.8069 16.0243 9.66303 15.1806 8.81939C14.337 7.97575 13.1931 7.50124 12 7.5ZM12 15C11.4067 15 10.8266 14.8241 10.3333 14.4944C9.83994 14.1648 9.45542 13.6962 9.22836 13.1481C9.0013 12.5999 8.94189 11.9967 9.05764 11.4147C9.1734 10.8328 9.45912 10.2982 9.87868 9.87868C10.2982 9.45912 10.8328 9.1734 11.4147 9.05764C11.9967 8.94189 12.5999 9.0013 13.1481 9.22836C13.6962 9.45542 14.1648 9.83994 14.4944 10.3333C14.8241 10.8266 15 11.4067 15 12C15 12.7956 14.6839 13.5587 14.1213 14.1213C13.5587 14.6839 12.7956 15 12 15ZM16.5 2.25H7.5C6.10807 2.25149 4.77358 2.80509 3.78933 3.78933C2.80509 4.77358 2.25149 6.10807 2.25 7.5V16.5C2.25149 17.8919 2.80509 19.2264 3.78933 20.2107C4.77358 21.1949 6.10807 21.7485 7.5 21.75H16.5C17.8919 21.7485 19.2264 21.1949 20.2107 20.2107C21.1949 19.2264 21.7485 17.8919 21.75 16.5V7.5C21.7485 6.10807 21.1949 4.77358 20.2107 3.78933C19.2264 2.80509 17.8919 2.25149 16.5 2.25ZM20.25 16.5C20.25 17.4946 19.8549 18.4484 19.1516 19.1516C18.4484 19.8549 17.4946 20.25 16.5 20.25H7.5C6.50544 20.25 5.55161 19.8549 4.84835 19.1516C4.14509 18.4484 3.75 17.4946 3.75 16.5V7.5C3.75 6.50544 4.14509 5.55161 4.84835 4.84835C5.55161 4.14509 6.50544 3.75 7.5 3.75H16.5C17.4946 3.75 18.4484 4.14509 19.1516 4.84835C19.8549 5.55161 20.25 6.50544 20.25 7.5V16.5ZM18 7.125C18 7.3475 17.934 7.56501 17.8104 7.75002C17.6868 7.93502 17.5111 8.07922 17.3055 8.16436C17.1 8.24951 16.8738 8.27179 16.6555 8.22838C16.4373 8.18498 16.2368 8.07783 16.0795 7.9205C15.9222 7.76316 15.815 7.56271 15.7716 7.34448C15.7282 7.12625 15.7505 6.90005 15.8356 6.69448C15.9208 6.48891 16.065 6.31321 16.25 6.1896C16.435 6.06598 16.6525 6 16.875 6C17.1734 6 17.4595 6.11853 17.6705 6.3295C17.8815 6.54048 18 6.82663 18 7.125Z" fill="#0C1311"/>
-                </svg>
+                Sou cliente
+                <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${openClienteDropdown ? 'rotate-180' : ''}`} />
+              </button>
+
+              {openClienteDropdown && (
+                <div className="dropdown-menu dropdown-menu-secondary absolute top-full left-0 right-0 mt-2 w-full bg-white rounded-lg shadow-xl z-50 py-4 px-4 text-center border border-gray-200">
+                  <strong className="block text-gray-900 font-semibold mb-1">Suporte</strong>
+                  <span className="text-gray-700">4003-0015</span>
+                  <small className="block text-gray-600 mt-2 mb-2">ou acesse</small>
+                  <div className="space-y-1">
+                    <a href="https://suporte.totvs.com" className="block text-[#a44dff] hover:underline">Central do Cliente</a>
+                    <a href="https://espacolegislacao.totvs.com/" className="block text-[#a44dff] hover:underline">Espaço Legislação</a>
+                    <a href="https://www.totvs.com/carta-da-reforma-tributaria/" className="block text-[#a44dff] hover:underline">Carta Reforma Tributária</a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="langs-option langs-mobile flex justify-center space-x-2">
+              <a href="/" className="langs-btn-mobile flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-50 transition-colors">
+                <figure className="m-0">
+                  <img
+                    src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-br_00c220c9.jpg.webp"
+                    alt="Linguagem PT-BR"
+                    className="w-6 h-4 object-cover rounded"
+                  />
+                </figure>
+                <span className="text text-sm text-gray-700">PT</span>
               </a>
-              <a 
-                href="https://www.linkedin.com/company/lukostecnologia/about/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                aria-label="LinkedIn"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <g clipPath="url(#clip0_2070_1055)">
-                    <path d="M18 0H2C0.9 0 0 0.9 0 2V18C0 19.1 0.9 20 2 20H18C19.1 20 20 19.1 20 18V2C20 0.9 19.1 0 18 0ZM6 17H3V8H6V17ZM4.5 6.3C3.5 6.3 2.7 5.5 2.7 4.5C2.7 3.5 3.5 2.7 4.5 2.7C5.5 2.7 6.3 3.5 6.3 4.5C6.3 5.5 5.5 6.3 4.5 6.3ZM17 17H14V11.7C14 10.9 13.3 10.2 12.5 10.2C11.7 10.2 11 10.9 11 11.7V17H8V8H11V9.2C11.5 8.4 12.6 7.8 13.5 7.8C15.4 7.8 17 9.4 17 11.3V17Z" fill="black"/>
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_2070_1055">
-                      <rect width="20" height="20" fill="white"/>
-                    </clipPath>
-                  </defs>
-                </svg>
+              <a href="https://es.totvs.com/" className="langs-btn-mobile flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-50 transition-colors">
+                <figure className="m-0">
+                  <img
+                    src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-es_9fac6f20.jpg.webp"
+                    alt="Linguagem ES-ES"
+                    className="w-6 h-4 object-cover rounded"
+                  />
+                </figure>
+                <span className="text text-sm text-gray-700">ES</span>
               </a>
-              <a 
-                href="https://www.youtube.com/@lukos-solucoesemtecnologia8036/videos" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                aria-label="YouTube"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M21.9684 6.5175C21.8801 6.17189 21.7109 5.85224 21.4747 5.58491C21.2385 5.31758 20.9421 5.11024 20.61 4.98C17.3963 3.73875 12.2812 3.75 12 3.75C11.7188 3.75 6.60375 3.73875 3.39 4.98C3.0579 5.11024 2.76153 5.31758 2.52534 5.58491C2.28915 5.85224 2.1199 6.17189 2.03156 6.5175C1.78875 7.45313 1.5 9.16313 1.5 12C1.5 14.8369 1.78875 16.5469 2.03156 17.4825C2.11977 17.8283 2.28895 18.1481 2.52515 18.4156C2.76136 18.6831 3.0578 18.8906 3.39 19.0209C6.46875 20.2088 11.2875 20.25 11.9381 20.25H12.0619C12.7125 20.25 17.5341 20.2088 20.61 19.0209C20.9422 18.8906 21.2386 18.6831 21.4748 18.4156C21.711 18.1481 21.8802 17.8283 21.9684 17.4825C22.2113 16.545 22.5 14.8369 22.5 12C22.5 9.16313 22.2113 7.45313 21.9684 6.5175ZM15.0553 12.6113L11.3053 15.2363C11.1931 15.3148 11.0616 15.3612 10.9249 15.3703C10.7883 15.3794 10.6517 15.351 10.5301 15.288C10.4085 15.225 10.3064 15.1299 10.235 15.013C10.1636 14.8962 10.1256 14.762 10.125 14.625V9.375C10.125 9.2378 10.1627 9.10324 10.2339 8.98597C10.3051 8.86869 10.4071 8.77319 10.5289 8.70987C10.6506 8.64655 10.7873 8.61783 10.9242 8.62683C11.0611 8.63584 11.1929 8.68222 11.3053 8.76094L15.0553 11.3859C15.154 11.4551 15.2345 11.547 15.2901 11.6539C15.3457 11.7608 15.3747 11.8795 15.3747 12C15.3747 12.1205 15.3457 12.2392 15.2901 12.3461C15.2345 12.453 15.154 12.5449 15.0553 12.6141V12.6113Z" fill="#0C1311"/>
-                </svg>
+              <a href="https://en.totvs.com/" className="langs-btn-mobile flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-50 transition-colors">
+                <figure className="m-0">
+                  <img
+                    src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-en_19a7eea0.png.webp"
+                    alt="Linguagem EN-EN"
+                    className="w-6 h-4 object-cover rounded"
+                  />
+                </figure>
+                <span className="text text-sm text-gray-700">EN</span>
               </a>
             </div>
           </div>
         </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden overflow-hidden">
-            <nav className="py-4 space-y-2">
-              {navItems.map((item) => {
-                if (item.isButton) {
-                  return (
-                    <a key={item.label} href={item.href}>
-                      <button className="w-full text-left px-4 py-3 rounded-lg transition-all duration-200 font-medium text-white bg-[#0b57f4] hover:bg-blue-700">
-                        {item.label}
-                      </button>
-                    </a>
-                  );
-                }
-
-                if (item.hasDropdown) {
-                  return (
-                    <div key={item.label}>
-                      <button
-                        onClick={() => toggleDropdown(item.key)}
-                        className="w-full text-left flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 font-medium text-black hover:text-blue-600 hover:bg-gray-100"
-                      >
-                        <span>{item.label}</span>
-                        <ChevronDown className={`h-4 w-4 transition-transform ${openDropdowns[item.key] ? 'rotate-180' : ''}`} />
-                      </button>
-                    </div>
-                  );
-                }
-
-                return (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    target={item.external ? "_blank" : undefined}
-                    rel={item.external ? "noopener noreferrer" : undefined}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block px-4 py-3 rounded-lg transition-all duration-200 font-medium text-black hover:text-blue-600 hover:bg-gray-100"
-                  >
-                    {item.label}
-                  </a>
-                );
-              })}
-            </nav>
-          </div>
-        )}
+      )}
       </div>
     </nav>
+    </>
   );
 }
 
 export default PageNavbar;
-

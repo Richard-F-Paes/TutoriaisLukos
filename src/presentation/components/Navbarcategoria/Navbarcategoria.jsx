@@ -141,19 +141,23 @@ export default function Navbarcateria() {
     // Limpar todos os timeouts e fechar outros menus instantaneamente
     clearAllTimeouts();
     
-    // Fechar todos os outros menus instantaneamente
+    // Remover estado "fixo" de todos os menus anteriores
+    // e marcar apenas o menu clicado como "fixo"
+    setFixedMenus({ [menuLabel]: true });
+    
+    // Fechar todos os outros menus e abrir o menu clicado
     setOpenMenus(prev => {
       const newState = {};
+      // Fechar todos os outros menus
       Object.keys(prev).forEach(key => {
         if (key !== menuLabel) {
           newState[key] = false;
         }
       });
+      // Sempre abrir o menu clicado (sem toggle)
+      newState[menuLabel] = true;
       return newState;
     });
-    
-    setFixedMenus(prev => ({ ...prev, [menuLabel]: !prev[menuLabel] }));
-    setOpenMenus(prev => ({ ...prev, [menuLabel]: !prev[menuLabel] }));
   };
 
   const handleClickOutside = () => {

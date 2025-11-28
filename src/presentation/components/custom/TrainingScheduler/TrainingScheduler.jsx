@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, User, Mail, Phone, Building, MessageSquare, Send } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Calendar, Clock, User, Mail, Phone, Building, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
 
 export default function TrainingScheduler() {
   const [formData, setFormData] = useState({
@@ -68,19 +69,39 @@ ${formData.message || 'Sem mensagem adicional'}`;
   };
 
   return (
-    <section id="agendamento" className="py-20 bg-gradient-to-b from-gray-50 to-white">
+    <section id="agendamento" className="py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-6">
-            <Calendar className="text-blue-600" size={40} />
-          </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Agende seu Treinamento</h2>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <motion.div
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl shadow-lg mb-6"
+          >
+            <Calendar className="text-white" size={40} />
+          </motion.div>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Agende seu Treinamento
+            </span>
+          </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Preencha o formulário abaixo e nossa equipe entrará em contato via WhatsApp para confirmar o agendamento
           </p>
-        </div>
+        </motion.div>
 
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100"
+        >
           <form onSubmit={handleSubmit} className="p-8 md:p-12">
             {/* Nome e Email */}
             <div className="grid md:grid-cols-2 gap-6 mb-6">
@@ -225,18 +246,20 @@ ${formData.message || 'Sem mensagem adicional'}`;
             </div>
 
             {/* Botão de Envio */}
-            <button
+            <motion.button
               type="submit"
               disabled={isSubmitted}
-              className={`w-full py-4 rounded-lg font-semibold text-lg transition-all transform flex items-center justify-center gap-3 ${
+              whileHover={!isSubmitted ? { scale: 1.02 } : {}}
+              whileTap={!isSubmitted ? { scale: 0.98 } : {}}
+              className={`w-full py-4 rounded-lg font-semibold text-lg transition-all flex items-center justify-center gap-3 ${
                 isSubmitted
                   ? 'bg-green-500 text-white cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:scale-105 shadow-lg hover:shadow-xl'
+                  : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl'
               }`}
             >
               {isSubmitted ? (
                 <>
-                  <span className="animate-spin">✓</span>
+                  <CheckCircle2 className="w-6 h-6" />
                   Enviado com sucesso!
                 </>
               ) : (
@@ -245,44 +268,68 @@ ${formData.message || 'Sem mensagem adicional'}`;
                   Enviar Agendamento via WhatsApp
                 </>
               )}
-            </button>
+            </motion.button>
 
             {isSubmitted && (
-              <p className="text-center text-green-600 mt-4 text-sm">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center text-green-600 mt-4 text-sm font-medium"
+              >
                 Redirecionando para o WhatsApp...
-              </p>
+              </motion.p>
             )}
           </form>
-        </div>
-
-        {/* Div com duas colunas */}
-        <div className="mt-12 grid md:grid-cols-2 gap-8">
-          <div className="bg-white p-6 rounded-xl shadow-md">
-            {/* Coluna 1 - Conteúdo aqui */}
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-md">
-            {/* Coluna 2 - Conteúdo aqui */}
-          </div>
-        </div>
+        </motion.div>
 
         {/* Informações Adicionais */}
-        <div className="mt-12 grid md:grid-cols-3 gap-6 text-center">
-          <div className="p-6 bg-white rounded-xl shadow-md">
-            <Clock className="mx-auto text-blue-600 mb-3" size={32} />
-            <h3 className="font-semibold text-gray-900 mb-2">Horário de Atendimento</h3>
-            <p className="text-gray-600 text-sm">Segunda a Sexta<br />8h às 18h</p>
-          </div>
-          <div className="p-6 bg-white rounded-xl shadow-md">
-            <Phone className="mx-auto text-blue-600 mb-3" size={32} />
-            <h3 className="font-semibold text-gray-900 mb-2">Contato Direto</h3>
-            <p className="text-gray-600 text-sm">(11) 98765-4321<br />contato@lukos.com.br</p>
-          </div>
-          <div className="p-6 bg-white rounded-xl shadow-md">
-            <Calendar className="mx-auto text-blue-600 mb-3" size={32} />
-            <h3 className="font-semibold text-gray-900 mb-2">Confirmação Rápida</h3>
-            <p className="text-gray-600 text-sm">Resposta em até<br />24 horas úteis</p>
-          </div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
+          {[
+            {
+              icon: Clock,
+              title: 'Horário de Atendimento',
+              content: 'Segunda a Sexta\n8h às 18h',
+              color: 'from-blue-500 to-blue-600'
+            },
+            {
+              icon: Phone,
+              title: 'Contato Direto',
+              content: '(11) 98765-4321\ncontato@lukos.com.br',
+              color: 'from-purple-500 to-purple-600'
+            },
+            {
+              icon: Calendar,
+              title: 'Confirmação Rápida',
+              content: 'Resposta em até\n24 horas úteis',
+              color: 'from-indigo-500 to-indigo-600'
+            }
+          ].map((info, index) => {
+            const Icon = info.icon;
+            return (
+              <motion.div
+                key={info.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="p-6 bg-white rounded-xl shadow-md hover:shadow-lg border border-gray-100 transition-all"
+              >
+                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${info.color} mb-4`}>
+                  <Icon className="text-white" size={32} />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2 text-lg">{info.title}</h3>
+                <p className="text-gray-600 text-sm whitespace-pre-line">{info.content}</p>
+              </motion.div>
+            );
+          })}
+        </motion.div>
       </div>
     </section>
   );

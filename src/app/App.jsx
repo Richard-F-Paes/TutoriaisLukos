@@ -107,7 +107,7 @@ function AppContent() {
         <Routes>
                 {/* Rotas públicas principais */}
                 <Route path="/" element={<BlogPage />} />
-                <Route path="/blog" element={<Navigate to="/" replace />} />
+                <Route path="/blog" element={<BlogPostsPage />} />
                 
                 {/* Rotas dos Tutoriais Lukos */}
                 <Route path="/tutoriais" element={<TutorialsUnified />} />

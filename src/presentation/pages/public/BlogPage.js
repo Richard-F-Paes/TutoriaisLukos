@@ -152,7 +152,7 @@ function BlogPage() {
   ];
 
   return (
-    <div className="bg-white min-h-screen overflow-hidden" style={{ marginTop: 0, paddingTop: 0 }}>
+    <div className="bg-white min-h-screen" style={{ marginTop: 0, paddingTop: 0 }}>
       <style>{`
         @keyframes fade-in {
           from {
@@ -192,10 +192,18 @@ function BlogPage() {
         .delay-1000 {
           animation-delay: 1s;
         }
+        @media screen and (max-width: 1440px) {
+          /* Estilos para telas com largura máxima de 1440px */
+        }
+        @media screen and (min-width: 1441px) {
+          #problemas .text-problemas {
+            margin-left: -5vw !important;
+          }
+        }
       `}</style>
       
       {/* Hero Section - Estilo TOTVS Melhorado */}
-      <section className="relative min-h-[750px] md:min-h-[900px] flex items-center overflow-hidden" style={{ marginTop: 0, paddingTop: 0 }}>
+      <section className="relative min-h-[750px] md:min-h-[900px] flex items-center" style={{ marginTop: 0, paddingTop: 0 }}>
         {/* Navbar dentro do hero com fundo transparente */}
         <PageNavbar transparent={true} />
         
@@ -245,10 +253,6 @@ function BlogPage() {
         </div>
       </section>
 
-
-   
-
-      
       <section className="relative -mt-[90px] flex items-center justify-center">
               <img 
                 src="https://images.pexels.com/photos/6803551/pexels-photo-6803551.jpeg" 
@@ -302,7 +306,7 @@ function BlogPage() {
             
 
 
-          <section className="relative   flex items-center justify-center bg-white">
+          <section className="relative   flex items-center justify-center bg-white w-full h-[500px] -mt-[50px] rounded-3xl shadow-lg ">
             <div className="w-[1200px] h-[500px] -mt-[50px]  text-black flex items-center justify-center flex-col">
         
           <div className="flex items-center justify-center mt-2 h-[400px] w-full">
@@ -330,7 +334,7 @@ function BlogPage() {
           </div>
 
           {/* Imagem à direita */}
-          <div className="w-[800px] h-[400px] md:w-[300px] flex items-center justify-center ">
+          <div className="w-[800px] h-[400px] md:w-[300px] flex items-center justify-center relative group">
             <img 
               src="IA.png" 
               alt="Treinamentos CS" 
@@ -370,147 +374,129 @@ function BlogPage() {
 
       {/* End Features */}
         
-      {/* Seção de Depoimentos */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden  ">
-          <div className="pb-4 mt-12">
-            <article className="w-full">
-              <h2 className="text-3xl md:text-3xl lg:text-3xl font-bold uppercase text-center text-gray-900 mb-4">
-                As empresas que movem o país, confiam na <strong className="text-[#00D4FF]">LUKOS</strong>
-              </h2>
-            </article>
-          </div>
+      {/* Seção Problemas */}
+      <div id="problemas" className="py-16 md:py-24 bg-white ]">
+        <div 
+          className="flex items-start relative border-0 m-0 p-0 align-baseline box-border"
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            gap: '0',
+            position: 'relative',
+            width: '90%',
+            maxWidth: '2000px',
+            margin: '0px auto',
+            border: '0px',
+            fontStyle: 'inherit',
+            fontVariant: 'inherit',
+            fontWeight: 'inherit',
+            fontStretch: 'inherit',
+            lineHeight: 'inherit',
+            fontFamily: 'inherit',
+            fontOpticalSizing: 'inherit',
+            fontSizeAdjust: 'inherit',
+            fontKerning: 'inherit',
+            fontFeatureSettings: 'inherit',
+            fontVariationSettings: 'inherit',
+            fontSize: '100%',
+            padding: '0px',
+            verticalAlign: 'baseline',
+            boxSizing: 'inherit'
+          }}
+        >
+          <div 
+            className="border-0 m-0 p-0 align-baseline box-border"
+            style={{
+              width: '42%',
+              border: '0px',
+              fontStyle: 'inherit',
+              fontVariant: 'inherit',
+              fontWeight: 'inherit',
+              fontStretch: 'inherit',
+              lineHeight: 'inherit',
+              fontFamily: 'inherit',
+              fontOpticalSizing: 'inherit',
+              fontSizeAdjust: 'inherit',
+              fontKerning: 'inherit',
+              fontFeatureSettings: 'inherit',
+              fontVariationSettings: 'inherit',
+              fontSize: '100%',
+              margin: '0px',
 
-          <div className=" flex justify-center items-center">
-            {/* Card com imagem e botão de vídeo - col-lg-6 col-12 */}
-            <div className="w-[800px] h-[500px] ">
-              <div className="relative group cursor-pointer overflow-hidden rounded-[40px] shadow-xl h-full" onClick={() => setIsVideoModalOpen(true)}>
-                {/* Card Image */}
-                <div className="relative w-full h-full overflow-hidden bg-gray-100">
-                  <img 
-                    src={videoImageUrl} 
-                    alt="Vídeo LUKOS" 
-                    className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors duration-300"></div>
-                  
-                  {/* Texto vertical "LUKOS" na borda direita */}
-                  <div className="absolute right-0 top-0 bottom-0 flex items-center justify-center pr-2 md:pr-4 z-10 pointer-events-none">
-                    <div 
-                      className="text-purple-500/40 text-3xl md:text-4xl lg:text-5xl font-bold uppercase"
-                      style={{ 
-                        writingMode: 'vertical-rl',
-                        textOrientation: 'upright',
-                        letterSpacing: '0.15em'
-                      }}
-                    >
-                      LUKOS
-                    </div>
-                  </div>
-                  
-                  {/* Card Body - Link com conteúdo */}
-                  <a 
-                    href="#" 
-                    onClick={(e) => { e.preventDefault(); setIsVideoModalOpen(true); }}
-                    className="absolute inset-0 flex items-center justify-center h-full z-10 no-underline"
-                  >
-                    <div className="">
-                      <div className="flex flex-col items-center justify-center w-full ">
-                        {/* Ícone de play */}
-                        <div className="mb-3">
-                          <div className="bg-white rounded-full p-4 md:p-6 group-hover:bg-white transition-all duration-300 group-hover:scale-110 shadow-2xl inline-block">
-                            <Play className="w-10 h-10 md:w-14 md:h-14 text-[#690093] ml-1" fill="#690093" />
-                          </div>
-                        </div>
-                        
-                        {/* Texto "Assista ao Vídeo" */}
-                   
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Texto descritivo - col-lg-6 col-12 pl-lg-5 pl-3 pt-lg-0 pt-4 d-flex align-items-center */}
-         
+              verticalAlign: 'baseline',
+              boxSizing: 'inherit'
+            }}
+          >
+            <img 
+              decoding="async" 
+              src="https://mistraltecnologia.com.br/wp-content/themes/mistral-tecnologia/tecnologia/cloud/mistral-cloud-01.webp" 
+              alt="Cloud" 
+              className="h-[500px] max-w-full border-4 border-gray-300 rounded-lg shadow-lg m-0 p-0 bg-blackalign-baseline block box-border "
+              style={{
+                marginLeft: '-0.5vw',
+                height: 'auto',
+                maxWidth: '100%',
+                border: '0px',
+                fontStyle: 'inherit',
+                fontVariant: 'inherit',
+                fontWeight: 'inherit',
+                fontStretch: 'inherit',
+                lineHeight: 'inherit',
+                fontFamily: 'inherit',
+                fontOpticalSizing: 'inherit',
+                fontSizeAdjust: 'inherit',
+                fontKerning: 'inherit',
+                fontFeatureSettings: 'inherit',
+                fontVariationSettings: 'inherit',
+                fontSize: '100%',
+                margin: '0px',
+                padding: '0px',
+                verticalAlign: 'baseline',
+                display: 'block',
+                boxSizing: 'inherit'
+              }}
+            />
           </div>
-        </div>
-      {/* Seção FAQ - Adaptada da TOTVS */}
-      <section className="bg-gray-50 py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Perguntas Frequentes
+          <div className="w-[700px] h-[300px] relative text-problemas flex items-center justify-center flex-col mt-[100px]" style={{ marginLeft: '-3vw' }}>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#c44cf4] leading-tight text-center">
+              Qual a diferença entre a LUKOS 
             </h2>
-            <p className="text-lg text-gray-600">
-              Tire suas dúvidas sobre o sistema LUKOS
+            <p className="text-lg md:text-xl text-gray-700 leading-relaxed text-center">
+              O LUKOS ERP e PDV é uma solução completa de gestão empresarial para postos de combustível.
             </p>
           </div>
-
-          <div className="space-y-4">
-            {faqItems.map((item, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
-                <button
-                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
-                  className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors"
-                >
-                  <span className="font-semibold text-gray-900 text-lg pr-4">
-                    {item.question}
-                  </span>
-                  {openFaqIndex === index ? (
-                    <ChevronUp className="w-5 h-5 text-[#690093] flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-[#690093] flex-shrink-0" />
-                  )}
-                </button>
-                {openFaqIndex === index && (
-                  <div className="px-6 pb-6 text-gray-700 leading-relaxed">
-                    {item.answer}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
         </div>
-      </section>
+      </div>
+
+      {/* Espaçamento */}
+      <div className="pt-16 pb-8 mt-[-30px] mb-[-30px]"></div>
 
       {/* CTA Section */}
-      <section className="relative py-16 md:py-24 overflow-hidden">
+      <section className="relative py-16 md:py-24 h-[500px]">
         {/* Background com gradiente roxo/violeta */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]"></div>
         
         {/* Container */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[200px] bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]">
           <div className="text-center">
             {/* Título */}
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
               Transforme a gestão do seu posto de combustível
             </h2>
             
-            {/* Descrição */}
-            <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Com o LUKOS ERP e PDV, você tem controle total sobre vendas, estoque, financeiro e operações. 
-              Automatize processos, reduza custos e tome decisões mais inteligentes com relatórios em tempo real.
-            </p>
-            
-            {/* Botão CTA */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <a
-                href="/contato"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#690093] font-bold text-lg rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-              >
-                Começar agora
-                <ArrowRight className="w-5 h-5" />
-              </a>
-              <a
-                href="/demonstracao"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-transparent border-2 border-white text-white font-bold text-lg rounded-lg hover:bg-white/10 transition-all duration-300"
-              >
-                Solicitar demonstração
-              </a>
+            {/* Vídeo */}
+            <div className="mt-12 max-w-4xl mx-auto group">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full rounded-3xl"
+                  src="https://www.youtube.com/embed/W9LN83G4DCE"
+                  title="Vídeo LUKOS"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             </div>
           </div>
         </div>
@@ -522,93 +508,7 @@ function BlogPage() {
 
 
           {/* Seção de Blog Posts */}
-          <section className="w-full py-16 px-4 md:px-8 bg-white">
-            <div className="max-w-7xl mx-auto">
-              {/* Header da Seção */}
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full mb-4">
-                  <BookOpen className="w-5 h-5 text-purple-600" />
-                  <span className="text-sm font-semibold text-purple-600 uppercase tracking-wide">
-                    Blog LUKOS
-                  </span>
-                </div>
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                  Conteúdos e Artigos
-                </h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                  Fique atualizado sobre o mercado de postos de combustíveis no Brasil e descubra como potencializar sua gestão
-                </p>
-              </div>
-
-              {/* Grid de Posts */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {blogPosts.map((post) => (
-                  <Link
-                    key={post.id}
-                    to={post.link}
-                    className="block group"
-                  >
-                    <article className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer h-full flex flex-col border border-gray-100">
-                      {/* Imagem do Post */}
-                      <div className="relative h-56 overflow-hidden bg-gray-200">
-                        <img
-                          src={post.image}
-                          alt={post.title}
-                          className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
-                          loading="lazy"
-                          onError={(e) => {
-                            e.target.src = 'https://via.placeholder.com/400x200?text=LUKOS';
-                            e.target.onerror = null;
-                          }}
-                        />
-                        {/* Overlay gradiente na imagem */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        {/* Badge de categoria */}
-                        <div className="absolute top-4 left-4">
-                          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-full shadow-lg backdrop-blur-sm">
-                            <Tag className="w-3 h-3" />
-                            {post.category}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Conteúdo do Post */}
-                      <div className="p-6 flex-1 flex flex-col">
-                        <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors line-clamp-2 min-h-[3.5rem]">
-                          {post.title}
-                        </h3>
-                        <p className="text-gray-600 mb-6 line-clamp-3 flex-1 text-sm leading-relaxed">
-                          {post.excerpt}
-                        </p>
-
-                        {/* Meta informações */}
-                        <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-4 pb-4 border-b border-gray-100">
-                          <div className="flex items-center gap-1.5">
-                            <User className="w-4 h-4 text-gray-400" />
-                            <span className="font-medium">{post.author}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <Calendar className="w-4 h-4 text-gray-400" />
-                            <span>{post.date}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="w-4 h-4 text-gray-400" />
-                            <span>{post.readTime}</span>
-                          </div>
-                        </div>
-
-                        {/* Link para ler mais */}
-                        <div className="inline-flex items-center gap-2 text-purple-600 font-semibold group-hover:text-purple-700 transition-colors group/link mt-auto">
-                          <span>Ler mais</span>
-                          <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" />
-                        </div>
-                      </div>
-                    </article>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
+         
 
           {/* Call to Action */}
        
@@ -619,4 +519,7 @@ function BlogPage() {
 }
 
 export default BlogPage;
+
+
+
 

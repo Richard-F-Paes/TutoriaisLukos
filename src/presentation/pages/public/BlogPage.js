@@ -377,8 +377,9 @@ function BlogPage() {
       {/* Seção Problemas */}
       <div id="problemas" className="py-16 md:py-24 bg-white ]">
         <div 
-          className="flex items-start relative border-0 m-0 p-0 align-baseline box-border"
+          className="flex items-start relative border-0 m-0 p-0 align-baseline box-border shadow-lg rounded-3xl "
           style={{
+            backgroundColor: '#f5f5f5',
             display: 'flex',
             alignItems: 'flex-start',
             justifyContent: 'center',
@@ -432,11 +433,11 @@ function BlogPage() {
               decoding="async" 
               src="https://mistraltecnologia.com.br/wp-content/themes/mistral-tecnologia/tecnologia/cloud/mistral-cloud-01.webp" 
               alt="Cloud" 
-              className="h-[500px] max-w-full border-4 border-gray-300 rounded-lg shadow-lg m-0 p-0 bg-blackalign-baseline block box-border "
+              className="h-[500px]  border-4 border-gray-300 rounded-lg shadow-lg m-0 p-0 bg-blackalign-baseline block box-border "
               style={{
                 marginLeft: '-0.5vw',
                 height: 'auto',
-                maxWidth: '100%',
+                maxWidth: '60%',
                 border: '0px',
                 fontStyle: 'inherit',
                 fontVariant: 'inherit',

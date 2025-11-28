@@ -190,10 +190,7 @@ function RegisterPage() {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <p>
-            Já tem uma conta?{' '}
-            <Link to="/login" className="auth-link">
-              Fazer login
-            </Link>
+            Já tem uma conta? Entre em contato com o administrador.
           </p>
         </motion.div>
       </motion.div>

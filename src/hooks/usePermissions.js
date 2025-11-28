@@ -137,7 +137,7 @@ export function useRouteAccess() {
   // Verifica se usuário pode acessar rota específica
   const canAccessRoute = useCallback((route, requiredPermission = null, requiredRole = null) => {
     // Rotas públicas
-    const publicRoutes = ['/', '/categorias', '/tutoriais', '/sobre', '/busca', '/login', '/register'];
+    const publicRoutes = ['/', '/categorias', '/tutoriais', '/sobre', '/busca', '/register'];
     if (publicRoutes.includes(route)) {
       return true;
     }

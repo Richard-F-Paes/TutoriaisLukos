@@ -7,7 +7,7 @@ const ProtectedRoute = ({
   children, 
   requiredRole = null, 
   requiredPermission = null,
-  fallback = '/login' 
+  fallback = '/' 
 }) => {
   const { user, loading, hasRole, hasPermission } = useAuth();
   const location = useLocation();

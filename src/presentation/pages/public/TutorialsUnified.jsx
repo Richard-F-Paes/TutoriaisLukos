@@ -6,10 +6,6 @@ import {
   ArrowRight, 
   Play, 
   BookOpen, 
-  GraduationCap, 
-  Video, 
-  Image as ImageIcon, 
-  CheckCircle2,
   Settings, 
   BarChart3, 
   CreditCard, 
@@ -18,20 +14,11 @@ import {
   Clock, 
   Star, 
   PlayCircle,
-  TrendingUp,
-  Award
+  ShoppingCart
 } from 'lucide-react';
 import { getAllTutorials, getCategories } from '../../../shared/data/__mocks__/lukosTutorials.js';
 
 // Componentes da HomePage original
-import LandingHero from '../../components/custom/LandingHero/LandingHero';
-import HeroTutorial from '../../components/features/HeroTutorial/HeroTutorial';
-import TrainingSection from '../../components/custom/TrainingSection/TrainingSection';
-import VideoShowcase from '../../components/videos/VideoShowcase/VideoShowcase';
-import ServicesSection from '../../components/custom/ServicesSection/ServicesSection';
-import TeamSection from '../../components/custom/TeamSection/TeamSection';
-import TrainingScheduler from '../../components/custom/TrainingScheduler/TrainingScheduler';
-import CustomSection from '../../components/custom/CustomSection/CustomSection';
 import { Chatbot } from '../../components/custom/Chatbot/Chatbot';
 
 const TutorialsUnified = () => {
@@ -156,48 +143,29 @@ const TutorialsUnified = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Componentes da HomePage original */}
-      <LandingHero />
-      <HeroTutorial />
-      <TrainingSection />
-      
-      {/* Header - Estilo Tutorials.jsx */}
-      <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="bg-white/10 backdrop-blur-sm p-3 rounded-2xl">
-              <GraduationCap className="w-12 h-12" />
-            </div>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-bold">Central de Tutoriais</h1>
-              <div className="flex items-center space-x-4 mt-2 text-sm text-blue-200">
-                <div className="flex items-center space-x-1">
-                  <Video className="w-4 h-4" />
-                  <span>Vídeos HD</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <ImageIcon className="w-4 h-4" />
-                  <span>Imagens Ilustrativas</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Passo a Passo</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <p className="text-xl text-blue-100 max-w-3xl">
-            Aprenda a usar todas as funcionalidades dos nossos produtos com tutoriais passo a passo, vídeos explicativos e imagens ilustrativas.
-          </p>
-        </div>
-      </div>
-
       {/* Categories Grid - Estilo Tutorials.jsx */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Categorias de Tutoriais</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore nossos tutoriais organizados por categoria para encontrar exatamente o que você precisa.
+          <div className="flex justify-center space-x-4 mb-6">
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-2xl shadow-lg transform rotate-12 hover:rotate-6 transition-transform duration-300">
+              <Fuel className="h-8 w-8 text-white" />
+            </div>
+            <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 rounded-2xl shadow-lg transform -rotate-12 hover:rotate-6 transition-transform duration-300">
+              <ShoppingCart className="h-8 w-8 text-white" />
+            </div>
+            <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 rounded-2xl shadow-lg transform rotate-6 hover:-rotate-6 transition-transform duration-300">
+              <BookOpen className="h-8 w-8 text-white" />
+            </div>
+          </div>
+          
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Tutoriais do Sistema
+            </span>
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Aprenda a usar todas as funcionalidades do sistema PDV para pista de combustível 
+            e conveniência com nossos tutoriais passo a passo.
           </p>
         </div>
 
@@ -333,43 +301,9 @@ const TutorialsUnified = () => {
             ))}
           </div>
         </div>
-
-        {/* Estatísticas Gerais - Estilo TutorialsHomePage.js */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-12">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Estatísticas da Plataforma</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 mb-2">{tutorials.length}</div>
-              <div className="text-sm text-gray-500">Total de Tutoriais</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">
-                {tutorials.filter(t => t.difficulty === 'Iniciante').length}
-              </div>
-              <div className="text-sm text-gray-500">Nível Iniciante</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-yellow-600 mb-2">
-                {tutorials.filter(t => t.difficulty === 'Intermediário').length}
-              </div>
-              <div className="text-sm text-gray-500">Nível Intermediário</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-red-600 mb-2">
-                {tutorials.filter(t => t.difficulty === 'Avançado').length}
-              </div>
-              <div className="text-sm text-gray-500">Nível Avançado</div>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Componentes adicionais da HomePage */}
-      <VideoShowcase />
-      <ServicesSection />
-      <TeamSection />
-      <TrainingScheduler />
-      <CustomSection />
       <Chatbot />
     </div>
   );

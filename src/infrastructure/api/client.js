@@ -32,16 +32,13 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Se token expirado ou inválido (401), redirecionar para login
+    // Se token expirado ou inválido (401), limpar tokens
     if (error.response?.status === 401) {
       // Limpar tokens
       sessionStorage.removeItem('token');
       localStorage.removeItem('token');
       
-      // Redirecionar para login (apenas se não estiver já na página de login)
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
-      }
+      // Não redirecionar automaticamente - o usuário pode usar o modal de login
     }
     
     return Promise.reject(error);

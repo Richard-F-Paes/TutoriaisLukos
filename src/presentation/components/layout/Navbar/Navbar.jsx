@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../../contexts/AuthContext';
+import AdminPasswordModal from '../../ui/AdminPasswordModal/AdminPasswordModal';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -8,6 +9,7 @@ const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -213,12 +215,12 @@ const Navbar = () => {
             )}
           </div>
         ) : (
-          <Link
-            to="/login"
+          <button
+            onClick={() => setShowAdminModal(true)}
             className="hidden md:flex bg-indigo-600 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-indigo-700 transition"
           >
             Entrar
-          </Link>
+          </button>
         )}
 
         {/* ☰ Menu mobile */}
@@ -239,6 +241,12 @@ const Navbar = () => {
           </svg>
         </button>
       </div>
+
+      {/* Modal de Senha Administrativa */}
+      <AdminPasswordModal 
+        isOpen={showAdminModal} 
+        onClose={() => setShowAdminModal(false)} 
+      />
     </header>
   );
 };

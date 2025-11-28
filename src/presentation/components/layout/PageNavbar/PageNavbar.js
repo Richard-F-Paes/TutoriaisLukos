@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, BookOpen, Brain, Info, Briefcase, Phone, Package, BarChart3, ShoppingCart, Wallet, Truck, Store, Link as LinkIcon } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, ChevronDown, BookOpen, Brain, Info, Briefcase, Phone, Package, BarChart3, ShoppingCart, Wallet, Truck, Store, Link as LinkIcon, Globe, Home, FileText } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 function PageNavbar({ transparent = false }) {
@@ -7,6 +7,8 @@ function PageNavbar({ transparent = false }) {
   const [openDropdowns, setOpenDropdowns] = useState({});
   const [openClienteDropdown, setOpenClienteDropdown] = useState(false);
   const [openLanguageMenu, setOpenLanguageMenu] = useState(false);
+  const [hoveredDropdown, setHoveredDropdown] = useState(null);
+  const closeTimeoutRef = useRef({});
   const location = useLocation();
 
   useEffect(() => {
@@ -18,8 +20,20 @@ function PageNavbar({ transparent = false }) {
       }
     };
 
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setOpenDropdowns({});
+        setOpenClienteDropdown(false);
+        setOpenLanguageMenu(false);
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const toggleDropdown = (key) => {
@@ -29,13 +43,36 @@ function PageNavbar({ transparent = false }) {
     }));
   };
 
+  const handleDropdownMouseEnter = (key) => {
+    // Limpar timeout de fechamento se existir
+    if (closeTimeoutRef.current[key]) {
+      clearTimeout(closeTimeoutRef.current[key]);
+      delete closeTimeoutRef.current[key];
+    }
+    setHoveredDropdown(key);
+    setOpenDropdowns(prev => ({ ...prev, [key]: true }));
+  };
+
+  const handleDropdownMouseLeave = (key) => {
+    // Delay antes de fechar para melhor UX
+    closeTimeoutRef.current[key] = setTimeout(() => {
+      setOpenDropdowns(prev => {
+        const newState = { ...prev };
+        delete newState[key];
+        return newState;
+      });
+      setHoveredDropdown(null);
+      delete closeTimeoutRef.current[key];
+    }, 150);
+  };
+
   const menuItems = [
     { 
-      label: 'Blog', 
+      label: 'Início', 
       hasDropdown: false, 
-      key: 'blog', 
-      href: '/blog',
-      icon: BookOpen
+      key: 'inicio', 
+      href: '/',
+      icon: Home
     },
     { 
       label: 'Tutoriais',
@@ -60,19 +97,11 @@ function PageNavbar({ transparent = false }) {
       submenu: [
         { 
           label: 'Sistema ERP', 
-          href: '/sistemas/erp',
+          href: '/erp',
           icon: BarChart3,
           image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_sistema_ERP_3_bc9518527d.png',
           iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_sistema_ERP_290ccde0c6.svg',
           description: 'Organizar e automatizar seu negócio'
-        },
-        { 
-          label: 'Hub de Integração', 
-          href: '/sistemas/integracao',
-          icon: LinkIcon,
-          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_hubdeintegracao_3_5ed34c0eab.png',
-          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_hubintegracao_9476475530.svg',
-          description: 'Conectar canais e vender sem limites'
         },
         { 
           label: 'Sistema PDV', 
@@ -83,14 +112,6 @@ function PageNavbar({ transparent = false }) {
           description: 'Vender na loja física com sistema integrado'
         },
         { 
-          label: 'Conta Digital', 
-          href: '/sistemas/conta-digital',
-          icon: Wallet,
-          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_contadigital_3_d89e2f5be3.png',
-          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_contadigital_944c930267.svg',
-          description: 'Receber, pagar e movimentar'
-        },
-        { 
           label: 'Envios', 
           href: '/sistemas/envios',
           icon: Truck,
@@ -98,56 +119,39 @@ function PageNavbar({ transparent = false }) {
           iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_envios_3c51f2fdbd.svg',
           description: 'Economizar em fretes e acelerar entregas'
         },
-        { 
-          label: 'Ecommerce', 
-          href: '/sistemas/ecommerce',
-          icon: Store,
-          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_ecommerce_3_fc023b46f5.png',
-          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_ecommerce_577508512a.svg',
-          description: 'Criar um site exclusivo para sua marca'
-        },
-        { 
-          label: 'Loja', 
-          href: '/sistemas/loja',
-          icon: Store,
-          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_loja_3_png_5f76f66412.png',
-          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_loja_43c1ec5482.svg',
-          description: 'Ranquear seus produtos nos marketplaces'
-        },
-        { 
-          label: 'Agentes de IA', 
-          href: '/sistemas/agentes-ia',
-          icon: Brain,
-          image: 'https://d3hw41hpah8tvx.cloudfront.net/images/bg_menuprodutos_agentes_IA_cfcfde18db.png',
-          iconImage: 'https://d3hw41hpah8tvx.cloudfront.net/images/icon_menuprodutos_agentes_IA_2565782604.svg',
-          description: 'Comandar seu ERP com inteligência artificial'
-        },
       ]
     },
     { 
-      label: 'Sobre nós', 
+      label: 'Serviços', 
+      hasDropdown: false, 
+      key: 'servicos',
+      href: '/servicos',
+      icon: Briefcase
+    },
+    { 
+      label: 'Blog', 
+      hasDropdown: false, 
+      key: 'blog', 
+      href: '/blog',
+      icon: FileText
+    },
+    { 
+      label: 'Sobre', 
       hasDropdown: false, 
       key: 'sobre', 
       href: '/sobre',
       icon: Info
-    },
-    { 
-      label: 'Serviços', 
-      hasDropdown: true, 
-      key: 'servicos',
-      icon: Briefcase,
-      submenu: [
-        { label: 'ERP', href: '/sistemas/erp' },
-        { label: 'PDV', href: '/sistemas/pdv' },
-        { label: 'Analytics', href: '/sistemas/analytics' },
-        { label: 'Inteligência Artificial', href: '/ia' },
-      ]
     },
   ];
 
   return (
     <>
       <style>{`
+        :root {
+          --dropdown-transition: cubic-bezier(0.4, 0, 0.2, 1);
+          --dropdown-duration: 250ms;
+        }
+
         .product-description {
           color: rgb(0, 22, 71);
           font-family: "Plus Jakarta Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
@@ -190,23 +194,24 @@ function PageNavbar({ transparent = false }) {
           display: flex;
           flex-direction: column;
           gap: 10px;
-          transition: transform 0.3s ease-in-out;
-          width: 151px;
+          transition: transform 0.3s var(--dropdown-transition);
+          width: 280px;
+          flex-shrink: 0;
         }
         
         .product-card:hover {
-          transform: scale(1.013);
+          transform: scale(1.02);
         }
         
         @media screen and (min-width: 1081px) and (max-width: 1239px) {
           .product-card {
-            width: 124px;
+            width: 240px;
           }
         }
         
         @media (min-width: 1240px) and (max-width: 1359px) {
           .product-card {
-            width: 138px;
+            width: 260px;
           }
         }
         
@@ -224,14 +229,228 @@ function PageNavbar({ transparent = false }) {
             width: 350px;
           }
         }
+
+        /* Dropdown animations */
+        .dropdown-menu-enter {
+          opacity: 0;
+          transform: translateY(-10px) scale(0.95);
+          transition: opacity var(--dropdown-duration) var(--dropdown-transition),
+                      transform var(--dropdown-duration) var(--dropdown-transition);
+        }
+
+        .dropdown-menu-enter-active {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        .dropdown-menu-exit {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          transition: opacity 150ms var(--dropdown-transition),
+                      transform 150ms var(--dropdown-transition);
+        }
+
+        .dropdown-menu-exit-active {
+          opacity: 0;
+          transform: translateY(-10px) scale(0.95);
+        }
+
+        /* Glassmorphism effect */
+        .glass-dropdown {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px) saturate(180%);
+          -webkit-backdrop-filter: blur(20px) saturate(180%);
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Menu item hover effects */
+        .menu-item-link {
+          transition: all 0.2s var(--dropdown-transition);
+          position: relative;
+        }
+
+        .menu-item-link:hover {
+          transform: translateY(-1px);
+        }
+
+        .menu-item-link:focus-visible {
+          outline: 2px solid #00D4FF;
+          outline-offset: 2px;
+          border-radius: 4px;
+        }
+
+        /* Submenu item hover */
+        .submenu-item {
+          transition: all 0.2s var(--dropdown-transition);
+          transform-origin: left center;
+        }
+
+        .submenu-item:hover {
+          transform: translateX(4px) scale(1.02);
+          background-color: rgba(0, 212, 255, 0.05);
+        }
+
+        /* Active indicator animation */
+        .active-indicator {
+          transition: width 0.3s var(--dropdown-transition), opacity 0.3s var(--dropdown-transition);
+        }
+
+        /* Keyframe animations */
+        @keyframes fadeInSlideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-5px) scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        @keyframes fadeOutSlideUp {
+          from {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+          }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+          .glass-dropdown {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+          }
+        }
+
+        @media (max-width: 1280px) {
+          .sub-menu {
+            max-width: calc(100vw - 2rem);
+          }
+        }
+
+        /* Smooth scroll behavior */
+        html {
+          scroll-behavior: smooth;
+        }
+
+        /* Prevent layout shift during animations */
+        .dropdown-container {
+          position: relative;
+        }
+
+        /* Improved focus styles for better accessibility */
+        *:focus-visible {
+          outline: 2px solid #00D4FF;
+          outline-offset: 2px;
+        }
+
+        /* Better touch targets for mobile */
+        @media (max-width: 768px) {
+          .menu-item-link,
+          .submenu-item {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+          }
+        }
+
+        /* Seletor de Idioma Minimalista */
+        .language-selector-minimalist {
+          position: fixed;
+          top: 1rem;
+          right: 1rem;
+          z-index: 60;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          opacity: 0.65;
+          transition: opacity 0.3s ease;
+          pointer-events: auto;
+        }
+
+        .language-selector-minimalist:hover,
+        .language-selector-minimalist.active {
+          opacity: 1;
+        }
+
+        .language-selector-minimalist .globe-button {
+          padding: 0.375rem;
+          color: white;
+          transition: all 0.2s ease;
+          border-radius: 0.375rem;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          opacity: 0.7;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .language-selector-minimalist .globe-button:hover {
+          color: #00D4FF;
+          background: rgba(255, 255, 255, 0.05);
+          opacity: 1;
+          transform: scale(1.1);
+        }
+
+        .language-selector-minimalist .globe-button:focus {
+          outline: 2px solid #00D4FF;
+          outline-offset: 2px;
+        }
+
+        .language-selector-minimalist .globe-button:active {
+          transform: scale(0.95);
+        }
+
+        .language-selector-minimalist .divider-line {
+          height: 1rem;
+          width: 1px;
+          background: rgba(255, 255, 255, 0.3);
+          opacity: 0.5;
+          flex-shrink: 0;
+        }
+
+        /* Responsividade para mobile */
+        @media (max-width: 1024px) {
+          .language-selector-minimalist {
+            top: 0.75rem;
+            right: 0.75rem;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .language-selector-minimalist {
+            top: 0.5rem;
+            right: 0.5rem;
+          }
+          
+          .language-selector-minimalist .globe-button {
+            padding: 0.5rem;
+            min-width: 36px;
+            min-height: 36px;
+          }
+        }
+
+        /* Garantir que não interfira com outros elementos */
+        @media (max-width: 640px) {
+          .language-selector-minimalist {
+            display: none;
+          }
+        }
       `}</style>
     <nav className={`absolute left-0 right-0 z-50 w-full flex items-center justify-center space-x-1 h-[60px] ${transparent ? 'top-12' : 'top-0'}`} style={{
       background: transparent ? 'transparent' : 'linear-gradient(135deg, #1a0f2e 0%, #0d0f14 30%, #0f1419 50%, #141a1a 70%, #1a2e1f 100%)',
       backdropFilter: transparent ? 'none' : 'blur(10px)',
       boxShadow: transparent ? 'none' : '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
     }}>
-      <div className="container mx-auto" style={{backgroundColor: 'transparent'}}>
-        <div className={`row flex items-center justify-center ${transparent ? 'py-2' : 'py-4'}`} style={{backgroundColor: 'transparent'}}>
+      <div className="container mx-auto max-w-full px-4" style={{backgroundColor: 'transparent'}}>
+        <div className={`row flex items-center justify-between gap-4 ${transparent ? 'py-2' : 'py-4'}`} style={{backgroundColor: 'transparent'}}>
         {/* Logo - col-lg-2 col-1 */}
         <div className="flex-shrink-0">
           <a className="brand inline-block" href="/">
@@ -246,28 +465,55 @@ function PageNavbar({ transparent = false }) {
         </div>
 
         {/* Menu Desktop - col-lg-6 */}
-        <div className="hidden lg:flex px-0 justify-center">
-          <nav className="nav-primary">
-            <ul className="nav flex items-center justify-center space-x-1 h-[60px]">
+        <div className="hidden lg:flex px-0 justify-center flex-1 min-w-0" style={{overflow: 'visible'}}>
+          <nav className="nav-primary w-full" role="navigation" aria-label="Menu principal" style={{overflow: 'visible'}}>
+            <ul className="nav flex items-center justify-center space-x-1 h-[60px]" role="menubar" style={{maxWidth: '100%', flexWrap: 'nowrap'}}>
               {menuItems.map((item) => {
                 if (item.hasDropdown) {
                   const Icon = item.icon;
+                  const isOpen = openDropdowns[item.key];
                   return (
-                    <li key={item.key} className="menu-item relative dropdown-container">
+                    <li key={item.key} className="menu-item relative dropdown-container" role="none" style={{overflow: 'visible', zIndex: item.isCardDropdown && isOpen ? 100 : 'auto'}}>
                       <button
                         onClick={() => toggleDropdown(item.key)}
-                        className="flex items-center gap-1 px-3 py-2 text-xl font-medium text-white hover:text-[#00D4FF] transition-colors"
+                        onMouseEnter={() => handleDropdownMouseEnter(item.key)}
+                        onMouseLeave={() => handleDropdownMouseLeave(item.key)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            toggleDropdown(item.key);
+                          }
+                        }}
+                        aria-expanded={isOpen}
+                        aria-haspopup="true"
+                        aria-label={`${item.label} menu`}
+                        className="menu-item-link flex items-center gap-1 px-3 py-2 text-lg font-medium text-white hover:text-[#00D4FF] transition-all duration-200 rounded-lg hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2 focus:ring-offset-transparent whitespace-nowrap"
                       >
-                        <Icon className="h-4 w-4" />
+                        <Icon className="h-4 w-4" aria-hidden="true" />
                         {item.label}
-                        <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${openDropdowns[item.key] ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
                       </button>
                       
-                      {openDropdowns[item.key] && item.hasDropdown && (
+                      {isOpen && item.hasDropdown && (
                         <>
                           {item.isCardDropdown ? (
-                            <div className="sub-menu absolute top-full mt-4 bg-white rounded-2xl shadow-2xl z-50 p-6 border border-gray-200" style={{ left: '70%', transform: 'translateX(-50%)', width: '100%', minWidth: '2000px' }}>
-                              <div className="flex flex-wrap gap-4 justify-center items-center mx-auto">
+                            <div 
+                              className="sub-menu glass-dropdown absolute top-full mt-4 rounded-2xl z-[100] p-6 dropdown-menu-enter-active"
+                              style={{ 
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                transformOrigin: 'top center',
+                                width: 'auto',
+                                minWidth: 'auto',
+                                maxWidth: 'calc(100vw - 2rem)',
+                                animation: 'fadeInSlideDown 0.25s var(--dropdown-transition)'
+                              }}
+                              role="menu"
+                              aria-label={`Menu ${item.label}`}
+                              onMouseEnter={() => handleDropdownMouseEnter(item.key)}
+                              onMouseLeave={() => handleDropdownMouseLeave(item.key)}
+                            >
+                              <div className="flex flex-row gap-4 justify-center items-center mx-auto">
                                 {item.submenu.map((subItem, index) => {
                                   const SubIcon = subItem.icon || Package;
                                   return (
@@ -275,9 +521,9 @@ function PageNavbar({ transparent = false }) {
                                       key={index}
                                       id={`submenu-produtos-${index}`}
                                       tabIndex={0}
-                                      role="button"
-                                      aria-label={`Produto ${subItem.label} `}
-                                      className="product-card rounded-lg overflow-hidden border border-gray-200"
+                                      role="menuitem"
+                                      aria-label={`Produto ${subItem.label}`}
+                                      className="product-card rounded-lg overflow-hidden border border-gray-200 hover:border-[#00D4FF]/50 hover:shadow-lg transition-all duration-300"
                                       onClick={() => window.location.href = subItem.href}
                                       onKeyDown={(e) => {
                                         if (e.key === 'Enter' || e.key === ' ') {
@@ -285,13 +531,20 @@ function PageNavbar({ transparent = false }) {
                                           window.location.href = subItem.href;
                                         }
                                       }}
+                                      onFocus={(e) => {
+                                        e.currentTarget.style.outline = '2px solid #00D4FF';
+                                        e.currentTarget.style.outlineOffset = '2px';
+                                      }}
+                                      onBlur={(e) => {
+                                        e.currentTarget.style.outline = 'none';
+                                      }}
                                     >
-                                      <figure className="relative" style={{ width: '100%', height: '200px', margin: 0, marginBottom: '8px' }}>
+                                      <figure className="relative" style={{ width: '100%', height: '120px', margin: 0, marginBottom: '8px' }}>
                                         <img 
                                           alt={`Produto de destaque ${subItem.label} `}
                                           loading="lazy"
-                                          width={index === 6 ? 166 : 165}
-                                          height="280"
+                                          width="280"
+                                          height="120"
                                           decoding="async"
                                           data-nimg="1"
                                           className="product-img"
@@ -353,25 +606,49 @@ function PageNavbar({ transparent = false }) {
                               </div>
                             </div>
                           ) : (
-                            <ul className="sub-menu absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-50 py-2 border border-gray-200">
+                            <ul 
+                              className="sub-menu glass-dropdown absolute top-full left-0 mt-2 w-64 rounded-xl z-50 py-2 dropdown-menu-enter-active"
+                              style={{
+                                animation: 'fadeInSlideDown 0.25s var(--dropdown-transition)'
+                              }}
+                              role="menu"
+                              onMouseEnter={() => handleDropdownMouseEnter(item.key)}
+                              onMouseLeave={() => handleDropdownMouseLeave(item.key)}
+                            >
                               {item.submenu.map((subItem, index) => (
-                            <li key={index} className="menu-item">
+                            <li key={index} className="menu-item" role="none">
                               {subItem.hasSubmenu ? (
                                 <div className="relative">
                                   <button
                                     onClick={() => toggleDropdown(`${item.key}-${index}`)}
-                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#a44dff] transition-colors"
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        toggleDropdown(`${item.key}-${index}`);
+                                      }
+                                    }}
+                                    aria-expanded={openDropdowns[`${item.key}-${index}`]}
+                                    aria-haspopup="true"
+                                    className="submenu-item block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                    role="menuitem"
                                   >
                                     {subItem.label}
-                                    <ChevronDown className={`ml-1 h-3 w-3 inline transition-transform ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} />
+                                    <ChevronDown className={`ml-1 h-3 w-3 inline transition-transform duration-300 ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} aria-hidden="true" />
                                   </button>
                                   {openDropdowns[`${item.key}-${index}`] && (
-                                    <ul className="sub-menu absolute left-full top-0 ml-2 w-56 bg-white rounded-lg shadow-xl z-50 py-2 border border-gray-200">
+                                    <ul 
+                                      className="sub-menu glass-dropdown absolute left-full top-0 ml-2 w-56 rounded-xl z-50 py-2 dropdown-menu-enter-active"
+                                      style={{
+                                        animation: 'fadeInSlideDown 0.25s var(--dropdown-transition)'
+                                      }}
+                                      role="menu"
+                                    >
                                       {subItem.submenu.map((subSubItem, subIndex) => (
-                                        <li key={subIndex}>
+                                        <li key={subIndex} role="none">
                                           <a
                                             href={subSubItem.href}
-                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#a44dff] transition-colors"
+                                            className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                            role="menuitem"
                                           >
                                             {subSubItem.label}
                                           </a>
@@ -385,7 +662,8 @@ function PageNavbar({ transparent = false }) {
                                   href={subItem.href}
                                   target={subItem.external ? "_blank" : undefined}
                                   rel={subItem.external ? "noopener noreferrer" : undefined}
-                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#a44dff] transition-colors"
+                                  className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                  role="menuitem"
                                 >
                                   {subItem.label}
                                 </a>
@@ -402,21 +680,20 @@ function PageNavbar({ transparent = false }) {
                   const Icon = item.icon;
                   const active = location.pathname === item.href;
                   return (
-                    <li key={item.key} className="menu-item relative">
+                    <li key={item.key} className="menu-item relative" role="none">
                       <a 
                         href={item.href}
-                        className={`flex items-center gap-1 px-3 py-2 text-xl font-medium transition-colors ${
+                        className={`menu-item-link flex items-center gap-1 px-3 py-2 text-lg font-medium transition-all duration-200 rounded-lg whitespace-nowrap ${
                           active 
                             ? 'text-[#00D4FF]' 
-                            : 'text-white hover:text-[#00D4FF]'
-                        }`}
+                            : 'text-white hover:text-[#00D4FF] hover:bg-white/10'
+                        } focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2 focus:ring-offset-transparent`}
+                        role="menuitem"
+                        aria-current={active ? 'page' : undefined}
                       >
-                        <Icon className="h-4 w-4" />
+                        <Icon className="h-4 w-4" aria-hidden="true" />
                         {item.label}
                       </a>
-                      {active && (
-                        <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-5 h-0.5 bg-[#00D4FF] rounded-full"></span>
-                      )}
                     </li>
                   );
                 }
@@ -426,89 +703,71 @@ function PageNavbar({ transparent = false }) {
         </div>
 
         {/* Botões Direita - col-lg-4 */}
-        <div className="hidden lg:flex items-center space-x-3">
+        <div className="hidden lg:flex items-center space-x-4 ml-4 flex-shrink-0">
           {/* Botão Contato */}
           <div className="btn-group dropdown dropdown-container">
-            <a href="/contato">
+            <a href="/contato" aria-label="Ir para página de contato">
               <button
-                className="btn btn-xs btn-blue px-4 py-2 bg-[#00D4FF] text-white text-base font-medium rounded hover:bg-[#00B8E6] transition-colors flex items-center gap-2"
+                className="btn btn-xs btn-blue px-5 py-2.5 bg-[#00D4FF] text-white text-base font-medium rounded-lg hover:bg-[#00B8E6] transition-all duration-200 flex items-center gap-2 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2"
                 type="button"
+                aria-label="Contato"
               >
-                <Phone className="h-4 w-4" />
+                <Phone className="h-4 w-4" aria-hidden="true" />
                 Contato
               </button>
             </a>
           </div>
 
 
-          {/* Seletor de Idioma */}
-          <div className="btn-group dropdown dropdown-container relative">
-           
-
-            {openLanguageMenu && (
-              <ul className="langs-drop absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-50 py-2 border border-gray-200">
-                <li>
-                  <a
-                    href="https://es.totvs.com/"
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    <figure className="m-0 mr-2">
-                      <img
-                        src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-es_9fac6f20.jpg.webp"
-                        alt="Linguagem ES-ES"
-                        className="w-6 h-4 object-cover rounded"
-                      />
-                    </figure>
-                    <span className="text">ES</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://en.totvs.com/"
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    <figure className="m-0 mr-2">
-                      <img
-                        src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-en_19a7eea0.png.webp"
-                        alt="Linguagem EN-EN"
-                        className="w-6 h-4 object-cover rounded"
-                      />
-                    </figure>
-                    <span className="text">EN</span>
-                  </a>
-                </li>
-              </ul>
-            )}
-          </div>
         </div>
 
         {/* Mobile Menu Button */}
         <div className="col-2 md:hidden text-right flex-shrink-0">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="navbar-toggler hamburger flex flex-col justify-center items-center w-8 h-8 space-y-1"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setIsMenuOpen(!isMenuOpen);
+              }
+            }}
+            aria-expanded={isMenuOpen}
+            aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+            aria-controls="mobile-menu"
+            className="navbar-toggler hamburger flex flex-col justify-center items-center w-10 h-10 space-y-1.5 rounded-lg hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2 transition-all duration-200"
             type="button"
           >
-            <span className={`block w-6 h-0.5 bg-white transition-all ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
-            <span className={`block w-6 h-0.5 bg-white transition-all ${isMenuOpen ? 'opacity-0' : ''}`}></span>
-            <span className={`block w-6 h-0.5 bg-white transition-all ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+            <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} aria-hidden="true"></span>
+            <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} aria-hidden="true"></span>
+            <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} aria-hidden="true"></span>
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="nav-primary-mobile lg:hidden bg-white rounded-lg shadow-xl mt-4 p-4">
+        <div id="mobile-menu" className="nav-primary-mobile lg:hidden glass-dropdown rounded-xl shadow-xl mt-4 p-6" role="navigation" aria-label="Menu mobile">
           <nav className="menu-principal-container">
-            <ul className="nav nav-mobile space-y-2">
+            <ul className="nav nav-mobile space-y-4" role="menubar">
               {menuItems.map((item) => (
-                <li key={item.key} className="menu-item">
+                <li key={item.key} className="menu-item" role="none">
                   <button
                     onClick={() => toggleDropdown(item.key)}
-                    className="w-full text-left flex items-center justify-between px-4 py-3 text-gray-700 hover:text-[#a44dff] transition-colors"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleDropdown(item.key);
+                      }
+                    }}
+                    aria-expanded={openDropdowns[item.key]}
+                    aria-haspopup={item.hasDropdown}
+                    className="w-full text-left flex items-center justify-between px-5 py-3.5 text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2"
+                    role="menuitem"
                   >
                     {item.label}
-                    <ChevronDown className={`h-4 w-4 transition-transform ${openDropdowns[item.key] ? 'rotate-180' : ''}`} />
+                    {item.hasDropdown && (
+                      <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${openDropdowns[item.key] ? 'rotate-180' : ''}`} aria-hidden="true" />
+                    )}
                   </button>
                   {openDropdowns[item.key] && item.hasDropdown && (
                     <>
@@ -600,25 +859,35 @@ function PageNavbar({ transparent = false }) {
                           </div>
                         </div>
                       ) : (
-                        <ul className="sub-menu pl-4 space-y-1 mt-1">
+                        <ul className="sub-menu pl-4 space-y-2 mt-2" role="menu">
                           {item.submenu.map((subItem, index) => (
-                            <li key={index} className="menu-item">
+                            <li key={index} className="menu-item" role="none">
                               {subItem.hasSubmenu ? (
                                 <div>
                                   <button
                                     onClick={() => toggleDropdown(`${item.key}-${index}`)}
-                                    className="w-full text-left flex items-center justify-between px-4 py-2 text-sm text-gray-600 hover:text-[#a44dff] transition-colors"
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        toggleDropdown(`${item.key}-${index}`);
+                                      }
+                                    }}
+                                    aria-expanded={openDropdowns[`${item.key}-${index}`]}
+                                    aria-haspopup="true"
+                                    className="submenu-item w-full text-left flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:text-[#00D4FF] transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                    role="menuitem"
                                   >
                                     {subItem.label}
-                                    <ChevronDown className={`h-3 w-3 transition-transform ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} />
+                                    <ChevronDown className={`h-3 w-3 transition-transform duration-300 ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} aria-hidden="true" />
                                   </button>
                                   {openDropdowns[`${item.key}-${index}`] && (
-                                    <ul className="sub-menu pl-4 space-y-1 mt-1">
+                                    <ul className="sub-menu pl-4 space-y-2 mt-2" role="menu">
                                       {subItem.submenu.map((subSubItem, subIndex) => (
-                                        <li key={subIndex}>
+                                        <li key={subIndex} role="none">
                                           <a
                                             href={subSubItem.href}
-                                            className="block px-4 py-2 text-sm text-gray-600 hover:text-[#a44dff] transition-colors"
+                                            className="submenu-item block px-4 py-2.5 text-sm text-gray-600 hover:text-[#00D4FF] transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                            role="menuitem"
                                           >
                                             {subSubItem.label}
                                           </a>
@@ -632,7 +901,8 @@ function PageNavbar({ transparent = false }) {
                                   href={subItem.href}
                                   target={subItem.external ? "_blank" : undefined}
                                   rel={subItem.external ? "noopener noreferrer" : undefined}
-                                  className="block px-4 py-2 text-sm text-gray-600 hover:text-[#a44dff] transition-colors"
+                                  className="submenu-item block px-4 py-2.5 text-sm text-gray-600 hover:text-[#00D4FF] transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                  role="menuitem"
                                 >
                                   {subItem.label}
                                 </a>
@@ -648,64 +918,85 @@ function PageNavbar({ transparent = false }) {
             </ul>
           </nav>
 
-          <div className="menu-info text-center mt-6 space-y-3">
-            <button className="btn btn-sm btn-blue w-full px-4 py-2 bg-[#00D4FF] text-white text-sm font-medium rounded hover:bg-[#00B8E6] transition-colors">
-              Contato
-            </button>
+          <div className="menu-info text-center mt-6 space-y-4">
+            <a href="/contato" className="block">
+              <button 
+                className="btn btn-sm btn-blue w-full px-5 py-3 bg-[#00D4FF] text-white text-sm font-medium rounded-lg hover:bg-[#00B8E6] transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2"
+                aria-label="Ir para página de contato"
+              >
+                Contato
+              </button>
+            </a>
 
             <div className="btn-group dropdown dropdown-container relative">
               <button
                 onClick={() => setOpenClienteDropdown(!openClienteDropdown)}
-                className="btn btn-sm btn-white-outline w-full px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-50 transition-colors flex items-center justify-center"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setOpenClienteDropdown(!openClienteDropdown);
+                  }
+                }}
+                aria-expanded={openClienteDropdown}
+                aria-haspopup="true"
+                aria-label="Menu do cliente"
+                className="btn btn-sm btn-white-outline w-full px-5 py-3 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 flex items-center justify-center hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2"
               >
                 Sou cliente
-                <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${openClienteDropdown ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-300 ${openClienteDropdown ? 'rotate-180' : ''}`} aria-hidden="true" />
               </button>
 
               {openClienteDropdown && (
-                <div className="dropdown-menu dropdown-menu-secondary absolute top-full left-0 right-0 mt-2 w-full bg-white rounded-lg shadow-xl z-50 py-4 px-4 text-center border border-gray-200">
-                  <strong className="block text-gray-900 font-semibold mb-1">Suporte</strong>
-                  <span className="text-gray-700">4003-0015</span>
-                  <small className="block text-gray-600 mt-2 mb-2">ou acesse</small>
-                  <div className="space-y-1">
-                    <a href="https://suporte.totvs.com" className="block text-[#a44dff] hover:underline">Central do Cliente</a>
-                    <a href="https://espacolegislacao.totvs.com/" className="block text-[#a44dff] hover:underline">Espaço Legislação</a>
-                    <a href="https://www.totvs.com/carta-da-reforma-tributaria/" className="block text-[#a44dff] hover:underline">Carta Reforma Tributária</a>
+                <div 
+                  className="dropdown-menu dropdown-menu-secondary glass-dropdown absolute top-full left-0 right-0 mt-2 w-full rounded-xl z-50 py-4 px-4 text-center dropdown-menu-enter-active"
+                  style={{
+                    animation: 'fadeInSlideDown 0.25s var(--dropdown-transition)'
+                  }}
+                  role="menu"
+                  aria-label="Menu de suporte ao cliente"
+                >
+                  <strong className="block text-gray-900 font-semibold mb-2">Suporte</strong>
+                  <a href="tel:40030015" className="block text-[#00D4FF] hover:text-[#00B8E6] transition-colors mb-3" role="menuitem">4003-0015</a>
+                  <small className="block text-gray-600 mt-3 mb-3">ou acesse</small>
+                  <div className="space-y-2">
+                    <a href="https://suporte.totvs.com" className="submenu-item block text-[#00D4FF] hover:text-[#00B8E6] transition-all duration-200 rounded-lg px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" role="menuitem" target="_blank" rel="noopener noreferrer">Central do Cliente</a>
+                    <a href="https://espacolegislacao.totvs.com/" className="submenu-item block text-[#00D4FF] hover:text-[#00B8E6] transition-all duration-200 rounded-lg px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" role="menuitem" target="_blank" rel="noopener noreferrer">Espaço Legislação</a>
+                    <a href="https://www.totvs.com/carta-da-reforma-tributaria/" className="submenu-item block text-[#00D4FF] hover:text-[#00B8E6] transition-all duration-200 rounded-lg px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" role="menuitem" target="_blank" rel="noopener noreferrer">Carta Reforma Tributária</a>
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="langs-option langs-mobile flex justify-center space-x-2">
-              <a href="/" className="langs-btn-mobile flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-50 transition-colors">
-                <figure className="m-0">
+            <div className="langs-option langs-mobile flex justify-center space-x-3" role="group" aria-label="Seleção de idioma">
+              <a href="/" className="langs-btn-mobile flex items-center space-x-2 px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" aria-label="Português (Brasil)">
+                <figure className="m-0" aria-hidden="true">
                   <img
                     src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-br_00c220c9.jpg.webp"
-                    alt="Linguagem PT-BR"
+                    alt="Bandeira Brasil"
                     className="w-6 h-4 object-cover rounded"
                   />
                 </figure>
-                <span className="text text-sm text-gray-700">PT</span>
+                <span className="text text-sm text-gray-700 font-medium">PT</span>
               </a>
-              <a href="https://es.totvs.com/" className="langs-btn-mobile flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-50 transition-colors">
-                <figure className="m-0">
+              <a href="https://es.totvs.com/" className="langs-btn-mobile flex items-center space-x-2 px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" aria-label="Español" target="_blank" rel="noopener noreferrer">
+                <figure className="m-0" aria-hidden="true">
                   <img
                     src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-es_9fac6f20.jpg.webp"
-                    alt="Linguagem ES-ES"
+                    alt="Bandeira Espanha"
                     className="w-6 h-4 object-cover rounded"
                   />
                 </figure>
-                <span className="text text-sm text-gray-700">ES</span>
+                <span className="text text-sm text-gray-700 font-medium">ES</span>
               </a>
-              <a href="https://en.totvs.com/" className="langs-btn-mobile flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-50 transition-colors">
-                <figure className="m-0">
+              <a href="https://en.totvs.com/" className="langs-btn-mobile flex items-center space-x-2 px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" aria-label="English" target="_blank" rel="noopener noreferrer">
+                <figure className="m-0" aria-hidden="true">
                   <img
                     src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-en_19a7eea0.png.webp"
-                    alt="Linguagem EN-EN"
+                    alt="Bandeira Reino Unido"
                     className="w-6 h-4 object-cover rounded"
                   />
                 </figure>
-                <span className="text text-sm text-gray-700">EN</span>
+                <span className="text text-sm text-gray-700 font-medium">EN</span>
               </a>
             </div>
           </div>
@@ -713,6 +1004,117 @@ function PageNavbar({ transparent = false }) {
       )}
       </div>
     </nav>
+
+    {/* Seletor de Idioma Minimalista - Fixo no top-right */}
+    <div 
+      className={`language-selector-minimalist dropdown-container ${openLanguageMenu ? 'active' : ''}`}
+      style={{
+        display: isMenuOpen ? 'none' : 'flex'
+      }}
+    >
+      {/* Ícone de Globo */}
+      <button
+        onClick={() => setOpenLanguageMenu(!openLanguageMenu)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setOpenLanguageMenu(!openLanguageMenu);
+          }
+        }}
+        aria-expanded={openLanguageMenu}
+        aria-haspopup="true"
+        aria-label="Selecionar idioma"
+        className="globe-button"
+      >
+        <Globe className="w-4 h-4" aria-hidden="true" />
+      </button>
+
+      {/* Linha Minimalista */}
+      <div 
+        className="divider-line"
+        aria-hidden="true"
+      />
+
+      {/* Dropdown Menu */}
+      {openLanguageMenu && (
+        <ul 
+          className="glass-dropdown absolute top-full right-0 mt-2 w-44 rounded-xl z-50 py-2 dropdown-menu-enter-active"
+          style={{
+            animation: 'fadeInSlideDown 0.25s var(--dropdown-transition)',
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.3)'
+          }}
+          role="menu"
+          aria-label="Menu de idiomas"
+          onMouseEnter={(e) => {
+            const container = e.currentTarget.closest('.language-selector-minimalist');
+            if (container) container.style.opacity = '1';
+          }}
+          onMouseLeave={(e) => {
+            const container = e.currentTarget.closest('.language-selector-minimalist');
+            if (container && !openLanguageMenu) container.style.opacity = '0.65';
+          }}
+        >
+            <li role="none">
+              <a
+                href="/"
+                className="submenu-item flex items-center px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                role="menuitem"
+                aria-label="Português (Brasil)"
+                onClick={() => setOpenLanguageMenu(false)}
+              >
+                <figure className="m-0 mr-2" aria-hidden="true">
+                  <img
+                    src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-br_00c220c9.jpg.webp"
+                    alt="Bandeira Brasil"
+                    className="w-6 h-4 object-cover rounded"
+                  />
+                </figure>
+                <span className="text">PT</span>
+              </a>
+            </li>
+            <li role="none">
+              <a
+                href="https://es.totvs.com/"
+                className="submenu-item flex items-center px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                role="menuitem"
+                aria-label="Espanhol"
+                onClick={() => setOpenLanguageMenu(false)}
+              >
+                <figure className="m-0 mr-2" aria-hidden="true">
+                  <img
+                    src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-es_9fac6f20.jpg.webp"
+                    alt="Bandeira Espanha"
+                    className="w-6 h-4 object-cover rounded"
+                  />
+                </figure>
+                <span className="text">ES</span>
+              </a>
+            </li>
+            <li role="none">
+              <a
+                href="https://en.totvs.com/"
+                className="submenu-item flex items-center px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                role="menuitem"
+                aria-label="Inglês"
+                onClick={() => setOpenLanguageMenu(false)}
+              >
+                <figure className="m-0 mr-2" aria-hidden="true">
+                  <img
+                    src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-en_19a7eea0.png.webp"
+                    alt="Bandeira Reino Unido"
+                    className="w-6 h-4 object-cover rounded"
+                  />
+                </figure>
+                <span className="text">EN</span>
+              </a>
+            </li>
+          </ul>
+      )}
+    </div>
     </>
   );
 }

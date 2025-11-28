@@ -1,6 +1,7 @@
 import React from 'react';
 import { Settings } from 'lucide-react';
 import PageNavbar from '../../components/layout/PageNavbar/PageNavbar';
+import ServicesSection from '../../components/custom/ServicesSection/ServicesSection';
 
 function ServicosPage() {
 
@@ -32,10 +33,10 @@ function ServicosPage() {
         </div>
       </section>
 
-      {/* Main Content - Deixar em branco para preencher depois */}
+      {/* Main Content */}
       <div className="mt-[-10px] pt-16 pb-16 bg-white relative px-4">
         <div className="max-w-7xl mx-auto">
-          {/* Conteúdo será adicionado aqui */}
+          <ServicesSection />
         </div>
       </div>
       

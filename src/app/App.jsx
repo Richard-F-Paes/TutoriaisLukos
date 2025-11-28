@@ -23,9 +23,9 @@ import TutorialsHomePage from '../presentation/pages/public/TutorialsHomePage';
 import Tutorials from '../presentation/pages/public/Tutorials';
 import TutorialsUnified from '../presentation/pages/public/TutorialsUnified';
 import CategoryTutorialsPage from '../presentation/pages/public/CategoryTutorialsPage';
+import TreinamentosPage from '../presentation/pages/public/TreinamentosPage';
 import AboutPage from '../presentation/pages/public/AboutPage';
 import SearchPage from '../presentation/pages/public/SearchPage';
-import LoginPage from '../presentation/pages/public/LoginPage';
 import RegisterPage from '../presentation/pages/public/RegisterPage';
 import ProfilePage from '../presentation/pages/public/ProfilePage';
 import PaginaTutorial from '../presentation/pages/public/PaginaTutorial';
@@ -56,6 +56,7 @@ import BlogPostPage from '../presentation/pages/public/BlogPostPage';
 import AppsPage from '../presentation/pages/public/AppsPage';
 import VerPage from '../presentation/pages/public/VerPage';
 import ApresentacaoSistemasPage from '../presentation/pages/public/ApresentacaoSistemasPage';
+import ERPPage from '../presentation/pages/public/ERPPage';
 
 // Importar páginas administrativas
 import EditorPage from '../presentation/pages/admin/EditorPage';
@@ -111,6 +112,7 @@ function AppContent() {
                 
                 {/* Rotas dos Tutoriais Lukos */}
                 <Route path="/tutoriais" element={<TutorialsUnified />} />
+                <Route path="/tutoriais/treinamentos" element={<TreinamentosPage />} />
                 <Route path="/video-tutoriais" element={<VideoTutorialsPage />} />
                 <Route path="/video-tutorial/:id" element={<VideoTutorialDetailPage />} />
                 <Route path="/categoria/:category" element={<CategoryTutorialsPage />} />
@@ -169,12 +171,12 @@ function AppContent() {
                 {/* Página de Apresentação dos Sistemas */}
                 <Route path="/apresentacao-sistemas" element={<ApresentacaoSistemasPage />} />
                 <Route path="/sistemas" element={<ApresentacaoSistemasPage />} />
+                <Route path="/erp" element={<ERPPage />} />
                 
                 {/* Rotas administrativas */}
                 <Route path="/admin" element={<AdminPage />} />
                 
                 {/* Rotas de autenticação */}
-                <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 
                 {/* Rotas protegidas */}

@@ -6,6 +6,7 @@ import { useRef, useState, useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useTheme } from '../../../contexts/ThemeContext';
+import AdminPasswordModal from '../ui/AdminPasswordModal/AdminPasswordModal';
 import './Navbarcategoria.css';
 
 // Component que renderiza conteúdo do menu via portal
@@ -74,6 +75,7 @@ export default function Navbarcateria() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
   const timeoutsRef = useRef({});
 
   const menuButtonClasses = 'category-dropdown-button';
@@ -127,11 +129,11 @@ export default function Navbarcateria() {
         clearTimeout(timeoutsRef.current[menuLabel]);
       }
       
-      // Criar novo timeout de 1 segundo
+      // Criar novo timeout de 150ms (melhor UX)
       timeoutsRef.current[menuLabel] = setTimeout(() => {
         setOpenMenus(prev => ({ ...prev, [menuLabel]: false }));
         delete timeoutsRef.current[menuLabel];
-      }, 1000);
+      }, 150);
     }
   };
 
@@ -209,11 +211,19 @@ export default function Navbarcateria() {
       }
     };
 
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleClickOutside();
+      }
+    };
+
     document.addEventListener('click', handleDocumentClick);
+    document.addEventListener('keydown', handleKeyDown);
     
     // Cleanup: limpar timeouts quando componente for desmontado
     return () => {
       document.removeEventListener('click', handleDocumentClick);
+      document.removeEventListener('keydown', handleKeyDown);
       clearAllTimeouts();
     };
   }, []);
@@ -269,13 +279,25 @@ export default function Navbarcateria() {
         </Link>
 
         {/* Menu Desktop */}
-        <nav className="category-navbar-menu">
+        <nav className="category-navbar-menu" role="navigation" aria-label="Menu de categorias">
           {/* Botão Início */}
           <Link
             to="/tutoriais"
             className={`category-nav-link ${location.pathname === '/tutoriais' ? 'active' : ''}`}
+            role="menuitem"
+            aria-current={location.pathname === '/tutoriais' ? 'page' : undefined}
           >
             Início
+          </Link>
+
+          {/* Botão Treinamentos */}
+          <Link
+            to="/tutoriais/treinamentos"
+            className={`category-nav-link ${location.pathname === '/tutoriais/treinamentos' ? 'active' : ''}`}
+            role="menuitem"
+            aria-current={location.pathname === '/tutoriais/treinamentos' ? 'page' : undefined}
+          >
+            Treinamentos
           </Link>
 
           {/* Dropdowns */}
@@ -298,11 +320,26 @@ export default function Navbarcateria() {
                   }}
                   className={menuButtonClasses}
                   onClick={() => handleClick(menu.label)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleClick(menu.label);
+                    }
+                  }}
                   aria-expanded={isOpen}
-                  aria-haspopup="menu"
+                  aria-haspopup="true"
+                  aria-label={`Menu ${menu.label}`}
+                  aria-controls={`menu-${menu.label}`}
                 >
                   {menu.label}
-                  <ChevronDownIcon aria-hidden="true" className="category-dropdown-icon" />
+                  <ChevronDownIcon 
+                    aria-hidden="true" 
+                    className={`category-dropdown-icon ${isOpen ? 'rotated' : ''}`}
+                    style={{ 
+                      transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                    }}
+                  />
                 </button>
 
                 <PortalMenuContent 
@@ -310,17 +347,28 @@ export default function Navbarcateria() {
                   className="category-dropdown-menu"
                   isOpen={isOpen}
                 >
-                  <div className="py-1">
+                  <div className="py-1" role="menu" id={`menu-${menu.label}`} aria-label={`Submenu ${menu.label}`}>
                     {menu.items.map((item) => (
                       <Link 
                         key={item.to} 
                         to={item.to} 
                         className={menuItemClasses(false, item.to)}
+                        role="menuitem"
+                        aria-current={location.pathname === item.to ? 'page' : undefined}
                         onClick={() => {
                           // Fechar menu ao clicar em um item
                           clearAllTimeouts();
                           setOpenMenus(prev => ({ ...prev, [menu.label]: false }));
                           setFixedMenus(prev => ({ ...prev, [menu.label]: false }));
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            // Fechar menu ao selecionar um item
+                            clearAllTimeouts();
+                            setOpenMenus(prev => ({ ...prev, [menu.label]: false }));
+                            setFixedMenus(prev => ({ ...prev, [menu.label]: false }));
+                          }
                         }}
                       >
                         {item.label}
@@ -370,23 +418,40 @@ export default function Navbarcateria() {
             <div className="relative user-menu">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setShowUserMenu(!showUserMenu);
+                  }
+                }}
+                aria-expanded={showUserMenu}
+                aria-haspopup="true"
+                aria-label="Menu do usuário"
                 className="category-user-button"
               >
-                <i className="fas fa-user"></i>
+                <i className="fas fa-user" aria-hidden="true"></i>
                 <span className="category-user-name">{user?.name}</span>
                 <i
                   className={`fas fa-chevron-down category-chevron ${
                     showUserMenu ? 'rotated' : ''
                   }`}
+                  aria-hidden="true"
                 ></i>
               </button>
 
               {showUserMenu && (
-                <div className="category-user-dropdown">
+                <div className="category-user-dropdown" role="menu" aria-label="Menu do usuário">
                   <Link
                     to="/profile"
                     onClick={() => setShowUserMenu(false)}
                     className="category-user-action"
+                    role="menuitem"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setShowUserMenu(false);
+                      }
+                    }}
                   >
                     Meu Perfil
                   </Link>
@@ -398,6 +463,13 @@ export default function Navbarcateria() {
                       to="/editor"
                       onClick={() => setShowUserMenu(false)}
                       className="category-user-action"
+                      role="menuitem"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setShowUserMenu(false);
+                        }
+                      }}
                     >
                       Editor Visual
                     </Link>
@@ -408,6 +480,13 @@ export default function Navbarcateria() {
                       to="/admin"
                       onClick={() => setShowUserMenu(false)}
                       className="category-user-action"
+                      role="menuitem"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setShowUserMenu(false);
+                        }
+                      }}
                     >
                       Administração
                     </Link>
@@ -416,6 +495,13 @@ export default function Navbarcateria() {
                   <button
                     onClick={handleLogout}
                     className="category-user-action logout"
+                    role="menuitem"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleLogout();
+                      }
+                    }}
                   >
                     Sair
                   </button>
@@ -423,19 +509,46 @@ export default function Navbarcateria() {
               )}
             </div>
           ) : (
-            <Link
-              to="/login"
+            <button
+              onClick={() => setShowAdminModal(true)}
               className="category-login-button"
+              title="Acesso Administrativo"
+              aria-label="Acesso Administrativo"
             >
-              Entrar
-            </Link>
+              <svg 
+                width="18" 
+                height="18" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="1.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                className="category-login-shield"
+              >
+                {/* Escudo */}
+                <path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3z"/>
+                {/* Engrenagem minimalista dentro do escudo */}
+                <circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.5"/>
+                <circle cx="12" cy="10" r="1" fill="currentColor" opacity="0.4"/>
+                <path d="M12 8.5v3M9.5 10h5" stroke="currentColor" strokeWidth="0.8" opacity="0.5"/>
+              </svg>
+            </button>
           )}
 
           {/* Menu mobile hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setMenuOpen(!menuOpen);
+              }
+            }}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-category-menu"
+            aria-label={menuOpen ? 'Fechar menu mobile' : 'Abrir menu mobile'}
             className="category-mobile-menu-button"
-            aria-label="Menu mobile"
           >
             {menuOpen ? (
               <svg
@@ -468,17 +581,28 @@ export default function Navbarcateria() {
 
       {/* Menu Mobile */}
       {menuOpen && (
-        <div className="category-mobile-menu">
+        <div id="mobile-category-menu" className="category-mobile-menu" role="navigation" aria-label="Menu mobile de categorias">
           <div className="category-mobile-menu-content">
             <Link
               to="/tutoriais"
               className={`category-mobile-link ${location.pathname === '/tutoriais' ? 'active' : ''}`}
               onClick={() => setMenuOpen(false)}
+              role="menuitem"
+              aria-current={location.pathname === '/tutoriais' ? 'page' : undefined}
             >
               Início
             </Link>
+            <Link
+              to="/tutoriais/treinamentos"
+              className={`category-mobile-link ${location.pathname === '/tutoriais/treinamentos' ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+              role="menuitem"
+              aria-current={location.pathname === '/tutoriais/treinamentos' ? 'page' : undefined}
+            >
+              Treinamentos
+            </Link>
             {menus.map((menu) => (
-              <div key={menu.label} className="category-mobile-dropdown">
+              <div key={menu.label} className="category-mobile-dropdown" role="group" aria-label={menu.label}>
                 <div className="category-mobile-dropdown-header">{menu.label}</div>
                 {menu.items.map((item) => (
                   <Link
@@ -486,6 +610,8 @@ export default function Navbarcateria() {
                     to={item.to}
                     className="category-mobile-link sub"
                     onClick={() => setMenuOpen(false)}
+                    role="menuitem"
+                    aria-current={location.pathname === item.to ? 'page' : undefined}
                   >
                     {item.label}
                   </Link>
@@ -550,17 +676,25 @@ export default function Navbarcateria() {
                 </button>
               </div>
             ) : (
-              <Link
-                to="/login"
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  setShowAdminModal(true);
+                }}
                 className="category-mobile-login-button"
-                onClick={() => setMenuOpen(false)}
               >
                 Entrar
-              </Link>
+              </button>
             )}
           </div>
         </div>
       )}
+
+      {/* Modal de Senha Administrativa */}
+      <AdminPasswordModal 
+        isOpen={showAdminModal} 
+        onClose={() => setShowAdminModal(false)} 
+      />
     </header>
   );
 }

@@ -27,9 +27,6 @@ export default function LandingHero() {
 
                     <div className="hidden md:block space-x-3">
                      
-                        <button className="hover:bg-slate-100 transition px-6 py-2 border border-indigo-600 rounded-md">
-                            Login
-                        </button>
                     </div>
 
                     <button 

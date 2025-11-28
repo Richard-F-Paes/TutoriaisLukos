@@ -8,7 +8,7 @@ import {
   Video,
   CheckCircle2,
   Headphones,
-  Certificate,
+  Badge,
   Zap,
   Shield
 } from 'lucide-react';
@@ -52,7 +52,7 @@ const TrainingBenefits = () => {
       color: 'from-indigo-400 to-indigo-600'
     },
     {
-      icon: Certificate,
+      icon: Badge,
       title: 'Atualizações Futuras',
       description: 'Receba atualizações sobre novos recursos e funcionalidades do sistema Lukos.',
       color: 'from-teal-400 to-teal-600'

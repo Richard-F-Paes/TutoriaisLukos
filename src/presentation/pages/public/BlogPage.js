@@ -35,7 +35,7 @@ function BlogPage() {
   
   // Configurações do vídeo
   const videoImageUrl = 'back.png';
-  const videoId = 'W9LN83G4DCE'; // Substituir pelo ID do vídeo do YouTube da LUKOS
+  const videoId = 'F_itCCQd0nk'; // Substituir pelo ID do vídeo do YouTube da LUKOS
 
   // Dados de tecnologias originais
 
@@ -377,9 +377,8 @@ function BlogPage() {
       {/* Seção Problemas */}
       <div id="problemas" className="py-16 md:py-24 bg-white ]">
         <div 
-          className="flex items-start relative border-0 m-0 p-0 align-baseline box-border shadow-lg rounded-3xl "
+          className="flex items-start relative border-0 m-0 p-0 align-baseline box-border shadow-lg "
           style={{
-            backgroundColor: '#f5f5f5',
             display: 'flex',
             alignItems: 'flex-start',
             justifyContent: 'center',
@@ -471,37 +470,28 @@ function BlogPage() {
       </div>
 
       {/* Espaçamento */}
-      <div className="pt-16 pb-8 mt-[-30px] mb-[-30px]"></div>
-
-      {/* CTA Section */}
-      <section className="relative py-16 md:py-24 h-[500px]">
-        {/* Background com gradiente roxo/violeta */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]"></div>
-        
-        {/* Container */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[200px] bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]">
-          <div className="text-center">
-            {/* Título */}
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+      <div className="h-[700px] bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[200px] bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a] pt-[50px]">  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
               Transforme a gestão do seu posto de combustível
-            </h2>
+            </h2> 
             
             {/* Vídeo */}
             <div className="mt-12 max-w-4xl mx-auto group">
               <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
                 <iframe
                   className="absolute top-0 left-0 w-full h-full rounded-3xl"
-                  src="https://www.youtube.com/embed/W9LN83G4DCE"
+                  src="https://www.youtube.com/embed/F_itCCQd0nk"
                   title="Vídeo LUKOS"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 ></iframe>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            </div> </div>
+
+      </div>
+
+      
 
       {/* Main Content Continua */}
       <div className="">

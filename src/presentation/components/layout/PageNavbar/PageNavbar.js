@@ -1,6 +1,192 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import { Menu, X, ChevronDown, BookOpen, Brain, Info, Briefcase, Phone, Package, BarChart3, ShoppingCart, Wallet, Truck, Store, Link as LinkIcon, Globe, Home, FileText, LayoutDashboard, ShoppingBag, Warehouse, CreditCard, Fuel } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+
+// Componente reutilizável para ProductCard (elimina duplicação DRY)
+const ProductCard = ({ subItem, index, isMobile = false }) => {
+  const SubIcon = subItem.icon || Package;
+  const figureHeight = isMobile ? '150px' : '100px';
+  const titleFontSize = isMobile ? '12px' : '14px';
+  const iconSize = isMobile ? 'w-5 h-5' : 'w-6 h-6';
+  const iconWidth = isMobile 
+    ? (index === 1 || index === 2 || index === 3 || index === 4 || index === 5 || index === 6 ? 25 : 24)
+    : (index === 0 ? 24 : index === 3 ? 25 : index === 7 ? 24 : 25);
+  const imageWidth = isMobile ? (index === 6 ? 166 : 165) : 280;
+  const imageHeight = isMobile ? 200 : 100;
+  const cardId = isMobile ? `submenu-produtos-mobile-${index}` : `submenu-produtos-${index}`;
+  const cardRole = isMobile ? 'button' : 'menuitem';
+  const marginBottom = isMobile ? '8px' : '6px';
+
+  return (
+    <div
+      id={cardId}
+      tabIndex={0}
+      role={cardRole}
+      aria-label={`Produto ${subItem.label}`}
+      className={`product-card rounded-lg overflow-hidden border ${isMobile ? 'border-gray-200' : 'border-gray-200/30 hover:border-transparent hover:shadow-2xl'} transition-all duration-300`}
+      style={!isMobile ? {
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+      } : {}}
+      onClick={() => window.location.href = subItem.href}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          window.location.href = subItem.href;
+        }
+      }}
+      onFocus={(e) => {
+        if (!isMobile) {
+          e.currentTarget.style.outline = '2px solid #00D4FF';
+          e.currentTarget.style.outlineOffset = '2px';
+        }
+      }}
+      onBlur={(e) => {
+        if (!isMobile) {
+          e.currentTarget.style.outline = 'none';
+        }
+      }}
+    >
+      <figure className="relative" style={{ width: '100%', height: figureHeight, margin: 0, marginBottom }}>
+        <img 
+          alt={`Produto de destaque ${subItem.label} `}
+          loading="lazy"
+          width={imageWidth}
+          height={imageHeight}
+          decoding="async"
+          data-nimg="1"
+          className="product-img"
+          style={{ color: 'transparent', width: '100%', height: '100%', objectFit: 'cover' }}
+          src={subItem.image || 'BANNER-HOME-1.png'}
+        />
+        <div 
+          className="product-img-overlay" 
+          style={{ 
+            background: 'linear-gradient(0deg, rgb(0, 22, 71) -10%, transparent 45%)',
+            borderRadius: '0px 0px 10px 10px',
+            bottom: '0px',
+            boxSizing: 'border-box',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            height: '100%',
+            justifyContent: 'flex-end',
+            padding: '20px 10px',
+            position: 'absolute',
+            transition: 'background-size 0.3s ease-in-out',
+            width: '100%',
+            margin: '0px',
+            textRendering: 'geometricprecision',
+            scrollBehavior: 'smooth',
+            fontFamily: '"Plus Jakarta Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+            zIndex: 10
+          }}
+        >
+          {subItem.iconImage ? (
+            <img 
+              alt={`Icone ${subItem.label}`}
+              loading="lazy"
+              width={iconWidth}
+              height={index === 3 ? 25 : 24}
+              decoding="async"
+              data-nimg="1"
+              className="product-icon"
+              style={{ color: 'transparent' }}
+              src={subItem.iconImage}
+            />
+          ) : (
+            <div>
+              <SubIcon className={`${iconSize} text-white drop-shadow-2xl`} />
+            </div>
+          )}
+          <p className="product-title" style={{ color: 'white', fontWeight: 'bold', fontSize: titleFontSize, textAlign: 'center', margin: 0 }}>
+            {subItem.label}
+          </p>
+        </div>
+      </figure>
+      <p className="product-description" style={{ textAlign: 'center' }}>
+        {subItem.description}
+      </p>
+    </div>
+  );
+};
+
+// Componente que renderiza o dropdown via Portal (fora da hierarquia da navbar)
+const PortalDropdownContent = ({ buttonRef, children, className, isOpen, onMouseEnter, onMouseLeave, centered = false }) => {
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [isAnimating, setIsAnimating] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen || !buttonRef?.current) return;
+    
+    const updatePosition = () => {
+      const rect = buttonRef.current.getBoundingClientRect();
+      let left = rect.left + window.scrollX;
+      
+      // Se centralizado, calcular posição central
+      if (centered && dropdownRef.current) {
+        const dropdownWidth = dropdownRef.current.offsetWidth;
+        const buttonCenter = rect.left + (rect.width / 2);
+        left = buttonCenter - (dropdownWidth / 2) + window.scrollX;
+        
+        // Garantir que não saia da tela
+        const maxLeft = window.innerWidth - dropdownWidth - 16;
+        left = Math.max(16, Math.min(left, maxLeft));
+      }
+      
+      setPosition({
+        top: rect.bottom + window.scrollY + 12, // 12px gap abaixo do botão
+        left: left,
+      });
+    };
+
+    // Atualizar posição inicial
+    updatePosition();
+    
+    // Atualizar posição após o dropdown ser renderizado (para calcular largura)
+    requestAnimationFrame(updatePosition);
+    
+    window.addEventListener('scroll', updatePosition, true);
+    window.addEventListener('resize', updatePosition);
+
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [isOpen, buttonRef, centered]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsAnimating(true);
+    } else {
+      // Delay para permitir animação de saída
+      const timer = setTimeout(() => setIsAnimating(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  if (!isAnimating) return null;
+
+  return ReactDOM.createPortal(
+    <div
+      ref={dropdownRef}
+      className={`${className} ${!isOpen ? 'dropdown-exit' : ''}`}
+      style={{
+        position: 'absolute',
+        top: `${position.top}px`,
+        left: `${position.left}px`,
+        zIndex: 9999,
+      }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      {children}
+    </div>,
+    document.body
+  );
+};
 
 function PageNavbar({ transparent = false }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,6 +195,7 @@ function PageNavbar({ transparent = false }) {
   const [openLanguageMenu, setOpenLanguageMenu] = useState(false);
   const [hoveredDropdown, setHoveredDropdown] = useState(null);
   const closeTimeoutRef = useRef({});
+  const menuButtonRefs = useRef({}); // Refs para os botões de dropdown
   const location = useLocation();
 
   useEffect(() => {
@@ -517,79 +704,45 @@ function PageNavbar({ transparent = false }) {
           }
         }
 
-        @media (max-width: 1280px) {
-          .sub-menu {
-            max-width: calc(100vw - 2rem);
-          }
-        }
-
         /* Garantir que o sub-menu não ultrapasse os limites da tela */
         .sub-menu.glass-dropdown {
           box-sizing: border-box;
+          max-width: calc(100vw - 2rem);
         }
 
         .sub-menu.glass-dropdown .products-grid-container {
           max-width: 100%;
           padding: 0;
-          min-width: 0;
         }
 
-        /* Garantir que o dropdown não ultrapasse a viewport */
-        .sub-menu.glass-dropdown[style*="left: 1rem"] {
-          max-width: none !important;
-          width: auto !important;
-          overflow-x: visible;
-          overflow-y: visible;
-          contain: none;
-        }
-
-        .sub-menu.glass-dropdown[style*="left: 1rem"] .products-grid-container {
-          max-width: 100%;
-          width: 100%;
-        }
-
-        /* CSS Flex Container para produtos - Layout horizontal em uma única linha sem scroll */
+        /* CSS Grid Container para produtos - Layout responsivo com quebra automática */
         .products-grid-container {
-          display: flex;
-          flex-direction: row;
-          flex-wrap: nowrap;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
           gap: 0.75rem;
-          align-items: stretch;
-          justify-content: flex-start;
           width: 100%;
-          max-width: 100%;
-          overflow: visible;
           box-sizing: border-box;
         }
 
-        /* Responsividade com breakpoints - Ajusta gaps para caber todos os cards */
-        @media (max-width: 640px) {
+        /* Desktop: 4 cards por linha */
+        @media (min-width: 1024px) {
           .products-grid-container {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+
+        /* Tablet: 3 cards por linha */
+        @media (max-width: 1023px) and (min-width: 768px) {
+          .products-grid-container {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
+        /* Mobile: 2 cards por linha */
+        @media (max-width: 767px) {
+          .products-grid-container {
+            grid-template-columns: repeat(2, 1fr);
             gap: 0.5rem;
-          }
-        }
-
-        @media (min-width: 641px) and (max-width: 768px) {
-          .products-grid-container {
-            gap: 0.625rem;
-          }
-        }
-
-        @media (min-width: 769px) and (max-width: 1024px) {
-          .products-grid-container {
-            gap: 0.75rem;
-          }
-        }
-
-        @media (min-width: 1025px) and (max-width: 1280px) {
-          .products-grid-container {
-            gap: 0.75rem;
-          }
-        }
-
-        @media (min-width: 1281px) {
-          .products-grid-container {
-            gap: 0.875rem;
           }
         }
 
@@ -602,9 +755,9 @@ function PageNavbar({ transparent = false }) {
         .dropdown-container {
           position: relative;
         }
-        
-        /* Otimização para animação do dropdown centralizado */
-        .sub-menu.glass-dropdown[style*="left: 50%"] {
+
+        /* Otimizações de performance para dropdowns */
+        .sub-menu.glass-dropdown {
           will-change: transform, opacity;
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
@@ -740,8 +893,9 @@ function PageNavbar({ transparent = false }) {
                   const Icon = item.icon;
                   const isOpen = openDropdowns[item.key];
                   return (
-                    <li key={item.key} className="menu-item relative dropdown-container" role="none" style={{overflow: 'visible', zIndex: item.isCardDropdown && isOpen ? 100 : 'auto'}}>
+                    <li key={item.key} className="menu-item relative dropdown-container h-full flex items-center" role="none" style={{overflow: 'visible'}}>
                       <button
+                        ref={(el) => { if (el) menuButtonRefs.current[item.key] = el; }}
                         onClick={() => toggleDropdown(item.key)}
                         onMouseEnter={() => handleDropdownMouseEnter(item.key)}
                         onMouseLeave={() => handleDropdownMouseLeave(item.key)}
@@ -761,197 +915,107 @@ function PageNavbar({ transparent = false }) {
                         <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
                       </button>
                       
-                      {isOpen && item.hasDropdown && (
+                      {item.hasDropdown && (
                         <>
                           {item.isCardDropdown ? (
-                            <div 
-                              className="sub-menu glass-dropdown absolute top-full mt-6 rounded-2xl z-[100] p-8 dropdown-menu-enter-active"
-                              style={{ 
-                                left: '50%',
-                                transform: 'translateX(-50%)',
-                                transformOrigin: 'center top',
-                                maxWidth: 'calc(100vw - 2rem)',
-                                minWidth: 'min(90vw, 1200px)',
-                                overflowX: 'auto',
-                                overflowY: 'visible',
-                                boxSizing: 'border-box',
-                                contain: 'none',
-                                animation: 'fadeInSlideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                willChange: 'transform, opacity',
-                                backfaceVisibility: 'hidden',
-                                WebkitBackfaceVisibility: 'hidden'
-                              }}
-                              role="menu"
-                              aria-label={`Menu ${item.label}`}
+                            <PortalDropdownContent
+                              buttonRef={{ current: menuButtonRefs.current[item.key] }}
+                              isOpen={isOpen}
+                              centered={true}
                               onMouseEnter={() => handleDropdownMouseEnter(item.key)}
                               onMouseLeave={() => handleDropdownMouseLeave(item.key)}
+                              className="sub-menu glass-dropdown rounded-2xl p-3 dropdown-menu-enter-active"
                             >
-                              <div className="products-grid-container">
-                                {item.submenu.map((subItem, index) => {
-                                  const SubIcon = subItem.icon || Package;
-                                  return (
-                                    <div
-                                      key={index}
-                                      id={`submenu-produtos-${index}`}
-                                      tabIndex={0}
-                                      role="menuitem"
-                                      aria-label={`Produto ${subItem.label}`}
-                                      className="product-card rounded-lg overflow-hidden border border-gray-200/30 hover:border-transparent hover:shadow-2xl transition-all duration-300"
-                                      style={{
-                                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-                                      }}
-                                      onClick={() => window.location.href = subItem.href}
-                                      onKeyDown={(e) => {
-                                        if (e.key === 'Enter' || e.key === ' ') {
-                                          e.preventDefault();
-                                          window.location.href = subItem.href;
-                                        }
-                                      }}
-                                      onFocus={(e) => {
-                                        e.currentTarget.style.outline = '2px solid #00D4FF';
-                                        e.currentTarget.style.outlineOffset = '2px';
-                                      }}
-                                      onBlur={(e) => {
-                                        e.currentTarget.style.outline = 'none';
-                                      }}
-                                    >
-                                      <figure className="relative" style={{ width: '100%', height: '100px', margin: 0, marginBottom: '6px' }}>
-                                        <img 
-                                          alt={`Produto de destaque ${subItem.label} `}
-                                          loading="lazy"
-                                          width="280"
-                                          height="100"
-                                          decoding="async"
-                                          data-nimg="1"
-                                          className="product-img"
-                                          style={{ color: 'transparent', width: '100%', height: '100%', objectFit: 'cover' }}
-                                          src={subItem.image || 'BANNER-HOME-1.png'}
-                                        />
-                                        <div 
-                                          className="product-img-overlay" 
-                                          style={{ 
-                                            background: 'linear-gradient(0deg, rgb(0, 22, 71) -10%, transparent 45%)',
-                                            borderRadius: '0px 0px 10px 10px',
-                                            bottom: '0px',
-                                            boxSizing: 'border-box',
-                                            cursor: 'pointer',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: '8px',
-                                            height: '100%',
-                                            justifyContent: 'flex-end',
-                                            padding: '20px 10px',
-                                            position: 'absolute',
-                                            transition: 'background-size 0.3s ease-in-out',
-                                            width: '100%',
-                                            margin: '0px',
-                                            textRendering: 'geometricprecision',
-                                            scrollBehavior: 'smooth',
-                                            fontFamily: '"Plus Jakarta Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
-                                            zIndex: 10
-                                          }}
-                                        >
-                                          {subItem.iconImage ? (
-                                            <img 
-                                              alt={`Icone ${subItem.label}`}
-                                              loading="lazy"
-                                              width={index === 0 ? 24 : index === 3 ? 25 : index === 7 ? 24 : 25}
-                                              height={index === 3 ? 25 : 24}
-                                              decoding="async"
-                                              data-nimg="1"
-                                              className="product-icon"
-                                              style={{ color: 'transparent' }}
-                                              src={subItem.iconImage}
-                                            />
-                                          ) : (
-                                            <div>
-                                              <SubIcon className="w-6 h-6 text-white drop-shadow-2xl" />
-                                            </div>
-                                          )}
-                                          <p className="product-title" style={{ color: 'white', fontWeight: 'bold', fontSize: '14px', textAlign: 'center', margin: 0 }}>
-                                            {subItem.label}
-                                          </p>
-                                        </div>
-                                      </figure>
-                                      <p className="product-description" style={{ textAlign: 'center' }}>
-                                        {subItem.description}
-                                      </p>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          ) : (
-                            <ul 
-                              className="sub-menu glass-dropdown absolute top-full left-0 mt-2 w-64 rounded-xl z-50 py-2 dropdown-menu-enter-active"
-                              style={{
-                                animation: 'fadeInSlideDownLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                transformOrigin: 'top left',
-                                transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                              }}
-                              role="menu"
-                              onMouseEnter={() => handleDropdownMouseEnter(item.key)}
-                              onMouseLeave={() => handleDropdownMouseLeave(item.key)}
-                            >
-                              {item.submenu.map((subItem, index) => (
-                            <li key={index} className="menu-item" role="none">
-                              {subItem.hasSubmenu ? (
-                                <div className="relative">
-                                  <button
-                                    onClick={() => toggleDropdown(`${item.key}-${index}`)}
-                                    onKeyDown={(e) => {
-                                      if (e.key === 'Enter' || e.key === ' ') {
-                                        e.preventDefault();
-                                        toggleDropdown(`${item.key}-${index}`);
-                                      }
-                                    }}
-                                    aria-expanded={openDropdowns[`${item.key}-${index}`]}
-                                    aria-haspopup="true"
-                                    className="submenu-item block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                                    role="menuitem"
-                                  >
-                                    {subItem.label}
-                                    <ChevronDown className={`ml-1 h-3 w-3 inline transition-transform duration-300 ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} aria-hidden="true" />
-                                  </button>
-                                  {openDropdowns[`${item.key}-${index}`] && (
-                                    <ul 
-                                      className="sub-menu glass-dropdown absolute left-full top-0 ml-2 w-56 rounded-xl z-50 py-2 dropdown-menu-enter-active"
-                                      style={{
-                                        animation: 'fadeInSlideDownLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        transformOrigin: 'top left',
-                                        transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                                      }}
-                                      role="menu"
-                                    >
-                                      {subItem.submenu.map((subSubItem, subIndex) => (
-                                        <li key={subIndex} role="none">
-                                          <a
-                                            href={subSubItem.href}
-                                            className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                                            role="menuitem"
-                                          >
-                                            {subSubItem.label}
-                                          </a>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  )}
+                              <div 
+                                role="menu"
+                                aria-label={`Menu ${item.label}`}
+                                style={{
+                                  maxWidth: 'calc(100vw - 2rem)',
+                                  width: 'fit-content',
+                                  boxSizing: 'border-box',
+                                }}
+                              >
+                                <div className="products-grid-container">
+                                  {item.submenu.map((subItem, index) => (
+                                    <ProductCard 
+                                      key={index} 
+                                      subItem={subItem} 
+                                      index={index} 
+                                      isMobile={false}
+                                    />
+                                  ))}
                                 </div>
-                              ) : (
-                                <a
-                                  href={subItem.href}
-                                  target={subItem.external ? "_blank" : undefined}
-                                  rel={subItem.external ? "noopener noreferrer" : undefined}
-                                  className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                                  role="menuitem"
-                                >
-                                  {subItem.label}
-                                </a>
-                              )}
-                                </li>
-                              ))}
-                            </ul>
+                              </div>
+                            </PortalDropdownContent>
+                          ) : (
+                            <PortalDropdownContent
+                              buttonRef={{ current: menuButtonRefs.current[item.key] }}
+                              isOpen={isOpen}
+                              centered={false}
+                              onMouseEnter={() => handleDropdownMouseEnter(item.key)}
+                              onMouseLeave={() => handleDropdownMouseLeave(item.key)}
+                              className="sub-menu glass-dropdown w-64 rounded-xl py-2 dropdown-menu-enter-active"
+                            >
+                              <ul role="menu">
+                                {item.submenu.map((subItem, index) => (
+                                  <li key={index} className="menu-item" role="none">
+                                    {subItem.hasSubmenu ? (
+                                      <div className="relative">
+                                        <button
+                                          onClick={() => toggleDropdown(`${item.key}-${index}`)}
+                                          onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                              e.preventDefault();
+                                              toggleDropdown(`${item.key}-${index}`);
+                                            }
+                                          }}
+                                          aria-expanded={openDropdowns[`${item.key}-${index}`]}
+                                          aria-haspopup="true"
+                                          className="submenu-item block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                          role="menuitem"
+                                        >
+                                          {subItem.label}
+                                          <ChevronDown className={`ml-1 h-3 w-3 inline transition-transform duration-300 ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} aria-hidden="true" />
+                                        </button>
+                                        {openDropdowns[`${item.key}-${index}`] && (
+                                          <ul 
+                                            className="sub-menu glass-dropdown absolute left-full top-0 ml-2 w-56 rounded-xl z-50 py-2 dropdown-menu-enter-active"
+                                            style={{
+                                              animation: 'fadeInSlideDownLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                              transformOrigin: 'top left',
+                                              transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                            }}
+                                            role="menu"
+                                          >
+                                            {subItem.submenu.map((subSubItem, subIndex) => (
+                                              <li key={subIndex} role="none">
+                                                <a
+                                                  href={subSubItem.href}
+                                                  className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                                  role="menuitem"
+                                                >
+                                                  {subSubItem.label}
+                                                </a>
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <a
+                                        href={subItem.href}
+                                        target={subItem.external ? "_blank" : undefined}
+                                        rel={subItem.external ? "noopener noreferrer" : undefined}
+                                        className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                        role="menuitem"
+                                      >
+                                        {subItem.label}
+                                      </a>
+                                    )}
+                                  </li>
+                                ))}
+                              </ul>
+                            </PortalDropdownContent>
                           )}
                         </>
                       )}
@@ -1055,88 +1119,14 @@ function PageNavbar({ transparent = false }) {
                       {item.isCardDropdown ? (
                         <div className="sub-menu pl-4 mt-2">
                           <div className="grid grid-cols-2 gap-3">
-                            {item.submenu.map((subItem, index) => {
-                              const SubIcon = subItem.icon || Package;
-                              return (
-                                <div
-                                  key={index}
-                                  id={`submenu-produtos-mobile-${index}`}
-                                  tabIndex={0}
-                                  role="button"
-                                  aria-label={`Produto ${subItem.label} `}
-                                  className="product-card rounded-lg overflow-hidden border border-gray-200"
-                                  onClick={() => window.location.href = subItem.href}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                      e.preventDefault();
-                                      window.location.href = subItem.href;
-                                    }
-                                  }}
-                                >
-                                  <figure className="relative" style={{ width: '100%', height: '150px', margin: 0, marginBottom: '8px' }}>
-                                    <img 
-                                      alt={`Produto de destaque ${subItem.label} `}
-                                      loading="lazy"
-                                      width={index === 6 ? 166 : 165}
-                                      height="200"
-                                      decoding="async"
-                                      data-nimg="1"
-                                      className="product-img"
-                                      style={{ color: 'transparent', width: '100%', height: '100%', objectFit: 'cover' }}
-                                      src={subItem.image || 'BANNER-HOME-1.png'}
-                                    />
-                                    <div 
-                                      className="product-img-overlay" 
-                                      style={{ 
-                                        background: 'linear-gradient(0deg, rgb(0, 22, 71) -10%, transparent 45%)',
-                                        borderRadius: '0px 0px 10px 10px',
-                                        bottom: '0px',
-                                        boxSizing: 'border-box',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: '8px',
-                                        height: '100%',
-                                        justifyContent: 'flex-end',
-                                        padding: '20px 10px',
-                                        position: 'absolute',
-                                        transition: 'background-size 0.3s ease-in-out',
-                                        width: '100%',
-                                        margin: '0px',
-                                        textRendering: 'geometricprecision',
-                                        scrollBehavior: 'smooth',
-                                        fontFamily: '"Plus Jakarta Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
-                                        zIndex: 10
-                                      }}
-                                    >
-                                      {subItem.iconImage ? (
-                                        <img 
-                                          alt={`Icone ${subItem.label}`}
-                                          loading="lazy"
-                                          width={index === 1 || index === 2 || index === 3 || index === 4 || index === 5 || index === 6 ? 25 : 24}
-                                          height={index === 3 ? 25 : 24}
-                                          decoding="async"
-                                          data-nimg="1"
-                                          className="product-icon"
-                                          style={{ color: 'transparent' }}
-                                          src={subItem.iconImage}
-                                        />
-                                      ) : (
-                                        <div>
-                                          <SubIcon className="w-5 h-5 text-white drop-shadow-2xl" />
-                                        </div>
-                                      )}
-                                      <p className="product-title" style={{ color: 'white', fontWeight: 'bold', fontSize: '12px', textAlign: 'center', margin: 0 }}>
-                                        {subItem.label}
-                                      </p>
-                                    </div>
-                                  </figure>
-                                  <p className="product-description" style={{ textAlign: 'center' }}>
-                                    {subItem.description}
-                                  </p>
-                                </div>
-                              );
-                            })}
+                            {item.submenu.map((subItem, index) => (
+                              <ProductCard 
+                                key={index} 
+                                subItem={subItem} 
+                                index={index} 
+                                isMobile={true}
+                              />
+                            ))}
                           </div>
                         </div>
                       ) : (

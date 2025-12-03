@@ -52,6 +52,16 @@ const AdminPasswordModal = ({ isOpen, onClose }) => {
   };
 
   return (
+    <>
+      <style>{`
+        .lukos-purple-button {
+          background: radial-gradient(circle at center, #6c2396 0%, #7d3fa3 60%, #8b4db0 100%);
+          transition: all 0.3s ease;
+        }
+        .lukos-purple-button:hover:not(:disabled) {
+          background: radial-gradient(circle at center, #7d3fa3 0%, #8b4db0 60%, #9d5cbf 100%);
+        }
+      `}</style>
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/20 backdrop-blur-md" aria-hidden="true" />
       
@@ -63,8 +73,8 @@ const AdminPasswordModal = ({ isOpen, onClose }) => {
           <div className="relative flex items-center justify-between px-6 py-5">
             <div className="flex items-center gap-3">
               <Lock className="w-5 h-5 text-gray-600" />
-              <Dialog.Title className="text-base font-semibold text-gray-700">
-                Acesso Administrativo
+              <Dialog.Title className="text-lg font-semibold text-[#5a008f]">
+                Acesso Lukos
               </Dialog.Title>
             </div>
             <button
@@ -85,11 +95,11 @@ const AdminPasswordModal = ({ isOpen, onClose }) => {
                 id="admin-username"
                 type="text"
                 {...register('username')}
-                className={`w-full px-4 py-3 bg-white/40 backdrop-blur-sm border rounded-xl text-base transition-all box-border ${
+                className={`w-full px-4 py-3 bg-white/80 backdrop-blur-sm border rounded-xl text-base transition-all box-border ${
                   errors.username 
                     ? 'border-red-200/60 focus:border-red-400/80 focus:ring-2 focus:ring-red-100/50' 
-                    : 'border-gray-200/40 focus:border-gray-400/60 focus:ring-2 focus:ring-gray-100/50'
-                } focus:outline-none disabled:bg-gray-100/40 disabled:cursor-not-allowed placeholder:text-gray-400`}
+                    : 'border-gray-200/60 focus:border-gray-400/80 focus:ring-2 focus:ring-gray-100/50'
+                } focus:outline-none disabled:bg-gray-100/60 disabled:cursor-not-allowed placeholder:text-gray-500 text-gray-800`}
                 placeholder="Digite seu usuário"
                 autoFocus
                 disabled={loading}
@@ -109,11 +119,11 @@ const AdminPasswordModal = ({ isOpen, onClose }) => {
                 id="admin-password"
                 type="password"
                 {...register('password')}
-                className={`w-full px-4 py-3 bg-white/40 backdrop-blur-sm border rounded-xl text-base transition-all box-border ${
+                className={`w-full px-4 py-3 bg-white/80 backdrop-blur-sm border rounded-xl text-base transition-all box-border ${
                   errors.password 
                     ? 'border-red-200/60 focus:border-red-400/80 focus:ring-2 focus:ring-red-100/50' 
-                    : 'border-gray-200/40 focus:border-gray-400/60 focus:ring-2 focus:ring-gray-100/50'
-                } focus:outline-none disabled:bg-gray-100/40 disabled:cursor-not-allowed placeholder:text-gray-400`}
+                    : 'border-gray-200/60 focus:border-gray-400/80 focus:ring-2 focus:ring-gray-100/50'
+                } focus:outline-none disabled:bg-gray-100/60 disabled:cursor-not-allowed placeholder:text-gray-500 text-gray-800`}
                 placeholder="Digite sua senha"
                 disabled={loading}
               />
@@ -142,7 +152,7 @@ const AdminPasswordModal = ({ isOpen, onClose }) => {
               </button>
               <button
                 type="submit"
-                className="px-6 py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-gray-700/90 to-gray-600/90 text-white hover:from-gray-800 hover:to-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-w-[100px] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-gray-400/30 active:translate-y-0 backdrop-blur-sm"
+                className="lukos-purple-button px-6 py-3 rounded-xl text-sm font-semibold text-white disabled:opacity-70 disabled:cursor-not-allowed min-w-[100px] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-200/40 active:translate-y-0 backdrop-blur-sm"
                 disabled={loading}
               >
                 {loading ? 'Entrando...' : 'Entrar'}
@@ -152,6 +162,7 @@ const AdminPasswordModal = ({ isOpen, onClose }) => {
         </Dialog.Panel>
       </div>
     </Dialog>
+    </>
   );
 };
 

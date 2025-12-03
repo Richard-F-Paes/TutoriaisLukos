@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Dialog } from '@headlessui/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send, Bot, User, Search, Video } from 'lucide-react';
 
 export function Chatbot() {
@@ -186,152 +188,245 @@ export function Chatbot() {
   return (
     <>
       {/* Chat Button */}
-      {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full shadow-2xl hover:shadow-blue-500/50 hover:scale-110 transition-all duration-300 flex items-center justify-center z-50 group"
-        >
-          <MessageCircle className="w-7 h-7 group-hover:scale-110 transition-transform" />
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
-        </button>
-      )}
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            whileHover={{ 
+              scale: 1.1,
+              boxShadow: '0 20px 25px -5px rgba(139, 92, 246, 0.5), 0 10px 10px -5px rgba(139, 92, 246, 0.2)'
+            }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsOpen(true)}
+            className="fixed bottom-6 right-6 w-16 h-16 text-white rounded-full shadow-2xl flex items-center justify-center z-50 group"
+            style={{
+              background: 'radial-gradient(circle at center, #6c2396 0%, #7d3fa3 60%, #8b4db0 100%)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'radial-gradient(circle at center, #7d3fa3 0%, #8b4db0 60%, #9d5cbf 100%)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'radial-gradient(circle at center, #6c2396 0%, #7d3fa3 60%, #8b4db0 100%)';
+            }}
+            aria-label="Abrir assistente virtual Luk"
+          >
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            >
+              <MessageCircle className="w-7 h-7" />
+            </motion.div>
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" aria-hidden="true" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Chat Window */}
-      {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[400px] h-[600px] shadow-2xl z-50 flex flex-col overflow-hidden border-2 border-gray-200 rounded-lg bg-white">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                <img src="logo.png" alt="Lukos" className="w-full h-full object-cover bg-white rounded-full" />
-              </div>
-              <div>
-                <div className="font-semibold">Assistente Luk</div>
-                <div className="text-xs text-white/80 flex items-center gap-1">
-                  <span className="w-2 h-2 bg-green-400 rounded-full" />
-                  Online
+      <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm" aria-hidden="true" />
+
+        <div className="fixed inset-0 flex items-end justify-end p-6 pointer-events-none">
+          <Dialog.Panel
+            as={motion.div}
+            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.8, opacity: 0, y: 20 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="w-[400px] h-[600px] shadow-2xl flex flex-col overflow-hidden border-2 border-gray-200 rounded-lg bg-white pointer-events-auto"
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-4 flex items-center justify-between" style={{
+              background: 'radial-gradient(circle at center, #6c2396 0%, #7d3fa3 60%, #8b4db0 100%)'
+            }}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <img src="logo.png" alt="Lukos" className="w-full h-full object-cover bg-white rounded-full" />
+                </div>
+                <div>
+                  <Dialog.Title className="font-semibold">Assistente Luk</Dialog.Title>
+                  <div className="text-xs text-white/80 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-green-400 rounded-full" aria-hidden="true" />
+                    Online
+                  </div>
                 </div>
               </div>
-            </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="w-8 h-8 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex gap-2 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                {message.sender === 'bot' && (
-                  <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center flex-shrink-0">
-                   <img src="logo.png" alt="Lukos" className="w-full h-full object-cover" />
-                  </div>
-                )}
-                <div className="flex flex-col gap-2 max-w-[80%]">
-                  <div
-                    className={`rounded-2xl px-4 py-2 ${
-                      message.sender === 'user'
-                        ? 'bg-blue-600 text-white rounded-br-none'
-                        : 'bg-white text-gray-800 rounded-bl-none shadow-sm'
-                    }`}
-                  >
-                    <p className={`whitespace-pre-line ${
-                      message.sender === 'user' 
-                        ? 'text-white' 
-                        : 'text-gray-800'
-                    }`}>{message.text}</p>
-                  </div>
-                  
-                  {message.type === 'tutorial' && message.tutorials && (
-                    <div className="space-y-2">
-                      {message.tutorials.map((tutorial, idx) => (
-                        <Link
-                          key={idx}
-                          to={`/tutorial/${tutorial.id}`}
-                          className="block bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer border border-gray-200 hover:border-blue-300"
-                        >
-                          <div className="flex items-start gap-2">
-                            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-                              <Video className="w-4 h-4 text-blue-600" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-blue-700 mb-1 font-semibold hover:text-blue-800 transition-colors">
-                                {tutorial.title}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-blue-100 text-blue-700 border-blue-200">
-                                  {tutorial.category}
-                                </span>
-                                <span className="text-xs text-gray-600 font-medium">
-                                  {tutorial.duration}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                {message.sender === 'user' && (
-                  <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                    <User className="w-5 h-5 text-gray-600" />
-                  </div>
-                )}
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Quick Actions */}
-          {messages.length <= 2 && (
-            <div className="p-3 bg-white border-t">
-              <div className="text-xs text-blue-600 font-semibold mb-2">Ações rápidas:</div>
-              <div className="flex gap-2">
-                {quickActions.map((action, idx) => {
-                  const Icon = action.icon;
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => handleQuickAction(action.action)}
-                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 hover:text-blue-800 transition-colors text-xs font-medium"
-                    >
-                      <Icon className="w-3 h-3" />
-                      <span className="hidden sm:inline">{action.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Input */}
-          <div className="p-4 bg-white border-t">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                placeholder="Digite sua mensagem..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder:text-gray-400"
-              />
               <button
-                onClick={handleSendMessage}
-                className="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
+                onClick={() => setIsOpen(false)}
+                className="w-8 h-8 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors"
+                aria-label="Fechar chat"
               >
-                <Send className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
-          </div>
+
+            {/* Messages */}
+            <div 
+              className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50"
+              role="log"
+              aria-live="polite"
+              aria-atomic="false"
+              aria-label="Mensagens do chat"
+            >
+              <AnimatePresence initial={false}>
+                {messages.map((message, index) => (
+                  <motion.div
+                    key={message.id}
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.3, delay: index === messages.length - 1 ? 0.1 : 0 }}
+                    className={`flex gap-2 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    {message.sender === 'bot' && (
+                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                        <img src="logo.png" alt="" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="flex flex-col gap-2 max-w-[80%]">
+                      <div
+                        className={`rounded-2xl px-4 py-2 ${
+                          message.sender === 'user'
+                            ? 'bg-purple-600 text-white rounded-br-none'
+                            : 'bg-white text-gray-800 rounded-bl-none shadow-sm'
+                        }`}
+                        style={message.sender === 'user' ? {
+                          background: 'radial-gradient(circle at center, #6c2396 0%, #7d3fa3 60%, #8b4db0 100%)'
+                        } : {}}
+                      >
+                        <p className={`whitespace-pre-line ${
+                          message.sender === 'user' 
+                            ? 'text-white' 
+                            : 'text-gray-800'
+                        }`}>{message.text}</p>
+                      </div>
+                      
+                      {message.type === 'tutorial' && message.tutorials && (
+                        <motion.div 
+                          className="space-y-2"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          transition={{ delay: 0.2 }}
+                        >
+                          {message.tutorials.map((tutorial, idx) => (
+                            <motion.div
+                              key={idx}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.1 * idx }}
+                              whileHover={{ scale: 1.02 }}
+                            >
+                              <Link
+                                to={`/tutorial/${tutorial.id}`}
+                                className="block bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition-all cursor-pointer border border-gray-200 hover:border-purple-300"
+                              >
+                                <div className="flex items-start gap-2">
+                                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <Video className="w-4 h-4 text-purple-600" aria-hidden="true" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="text-purple-700 mb-1 font-semibold hover:text-purple-800 transition-colors">
+                                      {tutorial.title}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-purple-100 text-purple-700 border-purple-200">
+                                        {tutorial.category}
+                                      </span>
+                                      <span className="text-xs text-gray-600 font-medium">
+                                        {tutorial.duration}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </motion.div>
+                      )}
+                    </div>
+                    {message.sender === 'user' && (
+                      <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                        <User className="w-5 h-5 text-gray-600" />
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Quick Actions */}
+            <AnimatePresence>
+              {messages.length <= 2 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="p-3 bg-white border-t overflow-hidden"
+                >
+                  <div className="text-xs text-purple-600 font-semibold mb-2">Ações rápidas:</div>
+                  <div className="flex gap-2">
+                    {quickActions.map((action, idx) => {
+                      const Icon = action.icon;
+                      return (
+                        <motion.button
+                          key={idx}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 * idx }}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handleQuickAction(action.action)}
+                          className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 hover:text-purple-800 transition-colors text-xs font-medium"
+                          aria-label={action.label}
+                        >
+                          <Icon className="w-3 h-3" aria-hidden="true" />
+                          <span className="hidden sm:inline">{action.label}</span>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Input */}
+            <div className="p-4 bg-white border-t">
+              <div className="flex gap-2">
+                <label htmlFor="chat-input" className="sr-only">
+                  Digite sua mensagem
+                </label>
+                <input
+                  id="chat-input"
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
+                  placeholder="Digite sua mensagem..."
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800 placeholder:text-gray-400"
+                  aria-label="Campo de mensagem do chat"
+                />
+                <button
+                  onClick={handleSendMessage}
+                  className="w-10 h-10 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
+                  style={{
+                    background: 'radial-gradient(circle at center, #6c2396 0%, #7d3fa3 60%, #8b4db0 100%)'
+                  }}
+                  aria-label="Enviar mensagem"
+                  disabled={!inputValue.trim()}
+                >
+                  <Send className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </Dialog.Panel>
         </div>
-      )}
+      </Dialog>
     </>
   );
 }

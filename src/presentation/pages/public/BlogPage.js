@@ -66,7 +66,7 @@ function BlogPage() {
   
   // Configurações do vídeo
   const videoImageUrl = 'back.png';
-  const videoId = 'W9LN83G4DCE'; // Substituir pelo ID do vídeo do YouTube da LUKOS
+  const videoId = 'F_itCCQd0nk'; // ID do vídeo do YouTube da LUKOS
 
 
 
@@ -653,6 +653,49 @@ function BlogPage() {
 
 
 
+          <section className="relative -mt-[90px] flex items-center justify-center">
+
+              <img 
+
+                src="https://images.pexels.com/photos/6803551/pexels-photo-6803551.jpeg" 
+
+                alt="Inteligência Artificial" 
+
+                className="w-full h-[500px] object-cover shadow-lg brightness-90 relative " 
+
+              />
+
+               <div className="absolute inset-0 bg-black/70 flex items-center justify-center gap-8 px-8 md:px-16 w-full h-full">
+
+                {/* Imagem LUKIA à esquerda */}
+
+                <div className="flex-shrink-0 hidden md:block">
+
+                  <img src="https://lukos.com.br/wp-content/uploads/2025/01/business-man-happy-with-phone-reading-email-notification-laughing-funny-text-message-employee-smile-person-with-smartphone-social-media-video-meme-with-studio-background-1.png" alt="LUKIA" className="w-full max-w-[420px] h-auto object-contain opacity-100 relative" />
+                
+                </div>
+
+                
+
+                {/* Texto à direita */}
+
+                <div className="flex-1 flex flex-col items-start justify-center gap-4 max-w-3xl">
+
+                  <img 
+                    src="/DEPOIMENTOS.png"
+                    alt="Depoimento" 
+                    className="w-full max-w-[650px] h-auto object-contain opacity-100 relative" 
+                  />
+          </div>
+
+            </div>
+
+      </section>
+
+
+
+
+
           <section className="relative   flex items-center justify-center bg-white w-full h-[500px] -mt-[50px] rounded-3xl shadow-lg ">
             <div className="w-[1200px] h-[500px] -mt-[50px]  text-black flex items-center justify-center flex-col">
         
@@ -722,15 +765,14 @@ function BlogPage() {
 
             </div>
             
+              
+              
+            </section>
             
 
-          </section>
 
 
-
-
-
-          <section className="relative -mt-[90px] flex items-center justify-center">
+          <section className="relative   flex items-center justify-center bg-white w-full h-[500px] -mt-[50px] rounded-3xl shadow-lg ">
 
               <img 
 
@@ -769,9 +811,6 @@ function BlogPage() {
 
       </section>
 
-          
-
-          
 
 
 
@@ -882,29 +921,38 @@ function BlogPage() {
 
 
       {/* Espaçamento */}
-      <div className="h-[700px] bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[200px] bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a] pt-[50px]">  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-              Transforme a gestão do seu posto de combustível
+      <div 
+        className="h-[700px] relative bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]"
+        style={{
+          backgroundImage: 'url(https://i.pinimg.com/1200x/ab/d9/c4/abd9c48d4eb80e27af7efe3042853e6d.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Overlay com gradiente para melhorar legibilidade */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#690093]/80 via-[#5a008f]/80 to-[#4a007a]/80"></div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[50px]">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 text-center">
+            Transforme a gestão do seu posto de combustível
+          </h2>
 
-            </h2>
-            
-            
-
-            {/* Vídeo */}
-            <div className="mt-12 max-w-4xl mx-auto group">
-              <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
-                <iframe
-                  className="absolute top-0 left-0 w-full h-full rounded-3xl"
-                  src="https://www.youtube.com/embed/W9LN83G4DCE"
-                  title="Vídeo LUKOS"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
+          {/* Vídeo */}
+          <div className="mt-12 max-w-4xl mx-auto group">
+            <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
+              <iframe
+                className="absolute top-0 left-0 w-full h-full rounded-3xl"
+                src="https://www.youtube.com/embed/F_itCCQd0nk"
+                title="Vídeo LUKOS"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
             </div>
-            </div> </div>
-
           </div>
+        </div>
+      </div>
 
 
       

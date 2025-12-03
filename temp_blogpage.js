@@ -375,22 +375,9 @@ function BlogPage() {
       {/* End Features */}
         
       {/* Seção Problemas */}
-      <div 
-        id="problemas" 
-        className="py-16 md:py-24 relative"
-        style={{
-          backgroundImage: 'url(https://i.pinimg.com/736x/17/4f/cb/174fcba56e292f6ed97658096b407b44.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          minHeight: '500px'
-        }}
-      >
-        {/* Overlay para melhorar legibilidade */}
-        <div className="absolute inset-0 bg-white/80"></div>
-        
+      <div id="problemas" className="py-16 md:py-24 bg-white ]">
         <div 
-          className="flex items-start relative z-10 border-0 m-0 p-0 align-baseline box-border shadow-lg "
+          className="flex items-start relative border-0 m-0 p-0 align-baseline box-border shadow-lg "
           style={{
             display: 'flex',
             alignItems: 'flex-start',
@@ -418,6 +405,59 @@ function BlogPage() {
             boxSizing: 'inherit'
           }}
         >
+          <div 
+            className="border-0 m-0 p-0 align-baseline box-border"
+            style={{
+              width: '42%',
+              border: '0px',
+              fontStyle: 'inherit',
+              fontVariant: 'inherit',
+              fontWeight: 'inherit',
+              fontStretch: 'inherit',
+              lineHeight: 'inherit',
+              fontFamily: 'inherit',
+              fontOpticalSizing: 'inherit',
+              fontSizeAdjust: 'inherit',
+              fontKerning: 'inherit',
+              fontFeatureSettings: 'inherit',
+              fontVariationSettings: 'inherit',
+              fontSize: '100%',
+              margin: '0px',
+
+              verticalAlign: 'baseline',
+              boxSizing: 'inherit'
+            }}
+          >
+            <img 
+              decoding="async" 
+              src="https://mistraltecnologia.com.br/wp-content/themes/mistral-tecnologia/tecnologia/cloud/mistral-cloud-01.webp" 
+              alt="Cloud" 
+              className="h-[500px]  border-4 border-gray-300 rounded-lg shadow-lg m-0 p-0 bg-blackalign-baseline block box-border "
+              style={{
+                marginLeft: '-0.5vw',
+                height: 'auto',
+                maxWidth: '60%',
+                border: '0px',
+                fontStyle: 'inherit',
+                fontVariant: 'inherit',
+                fontWeight: 'inherit',
+                fontStretch: 'inherit',
+                lineHeight: 'inherit',
+                fontFamily: 'inherit',
+                fontOpticalSizing: 'inherit',
+                fontSizeAdjust: 'inherit',
+                fontKerning: 'inherit',
+                fontFeatureSettings: 'inherit',
+                fontVariationSettings: 'inherit',
+                fontSize: '100%',
+                margin: '0px',
+                padding: '0px',
+                verticalAlign: 'baseline',
+                display: 'block',
+                boxSizing: 'inherit'
+              }}
+            />
+          </div>
           <div className="w-[700px] h-[300px] relative text-problemas flex items-center justify-center flex-col mt-[100px]" style={{ marginLeft: '-3vw' }}>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#c44cf4] leading-tight text-center">
               Qual a diferença entre a LUKOS 
@@ -430,22 +470,10 @@ function BlogPage() {
       </div>
 
       {/* Espaçamento */}
-      <div 
-        className="h-[700px] relative bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]"
-        style={{
-          backgroundImage: 'url(https://i.pinimg.com/1200x/ab/d9/c4/abd9c48d4eb80e27af7efe3042853e6d.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
-        {/* Overlay com gradiente para melhorar legibilidade */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#690093]/80 via-[#5a008f]/80 to-[#4a007a]/80"></div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[50px]">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 text-center">
-            Transforme a gestão do seu posto de combustível
-          </h2> 
+      <div className="h-[700px] bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[200px] bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a] pt-[50px]">  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+              Transforme a gestão do seu posto de combustível
+            </h2> 
             
             {/* Vídeo */}
             <div className="mt-12 max-w-4xl mx-auto group">
@@ -459,8 +487,8 @@ function BlogPage() {
                   allowFullScreen
                 ></iframe>
               </div>
-            </div>
-        </div>
+            </div> </div>
+
       </div>
 
       

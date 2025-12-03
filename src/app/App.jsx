@@ -57,6 +57,7 @@ import AppsPage from '../presentation/pages/public/AppsPage';
 import VerPage from '../presentation/pages/public/VerPage';
 import ApresentacaoSistemasPage from '../presentation/pages/public/ApresentacaoSistemasPage';
 import ERPPage from '../presentation/pages/public/ERPPage';
+import SobreNos from '../presentation/pages/public/SobreNos';
 
 // Importar páginas administrativas
 import EditorPage from '../presentation/pages/admin/EditorPage';
@@ -109,6 +110,7 @@ function AppContent() {
                 {/* Rotas públicas principais */}
                 <Route path="/" element={<BlogPage />} />
                 <Route path="/blog" element={<BlogPostsPage />} />
+                <Route path="/sobre-nos" element={<SobreNos />} />
                 
                 {/* Rotas dos Tutoriais Lukos */}
                 <Route path="/tutoriais" element={<TutorialsUnified />} />

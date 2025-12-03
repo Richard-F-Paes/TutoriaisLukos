@@ -2,32 +2,42 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Menu, X, ChevronDown, BookOpen, Brain, Info, Briefcase, Phone, Package, BarChart3, ShoppingCart, Wallet, Truck, Store, Link as LinkIcon, Globe, Home, FileText, LayoutDashboard, ShoppingBag, Warehouse, CreditCard, Fuel } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { motion } from 'motion/react';
 
-// Componente reutilizável para ProductCard (elimina duplicação DRY)
+// Componente reutilizável para ProductCard com estilo Apple Cards
 const ProductCard = ({ subItem, index, isMobile = false }) => {
   const SubIcon = subItem.icon || Package;
-  const figureHeight = isMobile ? '150px' : '100px';
-  const titleFontSize = isMobile ? '12px' : '14px';
-  const iconSize = isMobile ? 'w-5 h-5' : 'w-6 h-6';
-  const iconWidth = isMobile 
-    ? (index === 1 || index === 2 || index === 3 || index === 4 || index === 5 || index === 6 ? 25 : 24)
-    : (index === 0 ? 24 : index === 3 ? 25 : index === 7 ? 24 : 25);
-  const imageWidth = isMobile ? (index === 6 ? 166 : 165) : 280;
-  const imageHeight = isMobile ? 200 : 100;
   const cardId = isMobile ? `submenu-produtos-mobile-${index}` : `submenu-produtos-${index}`;
   const cardRole = isMobile ? 'button' : 'menuitem';
-  const marginBottom = isMobile ? '8px' : '6px';
+  
+  // Tamanhos responsivos para mobile e desktop - ajustados para melhor visualização
+  const cardHeight = isMobile ? 'h-[20rem]' : 'h-[24rem]';
+  const cardWidth = isMobile ? 'w-[14rem]' : 'w-[18rem]';
+  const mdHeight = isMobile ? 'md:h-[24rem]' : 'md:h-[28rem]';
+  const mdWidth = isMobile ? 'md:w-[16rem]' : 'md:w-[20rem]';
 
   return (
-    <div
+    <motion.button
       id={cardId}
       tabIndex={0}
       role={cardRole}
       aria-label={`Produto ${subItem.label}`}
-      className={`product-card rounded-lg overflow-hidden border ${isMobile ? 'border-gray-200' : 'border-gray-200/30 hover:border-transparent hover:shadow-2xl'} transition-all duration-300`}
-      style={!isMobile ? {
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-      } : {}}
+      className={`relative z-10 flex ${cardHeight} ${cardWidth} ${mdHeight} ${mdWidth} flex-col items-start justify-start overflow-hidden rounded-3xl bg-gray-100 dark:bg-neutral-900 cursor-pointer`}
+      initial={{
+        opacity: 0,
+        y: 20,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        transition: {
+          duration: 0.5,
+          delay: 0.1 * index,
+          ease: "easeOut",
+        },
+      }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       onClick={() => window.location.href = subItem.href}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -35,80 +45,45 @@ const ProductCard = ({ subItem, index, isMobile = false }) => {
           window.location.href = subItem.href;
         }
       }}
-      onFocus={(e) => {
-        if (!isMobile) {
-          e.currentTarget.style.outline = '2px solid #00D4FF';
-          e.currentTarget.style.outlineOffset = '2px';
-        }
-      }}
-      onBlur={(e) => {
-        if (!isMobile) {
-          e.currentTarget.style.outline = 'none';
-        }
-      }}
     >
-      <figure className="relative" style={{ width: '100%', height: figureHeight, margin: 0, marginBottom }}>
-        <img 
-          alt={`Produto de destaque ${subItem.label} `}
-          loading="lazy"
-          width={imageWidth}
-          height={imageHeight}
-          decoding="async"
-          data-nimg="1"
-          className="product-img"
-          style={{ color: 'transparent', width: '100%', height: '100%', objectFit: 'cover' }}
-          src={subItem.image || 'BANNER-HOME-1.png'}
-        />
-        <div 
-          className="product-img-overlay" 
-          style={{ 
-            background: 'linear-gradient(0deg, rgb(0, 22, 71) -10%, transparent 45%)',
-            borderRadius: '0px 0px 10px 10px',
-            bottom: '0px',
-            boxSizing: 'border-box',
-            cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            height: '100%',
-            justifyContent: 'flex-end',
-            padding: '20px 10px',
-            position: 'absolute',
-            transition: 'background-size 0.3s ease-in-out',
-            width: '100%',
-            margin: '0px',
-            textRendering: 'geometricprecision',
-            scrollBehavior: 'smooth',
-            fontFamily: '"Plus Jakarta Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
-            zIndex: 10
-          }}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+      <div className="relative z-40 p-6 m-4 w-full m-12">
+        <motion.p
+          className="text-left font-sans text-xs font-medium text-white md:text-sm mb-2"
         >
-          {subItem.iconImage ? (
-            <img 
-              alt={`Icone ${subItem.label}`}
-              loading="lazy"
-              width={iconWidth}
-              height={index === 3 ? 25 : 24}
-              decoding="async"
-              data-nimg="1"
-              className="product-icon"
-              style={{ color: 'transparent' }}
-              src={subItem.iconImage}
-            />
-          ) : (
-            <div>
-              <SubIcon className={`${iconSize} text-white drop-shadow-2xl`} />
-            </div>
-          )}
-          <p className="product-title" style={{ color: 'white', fontWeight: 'bold', fontSize: titleFontSize, textAlign: 'center', margin: 0 }}>
-            {subItem.label}
-          </p>
-        </div>
-      </figure>
-      <p className="product-description" style={{ textAlign: 'center' }}>
-        {subItem.description}
-      </p>
-    </div>
+          {subItem.label}
+        </motion.p>
+        <motion.p
+          className="mt-2 max-w-xs text-left font-sans text-lg font-semibold [text-wrap:balance] text-white md:text-2xl mb-4"
+        >
+          {subItem.description || subItem.label}
+        </motion.p>
+        {subItem.iconImage ? (
+          <img 
+            alt={`Icone ${subItem.label}`}
+            loading="lazy"
+            width="32"
+            height="32"
+            decoding="async"
+            className="mt-2"
+            style={{ color: 'transparent', filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))' }}
+            src={subItem.iconImage}
+          />
+        ) : (
+          <div className="mt-2">
+            <SubIcon className="w-8 h-8 text-white drop-shadow-2xl" />
+          </div>
+        )}
+      </div>
+      <img
+        src={subItem.image || 'BANNER-HOME-1.png'}
+        alt={`Produto de destaque ${subItem.label}`}
+        className="absolute inset-0 z-10 object-cover w-full h-full transition duration-300"
+        loading="lazy"
+        decoding="async"
+        style={{ color: 'transparent' }}
+      />
+    </motion.button>
   );
 };
 
@@ -713,39 +688,96 @@ function PageNavbar({ transparent = false }) {
         .sub-menu.glass-dropdown .products-grid-container {
           max-width: 100%;
           padding: 0;
+          margin: 24px;
         }
 
-        /* CSS Grid Container para produtos - Layout responsivo com quebra automática */
+        /* CSS Flex Container para produtos - Layout horizontal sem quebra */
         .products-grid-container {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
           gap: 0.75rem;
           width: 100%;
           box-sizing: border-box;
+          overflow-x: auto;
+          overflow-y: visible;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
         }
 
-        /* Desktop: 4 cards por linha */
+        .products-grid-container::-webkit-scrollbar {
+          height: 6px;
+        }
+
+        .products-grid-container::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        .products-grid-container::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 3px;
+        }
+
+        .products-grid-container::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (min-width: 641px) and (max-width: 768px) {
+          .products-grid-container {
+            gap: 0.625rem;
+          }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .products-grid-container {
+            gap: 0.75rem;
+          }
+        }
+
+        @media (min-width: 1025px) and (max-width: 1280px) {
+          .products-grid-container {
+            gap: 0.75rem;
+          }
+        }
+
+        @media (min-width: 1281px) {
+          .products-grid-container {
+            gap: 0.875rem;
+          }
+        }
+
+        /* Estilos para cards estilo Apple Cards */
+        .products-grid-container button {
+          flex-shrink: 0;
+          flex-grow: 0;
+          min-width: 14rem;
+          width: 14rem;
+          height: 20rem;
+        }
+
+        @media (min-width: 768px) {
+          .products-grid-container button {
+            min-width: 16rem;
+            width: 16rem;
+            height: 24rem;
+          }
+        }
+
         @media (min-width: 1024px) {
-          .products-grid-container {
-            grid-template-columns: repeat(4, 1fr);
+          .products-grid-container button {
+            min-width: 18rem;
+            width: 18rem;
+            height: 28rem;
           }
         }
 
-        /* Tablet: 3 cards por linha */
-        @media (max-width: 1023px) and (min-width: 768px) {
-          .products-grid-container {
-            grid-template-columns: repeat(3, 1fr);
+        @media (min-width: 1280px) {
+          .products-grid-container button {
+            min-width: 20rem;
+            width: 20rem;
+            height: 28rem;
           }
         }
-
-        /* Mobile: 2 cards por linha */
-        @media (max-width: 767px) {
-          .products-grid-container {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
-          }
-        }
-
         /* Smooth scroll behavior */
         html {
           scroll-behavior: smooth;
@@ -1131,12 +1163,12 @@ function PageNavbar({ transparent = false }) {
                         </div>
                       ) : (
                         <ul className="sub-menu pl-4 space-y-2 mt-2" role="menu">
-                          {item.submenu.map((subItem, index) => (
+                      {item.submenu.map((subItem, index) => (
                             <li key={index} className="menu-item" role="none">
-                              {subItem.hasSubmenu ? (
-                                <div>
-                                  <button
-                                    onClick={() => toggleDropdown(`${item.key}-${index}`)}
+                          {subItem.hasSubmenu ? (
+                            <div>
+                              <button
+                                onClick={() => toggleDropdown(`${item.key}-${index}`)}
                                     onKeyDown={(e) => {
                                       if (e.key === 'Enter' || e.key === ' ') {
                                         e.preventDefault();
@@ -1147,40 +1179,40 @@ function PageNavbar({ transparent = false }) {
                                     aria-haspopup="true"
                                     className="submenu-item w-full text-left flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:text-[#00D4FF] transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
                                     role="menuitem"
-                                  >
-                                    {subItem.label}
+                              >
+                                {subItem.label}
                                     <ChevronDown className={`h-3 w-3 transition-transform duration-300 ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} aria-hidden="true" />
-                                  </button>
-                                  {openDropdowns[`${item.key}-${index}`] && (
+                              </button>
+                              {openDropdowns[`${item.key}-${index}`] && (
                                     <ul className="sub-menu pl-4 space-y-2 mt-2" role="menu">
-                                      {subItem.submenu.map((subSubItem, subIndex) => (
+                                  {subItem.submenu.map((subSubItem, subIndex) => (
                                         <li key={subIndex} role="none">
-                                          <a
-                                            href={subSubItem.href}
+                                      <a
+                                        href={subSubItem.href}
                                             className="submenu-item block px-4 py-2.5 text-sm text-gray-600 hover:text-[#00D4FF] transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
                                             role="menuitem"
-                                          >
-                                            {subSubItem.label}
-                                          </a>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  )}
-                                </div>
-                              ) : (
-                                <a
-                                  href={subItem.href}
-                                  target={subItem.external ? "_blank" : undefined}
-                                  rel={subItem.external ? "noopener noreferrer" : undefined}
+                                      >
+                                        {subSubItem.label}
+                                      </a>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          ) : (
+                            <a
+                              href={subItem.href}
+                              target={subItem.external ? "_blank" : undefined}
+                              rel={subItem.external ? "noopener noreferrer" : undefined}
                                   className="submenu-item block px-4 py-2.5 text-sm text-gray-600 hover:text-[#00D4FF] transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
                                   role="menuitem"
-                                >
-                                  {subItem.label}
-                                </a>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
+                            >
+                              {subItem.label}
+                            </a>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
                       )}
                     </>
                   )}
@@ -1195,8 +1227,8 @@ function PageNavbar({ transparent = false }) {
                 className="btn btn-sm btn-blue w-full px-5 py-3 bg-gradient-to-br from-green-500 via-green-500 to-purple-100/40 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:via-green-600 hover:to-purple-200/50 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 aria-label="Ir para página de contato"
               >
-                Contato
-              </button>
+              Contato
+            </button>
             </a>
 
             <div className="btn-group dropdown dropdown-container relative">

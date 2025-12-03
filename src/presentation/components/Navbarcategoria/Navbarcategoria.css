@@ -541,7 +541,7 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid rgba(212, 179, 255, 0.3);
     flex-shrink: 0;
-    color: #5a008f;
+    color: white;
     background: rgba(212, 179, 255, 0.1);
     position: relative;
     overflow: hidden;
@@ -564,7 +564,7 @@
 
 /* Hover dos botões */
 .category-nav-link:hover {
-    color: #5a008f;
+    color: white;
     background: rgba(212, 179, 255, 0.2);
     transform: translateY(-2px) scale(1.03);
     box-shadow: 
@@ -580,7 +580,7 @@
 
 /* Estado ativo dos botões */
 .category-nav-link.active {
-    color: #5a008f;
+    color: white;
     background: rgba(212, 179, 255, 0.25);
     box-shadow: 
         0 4px 12px rgba(212, 179, 255, 0.4),
@@ -603,7 +603,7 @@
     border-radius: 12px;
     font-size: 0.875rem;
     font-weight: 600;
-    color: #5a008f;
+    color: white;
     background: rgba(212, 179, 255, 0.1);
     border: 1px solid rgba(212, 179, 255, 0.3);
     cursor: pointer;
@@ -629,7 +629,7 @@
 }
 
 .category-dropdown-button:hover {
-    color: #5a008f;
+    color: white;
     background: rgba(212, 179, 255, 0.2);
     transform: translateY(-2px) scale(1.03);
     box-shadow: 
@@ -677,7 +677,7 @@
 .category-dropdown-icon {
     width: 20px;
     height: 20px;
-    color: #5a008f;
+    color: white;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform-origin: center;
 }
@@ -687,7 +687,7 @@
 }
 
 .category-dropdown-button:hover .category-dropdown-icon {
-    color: #6c2396;
+    color: white;
 }
 
 .category-dropdown-button:active .category-dropdown-icon {

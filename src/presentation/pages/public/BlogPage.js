@@ -282,19 +282,17 @@ function BlogPage() {
                   </svg>
                 </a>
               </div>
-               <div className="absolute inset-0 bg-black/70 flex items-center justify-center gap-8 px-8 md:px-16 w-full h-full">
+               <div className="absolute inset-0 bg-black/70 flex items-center justify-center gap-8 px-8 md:px-16 w-full h-full rounded-lg border-4 border-white/20">
                 {/* Imagem LUKIA à esquerda */}
                 <div className="flex-shrink-0 hidden md:block">
                   <img src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0885-1.png" alt="LUKIA" className="w-full max-w-[500px] h-auto object-contain opacity-100 relative" />
                 </div>
                 
                 {/* Texto à direita */}
-                <div className="flex-1 flex flex-col items-center  justify-center gap-4 w-[500px] h-[500px]">
+                <div className="flex-1 flex flex-col items-center justify-center gap-4 w-[500px] h-[500px]">
                   <h2 className="text-white text-4xl md:text-6xl font-bold text-left drop-shadow-lg">Conheça mais sobre a LUKOS</h2>
                   <p className="text-white/90 text-lg md:text-xl text-left leading-relaxed drop-shadow-md">
                   Com mais de 10 anos de experiência, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência com soluções completas e personalizadas. Nosso ERP eficiente é a escolha de centenas de empresas, otimizando milhões de transações mensais com segurança e precisão.
-
-
                   </p>
                 </div>
               </div>
@@ -306,44 +304,32 @@ function BlogPage() {
             
 
 
-          <section className="relative   flex items-center justify-center bg-white w-full h-[500px] -mt-[50px] rounded-3xl shadow-lg ">
-            <div className="w-[1200px] h-[500px] -mt-[50px]  text-black flex items-center justify-center flex-col">
-        
-          <div className="flex items-center justify-center mt-2 h-[400px] w-full">
-          {/* Conteúdo centralizado */}
-          <div className="h-full w-full md:w-1/2 space-y-6 flex items-center justify-center flex-col mx-auto mb-[100px]">
-            {/* Div interna com flex */}
-            <div className="w-1/2 flex flex-col md:flex-row items-center gap-12">
-              {/* Conteúdo da div interna */}
+          <section className="relative flex items-center justify-center bg-white w-full h-[500px] -mt-[50px] rounded-3xl shadow-lg">
+            <div className="w-[1200px] h-[500px] -mt-[50px] text-black flex items-center justify-center flex-col">
+              <div className="flex items-center justify-center mt-2 h-[400px] w-full">
+                {/* Conteúdo centralizado */}
+                <div className="h-full w-full md:w-1/2 space-y-6 flex items-center justify-center flex-col mx-auto mb-[100px]">
+                  {/* Título */}
+                  <h2 className="text-4xl md:text-5xl font-bold text-gray-700 leading-tight text-start">
+                    Seu posto automatizado por <span className="text-[#c44cf4]">IA</span>
+                  </h2>
+
+                  {/* Descrição */}
+                  <p className="text-lg text-gray-600 leading-relaxed text-start">
+                    Seu posto mais eficiente com IA: automação, redução de custos e decisões mais rápidas.
+                  </p>
+                </div>
+
+                {/* Imagem à direita */}
+                <div className="w-[800px] h-[400px] md:w-[300px] flex items-center justify-center relative group">
+                  <img 
+                    src="IA.png" 
+                    alt="Treinamentos CS" 
+                    className="w-full h-[400px] object-cover ml-[-140px] ml-[-80px] flex items-center justify-center mb-[50px]" 
+                  />
+                </div>
+              </div>
             </div>
-
-            {/* Label pequeno */}
-          
-
-            {/* Título */}
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-700 leading-tight text-start ">
-            Seu posto automatizado por <span className="text-[#c44cf4]">IA</span>
-            </h2>
-
-            {/* Descrição */}
-            <p className="text-lg text-gray-600 leading-relaxed text-start">
-            Seu posto mais eficiente com IA: automação, redução de custos e decisões mais rápidas.
-            </p>
-
-           
-          </div>
-
-          {/* Imagem à direita */}
-          <div className="w-[800px] h-[400px] md:w-[300px] flex items-center justify-center relative group">
-            <img 
-              src="IA.png" 
-              alt="Treinamentos CS" 
-              className="w-full h-[400px] object-cover ml-[-140px] ml-[-80px] flex items-center justify-center mb-[50px]" 
-            />
-          </div>
-        </div>
-            </div>
-            
           </section>
 
 
@@ -377,54 +363,31 @@ function BlogPage() {
       {/* Seção Problemas */}
       <div 
         id="problemas" 
-        className="py-16 md:py-24 relative"
-        style={{
-          backgroundImage: 'url(https://i.pinimg.com/736x/17/4f/cb/174fcba56e292f6ed97658096b407b44.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          minHeight: '500px'
-        }}
+        className="relative flex items-center justify-center bg-white w-full h-[500px] rounded-3xl shadow-lg"
       >
-        {/* Overlay para melhorar legibilidade */}
-        <div className="absolute inset-0 bg-white/80"></div>
-        
-        <div 
-          className="flex items-start relative z-10 border-0 m-0 p-0 align-baseline box-border shadow-lg "
-          style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-            gap: '0',
-            position: 'relative',
-            width: '90%',
-            maxWidth: '2000px',
-            margin: '0px auto',
-            border: '0px',
-            fontStyle: 'inherit',
-            fontVariant: 'inherit',
-            fontWeight: 'inherit',
-            fontStretch: 'inherit',
-            lineHeight: 'inherit',
-            fontFamily: 'inherit',
-            fontOpticalSizing: 'inherit',
-            fontSizeAdjust: 'inherit',
-            fontKerning: 'inherit',
-            fontFeatureSettings: 'inherit',
-            fontVariationSettings: 'inherit',
-            fontSize: '100%',
-            padding: '0px',
-            verticalAlign: 'baseline',
-            boxSizing: 'inherit'
-          }}
-        >
-          <div className="w-[700px] h-[300px] relative text-problemas flex items-center justify-center flex-col mt-[100px]" style={{ marginLeft: '-3vw' }}>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#c44cf4] leading-tight text-center">
-              Qual a diferença entre a LUKOS 
-            </h2>
-            <p className="text-lg md:text-xl text-gray-700 leading-relaxed text-center">
-              O LUKOS ERP e PDV é uma solução completa de gestão empresarial para postos de combustível.
-            </p>
+        <div className="w-[1200px] h-[500px] -mt-[50px] text-black flex items-center justify-center flex-col relative z-10">
+          <div className="flex items-center justify-center mt-2 h-[400px] w-full">
+            {/* Conteúdo centralizado */}
+            <div className="h-full w-full md:w-1/2 space-y-6 flex items-center justify-center flex-col mx-auto mb-[100px]">
+              {/* Título */}
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-700 leading-tight text-start">
+                Qual a diferença entre a <span className="text-[#c44cf4]">LUKOS</span>
+              </h2>
+
+              {/* Descrição */}
+              <p className="text-lg text-gray-600 leading-relaxed text-start">
+                O LUKOS ERP e PDV é uma solução completa de gestão empresarial para postos de combustível.
+              </p>
+            </div>
+
+            {/* Imagem à direita */}
+            <div className="w-full h-[500px] md:w-[400px] flex items-center justify-center relative group">
+              <img 
+                src="lukos.jpg" 
+                alt="LUKOS ERP e PDV" 
+                className="w-full h-[400px] object-cover ml-[-140px] ml-[-80px] flex items-center justify-center mb-[50px]" 
+              />
+            </div>
           </div>
         </div>
       </div>

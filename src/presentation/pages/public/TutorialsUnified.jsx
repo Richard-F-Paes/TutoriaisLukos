@@ -16,95 +16,125 @@ import {
   PlayCircle,
   ShoppingCart
 } from 'lucide-react';
-import { getAllTutorials, getCategories } from '../../../shared/data/__mocks__/lukosTutorials.js';
+import { useTutorials } from '../../../hooks/useTutorials.js';
+import { useCategories } from '../../../hooks/useCategories.js';
 
 // Componentes da HomePage original
 import { Chatbot } from '../../components/custom/Chatbot/Chatbot';
 
 const TutorialsUnified = () => {
-  const tutorials = getAllTutorials();
-  const categories = getCategories();
+  const { data: tutorialsData, isLoading: tutorialsLoading } = useTutorials();
+  const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
+  
+  const tutorials = tutorialsData?.data || [];
+  const categories = categoriesData?.data || [];
+  
+  const isLoading = tutorialsLoading || categoriesLoading;
+
+  // Mapear categorias da API para o formato esperado
+  // Se não houver categorias na API, usar categorias padrão
+  const getTutorialCountByCategory = (categoryName) => {
+    if (!tutorials || tutorials.length === 0) return 0;
+    // Buscar por CategoryId ou CategoryName dependendo da estrutura da API
+    return tutorials.filter(t => {
+      const catName = t.Category?.Name || t.CategoryName || t.category;
+      return catName === categoryName || catName?.toLowerCase() === categoryName.toLowerCase();
+    }).length;
+  };
 
   // Categorias de tutoriais do componente Tutorials.jsx
-  const tutorialCategories = [
-    {
-      id: "Retaguarda",
-      title: "Retaguarda",
-      description: "Controle completo de estoque, produtos e relatórios",
-      icon: FileText,
-      color: "blue",
-      tutorials: tutorials.filter(t => t.category === 'Retaguarda').length,
-      duration: "45 min",
-      image: "https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=800",
-      link: "/retaguarda-tutoriais"
-    },
-    {
-      id: "PDV",
-      title: "PDV",
-      description: "Controle completo de vendas, pagamentos e relatórios",
-      icon: FileText,
-      color: "indigo",
-      tutorials: tutorials.filter(t => t.category === 'PDV').length,
-      duration: "1h 20min",
-      image: "https://images.unsplash.com/photo-1602665742701-389671bc40c0?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=735",
-      link: "/PDV"
-    },
-    {
-      id: "Dashboard",
-      title: "Dashboard",
-      description: "Painel de controle completo de vendas, pagamentos e relatórios",
-      icon: Fuel,
-      color: "indigo",
-      tutorials: tutorials.filter(t => t.category === 'Dashboard').length,
-      duration: "35 min",
-      image: "https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1074",
-      link: "/dashboard-tutoriais"
-    },
-    {
-      id: "Pré-Venda",
-      title: "Pré-Venda",
-      description: "Orçamentos, pedidos e gestão de vendas externas",
-      icon: Fuel,
-      color: "indigo",
-      tutorials: tutorials.filter(t => t.category === 'Pré-Venda').length,
-      duration: "55 min",
-      image: "https://images.unsplash.com/photo-1556745757-8d76bdb6984b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1073",
-      link: "/prevenda"
-    },
-    {
-      id: "Fatura Web",
-      title: "Fatura Web",
-      description: "Controle completo de vendas, pagamentos e relatórios",
-      icon: Fuel,
-      color: "indigo",
-      tutorials: tutorials.filter(t => t.category === 'Fatura Web').length,
-      duration: "40 min",
-      image: "https://plus.unsplash.com/premium_photo-1678139620956-cbd87b6ba3d0?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170",
-      link: "/FaturaWeb"
-    },
-    {
-      id: "PDV-Smart POS",
-      title: "PDV-Smart POS",
-      description: "Controle completo de vendas, pagamentos e relatórios",
-      icon: Fuel,
-      color: "indigo",
-      tutorials: tutorials.filter(t => t.category === 'PDV-Smart POS').length,
-      duration: "40 min",
-      image: "https://images.unsplash.com/photo-1556742521-9713bf272865?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687",
-      link: "/lukos-pay"
-    },
-    {
-      id: "Conveniência",
-      title: "Conveniência",
-      description: "Controle completo de estoque, produtos e relatórios",
-      icon: Fuel,
-      color: "indigo",
-      tutorials: tutorials.filter(t => t.category === 'Conveniência').length,
-      duration: "40 min",
-      image: "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170",
-      link: "/conveniencia-tutoriais"
-    }
-  ];
+  // Se houver categorias da API, usar elas, senão usar categorias padrão
+  const tutorialCategories = categories.length > 0 
+    ? categories.map(cat => ({
+        id: cat.Slug || cat.Id?.toString() || cat.id,
+        title: cat.Name || cat.name,
+        description: cat.Description || cat.description || "Tutoriais sobre " + (cat.Name || cat.name),
+        icon: FileText,
+        color: cat.Color || "blue",
+        tutorials: getTutorialCountByCategory(cat.Name || cat.name),
+        duration: "45 min",
+        image: cat.ImageUrl || cat.imageUrl || "https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=800",
+        link: `/tutoriais?categoria=${cat.Slug || cat.slug || cat.id}`
+      }))
+    : [
+      {
+        id: "Retaguarda",
+        title: "Retaguarda",
+        description: "Controle completo de estoque, produtos e relatórios",
+        icon: FileText,
+        color: "blue",
+        tutorials: getTutorialCountByCategory('Retaguarda'),
+        duration: "45 min",
+        image: "https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=800",
+        link: "/retaguarda-tutoriais"
+      },
+      {
+        id: "PDV",
+        title: "PDV",
+        description: "Controle completo de vendas, pagamentos e relatórios",
+        icon: FileText,
+        color: "indigo",
+        tutorials: getTutorialCountByCategory('PDV'),
+        duration: "1h 20min",
+        image: "https://images.unsplash.com/photo-1602665742701-389671bc40c0?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=735",
+        link: "/PDV"
+      },
+      {
+        id: "Dashboard",
+        title: "Dashboard",
+        description: "Painel de controle completo de vendas, pagamentos e relatórios",
+        icon: Fuel,
+        color: "indigo",
+        tutorials: getTutorialCountByCategory('Dashboard'),
+        duration: "35 min",
+        image: "https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1074",
+        link: "/dashboard-tutoriais"
+      },
+      {
+        id: "Pré-Venda",
+        title: "Pré-Venda",
+        description: "Orçamentos, pedidos e gestão de vendas externas",
+        icon: Fuel,
+        color: "indigo",
+        tutorials: getTutorialCountByCategory('Pré-Venda'),
+        duration: "55 min",
+        image: "https://images.unsplash.com/photo-1556745757-8d76bdb6984b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1073",
+        link: "/prevenda"
+      },
+      {
+        id: "Fatura Web",
+        title: "Fatura Web",
+        description: "Controle completo de vendas, pagamentos e relatórios",
+        icon: Fuel,
+        color: "indigo",
+        tutorials: getTutorialCountByCategory('Fatura Web'),
+        duration: "40 min",
+        image: "https://plus.unsplash.com/premium_photo-1678139620956-cbd87b6ba3d0?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170",
+        link: "/FaturaWeb"
+      },
+      {
+        id: "PDV-Smart POS",
+        title: "PDV-Smart POS",
+        description: "Controle completo de vendas, pagamentos e relatórios",
+        icon: Fuel,
+        color: "indigo",
+        tutorials: getTutorialCountByCategory('PDV-Smart POS'),
+        duration: "40 min",
+        image: "https://images.unsplash.com/photo-1556742521-9713bf272865?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687",
+        link: "/lukos-pay"
+      },
+      {
+        id: "Conveniência",
+        title: "Conveniência",
+        description: "Controle completo de estoque, produtos e relatórios",
+        icon: Fuel,
+        color: "indigo",
+        tutorials: getTutorialCountByCategory('Conveniência'),
+        duration: "40 min",
+        image: "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170",
+        link: "/conveniencia-tutoriais"
+      }
+    ];
 
   const categoryIcons = {
     'Retaguarda': Settings,
@@ -140,6 +170,17 @@ const TutorialsUnified = () => {
         return 'bg-gray-100 text-gray-800';
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando tutoriais...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative">

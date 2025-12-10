@@ -5,6 +5,10 @@ import TrainingBenefits from '../../components/custom/TrainingBenefits/TrainingB
 import TrainingFilters from '../../components/custom/TrainingFilters/TrainingFilters';
 import TrainingCard from '../../components/custom/TrainingCard/TrainingCard';
 import TrainingScheduler from '../../components/custom/TrainingScheduler/TrainingScheduler';
+// #region agent log
+fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TreinamentosPage.js:8',message:'Import attempt - before post-fix',data:{importsExpected:['getAllTrainings','getTrainingCategories','getTrainingLevels','getTrainingFormats','getTrainingModalities','getTrainingStats']},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'B'})}).catch(()=>{});
+// #endregion
+
 import {
   getAllTrainings,
   getTrainingCategories,
@@ -14,9 +18,20 @@ import {
   getTrainingStats
 } from '../../../shared/data/__mocks__/trainingsData.js';
 
+// #region agent log
+try {fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TreinamentosPage.js:16',message:'Import attempt - after post-fix',data:{getAllTrainingsType:typeof getAllTrainings,getAllTrainingsExists:typeof getAllTrainings!=='undefined',isFunction:typeof getAllTrainings==='function'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'B'})}).catch(()=>{});} catch(e) {fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TreinamentosPage.js:16',message:'Import error caught post-fix',data:{error:e.message},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'B'})}).catch(()=>{});}
+// #endregion
+
 const TreinamentosPage = () => {
+  // #region agent log
+  fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TreinamentosPage.js:17',message:'Function call attempt - before post-fix',data:{getAllTrainingsType:typeof getAllTrainings,isFunction:typeof getAllTrainings==='function'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
+  // #endregion
   const allTrainings = getAllTrainings();
   const stats = getTrainingStats();
+  
+  // #region agent log
+  fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TreinamentosPage.js:21',message:'Functions called successfully post-fix',data:{allTrainingsCount:Array.isArray(allTrainings)?allTrainings.length:'not-array',statsExists:!!stats,statsKeys:stats?Object.keys(stats):null},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
+  // #endregion
   
   // Scroll suave para âncoras
   useEffect(() => {

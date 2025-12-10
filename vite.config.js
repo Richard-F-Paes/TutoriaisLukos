@@ -23,6 +23,7 @@ export default defineConfig({
     exclude: [],
   },
   optimizeDeps: {
+    include: ['lowlight'],
     esbuildOptions: {
       loader: {
         '.js': 'jsx',

@@ -1,61 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getAllTutorials } from "../../../shared/data/__mocks__/lukosTutorials.js";
+import { useSearchTutorials } from "../../../hooks/useTutorials.js";
 
 const Pesquisa = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
-  const [allTutorials, setAllTutorials] = useState([]);
   const navigate = useNavigate();
 
+  const { data: searchData, isLoading: isSearching } = useSearchTutorials(
+    searchQuery.trim().length > 2 ? searchQuery : '',
+    { limit: 10 }
+  );
+
+  const searchResults = searchData?.data || [];
+
   useEffect(() => {
-    setAllTutorials(getAllTutorials());
-  }, []);
+    if (searchQuery.trim().length > 2) {
+      setShowResults(true);
+    } else {
+      setShowResults(false);
+    }
+  }, [searchQuery]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      const results = allTutorials.filter(tutorial => 
-        tutorial.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tutorial.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tutorial.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tutorial.subcategory.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setSearchResults(results);
-      setShowResults(true);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    
-    if (query.trim()) {
-      const results = allTutorials.filter(tutorial => 
-        tutorial.title.toLowerCase().includes(query.toLowerCase()) ||
-        tutorial.description.toLowerCase().includes(query.toLowerCase()) ||
-        tutorial.category.toLowerCase().includes(query.toLowerCase()) ||
-        tutorial.subcategory.toLowerCase().includes(query.toLowerCase())
-      );
-      setSearchResults(results);
-      setShowResults(true);
-    } else {
-      setSearchResults([]);
+      navigate(`/busca?q=${encodeURIComponent(searchQuery)}`);
       setShowResults(false);
     }
   };
 
-  const handleTutorialClick = (tutorialId) => {
-    navigate(`/tutorial/${tutorialId}`);
+  const handleInputChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleTutorialClick = (tutorial) => {
+    const tutorialId = tutorial.Id || tutorial.id
+    const tutorialSlug = tutorial.Slug || tutorial.slug || tutorialId
+    navigate(`/tutoriais/${tutorialSlug}`);
     setShowResults(false);
     setSearchQuery("");
   };
 
   const handleClearSearch = () => {
     setSearchQuery("");
-    setSearchResults([]);
     setShowResults(false);
   };
 
@@ -107,32 +96,52 @@ const Pesquisa = () => {
                       <div className="text-sm text-gray-500 mb-3">
                         {searchResults.length} tutorial{searchResults.length !== 1 ? 's' : ''} encontrado{searchResults.length !== 1 ? 's' : ''}
                       </div>
-                      {searchResults.map((tutorial) => (
-                    <div
-                      key={tutorial.id}
-                      onClick={() => handleTutorialClick(tutorial.id)}
-                      className="p-3 hover:bg-gray-50 rounded-lg cursor-pointer border-b border-gray-100 last:border-b-0"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white ${tutorial.color}`}>
-                          <tutorial.icon className="w-5 h-5" />
+                      {isSearching ? (
+                        <div className="p-4 text-center text-gray-500">
+                          Buscando...
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-900 truncate">{tutorial.title}</h3>
-                          <p className="text-sm text-gray-600 truncate">{tutorial.description}</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                              {tutorial.category}
-                            </span>
-                            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                              {tutorial.difficulty}
-                            </span>
-                            <span className="text-xs text-gray-500">{tutorial.duration}</span>
-                          </div>
+                      ) : searchResults.length > 0 ? (
+                        searchResults.map((tutorial) => {
+                          const tutorialTitle = tutorial.Title || tutorial.title
+                          const tutorialDescription = tutorial.Description || tutorial.description
+                          const tutorialCategory = tutorial.Category?.Name || tutorial.CategoryName || tutorial.category
+                          const tutorialDifficulty = tutorial.Difficulty || tutorial.difficulty || 'Geral'
+                          const tutorialDuration = tutorial.EstimatedDuration 
+                            ? `${tutorial.EstimatedDuration} min` 
+                            : tutorial.duration || 'N/A'
+                          
+                          return (
+                            <div
+                              key={tutorial.Id || tutorial.id}
+                              onClick={() => handleTutorialClick(tutorial)}
+                              className="p-3 hover:bg-gray-50 rounded-lg cursor-pointer border-b border-gray-100 last:border-b-0"
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white bg-purple-600">
+                                  <Search className="w-5 h-5" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h3 className="font-semibold text-gray-900 truncate">{tutorialTitle}</h3>
+                                  <p className="text-sm text-gray-600 truncate">{tutorialDescription || 'Sem descrição'}</p>
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                                      {tutorialCategory || 'Geral'}
+                                    </span>
+                                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                                      {tutorialDifficulty}
+                                    </span>
+                                    <span className="text-xs text-gray-500">{tutorialDuration}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })
+                      ) : (
+                        <div className="p-4 text-center text-gray-500">
+                          Nenhum tutorial encontrado para "{searchQuery}"
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      )}
                 </div>
               ) : (
                 <div className="p-4 text-center text-gray-500">

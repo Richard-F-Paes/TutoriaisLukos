@@ -20,17 +20,28 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // Verificar sessionStorage primeiro, depois localStorage (para compatibilidade)
+        // Verificar accessToken em sessionStorage (nova API) ou token (compatibilidade)
+        const accessToken = sessionStorage.getItem('accessToken');
         const token = sessionStorage.getItem('token') || localStorage.getItem('token');
-        if (token) {
-          const userData = await authService.verifyToken(token);
+        
+        if (accessToken || token) {
+          const userData = await authService.verifyToken();
           setUser(userData);
         }
       } catch (error) {
         console.error('Erro ao verificar token:', error);
-        // Limpar tokens inválidos
-        sessionStorage.removeItem('token');
-        localStorage.removeItem('token');
+        // Tentar refresh token
+        try {
+          await authService.refreshToken();
+          const userData = await authService.verifyToken();
+          setUser(userData);
+        } catch (refreshError) {
+          // Limpar tokens inválidos
+          sessionStorage.removeItem('accessToken');
+          sessionStorage.removeItem('refreshToken');
+          sessionStorage.removeItem('token');
+          localStorage.removeItem('token');
+        }
       } finally {
         setLoading(false);
       }
@@ -46,10 +57,11 @@ export const AuthProvider = ({ children }) => {
       setError(null);
       
       const response = await authService.login(username, password);
-      const { user: userData, token } = response;
+      const { user: userData, accessToken, refreshToken } = response;
       
-      // Salvar token em sessionStorage (mais seguro que localStorage)
-      sessionStorage.setItem('token', token);
+      // Salvar tokens em sessionStorage
+      sessionStorage.setItem('accessToken', accessToken);
+      sessionStorage.setItem('refreshToken', refreshToken);
       setUser(userData);
       
       return { success: true, user: userData };
@@ -69,8 +81,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Logout
-  const logout = () => {
-    authService.logout();
+  const logout = async () => {
+    await authService.logout();
     setUser(null);
     setError(null);
   };
@@ -110,18 +122,11 @@ export const AuthProvider = ({ children }) => {
   const hasPermission = (permission) => {
     if (!user) return false;
     
-    // Super Admin tem todas as permissões
-    if (user.role === 'super_admin') return true;
+    // Admin tem todas as permissões
+    if (user.role === 'admin') return true;
     
-    // Verificar permissões específicas do role
-    const rolePermissions = {
-      admin: ['manage_content', 'manage_users', 'view_analytics'],
-      editor: ['manage_content', 'view_analytics'],
-      moderator: ['moderate_content', 'view_analytics'],
-      viewer: ['view_content']
-    };
-    
-    return rolePermissions[user.role]?.includes(permission) || false;
+    // Verificar permissões do usuário (vindas da API)
+    return user.permissions?.includes(permission) || false;
   };
 
   // Verificar se usuário tem role específico

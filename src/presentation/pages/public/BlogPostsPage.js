@@ -1,163 +1,169 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, User, ArrowRight, BookOpen, Tag } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import PageNavbar from '../../components/layout/PageNavbar/PageNavbar';
 
 function BlogPostsPage() {
+  const [currentPage, setCurrentPage] = useState(1);
+
   // Dados dos posts do blog
   const blogPosts = [
     {
       id: 1,
-      title: 'Blog ',
-      excerpt: 'Fique atualizado sobre o mercado de Postos de combustíveis no Brasil.',
-      author: 'Equipe LUKOS',
-      date: 'Blog LUKOS',
-      readTime: 'Blog   ',
-      category: 'Blog LUKOS',
+      title: 'A Revolução da IA Generativa: O Que Esperar em 2024',
+      excerpt: 'Explore como a inteligência artificial generativa está remodelando indústrias e o que isso significa para o futuro do desenvolvimento de software e automação.',
+      author: 'Ana Silva',
+      date: '15 de Julho de 2024',
+      category: 'Inteligência Artificial',
       image: 'https://images.pexels.com/photos/4472873/pexels-photo-4472873.jpeg',
-      link: '/blog-posts',
+      link: '/blog/1',
     },
     {
       id: 2,
-      title: 'IA da LUKOS',
-      excerpt: 'A Inteligência Artificial está revolucionando a gestão de postos de combustível.',
-      author: 'Equipe LUKOS',
-      date: 'IA da LUKOS',
-      readTime: 'IA da LUKOS',
-      category: 'IA da LUKOS',
+      title: 'Segurança Cibernética: Protegendo Seus Dados na Nuvem',
+      excerpt: 'Descubra as melhores práticas para garantir a segurança dos seus ativos digitais em ambientes de nuvem híbrida.',
+      author: 'Carlos Mendes',
+      date: '12 de Julho de 2024',
+      category: 'Segurança',
       image: 'https://plus.unsplash.com/premium_photo-1683120963435-6f9355d4a776?q=80&w=663&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      link: '/ia',
+      link: '/blog/2',
     },
     {
       id: 3,
-      title: 'Sobre nós',
-      excerpt: 'Conheça a LUKOS Tecnologia e sua equipe de especialistas.',
-      author: 'Equipe LUKOS',
-      date: 'Sobre nós',
-      readTime: 'Sobre nós',
-      category: 'Sobre nós',
+      title: 'Desenvolvimento Ágil: Acelerando a Inovação',
+      excerpt: 'Como as metodologias ágeis podem transformar seu ciclo de desenvolvimento e entregar valor mais rapidamente.',
+      author: 'Bruno Lima',
+      date: '10 de Julho de 2024',
+      category: 'Desenvolvimento',
       image: 'https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png',
-      link: '/Nova-pagina',
+      link: '/blog/3',
     },
     {
       id: 4,
-      title: 'Equipe CS LUKOS',
-      excerpt: 'Conheça a equipe de especialistas da LUKOS Tecnologia.',
+      title: 'O Futuro do Trabalho Remoto na Indústria de TI',
+      excerpt: 'Entenda como o trabalho remoto está transformando a indústria de tecnologia e quais são as tendências para o futuro.',
       author: 'Equipe LUKOS',
-      date: 'Equipe CS LUKOS',
-      readTime: 'Equipe CS LUKOS',
-      category: 'Equipe CS LUKOS',
+      date: '5 de Julho de 2024',
+      category: 'Notícias da Empresa',
       image: 'https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?q=80&w=1147&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      link: '/equipe',
+      link: '/blog/4',
     },
     {
       id: 5,
-      title: 'Serviços LUKOS',
-      excerpt: 'Conheça os serviços oferecidos pela LUKOS Tecnologia.',
+      title: 'Computação Quântica: O Próximo Salto Tecnológico',
+      excerpt: 'Descubra como a computação quântica está revolucionando a forma como processamos informações e resolvemos problemas complexos.',
       author: 'Equipe LUKOS',
-      date: 'Serviços LUKOS',
-      readTime: 'Serviços LUKOS',
-      category: 'Serviços LUKOS',
+      date: '1 de Julho de 2024',
+      category: 'Inteligência Artificial',
       image: 'https://images.unsplash.com/photo-1602665742701-389671bc40c0?q=80&w=800&h=400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      link: '/servicos',
+      link: '/blog/5',
     },
   ];
 
   return (
-    <div className="bg-white min-h-screen">
-      {/* Navbar */}
-      <PageNavbar />
-      
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto flex items-center justify-center flex-col">
-        <section className="w-full py-16 px-4 md:px-8 bg-white">
-          <div className="max-w-7xl mx-auto">
-            {/* Header da Seção */}
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full mb-4">
-                <BookOpen className="w-5 h-5 text-purple-600" />
-                <span className="text-sm font-semibold text-purple-600 uppercase tracking-wide">
-                  Blog LUKOS
-                </span>
+    <div className="bg-gray-50 min-h-screen">
+      {/* Hero Section - Estilo TOTVS Melhorado */}
+      <section className="relative min-h-[750px] md:min-h-[900px] flex items-center" style={{ marginTop: 0, paddingTop: 0 }}>
+        {/* Navbar dentro do hero com fundo transparente */}
+        <PageNavbar transparent={true} />
+        
+        {/* Background com imagem do profissional */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center border-b-4 border-gray-300"
+          style={{
+            backgroundImage: 'url("https://i.pinimg.com/736x/4a/29/f5/4a29f5894432b10ed543ccae39c93e17.jpg")',
+            backgroundPosition: 'center',
+            backgroundSize: 'cover'
+          }}
+        ></div>
+        
+        {/* Overlay preto */}
+        <div className="absolute inset-0 bg-black/50"></div>
+        
+        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 w-full max-w-7xl pt-[60px]"> 
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            {/* Coluna Esquerda - Texto */}
+            <div className="text-white">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl text-white uppercase font-bold mb-6 leading-tight">
+                <div className="w-full max-w-3xl">
+                  <p className="m-0 mt-0 mb-0 text-3xl border-0 w-full max-w-3xl text-start box-border translate-x-0 translate-y-0 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100" style={{fontFamily: 'TOTVS !important'}}>
+                    Nosso Blog
+                  </p>
+                </div>
+              </h1>
+              
+              <div className="text-lg md:text-xl lg:text-2xl text-white mb-8 leading-relaxed" style={{maxWidth: '560px'}}>
+                <p className="w-full max-w-3xl text-start">
+                  Fique por dentro das últimas tendências e insights do mundo da tecnologia.
+                </p>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                Conteúdos e Artigos
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Fique atualizado sobre o mercado de postos de combustíveis no Brasil e descubra como potencializar sua gestão
-              </p>
-            </div>
-
-            {/* Grid de Posts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {blogPosts.map((post) => (
-                <Link
-                  key={post.id}
-                  to={post.link}
-                  className="block group"
-                >
-                  <article className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer h-full flex flex-col border border-gray-100">
-                    {/* Imagem do Post */}
-                    <div className="relative h-56 overflow-hidden bg-gray-200">
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
-                        loading="lazy"
-                        onError={(e) => {
-                          e.target.src = 'https://via.placeholder.com/400x200?text=LUKOS';
-                          e.target.onerror = null;
-                        }}
-                      />
-                      {/* Overlay gradiente na imagem */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      {/* Badge de categoria */}
-                      <div className="absolute top-4 left-4">
-                        <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-full shadow-lg backdrop-blur-sm">
-                          <Tag className="w-3 h-3" />
-                          {post.category}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Conteúdo do Post */}
-                    <div className="p-6 flex-1 flex flex-col">
-                      <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors line-clamp-2 min-h-[3.5rem]">
-                        {post.title}
-                      </h3>
-                      <p className="text-gray-600 mb-6 line-clamp-3 flex-1 text-sm leading-relaxed">
-                        {post.excerpt}
-                      </p>
-
-                      {/* Meta informações */}
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-4 pb-4 border-b border-gray-100">
-                        <div className="flex items-center gap-1.5">
-                          <User className="w-4 h-4 text-gray-400" />
-                          <span className="font-medium">{post.author}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-4 h-4 text-gray-400" />
-                          <span>{post.date}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Clock className="w-4 h-4 text-gray-400" />
-                          <span>{post.readTime}</span>
-                        </div>
-                      </div>
-
-                      {/* Link para ler mais */}
-                      <div className="inline-flex items-center gap-2 text-purple-600 font-semibold group-hover:text-purple-700 transition-colors group/link mt-auto">
-                        <span>Ler mais</span>
-                        <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" />
-                      </div>
-                    </div>
-                  </article>
-                </Link>
-              ))}
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+      
+      {/* Main Content */}
+      <main className="flex flex-1 justify-center py-10 px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col w-full max-w-7xl">
+
+          <div className="w-full h-full pt-8 pb-12 px-4 sm:px-6 lg:px-8 bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+            {/* Conteúdo Principal - Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Todos os Posts */}
+              {blogPosts.map((post) => (
+                <div key={post.id} className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                  <div 
+                    className="w-full h-48 bg-cover bg-center bg-no-repeat"
+                    style={{ backgroundImage: `url(${post.image})` }}
+                  />
+                  <div className="p-4">
+                    <Link to={post.link} className="block">
+                      <div className="text-gray-900">
+                        <span className="text-[#c44cf4] font-semibold uppercase">{post.category}</span>
+                        {' '}
+                        <span className="font-bold">{post.title}</span>
+                        {' '}
+                        <span className="text-gray-600 font-normal">{post.excerpt}</span>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Paginação */}
+            <div className="flex items-center justify-center gap-2 mt-6">
+              <button 
+                className="flex items-center justify-center rounded-lg size-10 bg-white text-gray-600 hover:bg-gray-100 transition-colors"
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button className="flex items-center justify-center rounded-lg size-10 bg-[#c44cf4] text-white text-sm font-bold">
+                {currentPage}
+              </button>
+              <button 
+                className="flex items-center justify-center rounded-lg size-10 bg-white text-gray-900 text-sm font-medium hover:bg-gray-100 transition-colors"
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
+                2
+              </button>
+              <button 
+                className="flex items-center justify-center rounded-lg size-10 bg-white text-gray-900 text-sm font-medium hover:bg-gray-100 transition-colors"
+                onClick={() => setCurrentPage(currentPage + 2)}
+              >
+                3
+              </button>
+              <button 
+                className="flex items-center justify-center rounded-lg size-10 bg-white text-gray-600 hover:bg-gray-100 transition-colors"
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

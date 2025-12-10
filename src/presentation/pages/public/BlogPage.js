@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, User, ArrowRight, BookOpen, Tag, FileText, Cloud, CreditCard, Gift, Smartphone, Wallet, Receipt, ShoppingCart, BarChart3, Database, Package, DollarSign, TrendingUp, ChevronLeft, ChevronRight, HelpCircle, ChevronDown, ChevronUp, CheckCircle, ArrowUp, Percent, MessageCircle, Play, X } from 'lucide-react';
+import { Calendar, Clock, User, ArrowRight, BookOpen, Tag, FileText, Cloud, CreditCard, Gift, Smartphone, Wallet, Receipt, ShoppingCart, BarChart3, Database, Package, DollarSign, TrendingUp, ChevronLeft, ChevronRight, HelpCircle, ChevronDown, ChevronUp, CheckCircle, ArrowUp, Percent, MessageCircle, Play, X, Rocket, Users, Edit, Zap, Brain, Cpu, Eye } from 'lucide-react';
 import VideoShowcase from '../../components/custom/VideoShowcase/VideoShowcase';
 import PageNavbar from '../../components/layout/PageNavbar/PageNavbar';
 
@@ -200,6 +200,15 @@ function BlogPage() {
             margin-left: -5vw !important;
           }
         }
+        
+        /* Ajuste da imagem de fundo para desktop */
+        @media screen and (min-width: 1024px) {
+          .hero-background {
+            background-size: cover !important;
+            background-position: center center !important;
+            background-attachment: fixed;
+          }
+        }
       `}</style>
       
       {/* Hero Section - Estilo TOTVS Melhorado */}
@@ -209,23 +218,16 @@ function BlogPage() {
         
         {/* Background com imagem do profissional */}
         <div 
-          className="absolute inset-0 bg-cover bg-center"
+          className="hero-background absolute inset-0 bg-cover bg-center md:bg-contain lg:bg-cover"
           style={{
-            backgroundImage: 'url("https://www.totvs.com/wp-content/uploads/2025/06/hero-banner-RH.jpg.webp")',
-            backgroundPosition: 'center',
-            backgroundSize: 'cover'
+            backgroundImage: 'url("/banner.png")',
+            backgroundPosition: 'center 40%',
+            backgroundRepeat: 'no-repeat'
           }}
         ></div>
         
-        {/* Overlay roxo com degradê suave */}
-        <div className="absolute inset-0 "></div>
-        
-        {/* Forma abstrata azul escura fluindo */}
-        <div className="absolute top-0 right-0 w-2/3 h-full opacity-30 pointer-events-none">
-          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M100,0 Q80,30 70,50 T50,80 Q30,90 0,100 L0,0 Z" fill="#1e3a8a" />
-          </svg>
-        </div>
+        {/* Filtro preto */}
+        <div className="absolute inset-0 bg-black/50"></div>
         
         <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 w-full max-w-7xl pt-[60px]"> 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
@@ -249,6 +251,89 @@ function BlogPage() {
            
 
         
+          </div>
+        </div>
+      </section>
+
+      {/* Seção: Recursos e Benefícios - Estilo Moderno */}
+      <section className="py-16 md:py-24 relative" style={{ backgroundColor: '#0a0a0f' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Coluna Esquerda - Texto */}
+            <div className="space-y-8">
+              {/* Títulos com navegação */}
+              <div className="space-y-4">
+                <h2 className="text-3xl md:text-4xl font-bold text-white relative pb-2">
+                  <span className="relative">
+                    Para Gestores
+                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#c44cf4] to-[#8b5cf6]"></span>
+                  </span>
+                </h2>
+                <h3 className="text-xl md:text-2xl font-medium text-gray-400">
+                  Para Operadores
+                </h3>
+              </div>
+
+              {/* Lista de Recursos Numerados */}
+              <div className="space-y-8">
+                {/* Recurso 1 */}
+                <div className="space-y-2">
+                  <div className="flex items-start gap-4">
+                    <span className="text-gray-500 text-lg font-light">.01</span>
+                    <div className="flex-1">
+                      <h4 className="text-xl md:text-2xl font-semibold text-white mb-2">
+                        Plataforma Completa
+                      </h4>
+                      <p className="text-gray-400 text-sm md:text-base leading-relaxed">
+                        Sistema completo de gestão empresarial, análise em tempo real e estatísticas detalhadas. Interface intuitiva, integração com API e automação de processos para postos de combustível.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recurso 2 */}
+                <div className="space-y-2">
+                  <div className="flex items-start gap-4">
+                    <span className="text-gray-500 text-lg font-light">.02</span>
+                    <div className="flex-1">
+                      <h4 className="text-xl md:text-2xl font-semibold text-white mb-2">
+                        Redução de Custos
+                      </h4>
+                      <p className="text-gray-400 text-sm md:text-base leading-relaxed">
+                        Condições vantajosas para nossos parceiros, redução de custos operacionais acima da média do mercado, otimização de processos e aumento da rentabilidade do seu negócio.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recurso 3 */}
+                <div className="space-y-2">
+                  <div className="flex items-start gap-4">
+                    <span className="text-gray-500 text-lg font-light">.03</span>
+                    <div className="flex-1">
+                      <h4 className="text-xl md:text-2xl font-semibold text-white mb-2">
+                        Suporte 24/7
+                      </h4>
+                      <p className="text-gray-400 text-sm md:text-base leading-relaxed">
+                        Suporte amigável sempre disponível, ajudamos a configurar o sistema, escolher as melhores funcionalidades e sugerir estratégias para maximizar seus resultados.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Coluna Direita - Imagem */}
+            <div className="relative">
+              <div className="relative rounded-lg overflow-hidden shadow-2xl">
+                <img 
+                  src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1000&auto=format&fit=crop" 
+                  alt="Profissional trabalhando" 
+                  className="w-full h-[600px] object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f]/80 via-transparent to-transparent"></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -282,117 +367,320 @@ function BlogPage() {
                   </svg>
                 </a>
               </div>
-               <div className="absolute inset-0 bg-black/70 flex items-center justify-center gap-8 px-8 md:px-16 w-full h-full rounded-lg border-4 border-white/20">
+               <div className="absolute inset-0 bg-black/70 flex items-center justify-center gap-8 px-8 md:px-16 w-full h-full">
                 {/* Imagem LUKIA à esquerda */}
                 <div className="flex-shrink-0 hidden md:block">
                   <img src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0885-1.png" alt="LUKIA" className="w-full max-w-[500px] h-auto object-contain opacity-100 relative" />
                 </div>
                 
                 {/* Texto à direita */}
-                <div className="flex-1 flex flex-col items-center justify-center gap-4 w-[500px] h-[500px]">
+                <div className="flex-1 flex flex-col items-center  justify-center gap-4 w-[500px] h-[500px]">
                   <h2 className="text-white text-4xl md:text-6xl font-bold text-left drop-shadow-lg">Conheça mais sobre a LUKOS</h2>
                   <p className="text-white/90 text-lg md:text-xl text-left leading-relaxed drop-shadow-md">
                   Com mais de 10 anos de experiência, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência com soluções completas e personalizadas. Nosso ERP eficiente é a escolha de centenas de empresas, otimizando milhões de transações mensais com segurança e precisão.
+
+
                   </p>
                 </div>
               </div>
+              
 
               
               
             </section>
              
-            
+      {/* Seção: Seu Posto Automatizado por IA */}
+      <section className="py-16 md:py-24 relative overflow-hidden" style={{ backgroundColor: '#100e26' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header Centralizado */}
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
+              <span className="block">SEU POSTO</span>
+              <span className="block">AUTOMATIZADO POR <span className="text-[#c44cf4]">IA</span></span>
+            </h2>
+            <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
+              Seu posto mais eficiente com IA: automação, redução de custos e decisões mais rápidas.
+            </p>
+          </div>
 
-
-          <section className="relative flex items-center justify-center bg-white w-full h-[500px] -mt-[50px] rounded-3xl shadow-lg">
-            <div className="w-[1200px] h-[500px] -mt-[50px] text-black flex items-center justify-center flex-col">
-              <div className="flex items-center justify-center mt-2 h-[400px] w-full">
-                {/* Conteúdo centralizado */}
-                <div className="h-full w-full md:w-1/2 space-y-6 flex items-center justify-center flex-col mx-auto mb-[100px]">
-                  {/* Título */}
-                  <h2 className="text-4xl md:text-5xl font-bold text-gray-700 leading-tight text-start">
-                    Seu posto automatizado por <span className="text-[#c44cf4]">IA</span>
-                  </h2>
-
-                  {/* Descrição */}
-                  <p className="text-lg text-gray-600 leading-relaxed text-start">
-                    Seu posto mais eficiente com IA: automação, redução de custos e decisões mais rápidas.
-                  </p>
-                </div>
-
-                {/* Imagem à direita */}
-                <div className="w-[800px] h-[400px] md:w-[300px] flex items-center justify-center relative group">
-                  <img 
-                    src="IA.png" 
-                    alt="Treinamentos CS" 
-                    className="w-full h-[400px] object-cover ml-[-140px] ml-[-80px] flex items-center justify-center mb-[50px]" 
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-
-
-          <section className="relative -mt-[90px] flex items-center justify-center">
-              <img 
-                src="https://images.pexels.com/photos/6803551/pexels-photo-6803551.jpeg" 
-                alt="Inteligência Artificial" 
-                className="w-full h-[500px] object-cover shadow-lg brightness-90 relative " 
-              />
-               <div className="absolute inset-0 bg-black/70 flex items-center justify-center gap-8 px-8 md:px-16 w-full h-full">
-                {/* Imagem LUKIA à esquerda */}
-                <div className="flex-shrink-0 hidden md:block">
-                  <img src="https://lukos.com.br/wp-content/uploads/2025/01/business-man-happy-with-phone-reading-email-notification-laughing-funny-text-message-employee-smile-person-with-smartphone-social-media-video-meme-with-studio-background-1.png" alt="LUKIA" className="w-full max-w-[420px] h-auto object-contain opacity-100 relative" />
+          {/* Container do Infográfico */}
+          <div className="relative w-full max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              {/* Coluna Central - Logo LUKOS */}
+              <div className="relative flex items-center justify-center order-1 lg:order-2">
+                <div className="relative w-72 h-72 md:w-96 md:h-96 flex items-center justify-center">
+                {/* Efeito glow animado com múltiplas camadas - Mais roxo */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/50 via-purple-600/50 to-purple-500/50 blur-3xl animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-tl from-purple-600/40 via-purple-500/40 to-purple-700/40 blur-2xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                
+                {/* Anel rotativo externo - Dados/Neural - Mais roxo */}
+                <div className="absolute inset-0 border-2 border-transparent rounded-full" style={{
+                  background: 'conic-gradient(from 0deg, transparent, rgba(168, 85, 247, 0.5), transparent, rgba(192, 132, 252, 0.5), transparent, rgba(168, 85, 247, 0.5), transparent)',
+                  animation: 'spin 8s linear infinite',
+                  mask: 'radial-gradient(circle, transparent 40%, black 42%, black 58%, transparent 60%)',
+                  WebkitMask: 'radial-gradient(circle, transparent 40%, black 42%, black 58%, transparent 60%)'
+                }}></div>
+                
+                {/* Anel interno rotativo - Sentido contrário - Mais roxo */}
+                <div className="absolute inset-4 border border-transparent rounded-full" style={{
+                  background: 'conic-gradient(from 180deg, transparent, rgba(192, 132, 252, 0.6), transparent, rgba(168, 85, 247, 0.6), transparent, rgba(192, 132, 252, 0.6), transparent)',
+                  animation: 'spin 6s linear infinite reverse',
+                  mask: 'radial-gradient(circle, transparent 45%, black 47%, black 53%, transparent 55%)',
+                  WebkitMask: 'radial-gradient(circle, transparent 45%, black 47%, black 53%, transparent 55%)'
+                }}></div>
+                
+                {/* Partículas flutuantes de dados - Mais roxo */}
+                <div className="absolute inset-0">
+                  {[...Array(12)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute w-1 h-1 rounded-full"
+                      style={{
+                        left: `${50 + 45 * Math.cos((i * 30) * Math.PI / 180)}%`,
+                        top: `${50 + 45 * Math.sin((i * 30) * Math.PI / 180)}%`,
+                        background: i % 3 === 0 ? 'rgba(132, 204, 22, 0.6)' : 'rgba(168, 85, 247, 0.9)',
+                        boxShadow: `0 0 10px ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}`,
+                        animation: `float-${i} 3s ease-in-out infinite`,
+                        animationDelay: `${i * 0.2}s`
+                      }}
+                    ></div>
+                  ))}
                 </div>
                 
-                {/* Texto à direita */}
-                <div className="flex-1 flex flex-col items-start justify-center gap-4 max-w-3xl">
-                  <img 
-                    src="/DEPOIMENTOS.png"
-                    alt="Depoimento" 
-                    className="w-full max-w-[650px] h-auto object-contain opacity-100 relative" 
-                  />
+                {/* Efeito de scan/holograma - Roxo */}
+                <div className="absolute inset-0 opacity-30" style={{
+                  background: 'linear-gradient(0deg, transparent 0%, rgba(168, 85, 247, 0.5) 50%, transparent 100%)',
+                  animation: 'scan 4s linear infinite',
+                  clipPath: 'polygon(0 0, 100% 0, 100% 20%, 0 20%)'
+                }}></div>
+                
+                {/* Logo Circular com efeito 3D e glitch sutil */}
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <div className="relative w-full h-full" style={{
+                    transform: 'perspective(1000px) rotateY(0deg)',
+                    animation: 'float-3d 6s ease-in-out infinite'
+                  }}>
+                    <img 
+                      src="/logo.png" 
+                      alt="LUKOS Logo" 
+                      className="w-full h-full object-contain relative z-10"
+                      style={{
+                        filter: 'drop-shadow(0 0 30px rgba(168, 85, 247, 1)) drop-shadow(0 0 40px rgba(192, 132, 252, 0.9)) drop-shadow(0 0 60px rgba(168, 85, 247, 0.7)) drop-shadow(0 0 25px rgba(132, 204, 22, 0.6))',
+                        animation: 'glow-pulse 3s ease-in-out infinite, subtle-glitch 8s ease-in-out infinite'
+                      }}
+                    />
+                    
+                    {/* Efeito de profundidade - Sombra holográfica */}
+                    <div className="absolute inset-0 w-full h-full object-contain opacity-20 blur-xl" style={{
+                      backgroundImage: 'url(/logo.png)',
+                      backgroundSize: 'contain',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'center',
+                      transform: 'translateZ(-50px) scale(1.1)',
+                      filter: 'blur(20px)'
+                    }}></div>
+                  </div>
+                </div>
+                
+                {/* Linhas de conexão neural ao redor */}
+                <svg className="absolute inset-0 w-full h-full opacity-40" style={{ pointerEvents: 'none' }}>
+                  <defs>
+                    <linearGradient id="neuralGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#a855f7" stopOpacity="0.9" />
+                      <stop offset="50%" stopColor="#c084fc" stopOpacity="0.9" />
+                      <stop offset="100%" stopColor="#a855f7" stopOpacity="0.9" />
+                    </linearGradient>
+                  </defs>
+                  {[...Array(8)].map((_, i) => {
+                    const angle = (i * 45) * Math.PI / 180;
+                    const radius = 45;
+                    return (
+                      <line
+                        key={i}
+                        x1="50%"
+                        y1="50%"
+                        x2={`${50 + radius * Math.cos(angle)}%`}
+                        y2={`${50 + radius * Math.sin(angle)}%`}
+                        stroke="url(#neuralGradient1)"
+                        strokeWidth="1"
+                        strokeDasharray="4 4"
+                        style={{
+                          animation: `neural-pulse 2s ease-in-out infinite`,
+                          animationDelay: `${i * 0.25}s`
+                        }}
+                      />
+                    );
+                  })}
+                </svg>
+                
+                {/* Partículas de energia pulsantes - Mais roxo */}
+                <div className="absolute inset-0">
+                  {[...Array(6)].map((_, i) => {
+                    const angle = (i * 60) * Math.PI / 180;
+                    const radius = 50;
+                    return (
+                      <div
+                        key={`energy-${i}`}
+                        className="absolute w-2 h-2 rounded-full"
+                        style={{
+                          left: `${50 + radius * Math.cos(angle)}%`,
+                          top: `${50 + radius * Math.sin(angle)}%`,
+                          background: `radial-gradient(circle, ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}, transparent)`,
+                          boxShadow: `0 0 20px ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}`,
+                          animation: `energy-pulse 2s ease-in-out infinite`,
+                          animationDelay: `${i * 0.3}s`,
+                          transform: 'translate(-50%, -50%)'
+                        }}
+                      ></div>
+                    );
+                  })}
+                </div>
                 </div>
               </div>
-            </section>
-          
-          
 
-      {/* End Features */}
-        
-      {/* Seção Problemas */}
-      <div 
-        id="problemas" 
-        className="relative flex items-center justify-center bg-white w-full h-[500px] rounded-3xl shadow-lg"
-      >
-        <div className="w-[1200px] h-[500px] -mt-[50px] text-black flex items-center justify-center flex-col relative z-10">
-          <div className="flex items-center justify-center mt-2 h-[400px] w-full">
-            {/* Conteúdo centralizado */}
-            <div className="h-full w-full md:w-1/2 space-y-6 flex items-center justify-center flex-col mx-auto mb-[100px]">
-              {/* Título */}
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-700 leading-tight text-start">
-                Qual a diferença entre a <span className="text-[#c44cf4]">LUKOS</span>
-              </h2>
+              {/* Coluna Direita - Timeline Vertical */}
+              <div className="relative order-3">
+                {/* Linha vertical roxa */}
+                <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-purple-500"></div>
+                
+                <div className="space-y-12 pl-16">
+                  {/* Step 1 - Análise de Dados */}
+                  <div className="relative">
+                    {/* Ícone circular na linha */}
+                    <div className="absolute -left-10 top-0 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center border-4 border-gray-900 shadow-lg z-10">
+                      <BarChart3 className="text-white" size={20} />
+                    </div>
+                    
+                    {/* Conteúdo */}
+                    <div>
+                      <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                        Análise de Dados
+                      </h4>
+                      <p className="text-white/60 leading-relaxed text-base md:text-lg">
+                        Processamento e interpretação de grandes volumes de dados em tempo real.
+                      </p>
+                    </div>
+                  </div>
 
-              {/* Descrição */}
-              <p className="text-lg text-gray-600 leading-relaxed text-start">
-                O LUKOS ERP e PDV é uma solução completa de gestão empresarial para postos de combustível.
-              </p>
-            </div>
+                  {/* Step 2 - Machine Learning */}
+                  <div className="relative">
+                    {/* Ícone circular na linha */}
+                    <div className="absolute -left-10 top-0 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center border-4 border-gray-900 shadow-lg z-10">
+                      <Brain className="text-white" size={20} />
+                    </div>
+                    
+                    {/* Conteúdo */}
+                    <div>
+                      <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                        Machine Learning
+                      </h4>
+                      <p className="text-white/60 leading-relaxed text-base md:text-lg">
+                        Algoritmos que aprendem e melhoram continuamente com os dados.
+                      </p>
+                    </div>
+                  </div>
 
-            {/* Imagem à direita */}
-            <div className="w-full h-[500px] md:w-[400px] flex items-center justify-center relative group">
-              <img 
-                src="lukos.jpg" 
-                alt="LUKOS ERP e PDV" 
-                className="w-full h-[400px] object-cover ml-[-140px] ml-[-80px] flex items-center justify-center mb-[50px]" 
-              />
+                  {/* Step 3 - Processamento de Linguagem Natural */}
+                  <div className="relative">
+                    {/* Ícone circular na linha */}
+                    <div className="absolute -left-10 top-0 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center border-4 border-gray-900 shadow-lg z-10">
+                      <MessageCircle className="text-white" size={20} />
+                    </div>
+                    
+                    {/* Conteúdo */}
+                    <div>
+                      <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                        Processamento de Linguagem Natural
+                      </h4>
+                      <p className="text-white/60 leading-relaxed text-base md:text-lg">
+                        Compreensão e geração de linguagem humana de forma inteligente.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Estilos de animação CSS */}
+          <style>{`
+            @keyframes float-3d {
+              0%, 100% { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
+              25% { transform: perspective(1000px) rotateY(5deg) rotateX(2deg); }
+              50% { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
+              75% { transform: perspective(1000px) rotateY(-5deg) rotateX(-2deg); }
+            }
+            @keyframes glow-pulse {
+              0%, 100% { filter: drop-shadow(0 0 30px rgba(168, 85, 247, 1)) drop-shadow(0 0 40px rgba(192, 132, 252, 0.9)) drop-shadow(0 0 25px rgba(132, 204, 22, 0.6)); }
+              50% { filter: drop-shadow(0 0 50px rgba(168, 85, 247, 1)) drop-shadow(0 0 60px rgba(192, 132, 252, 1)) drop-shadow(0 0 80px rgba(168, 85, 247, 0.8)) drop-shadow(0 0 30px rgba(132, 204, 22, 0.5)); }
+            }
+            @keyframes subtle-glitch {
+              0%, 100% { transform: translate(0, 0); }
+              98% { transform: translate(0, 0); }
+              99% { transform: translate(-1px, 1px); }
+            }
+            @keyframes scan {
+              0% { transform: translateY(-100%); }
+              100% { transform: translateY(400%); }
+            }
+            @keyframes neural-pulse {
+              0%, 100% { opacity: 0.3; stroke-dashoffset: 0; }
+              50% { opacity: 0.8; stroke-dashoffset: -8; }
+            }
+            @keyframes energy-pulse {
+              0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+              50% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+            }
+            ${[...Array(12)].map((_, i) => `
+              @keyframes float-${i} {
+                0%, 100% { transform: translate(0, 0) scale(1); }
+                50% { transform: translate(${Math.cos(i * 30 * Math.PI / 180) * 10}px, ${Math.sin(i * 30 * Math.PI / 180) * 10}px) scale(1.2); }
+              }
+            `).join('')}
+          `}</style>
+        </div>
+      </section>
+
+      {/* Seção: O que é LUKOS (Fundo Roxo) */}
+      <section className="py-16 md:py-24" style={{ backgroundColor: '#c44cf4' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Coluna Esquerda */}
+            <div>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                O QUE É A LUKOS?
+            </h2>
+              <p className="text-lg md:text-xl text-white/90 leading-relaxed mb-8">
+                Bem-vindo à plataforma LUKOS que vai redefinir sua experiência de gestão! Com mais de 10 anos de experiência, transformamos a gestão de postos de combustíveis e lojas de conveniência com soluções completas e personalizadas. Junte-se a centenas de empresas que confiam na LUKOS!
+            </p>
+              <button className="px-8 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors">
+                SAIBA MAIS
+              </button>
+          </div>
+
+            {/* Coluna Direita - Benefícios */}
+            <div className="bg-gray-900/30 backdrop-blur-sm rounded-xl p-8">
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-6">BENEFÍCIOS</h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-white flex-shrink-0 mt-1" />
+                  <p className="text-white/90 text-lg">Nosso sistema é totalmente responsivo e funciona perfeitamente em qualquer dispositivo!</p>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-white flex-shrink-0 mt-1" />
+                  <p className="text-white/90 text-lg">Soluções completas de gestão empresarial para postos de combustível e lojas de conveniência.</p>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-white flex-shrink-0 mt-1" />
+                  <p className="text-white/90 text-lg">Suporte premium e suporte ao vivo. Todas as suas dúvidas resolvidas rapidamente pela nossa equipe!</p>
+                </li>
+              </ul>
         </div>
       </div>
+        </div>
+      </section>
 
-      {/* Espaçamento */}
+      {/* Seção do Vídeo */}
       <div 
         className="h-[700px] relative bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]"
         style={{
@@ -426,7 +714,151 @@ function BlogPage() {
         </div>
       </div>
 
-      
+           
+           
+           
+
+      {/* End Features */}
+        
+      {/* Seção How it works */}
+      <section id="timeline" className="py-20 md:py-32 bg-gray-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+            {/* Coluna Esquerda - Título, Descrição e Botão */}
+            <div className="sticky top-24">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 text-left">
+                Como Funciona
+              </h2>
+              <p className="text-lg md:text-xl text-white/80 leading-relaxed text-left mb-8">
+                Seu site, construído por um Especialista LUKOS e lançado em um{' '}
+                <a href="#pricing" className="text-blue-400 hover:text-blue-300 underline">
+                  plano Scale
+                </a>
+                , pronto para crescer com você.
+              </p>
+              <a 
+                href="#kickoff" 
+                className="inline-block bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 shadow-lg"
+              >
+                Agendar Kickoff
+              </a>
+            </div>
+
+            {/* Coluna Direita - Timeline Vertical */}
+            <div className="relative">
+              {/* Linha vertical azul */}
+              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-blue-500"></div>
+              
+              <div className="space-y-12 pl-16">
+                {/* Step 1 - Análise de Dados */}
+                <div className="relative">
+                  {/* Ícone circular na linha */}
+                  <div className="absolute -left-10 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center border-4 border-gray-950 shadow-lg z-10">
+                    <BarChart3 className="text-white" size={20} />
+                  </div>
+                  
+                  {/* Conteúdo */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-white/40 text-sm font-light">.01</span>
+                      <h4 className="text-2xl md:text-3xl font-bold text-white">
+                        Análise de Dados
+                      </h4>
+                    </div>
+                    <p className="text-white/60 leading-relaxed text-base md:text-lg">
+                      Processamento e interpretação de grandes volumes de dados em tempo real.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 2 - Machine Learning */}
+                <div className="relative">
+                  {/* Ícone circular na linha */}
+                  <div className="absolute -left-10 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center border-4 border-gray-950 shadow-lg z-10">
+                    <Brain className="text-white" size={20} />
+                  </div>
+                  
+                  {/* Conteúdo */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-white/40 text-sm font-light">.02</span>
+                      <h4 className="text-2xl md:text-3xl font-bold text-white">
+                        Machine Learning
+                      </h4>
+                    </div>
+                    <p className="text-white/60 leading-relaxed text-base md:text-lg">
+                      Algoritmos que aprendem e melhoram continuamente com os dados.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 3 - Processamento de Linguagem Natural */}
+                <div className="relative">
+                  {/* Ícone circular na linha */}
+                  <div className="absolute -left-10 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center border-4 border-gray-950 shadow-lg z-10">
+                    <MessageCircle className="text-white" size={20} />
+                  </div>
+                  
+                  {/* Conteúdo */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-white/40 text-sm font-light">.03</span>
+                      <h4 className="text-2xl md:text-3xl font-bold text-white">
+                        Processamento de Linguagem Natural
+                      </h4>
+                    </div>
+                    <p className="text-white/60 leading-relaxed text-base md:text-lg">
+                      Compreensão e geração de linguagem humana de forma inteligente.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 4 - Visão Computacional */}
+                <div className="relative">
+                  {/* Ícone circular na linha */}
+                  <div className="absolute -left-10 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center border-4 border-gray-950 shadow-lg z-10">
+                    <Eye className="text-white" size={20} />
+                  </div>
+                  
+                  {/* Conteúdo */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-white/40 text-sm font-light">.04</span>
+                      <h4 className="text-2xl md:text-3xl font-bold text-white">
+                        Visão Computacional
+                      </h4>
+                    </div>
+                    <p className="text-white/60 leading-relaxed text-base md:text-lg">
+                      Reconhecimento e análise de imagens e vídeos automatizados.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 5 - Habilidade Técnica */}
+                <div className="relative">
+                  {/* Ícone circular na linha */}
+                  <div className="absolute -left-10 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center border-4 border-gray-950 shadow-lg z-10">
+                    <Cpu className="text-white" size={20} />
+                  </div>
+                  
+                  {/* Conteúdo */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-white/40 text-sm font-light">.05</span>
+                      <h4 className="text-2xl md:text-3xl font-bold text-white">
+                        Habilidade Técnica
+                      </h4>
+                    </div>
+                    <p className="text-white/60 leading-relaxed text-base md:text-lg">
+                      Domínio técnico em sistemas e tecnologias avançadas.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Main Content Continua */}
       <div className="">

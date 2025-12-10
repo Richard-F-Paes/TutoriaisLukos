@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, User, ArrowRight, BookOpen, Tag, FileText, Cloud, CreditCard, Gift, Smartphone, Wallet, Receipt, ShoppingCart, BarChart3, Database, Package, DollarSign, TrendingUp, ChevronLeft, ChevronRight, HelpCircle, ChevronDown, ChevronUp, CheckCircle, ArrowUp, Percent, MessageCircle, Play, X, Rocket, Users, Edit, Zap, Brain, Cpu, Eye } from 'lucide-react';
 import VideoShowcase from '../../components/custom/VideoShowcase/VideoShowcase';
-import PageNavbar from '../../components/layout/PageNavbar/PageNavbar';
 
 // Componente Feature2 adaptado
 const Feature2 = ({
@@ -209,13 +208,65 @@ function BlogPage() {
             background-attachment: fixed;
           }
         }
+        
+        /* Animação de brilho para borda superior */
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+          50% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+        
+        @keyframes pulse-glow {
+          0%, 100% {
+            opacity: 0.5;
+            transform: scaleX(1);
+          }
+          50% {
+            opacity: 1;
+            transform: scaleX(1.2);
+          }
+        }
+        
+        /* Gradiente radial */
+        .bg-gradient-radial {
+          background: radial-gradient(circle, var(--tw-gradient-stops));
+        }
+        
+        /* Animação de neon flicker */
+        @keyframes neon-flicker {
+          0%, 100% {
+            opacity: 1;
+            text-shadow: 
+              0 0 10px rgba(168, 85, 247, 0.8),
+              0 0 20px rgba(168, 85, 247, 0.6),
+              0 0 30px rgba(168, 85, 247, 0.4),
+              0 0 40px rgba(168, 85, 247, 0.3),
+              0 0 70px rgba(168, 85, 247, 0.2),
+              0 0 100px rgba(168, 85, 247, 0.1);
+          }
+          50% {
+            opacity: 0.9;
+            text-shadow: 
+              0 0 5px rgba(168, 85, 247, 0.6),
+              0 0 10px rgba(168, 85, 247, 0.4),
+              0 0 15px rgba(168, 85, 247, 0.3),
+              0 0 20px rgba(168, 85, 247, 0.2),
+              0 0 35px rgba(168, 85, 247, 0.1),
+              0 0 50px rgba(168, 85, 247, 0.05);
+          }
+        }
       `}</style>
       
       {/* Hero Section - Estilo TOTVS Melhorado */}
       <section className="relative min-h-[750px] md:min-h-[900px] flex items-center" style={{ marginTop: 0, paddingTop: 0 }}>
-        {/* Navbar dentro do hero com fundo transparente */}
-        <PageNavbar transparent={true} />
-        
         {/* Background com imagem do profissional */}
         <div 
           className="hero-background absolute inset-0 bg-cover bg-center md:bg-contain lg:bg-cover"
@@ -224,7 +275,8 @@ function BlogPage() {
             backgroundPosition: 'center 40%',
             backgroundRepeat: 'no-repeat'
           }}
-        ></div>
+        >
+        </div>
         
         {/* Filtro preto */}
         <div className="absolute inset-0 bg-black/50"></div>
@@ -255,6 +307,114 @@ function BlogPage() {
         </div>
       </section>
 
+      {/* Seção: Trusted by Brands */}
+      <section className="py-16 md:py-24 relative" style={{ backgroundColor: '#0a0a0f' }}>
+        {/* Overlay */}
+        <div 
+          className="framer-fa7s15" 
+          data-framer-name="Overlay"
+          style={{
+            background: 'linear-gradient(to top, rgba(10, 10, 15, 0.95) 0%, transparent 100%)',
+            borderBottomLeftRadius: '100px',
+            borderBottomRightRadius: '100px',
+            flex: '0 0 auto',
+            height: '100px',
+            left: '0px',
+            overflow: 'hidden',
+            position: 'absolute',
+            right: '0px',
+            top: '0px',
+            willChange: 'var(--framer-will-change-override, transform)',
+            zIndex: 1,
+            boxSizing: 'border-box',
+            WebkitFontSmoothing: 'inherit'
+          }}
+        ></div>
+        
+        {/* Efeitos de borda superior - se estendem por toda a largura da seção */}
+        <div className="absolute top-0 left-0 right-0 w-full">
+          {/* Camada base da borda */}
+          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gray-700/30 to-transparent"></div>
+          
+          {/* Camada de gradiente roxo */}
+          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/60 to-transparent"></div>
+          
+          {/* Efeito de brilho central animado */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-[2px] bg-gradient-to-r from-purple-500/0 via-purple-400 via-purple-300 to-purple-500/0 blur-md animate-pulse"></div>
+          
+          {/* Efeito de shimmer animado */}
+          <div 
+            className="absolute top-0 h-[1px] w-1/3 bg-gradient-to-r from-transparent via-purple-400 to-transparent blur-sm"
+            style={{
+              animation: 'shimmer 3s ease-in-out infinite',
+              left: '0%'
+            }}
+          ></div>
+          
+          {/* Pontos de brilho nas extremidades */}
+          <div className="absolute top-0 left-0 w-2 h-2 bg-purple-400 rounded-full blur-sm opacity-60 animate-pulse"></div>
+          <div className="absolute top-0 right-0 w-2 h-2 bg-purple-400 rounded-full blur-sm opacity-60 animate-pulse" style={{ animationDelay: '1s' }}></div>
+          
+          {/* Linha de profundidade */}
+          <div className="absolute top-[-1px] left-0 right-0 h-[3px] bg-gradient-to-r from-purple-900/20 via-purple-700/10 to-purple-900/20 blur-sm"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="framer-v2s8hx" data-framer-name="Tablet" id="logos">
+            {/* Container para ícones de tecnologias */}
+            <div className="relative grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center justify-items-center pt-8 pb-12">
+              {/* Efeito de fundo - Gradiente radial */}
+              <div className="absolute inset-0 bg-gradient-radial from-purple-900/10 via-transparent to-transparent rounded-3xl"></div>
+              
+              {/* Efeito de brilho central */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
+              
+              {/* Padrão de grid sutil */}
+              <div className="absolute inset-0 opacity-5" style={{
+                backgroundImage: `
+                  linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px)
+                `,
+                backgroundSize: '50px 50px'
+              }}></div>
+              
+              {/* Pontos decorativos */}
+              <div className="absolute top-10 left-10 w-2 h-2 bg-purple-400/20 rounded-full blur-sm"></div>
+              <div className="absolute top-20 right-20 w-1.5 h-1.5 bg-purple-300/30 rounded-full blur-sm"></div>
+              <div className="absolute bottom-10 left-1/4 w-1 h-1 bg-purple-500/20 rounded-full blur-sm"></div>
+              <div className="absolute bottom-20 right-1/3 w-1.5 h-1.5 bg-purple-400/25 rounded-full blur-sm"></div>
+              
+              {/* Efeito de borda sutil */}
+              <div className="absolute inset-0 rounded-3xl border border-purple-500/10"></div>
+              
+              {/* Texto LUKOS em Neon */}
+              <div className="col-span-full w-full flex items-center justify-center py-12">
+                <h1 
+                  className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-center"
+                  style={{
+                    letterSpacing: '0.3em',
+                    fontFamily: 'monospace',
+                    textShadow: `
+                      0 0 10px rgba(168, 85, 247, 0.8),
+                      0 0 20px rgba(168, 85, 247, 0.6),
+                      0 0 30px rgba(168, 85, 247, 0.4),
+                      0 0 40px rgba(168, 85, 247, 0.3),
+                      0 0 70px rgba(168, 85, 247, 0.2),
+                      0 0 100px rgba(168, 85, 247, 0.1)
+                    `,
+                    color: '#e9d5ff',
+                    animation: 'neon-flicker 3s ease-in-out infinite alternate',
+                    filter: 'drop-shadow(0 0 20px rgba(168, 85, 247, 0.8))'
+                  }}
+                >
+                  L U K O S
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Seção: Recursos e Benefícios - Estilo Moderno */}
       <section className="py-16 md:py-24 relative" style={{ backgroundColor: '#0a0a0f' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -279,7 +439,6 @@ function BlogPage() {
                 {/* Recurso 1 */}
                 <div className="space-y-2">
                   <div className="flex items-start gap-4">
-                    <span className="text-gray-500 text-lg font-light">.01</span>
                     <div className="flex-1">
                       <h4 className="text-xl md:text-2xl font-semibold text-white mb-2">
                         Plataforma Completa
@@ -294,7 +453,6 @@ function BlogPage() {
                 {/* Recurso 2 */}
                 <div className="space-y-2">
                   <div className="flex items-start gap-4">
-                    <span className="text-gray-500 text-lg font-light">.02</span>
                     <div className="flex-1">
                       <h4 className="text-xl md:text-2xl font-semibold text-white mb-2">
                         Redução de Custos
@@ -309,7 +467,6 @@ function BlogPage() {
                 {/* Recurso 3 */}
                 <div className="space-y-2">
                   <div className="flex items-start gap-4">
-                    <span className="text-gray-500 text-lg font-light">.03</span>
                     <div className="flex-1">
                       <h4 className="text-xl md:text-2xl font-semibold text-white mb-2">
                         Suporte 24/7
@@ -720,145 +877,6 @@ function BlogPage() {
 
       {/* End Features */}
         
-      {/* Seção How it works */}
-      <section id="timeline" className="py-20 md:py-32 bg-gray-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-            {/* Coluna Esquerda - Título, Descrição e Botão */}
-            <div className="sticky top-24">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 text-left">
-                Como Funciona
-              </h2>
-              <p className="text-lg md:text-xl text-white/80 leading-relaxed text-left mb-8">
-                Seu site, construído por um Especialista LUKOS e lançado em um{' '}
-                <a href="#pricing" className="text-blue-400 hover:text-blue-300 underline">
-                  plano Scale
-                </a>
-                , pronto para crescer com você.
-              </p>
-              <a 
-                href="#kickoff" 
-                className="inline-block bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 shadow-lg"
-              >
-                Agendar Kickoff
-              </a>
-            </div>
-
-            {/* Coluna Direita - Timeline Vertical */}
-            <div className="relative">
-              {/* Linha vertical azul */}
-              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-blue-500"></div>
-              
-              <div className="space-y-12 pl-16">
-                {/* Step 1 - Análise de Dados */}
-                <div className="relative">
-                  {/* Ícone circular na linha */}
-                  <div className="absolute -left-10 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center border-4 border-gray-950 shadow-lg z-10">
-                    <BarChart3 className="text-white" size={20} />
-                  </div>
-                  
-                  {/* Conteúdo */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-white/40 text-sm font-light">.01</span>
-                      <h4 className="text-2xl md:text-3xl font-bold text-white">
-                        Análise de Dados
-                      </h4>
-                    </div>
-                    <p className="text-white/60 leading-relaxed text-base md:text-lg">
-                      Processamento e interpretação de grandes volumes de dados em tempo real.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Step 2 - Machine Learning */}
-                <div className="relative">
-                  {/* Ícone circular na linha */}
-                  <div className="absolute -left-10 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center border-4 border-gray-950 shadow-lg z-10">
-                    <Brain className="text-white" size={20} />
-                  </div>
-                  
-                  {/* Conteúdo */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-white/40 text-sm font-light">.02</span>
-                      <h4 className="text-2xl md:text-3xl font-bold text-white">
-                        Machine Learning
-                      </h4>
-                    </div>
-                    <p className="text-white/60 leading-relaxed text-base md:text-lg">
-                      Algoritmos que aprendem e melhoram continuamente com os dados.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Step 3 - Processamento de Linguagem Natural */}
-                <div className="relative">
-                  {/* Ícone circular na linha */}
-                  <div className="absolute -left-10 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center border-4 border-gray-950 shadow-lg z-10">
-                    <MessageCircle className="text-white" size={20} />
-                  </div>
-                  
-                  {/* Conteúdo */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-white/40 text-sm font-light">.03</span>
-                      <h4 className="text-2xl md:text-3xl font-bold text-white">
-                        Processamento de Linguagem Natural
-                      </h4>
-                    </div>
-                    <p className="text-white/60 leading-relaxed text-base md:text-lg">
-                      Compreensão e geração de linguagem humana de forma inteligente.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Step 4 - Visão Computacional */}
-                <div className="relative">
-                  {/* Ícone circular na linha */}
-                  <div className="absolute -left-10 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center border-4 border-gray-950 shadow-lg z-10">
-                    <Eye className="text-white" size={20} />
-                  </div>
-                  
-                  {/* Conteúdo */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-white/40 text-sm font-light">.04</span>
-                      <h4 className="text-2xl md:text-3xl font-bold text-white">
-                        Visão Computacional
-                      </h4>
-                    </div>
-                    <p className="text-white/60 leading-relaxed text-base md:text-lg">
-                      Reconhecimento e análise de imagens e vídeos automatizados.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Step 5 - Habilidade Técnica */}
-                <div className="relative">
-                  {/* Ícone circular na linha */}
-                  <div className="absolute -left-10 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center border-4 border-gray-950 shadow-lg z-10">
-                    <Cpu className="text-white" size={20} />
-                  </div>
-                  
-                  {/* Conteúdo */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-white/40 text-sm font-light">.05</span>
-                      <h4 className="text-2xl md:text-3xl font-bold text-white">
-                        Habilidade Técnica
-                      </h4>
-                    </div>
-                    <p className="text-white/60 leading-relaxed text-base md:text-lg">
-                      Domínio técnico em sistemas e tecnologias avançadas.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Main Content Continua */}
       <div className="">

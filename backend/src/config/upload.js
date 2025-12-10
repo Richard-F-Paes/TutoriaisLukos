@@ -13,7 +13,7 @@ const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/ogg'];
 const ALLOWED_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES];
 
 // Tamanho máximo de arquivo (10MB por padrão)
-const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024;
+const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE, 10) || 10 * 1024 * 1024;
 
 // Diretório de uploads
 const UPLOAD_PATH = process.env.UPLOAD_PATH || path.join(__dirname, '../../uploads');

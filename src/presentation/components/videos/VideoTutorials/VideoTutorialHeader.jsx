@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, Search, Bell, User, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../../../contexts/ThemeContext';
-import { tutorials } from '../../../../shared/data/__mocks__/videoTutorialsData.js';
+import { useTutorials } from '../../../../hooks/useTutorials.js';
 
 const VideoTutorialHeader = ({ onMenuClick }) => {
   const { theme, toggleTheme } = useTheme();
@@ -9,12 +9,16 @@ const VideoTutorialHeader = ({ onMenuClick }) => {
   const [filteredResults, setFilteredResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef(null);
+  
+  // Buscar tutoriais da API (filtrar apenas os que têm vídeo)
+  const { data: tutorialsData } = useTutorials({ hasVideo: true });
+  const tutorials = tutorialsData?.data?.filter(t => t.VideoUrl) || [];
 
   useEffect(() => {
-    if (searchTerm.length > 0) {
+    if (searchTerm.length > 0 && tutorials.length > 0) {
       const filtered = tutorials.filter(tutorial =>
-        tutorial.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        tutorial.category.toLowerCase().includes(searchTerm.toLowerCase())
+        (tutorial.Title || tutorial.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (tutorial.Category?.Name || tutorial.CategoryName || tutorial.category || '').toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredResults(filtered.slice(0, 5)); // Limitar a 5 resultados
       setShowResults(true);
@@ -22,7 +26,7 @@ const VideoTutorialHeader = ({ onMenuClick }) => {
       setFilteredResults([]);
       setShowResults(false);
     }
-  }, [searchTerm]);
+  }, [searchTerm, tutorials]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -78,10 +82,14 @@ const VideoTutorialHeader = ({ onMenuClick }) => {
                       className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-[#272727] transition-colors border-b border-[#272727] last:border-b-0"
                     >
                       <div className="flex-1 text-left">
-                        <p className="text-white text-sm font-medium">{result.title}</p>
-                        <p className="text-gray-400 text-xs">{result.category} • {result.views} visualizações</p>
+                        <p className="text-white text-sm font-medium">{result.Title || result.title}</p>
+                        <p className="text-gray-400 text-xs">
+                          {result.Category?.Name || result.CategoryName || result.category || 'Geral'} • {result.ViewCount || 0} visualizações
+                        </p>
                       </div>
-                      <div className="text-gray-500 text-xs">{result.duration}</div>
+                      <div className="text-gray-500 text-xs">
+                        {result.EstimatedDuration ? `${result.EstimatedDuration} min` : result.duration || 'N/A'}
+                      </div>
                     </button>
                   ))}
                 </div>

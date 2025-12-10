@@ -51,6 +51,7 @@ import TutorialEditPage from '../presentation/pages/admin/TutorialEditPage';
 // Importar componentes
 import GlobalSearch from '../presentation/components/GlobalSearch/GlobalSearch';
 import Navbarcategoria from '../presentation/components/Navbarcategoria/Navbarcategoria';
+import TutorialModal from '../presentation/components/TutorialModal/TutorialModal';
 
 function AppContent() {
   const location = useLocation();
@@ -103,11 +104,23 @@ function AppContent() {
                 <Route path="/pages/GeradorSenha" element={<GeradorSenha />} />
                 <Route path="/pages/PrecoCombustivel" element={<PrecoCombustivel />} />                    
                 
-                {/* Rotas de Tutoriais por Seção - Podem ser migradas para filtros de URL futuramente */}
-                <Route path="/retaguarda-tutoriais" element={<RetaguardaTutorialsPage />} />
-                <Route path="/conveniencia-tutoriais" element={<ConvenienciaTutorialsPage />} />
-                <Route path="/dashboard-tutoriais" element={<DashboardTutorialsPage />} />
-                <Route path="/pista-tutoriais" element={<PistaTutorialsPage />} />
+                {/* Rotas de Tutoriais por Seção - Redirecionadas para filtros de URL */}
+                <Route 
+                  path="/retaguarda-tutoriais" 
+                  element={<Navigate to="/tutoriais?categoria=retaguarda" replace />} 
+                />
+                <Route 
+                  path="/conveniencia-tutoriais" 
+                  element={<Navigate to="/tutoriais?categoria=conveniencia" replace />} 
+                />
+                <Route 
+                  path="/dashboard-tutoriais" 
+                  element={<Navigate to="/tutoriais?categoria=dashboard" replace />} 
+                />
+                <Route 
+                  path="/pista-tutoriais" 
+                  element={<Navigate to="/tutoriais?categoria=pista" replace />} 
+                />
                 
                 {/* Nova Página */}
                 <Route path="/nova-pagina" element={<NovaPagina />} />
@@ -179,6 +192,7 @@ function AppContent() {
               </Routes>
       </main>
       <Footer />
+      <TutorialModal />
     </div>
   );
 }

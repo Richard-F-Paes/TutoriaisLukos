@@ -3,9 +3,10 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import { useRef, useState, useEffect } from 'react';
-import { Moon, Sun } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useTheme } from '../../../contexts/ThemeContext';
+import { useTutorialModal } from '../../../contexts/TutorialModalContext';
+import { useQuery } from '@tanstack/react-query';
+import { headerMenuService } from '../../../services/headerMenuService';
 import AdminPasswordModal from '../ui/AdminPasswordModal/AdminPasswordModal';
 import './Navbarcategoria.css';
 
@@ -67,7 +68,7 @@ export default function Navbarcateria() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { openModal } = useTutorialModal();
   
   const [openMenus, setOpenMenus] = useState({});
   const [fixedMenus, setFixedMenus] = useState({});
@@ -77,6 +78,13 @@ export default function Navbarcateria() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const timeoutsRef = useRef({});
+
+  // Carregar menus do banco de dados
+  const { data: headerMenusData } = useQuery({
+    queryKey: ['headerMenus'],
+    queryFn: () => headerMenuService.list(),
+    staleTime: 5 * 60 * 1000, // 5 minutos
+  });
 
   const menuButtonClasses = 'category-dropdown-button';
   const menuItemClasses = (active, path) =>
@@ -232,39 +240,64 @@ export default function Navbarcateria() {
     };
   }, []);
 
-  const menus = [
+  // Menus padrão (fallback se não houver no banco)
+  const defaultMenus = [
     {
       label: 'PDV',
       items: [
-        { label: 'PDV Pista', to: '/PDV' },
-        { label: 'PDV Loja', to: '/PDVLoja' },
+        { label: 'PDV Pista', tutorialSlug: null },
+        { label: 'PDV Loja', tutorialSlug: null },
       ],
     },
     {
       label: 'Retaguarda',
       items: [
-        { label: 'Cadastros', to: '/Retaguarda/Cadastros' },
-        { label: 'Produtos', to: '/Retaguarda/Produtos' },
+        { label: 'Cadastros', tutorialSlug: null },
+        { label: 'Produtos', tutorialSlug: null },
       ],
     },
     {
       label: 'Aplicativos',
       items: [
-        { label: 'Pré-venda', to: '/Prevenda' },
-        { label: 'Inventário', to: '/Inventario' },
-        { label: 'Instalar Lukos Pay', to: '/POS/Instalar' },
-        { label: 'Venda de Combustível', to: '/POS/VendaCombustivel' },
-        { label: 'Venda de Produto', to: '/POS/VendaProduto' },
+        { label: 'Pré-venda', tutorialSlug: null },
+        { label: 'Inventário', tutorialSlug: null },
+        { label: 'Instalar Lukos Pay', tutorialSlug: null },
+        { label: 'Venda de Combustível', tutorialSlug: null },
+        { label: 'Venda de Produto', tutorialSlug: null },
       ],
     },
     {
       label: 'Web',
       items: [
-        { label: 'Dashboard', to: '/Dashboard' },
-        { label: 'Fatura Web', to: '/FaturaWeb' },
+        { label: 'Dashboard', tutorialSlug: null },
+        { label: 'Fatura Web', tutorialSlug: null },
       ],
     },
   ];
+
+  // Usar menus do banco ou menus padrão
+  const menus = headerMenusData?.data?.length > 0 
+    ? headerMenusData.data.map(menu => ({
+        label: menu.Label || menu.label,
+        items: (menu.Items || menu.items || []).map(item => ({
+          label: item.Label || item.label,
+          tutorialSlug: item.TutorialSlug || item.tutorialSlug || null,
+        })),
+      }))
+    : defaultMenus;
+
+  // Handler para clicar em item do menu
+  const handleMenuItemClick = (item, e) => {
+    e.preventDefault();
+    clearAllTimeouts();
+    setOpenMenus(prev => ({ ...prev, [item.parentLabel]: false }));
+    setFixedMenus(prev => ({ ...prev, [item.parentLabel]: false }));
+    
+    // Se tiver tutorialSlug, abrir modal, senão não fazer nada (não deve navegar)
+    if (item.tutorialSlug) {
+      openModal(item.tutorialSlug);
+    }
+  };
 
   return (
     <header className={`category-navbar ${isScrolled ? 'scrolled' : ''}`}>
@@ -272,7 +305,7 @@ export default function Navbarcateria() {
         {/* Logo */}
         <Link to="/" className="category-navbar-logo">
           <img
-            src="logo.png"
+            src="/icons/Logo4kIcon.png"
             alt="Logo Lukos Tecnologia"
             className="category-logo-image"
           />
@@ -353,30 +386,31 @@ export default function Navbarcateria() {
                 >
                   <div className="py-1" role="menu" id={`menu-${menu.label}`} aria-label={`Submenu ${menu.label}`}>
                     {menu.items.map((item) => (
-                      <Link 
-                        key={item.to} 
-                        to={item.to} 
-                        className={menuItemClasses(false, item.to)}
-                        role="menuitem"
-                        aria-current={location.pathname === item.to ? 'page' : undefined}
-                        onClick={() => {
-                          // Fechar menu ao clicar em um item
-                          clearAllTimeouts();
-                          setOpenMenus(prev => ({ ...prev, [menu.label]: false }));
-                          setFixedMenus(prev => ({ ...prev, [menu.label]: false }));
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            // Fechar menu ao selecionar um item
-                            clearAllTimeouts();
-                            setOpenMenus(prev => ({ ...prev, [menu.label]: false }));
-                            setFixedMenus(prev => ({ ...prev, [menu.label]: false }));
-                          }
-                        }}
-                      >
-                        {item.label}
-                      </Link>
+                      item.tutorialSlug ? (
+                        <button
+                          key={item.label}
+                          onClick={(e) => handleMenuItemClick({ ...item, parentLabel: menu.label }, e)}
+                          className={menuItemClasses(false, '')}
+                          role="menuitem"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              handleMenuItemClick({ ...item, parentLabel: menu.label }, e);
+                            }
+                          }}
+                        >
+                          {item.label}
+                        </button>
+                      ) : (
+                        <span
+                          key={item.label}
+                          className={menuItemClasses(false, '')}
+                          style={{ opacity: 0.5, cursor: 'not-allowed' }}
+                          title="Tutorial não configurado"
+                        >
+                          {item.label}
+                        </span>
+                      )
                     ))}
                   </div>
                 </PortalMenuContent>
@@ -398,24 +432,6 @@ export default function Navbarcateria() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </form>
-
-          {/* Botão de tema */}
-          <button 
-            className="category-theme-button" 
-            aria-label="Alternar tema"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              toggleTheme();
-            }}
-            title={theme === 'dark' ? 'Alternar para tema claro' : 'Alternar para tema escuro'}
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4" />
-            ) : (
-              <Moon className="w-4 h-4" />
-            )}
-          </button>
 
           {/* Autenticação / Usuário */}
           {isAuthenticated ? (
@@ -609,16 +625,30 @@ export default function Navbarcateria() {
               <div key={menu.label} className="category-mobile-dropdown" role="group" aria-label={menu.label}>
                 <div className="category-mobile-dropdown-header">{menu.label}</div>
                 {menu.items.map((item) => (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    className="category-mobile-link sub"
-                    onClick={() => setMenuOpen(false)}
-                    role="menuitem"
-                    aria-current={location.pathname === item.to ? 'page' : undefined}
-                  >
-                    {item.label}
-                  </Link>
+                  item.tutorialSlug ? (
+                    <button
+                      key={item.label}
+                      onClick={() => {
+                        setMenuOpen(false);
+                        if (item.tutorialSlug) {
+                          openModal(item.tutorialSlug);
+                        }
+                      }}
+                      className="category-mobile-link sub"
+                      role="menuitem"
+                    >
+                      {item.label}
+                    </button>
+                  ) : (
+                    <span
+                      key={item.label}
+                      className="category-mobile-link sub"
+                      style={{ opacity: 0.5, cursor: 'not-allowed' }}
+                      title="Tutorial não configurado"
+                    >
+                      {item.label}
+                    </span>
+                  )
                 ))}
               </div>
             ))}

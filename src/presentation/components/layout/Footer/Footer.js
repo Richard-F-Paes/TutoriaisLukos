@@ -16,10 +16,10 @@ const Footer = () => {
             href="https://lukos.com.br"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center mb-2 text-white"
+            className="flex items-center justify-center mb-2 text-white no-underline hover:no-underline hover:text-white visited:text-white active:text-white focus:text-white focus:outline-none hover:drop-shadow-[0_2px_4px_rgba(255,255,255,0.3)] transition-all duration-300"
           >
-            <img src="logo.png" alt="Logo" className="w-14 h-14 mr-2 drop-shadow-md" />
-            <span className="text-lg font-bold leading-tight tracking-wide">
+            <img src="/icons/Logo4kIcon.png" alt="Logo" className="w-14 h-14 mr-2 drop-shadow-md" />
+            <span className="text-lg font-bold leading-tight tracking-wide text-white">
               Lukos <br /> Tecnologia
             </span>
           </a>

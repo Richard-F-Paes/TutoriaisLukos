@@ -64,6 +64,16 @@ export const endpoints = {
   audit: {
     logs: `${API_VERSION}/audit/logs`,
   },
+  
+  // Menus do Header
+  headerMenus: {
+    list: `${API_VERSION}/header-menus`,
+    get: (id) => `${API_VERSION}/header-menus/${id}`,
+    create: `${API_VERSION}/header-menus`,
+    update: (id) => `${API_VERSION}/header-menus/${id}`,
+    delete: (id) => `${API_VERSION}/header-menus/${id}`,
+    reorder: `${API_VERSION}/header-menus/reorder`,
+  },
 };
 
 export default endpoints;

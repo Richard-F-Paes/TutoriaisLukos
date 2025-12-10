@@ -197,27 +197,6 @@
     box-shadow: 0 0 0 3px rgba(212, 179, 255, 0.2);
 }
 
-/* Botão de tema */
-.category-theme-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    background: rgba(212, 179, 255, 0.1);
-    border: 1px solid rgba(212, 179, 255, 0.3);
-    border-radius: 8px;
-    color: #5a008f;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.category-theme-button:hover {
-    background: rgba(212, 179, 255, 0.2);
-    border-color: rgba(212, 179, 255, 0.5);
-    transform: scale(1.1);
-}
-
 /* Menu de usuário */
 .category-user-button {
     display: flex;
@@ -844,10 +823,6 @@
         display: none;
     }
 
-    .category-theme-button {
-        display: none;
-    }
-
     .category-user-name {
         display: none;
     }
@@ -892,10 +867,6 @@
     }
 
     .category-search-form {
-        display: none;
-    }
-
-    .category-theme-button {
         display: none;
     }
 

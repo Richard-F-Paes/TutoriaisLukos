@@ -1,8 +1,25 @@
 import React from 'react';
 import VideoTutorialCard from './VideoTutorialCard';
-import { tutorials } from '../../../../shared/data/__mocks__/videoTutorialsData.js';
+import { useTutorials } from '../../../../hooks/useTutorials.js';
 
 const VideoTutorialGrid = ({ category, subcategory, subSubcategory }) => {
+  // Buscar tutoriais da API (filtrar apenas os que têm vídeo)
+  const { data: tutorialsData, isLoading } = useTutorials({ hasVideo: true });
+  const allTutorials = tutorialsData?.data?.filter(t => t.VideoUrl) || [];
+  
+  // Converter para formato esperado pelo componente
+  const tutorials = allTutorials.map(t => ({
+    id: t.Id,
+    title: t.Title,
+    category: t.Category?.Name || t.CategoryName || 'Geral',
+    subcategory: subcategory || null,
+    subSubcategory: subSubcategory || null,
+    thumbnail: t.ThumbnailUrl || t.Category?.ImageUrl || 'https://via.placeholder.com/150',
+    url: t.VideoUrl,
+    views: t.ViewCount || 0,
+    duration: t.EstimatedDuration ? `${t.EstimatedDuration} min` : 'N/A'
+  }));
+  
   const filteredTutorials = subSubcategory
     ? tutorials.filter(tutorial => 
         tutorial.category === category && 
@@ -14,6 +31,15 @@ const VideoTutorialGrid = ({ category, subcategory, subSubcategory }) => {
     : category 
     ? tutorials.filter(tutorial => tutorial.category === category)
     : tutorials;
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+        <p className="text-gray-400">Carregando tutoriais...</p>
+      </div>
+    );
+  }
 
   if (filteredTutorials.length === 0) {
     return (
@@ -27,7 +53,7 @@ const VideoTutorialGrid = ({ category, subcategory, subSubcategory }) => {
           Nenhum tutorial encontrado
         </h3>
         <p className="text-gray-400 text-center">
-          Não há tutoriais disponíveis para a categoria "{category}" no momento.
+          {category ? `Não há tutoriais disponíveis para a categoria "${category}" no momento.` : 'Não há tutoriais disponíveis no momento.'}
         </p>
       </div>
     );

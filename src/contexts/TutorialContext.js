@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import tutorialProgressService from '../services/tutorialProgressService.js';
 
 // Estado inicial do tutorial
 const initialState = {
+  tutorialId: null,
   currentStep: 1,
   totalSteps: 6,
   completedSteps: [],
@@ -90,35 +92,108 @@ function tutorialReducer(state, action) {
 const TutorialContext = createContext();
 
 // Provider do contexto
-export function TutorialProvider({ children }) {
-  const [state, dispatch] = useReducer(tutorialReducer, initialState);
+export function TutorialProvider({ children, tutorialId = null }) {
+  const [state, dispatch] = useReducer(tutorialReducer, {
+    ...initialState,
+    tutorialId
+  });
 
-  // Carrega progresso salvo ao inicializar
+  // Carrega progresso salvo ao inicializar ou quando tutorialId mudar
   useEffect(() => {
-    const savedProgress = localStorage.getItem('tutorialProgress');
-    if (savedProgress) {
+    const loadProgress = async () => {
+      if (!tutorialId) {
+        // Fallback para progresso genérico sem tutorialId
+        const savedProgress = localStorage.getItem('tutorialProgress');
+        if (savedProgress) {
+          try {
+            const progressData = JSON.parse(savedProgress);
+            dispatch({
+              type: TUTORIAL_ACTIONS.LOAD_PROGRESS,
+              payload: progressData
+            });
+          } catch (error) {
+            console.error('Erro ao carregar progresso:', error);
+          }
+        }
+        return;
+      }
+
+      // Tentar carregar da API primeiro
       try {
-        const progressData = JSON.parse(savedProgress);
-        dispatch({
-          type: TUTORIAL_ACTIONS.LOAD_PROGRESS,
-          payload: progressData
-        });
+        const apiProgress = await tutorialProgressService.getProgress(tutorialId);
+        if (apiProgress?.data) {
+          dispatch({
+            type: TUTORIAL_ACTIONS.LOAD_PROGRESS,
+            payload: apiProgress.data
+          });
+        } else {
+          // Fallback para localStorage
+          const localProgress = tutorialProgressService.getProgressLocal(tutorialId);
+          if (localProgress) {
+            dispatch({
+              type: TUTORIAL_ACTIONS.LOAD_PROGRESS,
+              payload: localProgress
+            });
+            // Tentar sincronizar com API em background
+            tutorialProgressService.syncProgress(tutorialId);
+          }
+        }
       } catch (error) {
         console.error('Erro ao carregar progresso:', error);
+        // Fallback para localStorage
+        const localProgress = tutorialProgressService.getProgressLocal(tutorialId);
+        if (localProgress) {
+          dispatch({
+            type: TUTORIAL_ACTIONS.LOAD_PROGRESS,
+            payload: localProgress
+          });
+        }
       }
-    }
-  }, []);
+    };
+
+    loadProgress();
+  }, [tutorialId]);
 
   // Salva progresso automaticamente
   useEffect(() => {
-    const progressData = {
-      currentStep: state.currentStep,
-      completedSteps: state.completedSteps,
-      progress: state.progress,
-      timestamp: new Date().toISOString()
+    if (!tutorialId) {
+      // Fallback para progresso genérico
+      const progressData = {
+        currentStep: state.currentStep,
+        completedSteps: state.completedSteps,
+        progress: state.progress,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem('tutorialProgress', JSON.stringify(progressData));
+      return;
+    }
+
+    const saveProgress = async () => {
+      const progressData = {
+        currentStep: state.currentStep,
+        completedSteps: state.completedSteps,
+        progress: state.progress,
+        totalSteps: state.totalSteps,
+        timestamp: new Date().toISOString()
+      };
+
+      // Tentar salvar na API
+      try {
+        const result = await tutorialProgressService.saveProgress(tutorialId, progressData);
+        if (!result) {
+          // Se API falhar, salvar no localStorage
+          tutorialProgressService.saveProgressLocal(tutorialId, progressData);
+        }
+      } catch (error) {
+        // Se API falhar, salvar no localStorage
+        tutorialProgressService.saveProgressLocal(tutorialId, progressData);
+      }
     };
-    localStorage.setItem('tutorialProgress', JSON.stringify(progressData));
-  }, [state.currentStep, state.completedSteps, state.progress]);
+
+    // Debounce para não salvar a cada mudança
+    const timeoutId = setTimeout(saveProgress, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [state.currentStep, state.completedSteps, state.progress, state.totalSteps, tutorialId]);
 
   // Funções de navegação
   const goToStep = (stepNumber) => {
@@ -150,10 +225,28 @@ export function TutorialProvider({ children }) {
     });
   };
 
-  const resetProgress = () => {
+  const resetProgress = useCallback(async () => {
     dispatch({ type: TUTORIAL_ACTIONS.RESET_PROGRESS });
-    localStorage.removeItem('tutorialProgress');
-  };
+    
+    if (tutorialId) {
+      // Tentar remover da API
+      try {
+        // Nota: Pode ser necessário criar endpoint DELETE no backend
+        await tutorialProgressService.saveProgress(tutorialId, {
+          currentStep: 1,
+          completedSteps: [],
+          progress: 0,
+          totalSteps: state.totalSteps
+        });
+      } catch (error) {
+        console.warn('Erro ao resetar progresso na API:', error);
+      }
+      // Remover do localStorage também
+      localStorage.removeItem(`tutorial_progress_${tutorialId}`);
+    } else {
+      localStorage.removeItem('tutorialProgress');
+    }
+  }, [tutorialId, state.totalSteps]);
 
   // Verifica se um passo está completo
   const isStepCompleted = (stepNumber) => {
@@ -165,6 +258,20 @@ export function TutorialProvider({ children }) {
     return state.currentStep === stepNumber;
   };
 
+  // Função para inicializar progresso de um tutorial específico
+  const initializeTutorial = useCallback((tutorialId, totalSteps) => {
+    dispatch({
+      type: TUTORIAL_ACTIONS.LOAD_PROGRESS,
+      payload: {
+        tutorialId,
+        totalSteps,
+        currentStep: 1,
+        completedSteps: [],
+        progress: 0
+      }
+    });
+  }, []);
+
   const value = {
     ...state,
     goToStep,
@@ -174,7 +281,8 @@ export function TutorialProvider({ children }) {
     setPlaying,
     resetProgress,
     isStepCompleted,
-    isCurrentStep
+    isCurrentStep,
+    initializeTutorial
   };
 
   return (

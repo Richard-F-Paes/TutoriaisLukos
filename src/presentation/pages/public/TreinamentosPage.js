@@ -5,33 +5,60 @@ import TrainingBenefits from '../../components/custom/TrainingBenefits/TrainingB
 import TrainingFilters from '../../components/custom/TrainingFilters/TrainingFilters';
 import TrainingCard from '../../components/custom/TrainingCard/TrainingCard';
 import TrainingScheduler from '../../components/custom/TrainingScheduler/TrainingScheduler';
-// #region agent log
-fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TreinamentosPage.js:8',message:'Import attempt - before post-fix',data:{importsExpected:['getAllTrainings','getTrainingCategories','getTrainingLevels','getTrainingFormats','getTrainingModalities','getTrainingStats']},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'B'})}).catch(()=>{});
-// #endregion
-
-import {
-  getAllTrainings,
-  getTrainingCategories,
-  getTrainingLevels,
-  getTrainingFormats,
-  getTrainingModalities,
-  getTrainingStats
-} from '../../../shared/data/__mocks__/trainingsData.js';
-
-// #region agent log
-try {fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TreinamentosPage.js:16',message:'Import attempt - after post-fix',data:{getAllTrainingsType:typeof getAllTrainings,getAllTrainingsExists:typeof getAllTrainings!=='undefined',isFunction:typeof getAllTrainings==='function'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'B'})}).catch(()=>{});} catch(e) {fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TreinamentosPage.js:16',message:'Import error caught post-fix',data:{error:e.message},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'B'})}).catch(()=>{});}
-// #endregion
+import { useTutorials } from '../../../hooks/useTutorials.js';
+import { useCategories } from '../../../hooks/useCategories.js';
 
 const TreinamentosPage = () => {
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TreinamentosPage.js:17',message:'Function call attempt - before post-fix',data:{getAllTrainingsType:typeof getAllTrainings,isFunction:typeof getAllTrainings==='function'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
-  // #endregion
-  const allTrainings = getAllTrainings();
-  const stats = getTrainingStats();
+  // Buscar tutoriais e categorias da API
+  const { data: tutorialsData, isLoading: tutorialsLoading } = useTutorials();
+  const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
   
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TreinamentosPage.js:21',message:'Functions called successfully post-fix',data:{allTrainingsCount:Array.isArray(allTrainings)?allTrainings.length:'not-array',statsExists:!!stats,statsKeys:stats?Object.keys(stats):null},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
-  // #endregion
+  const isLoading = tutorialsLoading || categoriesLoading;
+  
+  // Converter tutoriais da API para formato esperado pelos componentes
+  const allTrainings = useMemo(() => {
+    if (!tutorialsData?.data) return [];
+    
+    return tutorialsData.data.map(tutorial => ({
+      id: tutorial.Id,
+      title: tutorial.Title,
+      description: tutorial.Description || '',
+      category: tutorial.Category?.Name || tutorial.CategoryName || 'Geral',
+      level: tutorial.Difficulty === 'iniciante' ? 'Iniciante' : 
+             tutorial.Difficulty === 'intermediario' ? 'Intermediário' : 
+             tutorial.Difficulty === 'avancado' ? 'Avançado' : 'Iniciante',
+      format: 'Online', // Padrão, pode ser adicionado ao modelo depois
+      modality: tutorial.VideoUrl ? 'Gravado' : 'Ao Vivo',
+      duration: tutorial.EstimatedDuration ? `${tutorial.EstimatedDuration} min` : '1h',
+      modules: tutorial.steps?.length || 1,
+      image: tutorial.ThumbnailUrl || tutorial.Category?.ImageUrl || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+      thumbnail: tutorial.ThumbnailUrl || tutorial.Category?.ImageUrl || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=150&h=150&fit=crop',
+      rating: 4.8, // Pode ser adicionado ao modelo depois
+      reviews: 0,
+      enrolled: 0,
+      maxStudents: 100,
+      availableDates: [],
+      benefits: ['Certificado de conclusão', 'Material de apoio', 'Suporte durante o curso'],
+      icon: 'ShoppingCart'
+    }));
+  }, [tutorialsData]);
+  
+  // Calcular estatísticas
+  const stats = useMemo(() => {
+    const totalTrainings = allTrainings.length;
+    const totalEnrolled = allTrainings.reduce((sum, t) => sum + (t.enrolled || 0), 0);
+    const totalReviews = allTrainings.reduce((sum, t) => sum + (t.reviews || 0), 0);
+    const averageRating = totalReviews > 0 
+      ? (allTrainings.reduce((sum, t) => sum + ((t.rating || 4.8) * (t.reviews || 0)), 0) / totalReviews).toFixed(1)
+      : '4.8';
+    
+    return {
+      totalTrainings,
+      totalEnrolled,
+      totalReviews,
+      averageRating: parseFloat(averageRating)
+    };
+  }, [allTrainings]);
   
   // Scroll suave para âncoras
   useEffect(() => {
@@ -69,10 +96,25 @@ const TreinamentosPage = () => {
   const [selectedModality, setSelectedModality] = useState('all');
 
   // Obter opções de filtros
-  const categories = getTrainingCategories();
-  const levels = getTrainingLevels();
-  const formats = getTrainingFormats();
-  const modalities = getTrainingModalities();
+  const categories = useMemo(() => {
+    if (categoriesData?.data) {
+      return categoriesData.data.map(cat => cat.Name || cat.name);
+    }
+    // Extrair categorias únicas dos tutoriais
+    return [...new Set(allTrainings.map(t => t.category))];
+  }, [categoriesData, allTrainings]);
+  
+  const levels = useMemo(() => {
+    return [...new Set(allTrainings.map(t => t.level))];
+  }, [allTrainings]);
+  
+  const formats = useMemo(() => {
+    return [...new Set(allTrainings.map(t => t.format))];
+  }, [allTrainings]);
+  
+  const modalities = useMemo(() => {
+    return [...new Set(allTrainings.map(t => t.modality))];
+  }, [allTrainings]);
 
   // Filtrar treinamentos
   const filteredTrainings = useMemo(() => {
@@ -112,6 +154,17 @@ const TreinamentosPage = () => {
     setSelectedFormat('all');
     setSelectedModality('all');
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando treinamentos...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">

@@ -4,6 +4,7 @@
 import React from 'react';
 import { AuthProvider } from '../contexts/AuthContext';
 import { TutorialProvider } from '../contexts/TutorialContext';
+import { TutorialModalProvider } from '../contexts/TutorialModalContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -41,7 +42,9 @@ export function AppProviders({ children }) {
         <ThemeProvider>
           <AuthProvider>
             <TutorialProvider>
-              {children}
+              <TutorialModalProvider>
+                {children}
+              </TutorialModalProvider>
             </TutorialProvider>
           </AuthProvider>
         </ThemeProvider>

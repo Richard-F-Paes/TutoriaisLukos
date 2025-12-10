@@ -1,16 +1,18 @@
 // AdminPage - Página principal do admin
 import React, { useState } from 'react';
 import { useAuth } from '../../../contexts/AuthContext.js';
+import AdminDashboard from '../../components/Admin/AdminDashboard.jsx';
 import TutorialManager from '../../components/Admin/TutorialManager.jsx';
 import CategoryManager from '../../components/Admin/CategoryManager.jsx';
 import UserManager from '../../components/Admin/UserManager.jsx';
 import MediaLibrary from '../../components/Admin/MediaLibrary.jsx';
 import AuditLogs from '../../components/Admin/AuditLogs.jsx';
+import HeaderMenuManager from '../../components/Admin/HeaderMenuManager.jsx';
 import './AdminPage.css';
 
 const AdminPage = () => {
   const { user, hasPermission } = useAuth();
-  const [activeTab, setActiveTab] = useState('tutorials');
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   if (!user) {
     return (
@@ -24,12 +26,14 @@ const AdminPage = () => {
   }
 
   const tabs = [
+    { id: 'dashboard', label: 'Dashboard', permission: null }, // Sempre visível para usuários autenticados
     { id: 'tutorials', label: 'Tutoriais', permission: 'create_tutorial' },
     { id: 'categories', label: 'Categorias', permission: 'manage_categories' },
+    { id: 'header-menus', label: 'Menus do Header', permission: 'manage_categories' },
     { id: 'users', label: 'Usuários', permission: 'manage_users' },
     { id: 'media', label: 'Mídia', permission: 'upload_media' },
     { id: 'logs', label: 'Logs', permission: 'view_audit_logs' },
-  ].filter(tab => hasPermission(tab.permission));
+  ].filter(tab => !tab.permission || hasPermission(tab.permission));
 
   return (
     <div className="admin-page">
@@ -51,8 +55,10 @@ const AdminPage = () => {
       </div>
 
       <div className="admin-content">
+        {activeTab === 'dashboard' && <AdminDashboard />}
         {activeTab === 'tutorials' && <TutorialManager />}
         {activeTab === 'categories' && <CategoryManager />}
+        {activeTab === 'header-menus' && <HeaderMenuManager />}
         {activeTab === 'users' && <UserManager />}
         {activeTab === 'media' && <MediaLibrary />}
         {activeTab === 'logs' && <AuditLogs />}

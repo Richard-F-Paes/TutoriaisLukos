@@ -6,7 +6,7 @@ dotenv.config();
 
 const dbConfig = {
   server: process.env.DB_SERVER || 'localhost',
-  port: parseInt(process.env.DB_PORT) || 1433,
+  port: parseInt(process.env.DB_PORT, 10) || 1433,
   database: process.env.DB_NAME || 'TutoriaisLukos',
   user: process.env.DB_USER || 'sa',
   password: process.env.DB_PASSWORD || '',
@@ -43,11 +43,23 @@ export async function connectDatabase() {
     // Mock pool to prevent crash
     pool = {
       close: async () => { },
-      request: () => ({
-        input: () => ({ query: () => [] }),
-        query: async () => { console.log('Mock DB Query executed'); return { recordset: [] }; },
-        execute: async () => { console.log('Mock DB Execute executed'); return { recordset: [] }; }
-      })
+      request: () => {
+        const requestObj = {
+          input: function() {
+            // Return self for chaining
+            return this;
+          },
+          query: async () => { 
+            console.log('Mock DB Query executed'); 
+            return { recordset: [] }; 
+          },
+          execute: async () => { 
+            console.log('Mock DB Execute executed'); 
+            return { recordset: [] }; 
+          }
+        };
+        return requestObj;
+      }
     };
     return pool;
   }

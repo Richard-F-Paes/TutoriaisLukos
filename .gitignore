@@ -1,58 +1,129 @@
+# ===================================
 # Dependencies
-/node_modules
-/.pnp
+# ===================================
+node_modules/
+.pnp
 .pnp.js
+backend/node_modules/
 
+# ===================================
 # Testing
-/coverage
+# ===================================
+coverage/
+*.lcov
+.nyc_output/
 
+# ===================================
 # Production / Build
-/build
-/dist
-/.vite
+# ===================================
+build/
+dist/
+.vite/
+.vite/
+*.local
 
+# ===================================
 # Environment variables
+# ===================================
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 .env*.local
+backend/.env
+backend/.env.local
+backend/.env.development.local
+backend/.env.test.local
+backend/.env.production.local
+backend/.env*.local
 
+# ===================================
 # Logs
+# ===================================
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+backend/logs/
+backend/*.log
 
+# ===================================
 # Runtime data
-pids
+# ===================================
+pids/
 *.pid
 *.seed
 *.pid.lock
 
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
+# ===================================
+# Cache
+# ===================================
+.npm/
 .eslintcache
-
-# Optional stylelint cache
 .stylelintcache
-
-# Vite
-.vite
+.cache/
+.parcel-cache/
+.next/
+out/
+.turbo/
+.vite/
 vite.config.*.timestamp-*
 
-# IDE
-.vscode/
-.idea/
+# ===================================
+# Database
+# ===================================
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+backend/data/
+backend/uploads/
+backend/temp/
+
+# ===================================
+# Uploads & Media (desenvolvimento)
+# ===================================
+uploads/
+media/
+temp/
+tmp/
+*.tmp
+
+# ===================================
+# Arquivos temporários
+# ===================================
+temp_*.js
+temp_*.ts
+temp_*.tsx
+*.temp
 *.swp
 *.swo
 *~
+.DS_Store
 
+# ===================================
+# IDE & Editors
+# ===================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ===================================
 # OS generated files
+# ===================================
 .DS_Store
 .DS_Store?
 ._*
@@ -60,3 +131,46 @@ vite.config.*.timestamp-*
 .Trashes
 ehthumbs.db
 Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ===================================
+# TypeScript
+# ===================================
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# ===================================
+# Package managers
+# ===================================
+# package-lock.json (manter versionado para builds consistentes)
+# yarn.lock (manter versionado se usar yarn)
+# pnpm-lock.yaml (manter versionado se usar pnpm)
+.pnpm-store/
+.yarn/
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# ===================================
+# Testing & Coverage
+# ===================================
+.nyc_output/
+coverage/
+.jest/
+*.test.js.snap
+
+# ===================================
+# Build tools
+# ===================================
+.turbo/
+.vercel/
+.netlify/
+
+# ===================================
+# Scripts temporários (manter env.example)
+# ===================================
+# Não ignorar: env.example, backend/env.example

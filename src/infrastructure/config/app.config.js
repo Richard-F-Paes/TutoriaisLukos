@@ -6,7 +6,7 @@ export const appConfig = {
   description: import.meta.env.VITE_APP_DESCRIPTION || 'Plataforma de tutoriais do sistema Lukos',
   
   // URLs
-  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
+  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:3001',
   
   // Configurações de desenvolvimento
   devMode: import.meta.env.DEV,

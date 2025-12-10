@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, X, Clock, Star, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getAllTutorials } from "../../../shared/data/__mocks__/lukosTutorials.js";
+import { useSearchTutorials } from "../../../hooks/useTutorials.js";
 
 const GlobalSearch = ({ placeholder = "Buscar tutoriais...", showSuggestions = true, className = "" }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
-  const [allTutorials, setAllTutorials] = useState([]);
   const navigate = useNavigate();
   const searchRef = useRef(null);
 
-  useEffect(() => {
-    setAllTutorials(getAllTutorials());
-  }, []);
+  const { data: searchData, isLoading: isSearching } = useSearchTutorials(
+    searchQuery.trim().length > 2 ? searchQuery : '',
+    { limit: 8 }
+  );
+
+  const searchResults = searchData?.data || [];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -28,27 +29,22 @@ const GlobalSearch = ({ placeholder = "Buscar tutoriais...", showSuggestions = t
     };
   }, []);
 
-  const handleInputChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    
-    if (query.trim() && showSuggestions) {
-      const results = allTutorials.filter(tutorial => 
-        tutorial.title.toLowerCase().includes(query.toLowerCase()) ||
-        tutorial.description.toLowerCase().includes(query.toLowerCase()) ||
-        tutorial.category.toLowerCase().includes(query.toLowerCase()) ||
-        tutorial.subcategory.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 8); // Limitar a 8 resultados
-      setSearchResults(results);
+  useEffect(() => {
+    if (searchQuery.trim().length > 2 && showSuggestions) {
       setShowResults(true);
     } else {
-      setSearchResults([]);
       setShowResults(false);
     }
+  }, [searchQuery, showSuggestions]);
+
+  const handleInputChange = (e) => {
+    setSearchQuery(e.target.value);
   };
 
-  const handleTutorialClick = (tutorialId) => {
-    navigate(`/tutorial/${tutorialId}`);
+  const handleTutorialClick = (tutorial) => {
+    const tutorialId = tutorial.Id || tutorial.id
+    const tutorialSlug = tutorial.Slug || tutorial.slug || tutorialId
+    navigate(`/tutoriais/${tutorialSlug}`);
     setShowResults(false);
     setSearchQuery("");
   };
@@ -107,36 +103,56 @@ const GlobalSearch = ({ placeholder = "Buscar tutoriais...", showSuggestions = t
                 <div className="text-xs text-gray-500 px-3 py-2 border-b border-gray-100">
                   {searchResults.length} resultado{searchResults.length !== 1 ? 's' : ''} encontrado{searchResults.length !== 1 ? 's' : ''}
                 </div>
-                {searchResults.map((tutorial) => (
-                  <div
-                    key={tutorial.id}
-                    onClick={() => handleTutorialClick(tutorial.id)}
-                    className="p-3 hover:bg-gray-50 rounded-lg cursor-pointer border-b border-gray-50 last:border-b-0"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs ${tutorial.color}`}>
-                        <tutorial.icon className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-900 text-sm truncate">{tutorial.title}</h3>
-                        <p className="text-xs text-gray-600 truncate mt-1">{tutorial.description}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
-                            {tutorial.category}
-                          </span>
-                          <span className="text-xs text-gray-500 flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {tutorial.duration}
-                          </span>
-                          <span className="text-xs text-gray-500 flex items-center gap-1">
-                            <Star className="w-3 h-3" />
-                            {tutorial.difficulty}
-                          </span>
+                {isSearching ? (
+                  <div className="p-4 text-center text-gray-500 text-sm">
+                    Buscando...
+                  </div>
+                ) : searchResults.length > 0 ? (
+                  searchResults.map((tutorial) => {
+                    const tutorialTitle = tutorial.Title || tutorial.title
+                    const tutorialDescription = tutorial.Description || tutorial.description
+                    const tutorialCategory = tutorial.Category?.Name || tutorial.CategoryName || tutorial.category
+                    const tutorialDuration = tutorial.EstimatedDuration 
+                      ? `${tutorial.EstimatedDuration} min` 
+                      : tutorial.duration || 'N/A'
+                    const tutorialDifficulty = tutorial.Difficulty || tutorial.difficulty || 'Geral'
+                    
+                    return (
+                      <div
+                        key={tutorial.Id || tutorial.id}
+                        onClick={() => handleTutorialClick(tutorial)}
+                        className="p-3 hover:bg-gray-50 rounded-lg cursor-pointer border-b border-gray-50 last:border-b-0"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs bg-purple-600">
+                            <Search className="w-4 h-4" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-medium text-gray-900 text-sm truncate">{tutorialTitle}</h3>
+                            <p className="text-xs text-gray-600 truncate mt-1">{tutorialDescription || 'Sem descrição'}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                                {tutorialCategory || 'Geral'}
+                              </span>
+                              <span className="text-xs text-gray-500 flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {tutorialDuration}
+                              </span>
+                              <span className="text-xs text-gray-500 flex items-center gap-1">
+                                <Star className="w-3 h-3" />
+                                {tutorialDifficulty}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )
+                  })
+                ) : (
+                  <div className="p-4 text-center text-gray-500 text-sm">
+                    Nenhum tutorial encontrado
                   </div>
-                ))}
+                )}
                 {searchResults.length > 0 && (
                   <div className="p-2 border-t border-gray-100">
                     <button

@@ -14,29 +14,12 @@ import { isTutorialRoute, shouldShowCategoryNavbar, shouldShowPageNavbar } from 
 
 // Importar páginas públicas
 import HomePage from '../presentation/pages/public/HomePage';
-import CategoriesPage from '../presentation/pages/public/CategoriesPage';
-import CategoryPage from '../presentation/pages/public/CategoryPage';
-import TutorialsPage from '../presentation/pages/public/TutorialsPage';
-import TutorialDetailPage from '../presentation/pages/public/TutorialDetailPage';
-import TutorialPage from '../presentation/pages/public/TutorialPage';
-import TutorialsHomePage from '../presentation/pages/public/TutorialsHomePage';
-import Tutorials from '../presentation/pages/public/Tutorials';
+import CategoiresPage from '../presentation/pages/public/CategoriesPage';
 import TutorialsUnified from '../presentation/pages/public/TutorialsUnified';
 import CategoryTutorialsPage from '../presentation/pages/public/CategoryTutorialsPage';
 import TreinamentosPage from '../presentation/pages/public/TreinamentosPage';
-import AboutPage from '../presentation/pages/public/AboutPage';
-import SearchPage from '../presentation/pages/public/SearchPage';
 import RegisterPage from '../presentation/pages/public/RegisterPage';
 import ProfilePage from '../presentation/pages/public/ProfilePage';
-import PaginaTutorial from '../presentation/pages/public/PaginaTutorial';
-import Dashboard from '../presentation/pages/public/Dashboard';
-import PDV from '../presentation/pages/public/PDV';
-import Prevenda from '../presentation/pages/public/Prevenda';
-import FaturaWeb from '../presentation/pages/public/FaturaWeb';
-import Homedesigner from '../presentation/pages/public/Homedesigner/Home';
-import Lukospos from '../presentation/pages/public/Lukospos';
-import Conveniencia from '../presentation/pages/public/Conveniencia';
-import Pista from '../presentation/pages/public/Pista';
 import GeradorSenha from '../presentation/pages/public/Dashboard/GeradorSenha';
 import PrecoCombustivel from '../presentation/pages/public/Dashboard/PrecoCombustivel';
 import CadastrosPage from '../presentation/pages/public/CadastrosPage';
@@ -46,6 +29,7 @@ import DashboardTutorialsPage from '../presentation/pages/public/DashboardTutori
 import PistaTutorialsPage from '../presentation/pages/public/PistaTutorialsPage';
 import VideoTutorialsPage from '../presentation/pages/public/VideoTutorialsPage';
 import VideoTutorialDetailPage from '../presentation/pages/public/VideoTutorialDetailPage';
+import TutorialViewPage from '../presentation/pages/public/TutorialViewPage';
 import NovaPagina from '../presentation/pages/public/NovaPagina';
 import IAPage from '../presentation/pages/public/IAPage';
 import ServicosPage from '../presentation/pages/public/ServicosPage';
@@ -62,19 +46,11 @@ import SobreNos from '../presentation/pages/public/SobreNos';
 // Importar páginas administrativas
 import EditorPage from '../presentation/pages/admin/EditorPage';
 import AdminPage from '../presentation/pages/admin/AdminPage';
+import TutorialEditPage from '../presentation/pages/admin/TutorialEditPage';
 
 // Importar componentes
 import GlobalSearch from '../presentation/components/GlobalSearch/GlobalSearch';
-import RetaguardaTutorial from '../presentation/components/tutorial/RetaguardaTutorial/RetaguardaTutorial';
 import Navbarcategoria from '../presentation/components/Navbarcategoria/Navbarcategoria';
-import Lukospay from '../presentation/components/Lukospay/Lukospay';
-
-
-
-
-
-
-
 
 function AppContent() {
   const location = useLocation();
@@ -114,37 +90,20 @@ function AppContent() {
                 
                 {/* Rotas dos Tutoriais Lukos */}
                 <Route path="/tutoriais" element={<TutorialsUnified />} />
+                <Route path="/tutoriais/:slug" element={<TutorialViewPage />} />
                 <Route path="/tutoriais/treinamentos" element={<TreinamentosPage />} />
                 <Route path="/video-tutoriais" element={<VideoTutorialsPage />} />
                 <Route path="/video-tutorial/:id" element={<VideoTutorialDetailPage />} />
                 <Route path="/categoria/:category" element={<CategoryTutorialsPage />} />
-                <Route path="/tutorial/:tutorialId" element={<TutorialPage />} />
                 
                 {/* Rotas Hierárquicas */}
                 <Route path="/cadastros" element={<CadastrosPage />} />
-                
-                {/* Rotas antigas (mantidas para compatibilidade) */}
-                <Route path="/Retaguarda" element={<CategoriesPage />} />
-                <Route path="/categoria/:id" element={<CategoryPage />} />
-                <Route path="/Fatura Web" element={<TutorialsPage />} />
-                <Route path="/tutorial/:id" element={<TutorialDetailPage />} />
-                <Route path="/tutorial/:id/executar" element={<TutorialPage />} />
-                <Route path="/sobre" element={<AboutPage />} />
-                <Route path="/busca" element={<SearchPage />} />
-                <Route path="/paginatutorial" element={<PaginaTutorial />} />
-                <Route path="/Dashboard" element={<Dashboard />} />
-                <Route path="/PDV" element={<PDV />} />
-                <Route path="/prevenda" element={<Prevenda />} />
-                <Route path="/FaturaWeb" element={<FaturaWeb />} />
-                <Route path="/lukos-pay" element={<Lukospos />} />
-                <Route path="/Conveniencia" element={<Conveniencia />} />
-                <Route path="/pista" element={<Pista />} />
 
                 {/* Rotas Dashboard */}
                 <Route path="/pages/GeradorSenha" element={<GeradorSenha />} />
                 <Route path="/pages/PrecoCombustivel" element={<PrecoCombustivel />} />                    
                 
-                {/* Rotas de Tutoriais por Seção */}
+                {/* Rotas de Tutoriais por Seção - Podem ser migradas para filtros de URL futuramente */}
                 <Route path="/retaguarda-tutoriais" element={<RetaguardaTutorialsPage />} />
                 <Route path="/conveniencia-tutoriais" element={<ConvenienciaTutorialsPage />} />
                 <Route path="/dashboard-tutoriais" element={<DashboardTutorialsPage />} />
@@ -177,6 +136,22 @@ function AppContent() {
                 
                 {/* Rotas administrativas */}
                 <Route path="/admin" element={<AdminPage />} />
+                <Route 
+                  path="/admin/tutoriais/novo" 
+                  element={
+                    <ProtectedRoute requiredPermission="create_tutorial">
+                      <TutorialEditPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/tutoriais/:id/editar" 
+                  element={
+                    <ProtectedRoute requiredPermission="edit_tutorial">
+                      <TutorialEditPage />
+                    </ProtectedRoute>
+                  } 
+                />
                 
                 {/* Rotas de autenticação */}
                 <Route path="/register" element={<RegisterPage />} />

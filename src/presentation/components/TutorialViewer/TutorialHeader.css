@@ -1,0 +1,82 @@
+/* TutorialHeader Styles */
+.tutorial-header {
+  margin-bottom: 2rem;
+}
+
+.tutorial-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.breadcrumb-link {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #3b82f6;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+  color: #2563eb;
+}
+
+.breadcrumb-current {
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.breadcrumb-separator {
+  color: #9ca3af;
+}
+
+.tutorial-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.tutorial-description {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.tutorial-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tutorial-meta span {
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.tutorial-category {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.tutorial-difficulty {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.tutorial-duration {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.tutorial-views {
+  background: #f3e8ff;
+  color: #6b21a8;
+}

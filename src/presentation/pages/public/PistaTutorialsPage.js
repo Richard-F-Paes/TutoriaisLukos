@@ -59,15 +59,19 @@ import {
   Percent,
   Archive
 } from 'lucide-react'
-import { getTutorialsByCategory } from '../../../shared/data/__mocks__/lukosTutorials.js'
+import { useTutorials } from '../../../hooks/useTutorials.js'
 
 const PistaTutorialsPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
 
-  // Buscar tutoriais da Pista do arquivo lukosTutorials.js
-  const allTutorials = getTutorialsByCategory('PDV')
-  const tutorials = allTutorials.filter(tutorial => tutorial.subcategory === 'Pista')
+  // Buscar tutoriais da Pista da API
+  const { data: tutorialsData, isLoading } = useTutorials({ categorySlug: 'PDV' })
+  const allTutorials = tutorialsData?.data || []
+  const tutorials = allTutorials.filter(tutorial => {
+    const subcat = tutorial.Subcategory || tutorial.subcategory
+    return subcat === 'Pista'
+  })
 
   // Criar categorias baseadas nos tutoriais encontrados
   const subcategories = [...new Set(tutorials.map(tutorial => tutorial.subcategory))]

@@ -16,10 +16,10 @@ const apiClient = axios.create({
 // Interceptor para adicionar token automaticamente
 apiClient.interceptors.request.use(
   (config) => {
-    // Obter token de sessionStorage ou localStorage
-    const token = sessionStorage.getItem('token') || localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Obter access token de sessionStorage
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
   },
@@ -28,19 +28,54 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Interceptor para lidar com respostas e erros
+// Interceptor para lidar com respostas e refresh token
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    // Se token expirado ou inválido (401), limpar tokens
-    if (error.response?.status === 401) {
-      // Limpar tokens
-      sessionStorage.removeItem('token');
-      localStorage.removeItem('token');
-      
-      // Não redirecionar automaticamente - o usuário pode usar o modal de login
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Se token expirado ou inválido (401) e ainda não tentou refresh
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const refreshToken = sessionStorage.getItem('refreshToken');
+        if (!refreshToken) {
+          throw new Error('No refresh token');
+        }
+
+        // Tentar renovar o access token
+        const response = await axios.post(`${appConfig.apiUrl}/api/v1/auth/refresh`, {
+          refreshToken,
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data.data;
+
+        // Salvar novos tokens
+        sessionStorage.setItem('accessToken', newAccessToken);
+        if (newRefreshToken) {
+          sessionStorage.setItem('refreshToken', newRefreshToken);
+        }
+
+        // Retry da requisição original com novo token
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        // Refresh falhou, fazer logout
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        
+        // Não redirecionar automaticamente - o usuário pode usar o modal de login
+        return Promise.reject(refreshError);
+      }
     }
-    
+
     return Promise.reject(error);
   }
 );

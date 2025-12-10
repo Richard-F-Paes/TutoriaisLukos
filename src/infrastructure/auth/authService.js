@@ -1,83 +1,104 @@
-// Serviço de Autenticação Simplificado
-// Para equipe pequena de suporte - apenas login/senha
-
-import { verifyCredentials } from '../config/auth.config.js';
-import { generateToken, verifyToken as verifyTokenFromService } from './tokenService.js';
+// Serviço de Autenticação - Integrado com API
+import apiClient from '../api/client.js';
+import { endpoints } from '../api/endpoints.js';
 
 /**
- * Serviço de autenticação simplificado
- * Usa configuração local (auth.config.js) para verificar credenciais
+ * Serviço de autenticação integrado com API
  */
 export const authService = {
   /**
-   * Login - Verifica credenciais e retorna token
+   * Login - Autentica com API e retorna tokens
    * @param {string} username - Nome de usuário (ou email)
    * @param {string} password - Senha
-   * @returns {Promise<{user: Object, token: string}>}
+   * @returns {Promise<{user: Object, accessToken: string, refreshToken: string}>}
    */
   async login(username, password) {
     try {
-      // Verificar credenciais usando configuração
-      const user = await verifyCredentials(username, password);
-      
-      if (!user) {
-        throw new Error('Usuário ou senha incorretos');
-      }
+      const response = await apiClient.post(endpoints.auth.login, {
+        username,
+        password,
+      });
 
-      // Gerar token JWT
-      const token = generateToken(user, 24); // 24 horas
+      const { user, accessToken, refreshToken } = response.data.data;
+
+      // Salvar tokens em sessionStorage
+      sessionStorage.setItem('accessToken', accessToken);
+      sessionStorage.setItem('refreshToken', refreshToken);
 
       return {
-        user: {
-          id: user.id,
-          username: user.username,
-          name: user.name,
-          role: user.role
-        },
-        token
+        user,
+        accessToken,
+        refreshToken,
       };
     } catch (error) {
-      throw new Error(error.message || 'Erro ao fazer login');
+      throw new Error(error.response?.data?.error || 'Erro ao fazer login');
     }
   },
 
   /**
-   * Verificar token - Valida e retorna dados do usuário
-   * @param {string} token - Token JWT
-   * @returns {Promise<Object>} - Dados do usuário
+   * Refresh token - Renova access token
+   * @returns {Promise<string>} - Novo access token
    */
-  async verifyToken(token) {
+  async refreshToken() {
     try {
-      const payload = verifyTokenFromService(token);
-      
-      if (!payload) {
-        throw new Error('Token inválido ou expirado');
+      const refreshToken = sessionStorage.getItem('refreshToken');
+      if (!refreshToken) {
+        throw new Error('No refresh token available');
       }
 
-      // Retornar dados do usuário do token
-      return {
-        id: payload.userId,
-        username: payload.username,
-        role: payload.role
-      };
+      const response = await apiClient.post(endpoints.auth.refresh, {
+        refreshToken,
+      });
+
+      const { accessToken, refreshToken: newRefreshToken } = response.data.data;
+
+      // Atualizar tokens
+      sessionStorage.setItem('accessToken', accessToken);
+      if (newRefreshToken) {
+        sessionStorage.setItem('refreshToken', newRefreshToken);
+      }
+
+      return accessToken;
+    } catch (error) {
+      // Limpar tokens se refresh falhar
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('refreshToken');
+      throw new Error('Failed to refresh token');
+    }
+  },
+
+  /**
+   * Verificar token - Obtém usuário atual da API
+   * @returns {Promise<Object>} - Dados do usuário
+   */
+  async verifyToken() {
+    try {
+      const response = await apiClient.get(endpoints.auth.me);
+      return response.data.data.user;
     } catch (error) {
       throw new Error('Token inválido ou expirado');
     }
   },
 
   /**
-   * Logout - Limpa token local
+   * Logout - Limpa tokens e chama API
    */
-  logout() {
-    // Limpar token do localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-      sessionStorage.removeItem('token');
+  async logout() {
+    try {
+      // Tentar chamar API de logout (opcional)
+      await apiClient.post(endpoints.auth.logout).catch(() => {
+        // Ignorar erro se API não estiver disponível
+      });
+    } finally {
+      // Sempre limpar tokens locais
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+      }
     }
-  }
+  },
 };
 
-// Exportar serviço real (padrão para produção)
-// Mocks estão em ./__mocks__/authService.mock.js e só devem ser usados
-// em desenvolvimento com VITE_USE_MOCK_DATA=true
 export default authService;

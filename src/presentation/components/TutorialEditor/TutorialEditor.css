@@ -1,0 +1,108 @@
+/* TutorialEditor Styles */
+.tutorial-editor {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+  flex-wrap: wrap;
+}
+
+.toolbar-group {
+  display: flex;
+  gap: 0.25rem;
+  padding-right: 0.75rem;
+  border-right: 1px solid #e5e7eb;
+}
+
+.toolbar-group:last-child {
+  border-right: none;
+}
+
+.toolbar-actions {
+  margin-left: auto;
+  border-right: none;
+}
+
+.editor-toolbar button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+
+.editor-toolbar button:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.editor-toolbar button.is-active {
+  background: #3b82f6;
+  color: white;
+}
+
+.editor-toolbar button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-save {
+  background: #3b82f6 !important;
+  color: white !important;
+  padding: 0.5rem 1rem !important;
+}
+
+.btn-save:hover {
+  background: #2563eb !important;
+}
+
+.tutorial-editor-content {
+  min-height: 400px;
+  padding: 1.5rem;
+  outline: none;
+}
+
+.tutorial-editor-content p {
+  margin: 0.75rem 0;
+}
+
+.tutorial-editor-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.tutorial-editor-content pre {
+  background: #1e293b;
+  color: #f1f5f9;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.tutorial-editor-content code {
+  background: #f1f5f9;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.tutorial-editor-content pre code {
+  background: transparent;
+  padding: 0;
+}

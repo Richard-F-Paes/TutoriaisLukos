@@ -58,7 +58,6 @@ function AppContent() {
   const isTutorial = isTutorialRoute(location.pathname);
   const showCategoryNavbar = shouldShowCategoryNavbar(location.pathname);
   const showPageNavbar = shouldShowPageNavbar(location.pathname);
-  // Não mostrar PageNavbar na rota "/" (blog) pois ele está dentro do BlogPage
   const isBlogPage = location.pathname === '/' || location.pathname === '/blog';
 
   // Remover padding-top do body quando estiver na rota do blog
@@ -79,8 +78,8 @@ function AppContent() {
       {/* Renderizar Navbarcategoria apenas em rotas de tutoriais */}
       {showCategoryNavbar && <Navbarcategoria />}
       
-      {/* Renderizar PageNavbar apenas em rotas principais (não tutoriais e não blog) */}
-      {showPageNavbar && !isBlogPage && <PageNavbar />}
+      {/* Renderizar PageNavbar em rotas principais (não tutoriais) */}
+      {showPageNavbar && <PageNavbar transparent={isBlogPage} />}
     
       <main>
         <Routes>

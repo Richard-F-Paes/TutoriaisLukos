@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, User, ArrowRight, BookOpen, Tag, FileText, Cloud, CreditCard, Gift, Smartphone, Wallet, Receipt, ShoppingCart, BarChart3, Database, Package, DollarSign, TrendingUp, ChevronLeft, ChevronRight, HelpCircle, ChevronDown, ChevronUp, CheckCircle, ArrowUp, Percent, MessageCircle, Play, X, Rocket, Users, Edit, Zap, Brain, Cpu, Eye } from 'lucide-react';
 import VideoShowcase from '../../components/custom/VideoShowcase/VideoShowcase';
+import BentoGrid from '../../components/custom/BentoGrid/BentoGrid';
 
 // Componente Feature2 adaptado
 const Feature2 = ({
@@ -20,7 +21,7 @@ const Feature2 = ({
 }) => {
   return (
     <section className="py-16 md:py-32">
-     
+
     </section>
   );
 };
@@ -28,10 +29,10 @@ const Feature2 = ({
 function BlogPage() {
   // Estado para FAQ
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
-  
+
   // Estado para controlar modal de vídeo
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  
+
   // Configurações do vídeo
   const videoImageUrl = 'back.png';
   const videoId = 'F_itCCQd0nk'; // Substituir pelo ID do vídeo do YouTube da LUKOS
@@ -147,7 +148,7 @@ function BlogPage() {
       image: 'https://images.unsplash.com/photo-1602665742701-389671bc40c0?q=80&w=800&h=400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       link: '/servicos',
     },
-    
+
   ];
 
   return (
@@ -264,11 +265,11 @@ function BlogPage() {
           }
         }
       `}</style>
-      
+
       {/* Hero Section - Estilo TOTVS Melhorado */}
       <section className="relative min-h-[750px] md:min-h-[900px] flex items-center" style={{ marginTop: 0, paddingTop: 0 }}>
         {/* Background com imagem do profissional */}
-        <div 
+        <div
           className="hero-background absolute inset-0 bg-cover bg-center md:bg-contain lg:bg-cover"
           style={{
             backgroundImage: 'url("/banner.png")',
@@ -277,32 +278,32 @@ function BlogPage() {
           }}
         >
         </div>
-        
+
         {/* Filtro preto */}
-        <div className="absolute inset-0 bg-black/50"></div>
-        
-        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 w-full max-w-7xl pt-[60px]"> 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+        <div className="absolute inset-0 bg-black/50" style={{ borderWidth: '1px', borderColor: 'rgba(0, 0, 0, 1)', borderImage: 'none' }}></div>
+
+        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 w-full max-w-7xl pt-[60px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gridTemplateRows: 'repeat(1, 1fr)', verticalAlign: 'middle' }}>
             {/* Coluna Esquerda - Texto */}
             <div className="text-white">
               <h1 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl text-white uppercase font-bold mb-6 leading-tight">
-               <div className="w-full max-w-3xl">
-                <p className="m-0 mt-0 mb-0 text-3xl border-0 w-full max-w-3xl text-start box-border translate-x-0 translate-y-0 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100" style={{fontFamily: 'TOTVS !important'}}>
-                 Lukos tecnologia para postos de combustível
-                </p></div>
+                <div className="w-full max-w-3xl">
+                  <p className="m-0 mt-0 mb-0 text-3xl border-0 w-full max-w-3xl text-start box-border translate-x-0 translate-y-0 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100" style={{ fontFamily: 'TOTVS !important' }}>
+                    Lukos tecnologia para postos de combustível
+                  </p></div>
               </h1>
-              
-              <div className="text-lg md:text-xl lg:text-2xl text-white mb-8 leading-relaxed" style={{maxWidth: '560px'}}>
+
+              <div className="text-lg md:text-xl lg:text-2xl text-white mb-8 leading-relaxed" style={{ maxWidth: '560px' }}>
                 <p className="w-full max-w-3xl text-start">
-                Com mais de 10 anos de experiência, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência.
+                  Com mais de 10 anos de experiência, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência.
                 </p>
               </div>
-            
-            </div>
-            
-           
 
-        
+            </div>
+
+
+
+
           </div>
         </div>
       </section>
@@ -310,8 +311,8 @@ function BlogPage() {
       {/* Seção: Trusted by Brands */}
       <section className="py-16 md:py-24 relative" style={{ backgroundColor: '#0a0a0f' }}>
         {/* Overlay */}
-        <div 
-          className="framer-fa7s15" 
+        <div
+          className="framer-fa7s15"
           data-framer-name="Overlay"
           style={{
             background: 'linear-gradient(to top, rgba(10, 10, 15, 0.95) 0%, transparent 100%)',
@@ -330,90 +331,40 @@ function BlogPage() {
             WebkitFontSmoothing: 'inherit'
           }}
         ></div>
-        
+
         {/* Efeitos de borda superior - se estendem por toda a largura da seção */}
         <div className="absolute top-0 left-0 right-0 w-full">
           {/* Camada base da borda */}
           <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gray-700/30 to-transparent"></div>
-          
+
           {/* Camada de gradiente roxo */}
           <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/60 to-transparent"></div>
-          
+
           {/* Efeito de brilho central animado */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-[2px] bg-gradient-to-r from-purple-500/0 via-purple-400 via-purple-300 to-purple-500/0 blur-md animate-pulse"></div>
-          
+
           {/* Efeito de shimmer animado */}
-          <div 
+          <div
             className="absolute top-0 h-[1px] w-1/3 bg-gradient-to-r from-transparent via-purple-400 to-transparent blur-sm"
             style={{
               animation: 'shimmer 3s ease-in-out infinite',
               left: '0%'
             }}
           ></div>
-          
+
           {/* Pontos de brilho nas extremidades */}
           <div className="absolute top-0 left-0 w-2 h-2 bg-purple-400 rounded-full blur-sm opacity-60 animate-pulse"></div>
           <div className="absolute top-0 right-0 w-2 h-2 bg-purple-400 rounded-full blur-sm opacity-60 animate-pulse" style={{ animationDelay: '1s' }}></div>
-          
+
           {/* Linha de profundidade */}
           <div className="absolute top-[-1px] left-0 right-0 h-[3px] bg-gradient-to-r from-purple-900/20 via-purple-700/10 to-purple-900/20 blur-sm"></div>
         </div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="framer-v2s8hx" data-framer-name="Tablet" id="logos">
-            {/* Container para ícones de tecnologias */}
-            <div className="relative grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center justify-items-center pt-8 pb-12">
-              {/* Efeito de fundo - Gradiente radial */}
-              <div className="absolute inset-0 bg-gradient-radial from-purple-900/10 via-transparent to-transparent rounded-3xl"></div>
-              
-              {/* Efeito de brilho central */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
-              
-              {/* Padrão de grid sutil */}
-              <div className="absolute inset-0 opacity-5" style={{
-                backgroundImage: `
-                  linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px)
-                `,
-                backgroundSize: '50px 50px'
-              }}></div>
-              
-              {/* Pontos decorativos */}
-              <div className="absolute top-10 left-10 w-2 h-2 bg-purple-400/20 rounded-full blur-sm"></div>
-              <div className="absolute top-20 right-20 w-1.5 h-1.5 bg-purple-300/30 rounded-full blur-sm"></div>
-              <div className="absolute bottom-10 left-1/4 w-1 h-1 bg-purple-500/20 rounded-full blur-sm"></div>
-              <div className="absolute bottom-20 right-1/3 w-1.5 h-1.5 bg-purple-400/25 rounded-full blur-sm"></div>
-              
-              {/* Efeito de borda sutil */}
-              <div className="absolute inset-0 rounded-3xl border border-purple-500/10"></div>
-              
-              {/* Texto LUKOS em Neon */}
-              <div className="col-span-full w-full flex items-center justify-center py-12">
-                <h1 
-                  className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-center"
-                  style={{
-                    letterSpacing: '0.3em',
-                    fontFamily: 'monospace',
-                    textShadow: `
-                      0 0 10px rgba(168, 85, 247, 0.8),
-                      0 0 20px rgba(168, 85, 247, 0.6),
-                      0 0 30px rgba(168, 85, 247, 0.4),
-                      0 0 40px rgba(168, 85, 247, 0.3),
-                      0 0 70px rgba(168, 85, 247, 0.2),
-                      0 0 100px rgba(168, 85, 247, 0.1)
-                    `,
-                    color: '#e9d5ff',
-                    animation: 'neon-flicker 3s ease-in-out infinite alternate',
-                    filter: 'drop-shadow(0 0 20px rgba(168, 85, 247, 0.8))'
-                  }}
-                >
-                  L U K O S
-                </h1>
-              </div>
-            </div>
-          </div>
-        </div>
+
+
       </section>
+
+      {/* Bento Grid Section */}
+      <BentoGrid />
 
       {/* Seção: Recursos e Benefícios - Estilo Moderno */}
       <section className="py-16 md:py-24 relative" style={{ backgroundColor: '#0a0a0f' }}>
@@ -483,9 +434,9 @@ function BlogPage() {
             {/* Coluna Direita - Imagem */}
             <div className="relative">
               <div className="relative rounded-lg overflow-hidden shadow-2xl">
-                <img 
-                  src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Profissional trabalhando" 
+                <img
+                  src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1000&auto=format&fit=crop"
+                  alt="Profissional trabalhando"
                   className="w-full h-[600px] object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f]/80 via-transparent to-transparent"></div>
@@ -496,56 +447,56 @@ function BlogPage() {
       </section>
 
       <section className="relative -mt-[90px] flex items-center justify-center">
-              <img 
-                src="https://images.pexels.com/photos/6803551/pexels-photo-6803551.jpeg" 
-                alt="Inteligência Artificial" 
-                className="w-full h-[800px] object-cover shadow-lg brightness-90 relative " 
+        <img
+          src="https://images.pexels.com/photos/6803551/pexels-photo-6803551.jpeg"
+          alt="Inteligência Artificial"
+          className="w-full h-[800px] object-cover shadow-lg brightness-90 relative "
+        />
+
+        {/* Scroll SVG */}
+        <div className="scroll scroll-gray-new">
+          <a href="#">
+            <svg
+              version="1.1"
+              id="Layer_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
+              x="0px"
+              y="0px"
+              viewBox="0 0 505.7 70.1"
+              style={{ enableBackground: 'new 0 0 505.7 70.1' }}
+              xmlSpace="preserve"
+            >
+              <title>curve-hollow-grey-out</title>
+              <path
+                className="d-block"
+                d="M351,32.6c-55.9,30.1-71.4,32.7-98.2,32.7s-42.3-2.6-98.2-32.7S28,0,28,0H0v70.1h28h449.6h28.1V0h-28.1C477.6,0,407,2.5,351,32.6z"
               />
-              
-              {/* Scroll SVG */}
-              <div className="scroll scroll-gray-new">
-                <a href="#">
-                  <svg 
-                    version="1.1" 
-                    id="Layer_1" 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    xmlnsXlink="http://www.w3.org/1999/xlink" 
-                    x="0px" 
-                    y="0px" 
-                    viewBox="0 0 505.7 70.1" 
-                    style={{enableBackground: 'new 0 0 505.7 70.1'}} 
-                    xmlSpace="preserve"
-                  >
-                    <title>curve-hollow-grey-out</title>
-                    <path 
-                      className="d-block" 
-                      d="M351,32.6c-55.9,30.1-71.4,32.7-98.2,32.7s-42.3-2.6-98.2-32.7S28,0,28,0H0v70.1h28h449.6h28.1V0h-28.1C477.6,0,407,2.5,351,32.6z"
-                    />
-                  </svg>
-                </a>
-              </div>
-               <div className="absolute inset-0 bg-black/70 flex items-center justify-center gap-8 px-8 md:px-16 w-full h-full">
-                {/* Imagem LUKIA à esquerda */}
-                <div className="flex-shrink-0 hidden md:block">
-                  <img src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0885-1.png" alt="LUKIA" className="w-full max-w-[500px] h-auto object-contain opacity-100 relative" />
-                </div>
-                
-                {/* Texto à direita */}
-                <div className="flex-1 flex flex-col items-center  justify-center gap-4 w-[500px] h-[500px]">
-                  <h2 className="text-white text-4xl md:text-6xl font-bold text-left drop-shadow-lg">Conheça mais sobre a LUKOS</h2>
-                  <p className="text-white/90 text-lg md:text-xl text-left leading-relaxed drop-shadow-md">
-                  Com mais de 10 anos de experiência, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência com soluções completas e personalizadas. Nosso ERP eficiente é a escolha de centenas de empresas, otimizando milhões de transações mensais com segurança e precisão.
+            </svg>
+          </a>
+        </div>
+        <div className="absolute inset-0 bg-black/70 flex items-center justify-center gap-8 px-8 md:px-16 w-full h-full">
+          {/* Imagem LUKIA à esquerda */}
+          <div className="flex-shrink-0 hidden md:block">
+            <img src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0885-1.png" alt="LUKIA" className="w-full max-w-[500px] h-auto object-contain opacity-100 relative" />
+          </div>
+
+          {/* Texto à direita */}
+          <div className="flex-1 flex flex-col items-center  justify-center gap-4 w-[500px] h-[500px]">
+            <h2 className="text-white text-4xl md:text-6xl font-bold text-left drop-shadow-lg">Conheça mais sobre a LUKOS</h2>
+            <p className="text-white/90 text-lg md:text-xl text-left leading-relaxed drop-shadow-md">
+              Com mais de 10 anos de experiência, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência com soluções completas e personalizadas. Nosso ERP eficiente é a escolha de centenas de empresas, otimizando milhões de transações mensais com segurança e precisão.
 
 
-                  </p>
-                </div>
-              </div>
-              
+            </p>
+          </div>
+        </div>
 
-              
-              
-            </section>
-             
+
+
+
+      </section>
+
       {/* Seção: Seu Posto Automatizado por IA */}
       <section className="py-16 md:py-24 relative overflow-hidden" style={{ backgroundColor: '#100e26' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -566,132 +517,132 @@ function BlogPage() {
               {/* Coluna Central - Logo LUKOS */}
               <div className="relative flex items-center justify-center order-1 lg:order-2">
                 <div className="relative w-72 h-72 md:w-96 md:h-96 flex items-center justify-center">
-                {/* Efeito glow animado com múltiplas camadas - Mais roxo */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/50 via-purple-600/50 to-purple-500/50 blur-3xl animate-pulse"></div>
-                <div className="absolute inset-0 bg-gradient-to-tl from-purple-600/40 via-purple-500/40 to-purple-700/40 blur-2xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                
-                {/* Anel rotativo externo - Dados/Neural - Mais roxo */}
-                <div className="absolute inset-0 border-2 border-transparent rounded-full" style={{
-                  background: 'conic-gradient(from 0deg, transparent, rgba(168, 85, 247, 0.5), transparent, rgba(192, 132, 252, 0.5), transparent, rgba(168, 85, 247, 0.5), transparent)',
-                  animation: 'spin 8s linear infinite',
-                  mask: 'radial-gradient(circle, transparent 40%, black 42%, black 58%, transparent 60%)',
-                  WebkitMask: 'radial-gradient(circle, transparent 40%, black 42%, black 58%, transparent 60%)'
-                }}></div>
-                
-                {/* Anel interno rotativo - Sentido contrário - Mais roxo */}
-                <div className="absolute inset-4 border border-transparent rounded-full" style={{
-                  background: 'conic-gradient(from 180deg, transparent, rgba(192, 132, 252, 0.6), transparent, rgba(168, 85, 247, 0.6), transparent, rgba(192, 132, 252, 0.6), transparent)',
-                  animation: 'spin 6s linear infinite reverse',
-                  mask: 'radial-gradient(circle, transparent 45%, black 47%, black 53%, transparent 55%)',
-                  WebkitMask: 'radial-gradient(circle, transparent 45%, black 47%, black 53%, transparent 55%)'
-                }}></div>
-                
-                {/* Partículas flutuantes de dados - Mais roxo */}
-                <div className="absolute inset-0">
-                  {[...Array(12)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute w-1 h-1 rounded-full"
-                      style={{
-                        left: `${50 + 45 * Math.cos((i * 30) * Math.PI / 180)}%`,
-                        top: `${50 + 45 * Math.sin((i * 30) * Math.PI / 180)}%`,
-                        background: i % 3 === 0 ? 'rgba(132, 204, 22, 0.6)' : 'rgba(168, 85, 247, 0.9)',
-                        boxShadow: `0 0 10px ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}`,
-                        animation: `float-${i} 3s ease-in-out infinite`,
-                        animationDelay: `${i * 0.2}s`
-                      }}
-                    ></div>
-                  ))}
-                </div>
-                
-                {/* Efeito de scan/holograma - Roxo */}
-                <div className="absolute inset-0 opacity-30" style={{
-                  background: 'linear-gradient(0deg, transparent 0%, rgba(168, 85, 247, 0.5) 50%, transparent 100%)',
-                  animation: 'scan 4s linear infinite',
-                  clipPath: 'polygon(0 0, 100% 0, 100% 20%, 0 20%)'
-                }}></div>
-                
-                {/* Logo Circular com efeito 3D e glitch sutil */}
-                <div className="relative w-full h-full flex items-center justify-center">
-                  <div className="relative w-full h-full" style={{
-                    transform: 'perspective(1000px) rotateY(0deg)',
-                    animation: 'float-3d 6s ease-in-out infinite'
-                  }}>
-                    <img 
-                      src="/logo.png" 
-                      alt="LUKOS Logo" 
-                      className="w-full h-full object-contain relative z-10"
-                      style={{
-                        filter: 'drop-shadow(0 0 30px rgba(168, 85, 247, 1)) drop-shadow(0 0 40px rgba(192, 132, 252, 0.9)) drop-shadow(0 0 60px rgba(168, 85, 247, 0.7)) drop-shadow(0 0 25px rgba(132, 204, 22, 0.6))',
-                        animation: 'glow-pulse 3s ease-in-out infinite, subtle-glitch 8s ease-in-out infinite'
-                      }}
-                    />
-                    
-                    {/* Efeito de profundidade - Sombra holográfica */}
-                    <div className="absolute inset-0 w-full h-full object-contain opacity-20 blur-xl" style={{
-                      backgroundImage: 'url(/logo.png)',
-                      backgroundSize: 'contain',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'center',
-                      transform: 'translateZ(-50px) scale(1.1)',
-                      filter: 'blur(20px)'
-                    }}></div>
-                  </div>
-                </div>
-                
-                {/* Linhas de conexão neural ao redor */}
-                <svg className="absolute inset-0 w-full h-full opacity-40" style={{ pointerEvents: 'none' }}>
-                  <defs>
-                    <linearGradient id="neuralGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#a855f7" stopOpacity="0.9" />
-                      <stop offset="50%" stopColor="#c084fc" stopOpacity="0.9" />
-                      <stop offset="100%" stopColor="#a855f7" stopOpacity="0.9" />
-                    </linearGradient>
-                  </defs>
-                  {[...Array(8)].map((_, i) => {
-                    const angle = (i * 45) * Math.PI / 180;
-                    const radius = 45;
-                    return (
-                      <line
-                        key={i}
-                        x1="50%"
-                        y1="50%"
-                        x2={`${50 + radius * Math.cos(angle)}%`}
-                        y2={`${50 + radius * Math.sin(angle)}%`}
-                        stroke="url(#neuralGradient1)"
-                        strokeWidth="1"
-                        strokeDasharray="4 4"
-                        style={{
-                          animation: `neural-pulse 2s ease-in-out infinite`,
-                          animationDelay: `${i * 0.25}s`
-                        }}
-                      />
-                    );
-                  })}
-                </svg>
-                
-                {/* Partículas de energia pulsantes - Mais roxo */}
-                <div className="absolute inset-0">
-                  {[...Array(6)].map((_, i) => {
-                    const angle = (i * 60) * Math.PI / 180;
-                    const radius = 50;
-                    return (
+                  {/* Efeito glow animado com múltiplas camadas - Mais roxo */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/50 via-purple-600/50 to-purple-500/50 blur-3xl animate-pulse"></div>
+                  <div className="absolute inset-0 bg-gradient-to-tl from-purple-600/40 via-purple-500/40 to-purple-700/40 blur-2xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+
+                  {/* Anel rotativo externo - Dados/Neural - Mais roxo */}
+                  <div className="absolute inset-0 border-2 border-transparent rounded-full" style={{
+                    background: 'conic-gradient(from 0deg, transparent, rgba(168, 85, 247, 0.5), transparent, rgba(192, 132, 252, 0.5), transparent, rgba(168, 85, 247, 0.5), transparent)',
+                    animation: 'spin 8s linear infinite',
+                    mask: 'radial-gradient(circle, transparent 40%, black 42%, black 58%, transparent 60%)',
+                    WebkitMask: 'radial-gradient(circle, transparent 40%, black 42%, black 58%, transparent 60%)'
+                  }}></div>
+
+                  {/* Anel interno rotativo - Sentido contrário - Mais roxo */}
+                  <div className="absolute inset-4 border border-transparent rounded-full" style={{
+                    background: 'conic-gradient(from 180deg, transparent, rgba(192, 132, 252, 0.6), transparent, rgba(168, 85, 247, 0.6), transparent, rgba(192, 132, 252, 0.6), transparent)',
+                    animation: 'spin 6s linear infinite reverse',
+                    mask: 'radial-gradient(circle, transparent 45%, black 47%, black 53%, transparent 55%)',
+                    WebkitMask: 'radial-gradient(circle, transparent 45%, black 47%, black 53%, transparent 55%)'
+                  }}></div>
+
+                  {/* Partículas flutuantes de dados - Mais roxo */}
+                  <div className="absolute inset-0">
+                    {[...Array(12)].map((_, i) => (
                       <div
-                        key={`energy-${i}`}
-                        className="absolute w-2 h-2 rounded-full"
+                        key={i}
+                        className="absolute w-1 h-1 rounded-full"
                         style={{
-                          left: `${50 + radius * Math.cos(angle)}%`,
-                          top: `${50 + radius * Math.sin(angle)}%`,
-                          background: `radial-gradient(circle, ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}, transparent)`,
-                          boxShadow: `0 0 20px ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}`,
-                          animation: `energy-pulse 2s ease-in-out infinite`,
-                          animationDelay: `${i * 0.3}s`,
-                          transform: 'translate(-50%, -50%)'
+                          left: `${50 + 45 * Math.cos((i * 30) * Math.PI / 180)}%`,
+                          top: `${50 + 45 * Math.sin((i * 30) * Math.PI / 180)}%`,
+                          background: i % 3 === 0 ? 'rgba(132, 204, 22, 0.6)' : 'rgba(168, 85, 247, 0.9)',
+                          boxShadow: `0 0 10px ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}`,
+                          animation: `float-${i} 3s ease-in-out infinite`,
+                          animationDelay: `${i * 0.2}s`
                         }}
                       ></div>
-                    );
-                  })}
-                </div>
+                    ))}
+                  </div>
+
+                  {/* Efeito de scan/holograma - Roxo */}
+                  <div className="absolute inset-0 opacity-30" style={{
+                    background: 'linear-gradient(0deg, transparent 0%, rgba(168, 85, 247, 0.5) 50%, transparent 100%)',
+                    animation: 'scan 4s linear infinite',
+                    clipPath: 'polygon(0 0, 100% 0, 100% 20%, 0 20%)'
+                  }}></div>
+
+                  {/* Logo Circular com efeito 3D e glitch sutil */}
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <div className="relative w-full h-full" style={{
+                      transform: 'perspective(1000px) rotateY(0deg)',
+                      animation: 'float-3d 6s ease-in-out infinite'
+                    }}>
+                      <img
+                        src="/logo.png"
+                        alt="LUKOS Logo"
+                        className="w-full h-full object-contain relative z-10"
+                        style={{
+                          filter: 'drop-shadow(0 0 30px rgba(168, 85, 247, 1)) drop-shadow(0 0 40px rgba(192, 132, 252, 0.9)) drop-shadow(0 0 60px rgba(168, 85, 247, 0.7)) drop-shadow(0 0 25px rgba(132, 204, 22, 0.6))',
+                          animation: 'glow-pulse 3s ease-in-out infinite, subtle-glitch 8s ease-in-out infinite'
+                        }}
+                      />
+
+                      {/* Efeito de profundidade - Sombra holográfica */}
+                      <div className="absolute inset-0 w-full h-full object-contain opacity-20 blur-xl" style={{
+                        backgroundImage: 'url(/logo.png)',
+                        backgroundSize: 'contain',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center',
+                        transform: 'translateZ(-50px) scale(1.1)',
+                        filter: 'blur(20px)'
+                      }}></div>
+                    </div>
+                  </div>
+
+                  {/* Linhas de conexão neural ao redor */}
+                  <svg className="absolute inset-0 w-full h-full opacity-40" style={{ pointerEvents: 'none' }}>
+                    <defs>
+                      <linearGradient id="neuralGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#a855f7" stopOpacity="0.9" />
+                        <stop offset="50%" stopColor="#c084fc" stopOpacity="0.9" />
+                        <stop offset="100%" stopColor="#a855f7" stopOpacity="0.9" />
+                      </linearGradient>
+                    </defs>
+                    {[...Array(8)].map((_, i) => {
+                      const angle = (i * 45) * Math.PI / 180;
+                      const radius = 45;
+                      return (
+                        <line
+                          key={i}
+                          x1="50%"
+                          y1="50%"
+                          x2={`${50 + radius * Math.cos(angle)}%`}
+                          y2={`${50 + radius * Math.sin(angle)}%`}
+                          stroke="url(#neuralGradient1)"
+                          strokeWidth="1"
+                          strokeDasharray="4 4"
+                          style={{
+                            animation: `neural-pulse 2s ease-in-out infinite`,
+                            animationDelay: `${i * 0.25}s`
+                          }}
+                        />
+                      );
+                    })}
+                  </svg>
+
+                  {/* Partículas de energia pulsantes - Mais roxo */}
+                  <div className="absolute inset-0">
+                    {[...Array(6)].map((_, i) => {
+                      const angle = (i * 60) * Math.PI / 180;
+                      const radius = 50;
+                      return (
+                        <div
+                          key={`energy-${i}`}
+                          className="absolute w-2 h-2 rounded-full"
+                          style={{
+                            left: `${50 + radius * Math.cos(angle)}%`,
+                            top: `${50 + radius * Math.sin(angle)}%`,
+                            background: `radial-gradient(circle, ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}, transparent)`,
+                            boxShadow: `0 0 20px ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}`,
+                            animation: `energy-pulse 2s ease-in-out infinite`,
+                            animationDelay: `${i * 0.3}s`,
+                            transform: 'translate(-50%, -50%)'
+                          }}
+                        ></div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
@@ -699,7 +650,7 @@ function BlogPage() {
               <div className="relative order-3">
                 {/* Linha vertical roxa */}
                 <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-purple-500"></div>
-                
+
                 <div className="space-y-12 pl-16">
                   {/* Step 1 - Análise de Dados */}
                   <div className="relative">
@@ -707,7 +658,7 @@ function BlogPage() {
                     <div className="absolute -left-10 top-0 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center border-4 border-gray-900 shadow-lg z-10">
                       <BarChart3 className="text-white" size={20} />
                     </div>
-                    
+
                     {/* Conteúdo */}
                     <div>
                       <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">
@@ -725,7 +676,7 @@ function BlogPage() {
                     <div className="absolute -left-10 top-0 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center border-4 border-gray-900 shadow-lg z-10">
                       <Brain className="text-white" size={20} />
                     </div>
-                    
+
                     {/* Conteúdo */}
                     <div>
                       <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">
@@ -743,7 +694,7 @@ function BlogPage() {
                     <div className="absolute -left-10 top-0 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center border-4 border-gray-900 shadow-lg z-10">
                       <MessageCircle className="text-white" size={20} />
                     </div>
-                    
+
                     {/* Conteúdo */}
                     <div>
                       <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">
@@ -806,14 +757,14 @@ function BlogPage() {
             <div>
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
                 O QUE É A LUKOS?
-            </h2>
+              </h2>
               <p className="text-lg md:text-xl text-white/90 leading-relaxed mb-8">
                 Bem-vindo à plataforma LUKOS que vai redefinir sua experiência de gestão! Com mais de 10 anos de experiência, transformamos a gestão de postos de combustíveis e lojas de conveniência com soluções completas e personalizadas. Junte-se a centenas de empresas que confiam na LUKOS!
-            </p>
+              </p>
               <button className="px-8 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors">
                 SAIBA MAIS
               </button>
-          </div>
+            </div>
 
             {/* Coluna Direita - Benefícios */}
             <div className="bg-gray-900/30 backdrop-blur-sm rounded-xl p-8">
@@ -832,13 +783,13 @@ function BlogPage() {
                   <p className="text-white/90 text-lg">Suporte premium e suporte ao vivo. Todas as suas dúvidas resolvidas rapidamente pela nossa equipe!</p>
                 </li>
               </ul>
-        </div>
-      </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Seção do Vídeo */}
-      <div 
+      <div
         className="h-[700px] relative bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]"
         style={{
           backgroundImage: 'url(https://i.pinimg.com/1200x/ab/d9/c4/abd9c48d4eb80e27af7efe3042853e6d.jpg)',
@@ -849,34 +800,34 @@ function BlogPage() {
       >
         {/* Overlay com gradiente para melhorar legibilidade */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#690093]/80 via-[#5a008f]/80 to-[#4a007a]/80"></div>
-        
+
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[50px]">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 text-center">
             Transforme a gestão do seu posto de combustível
-          </h2> 
-            
-            {/* Vídeo */}
-            <div className="mt-12 max-w-4xl mx-auto group">
-              <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
-                <iframe
-                  className="absolute top-0 left-0 w-full h-full rounded-3xl"
-                  src="https://www.youtube.com/embed/F_itCCQd0nk"
-                  title="Vídeo LUKOS"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
+          </h2>
+
+          {/* Vídeo */}
+          <div className="mt-12 max-w-4xl mx-auto group">
+            <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
+              <iframe
+                className="absolute top-0 left-0 w-full h-full rounded-3xl"
+                src="https://www.youtube.com/embed/F_itCCQd0nk"
+                title="Vídeo LUKOS"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
             </div>
+          </div>
         </div>
       </div>
 
-           
-           
-           
+
+
+
 
       {/* End Features */}
-        
+
 
       {/* Main Content Continua */}
       <div className="">
@@ -884,10 +835,10 @@ function BlogPage() {
 
 
           {/* Seção de Blog Posts */}
-         
+
 
           {/* Call to Action */}
-       
+
         </div>
       </div>
     </div>

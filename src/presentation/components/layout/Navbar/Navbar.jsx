@@ -97,8 +97,29 @@ const Navbar = () => {
           Categorias
         </Link>
         <Link
-          to="/sobre"
-          className={`hover:text-indigo-600 ${location.pathname === '/sobre' ? 'text-indigo-600 font-semibold' : ''}`}
+          to="/conciliacao"
+          className={`hover:text-indigo-600 ${location.pathname === '/conciliacao' ? 'text-indigo-600 font-semibold' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          Conciliação
+        </Link>
+        <Link
+          to="/fullcheck"
+          className={`hover:text-indigo-600 ${location.pathname === '/fullcheck' ? 'text-indigo-600 font-semibold' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          Fullcheck
+        </Link>
+        <Link
+          to="/fidelidade"
+          className={`hover:text-indigo-600 ${location.pathname === '/fidelidade' ? 'text-indigo-600 font-semibold' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          Fidelidade
+        </Link>
+        <Link
+          to="/sobre-nos"
+          className={`hover:text-indigo-600 ${location.pathname === '/sobre-nos' ? 'text-indigo-600 font-semibold' : ''}`}
           onClick={() => setMenuOpen(false)}
         >
           Sobre
@@ -129,7 +150,7 @@ const Navbar = () => {
         <form onSubmit={handleSearch} className="hidden md:flex items-center bg-gray-100 px-3 py-1.5 rounded-full">
           <i className="fas fa-search text-gray-500 mr-2 text-sm"></i>
           <input
-          
+
             type="text"
             placeholder="Buscar..."
             className="bg-transparent outline-none text-sm text-gray-700 w-32"
@@ -167,9 +188,8 @@ const Navbar = () => {
               <i className="fas fa-user text-gray-700"></i>
               <span className="text-sm text-gray-700">{user?.name}</span>
               <i
-                className={`fas fa-chevron-down transition-transform ${
-                  showUserMenu ? 'rotate-180' : ''
-                }`}
+                className={`fas fa-chevron-down transition-transform ${showUserMenu ? 'rotate-180' : ''
+                  }`}
               ></i>
             </button>
 
@@ -186,14 +206,14 @@ const Navbar = () => {
                 {(user?.role === 'admin' ||
                   user?.role === 'super_admin' ||
                   user?.role === 'editor') && (
-                  <Link
-                    to="/editor"
-                    onClick={() => setShowUserMenu(false)}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Editor Visual
-                  </Link>
-                )}
+                    <Link
+                      to="/editor"
+                      onClick={() => setShowUserMenu(false)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Editor Visual
+                    </Link>
+                  )}
 
                 {(user?.role === 'admin' || user?.role === 'super_admin') && (
                   <Link
@@ -243,9 +263,9 @@ const Navbar = () => {
       </div>
 
       {/* Modal de Senha Administrativa */}
-      <AdminPasswordModal 
-        isOpen={showAdminModal} 
-        onClose={() => setShowAdminModal(false)} 
+      <AdminPasswordModal
+        isOpen={showAdminModal}
+        onClose={() => setShowAdminModal(false)}
       />
     </header>
   );

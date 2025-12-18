@@ -42,6 +42,11 @@ import VerPage from '../presentation/pages/public/VerPage';
 import ApresentacaoSistemasPage from '../presentation/pages/public/ApresentacaoSistemasPage';
 import ERPPage from '../presentation/pages/public/ERPPage';
 import SobreNos from '../presentation/pages/public/SobreNos';
+import ConciliacaoPage from '../presentation/pages/public/ConciliacaoPage';
+import FullcheckPage from '../presentation/pages/public/FullcheckPage';
+import FidelidadePage from '../presentation/pages/public/FidelidadePage';
+
+
 
 // Importar páginas administrativas
 import EditorPage from '../presentation/pages/admin/EditorPage';
@@ -58,7 +63,9 @@ function AppContent() {
   const isTutorial = isTutorialRoute(location.pathname);
   const showCategoryNavbar = shouldShowCategoryNavbar(location.pathname);
   const showPageNavbar = shouldShowPageNavbar(location.pathname);
-  const isBlogPage = location.pathname === '/' || location.pathname === '/blog';
+  const isBlogPage = location.pathname === '/' || location.pathname === '/blog' || location.pathname === '/sobre-nos' || location.pathname === '/conciliacao' || location.pathname === '/fullcheck' || location.pathname === '/fidelidade' || location.pathname === '/servicos';
+
+
 
   // Remover padding-top do body quando estiver na rota do blog
   useEffect(() => {
@@ -77,118 +84,123 @@ function AppContent() {
     <div className="App">
       {/* Renderizar Navbarcategoria apenas em rotas de tutoriais */}
       {showCategoryNavbar && <Navbarcategoria />}
-      
+
       {/* Renderizar PageNavbar em rotas principais (não tutoriais) */}
       {showPageNavbar && <PageNavbar transparent={isBlogPage} />}
-    
+
       <main>
         <Routes>
-                {/* Rotas públicas principais */}
-                <Route path="/" element={<BlogPage />} />
-                <Route path="/blog" element={<BlogPostsPage />} />
-                <Route path="/sobre-nos" element={<SobreNos />} />
-                
-                {/* Rotas dos Tutoriais Lukos */}
-                <Route path="/tutoriais" element={<TutorialsUnified />} />
-                <Route path="/tutoriais/:slug" element={<TutorialViewPage />} />
-                <Route path="/tutoriais/treinamentos" element={<TreinamentosPage />} />
-                <Route path="/video-tutoriais" element={<VideoTutorialsPage />} />
-                <Route path="/video-tutorial/:id" element={<VideoTutorialDetailPage />} />
-                <Route path="/categoria/:category" element={<CategoryTutorialsPage />} />
-                
-                {/* Rotas Hierárquicas */}
-                <Route path="/cadastros" element={<CadastrosPage />} />
+          {/* Rotas públicas principais */}
+          <Route path="/" element={<BlogPage />} />
+          <Route path="/blog" element={<BlogPostsPage />} />
+          <Route path="/sobre-nos" element={<SobreNos />} />
 
-                {/* Rotas Dashboard */}
-                <Route path="/pages/GeradorSenha" element={<GeradorSenha />} />
-                <Route path="/pages/PrecoCombustivel" element={<PrecoCombustivel />} />                    
-                
-                {/* Rotas de Tutoriais por Seção - Redirecionadas para filtros de URL */}
-                <Route 
-                  path="/retaguarda-tutoriais" 
-                  element={<Navigate to="/tutoriais?categoria=retaguarda" replace />} 
-                />
-                <Route 
-                  path="/conveniencia-tutoriais" 
-                  element={<Navigate to="/tutoriais?categoria=conveniencia" replace />} 
-                />
-                <Route 
-                  path="/dashboard-tutoriais" 
-                  element={<Navigate to="/tutoriais?categoria=dashboard" replace />} 
-                />
-                <Route 
-                  path="/pista-tutoriais" 
-                  element={<Navigate to="/tutoriais?categoria=pista" replace />} 
-                />
-                
-                {/* Nova Página */}
-                <Route path="/nova-pagina" element={<NovaPagina />} />
-                
-                {/* Página de IA */}
-                <Route path="/ia" element={<IAPage />} />
-                
-                {/* Página de Serviços */}
-                <Route path="/servicos" element={<ServicosPage />} />
-                
-                {/* Página do Blog */}
-                <Route path="/blog/:id" element={<BlogPostDetailPage />} />
-                <Route path="/blog-posts" element={<BlogPostsPage />} />
-                <Route path="/artigo/:id" element={<BlogPostPage />} />
-                
-                {/* Página de Aplicativos */}
-                <Route path="/apps" element={<AppsPage />} />
-                
-                {/* Página de Visualização */}
-                <Route path="/ver" element={<VerPage />} />
-                
-                {/* Página de Apresentação dos Sistemas */}
-                <Route path="/apresentacao-sistemas" element={<ApresentacaoSistemasPage />} />
-                <Route path="/sistemas" element={<ApresentacaoSistemasPage />} />
-                <Route path="/erp" element={<ERPPage />} />
-                
-                {/* Rotas administrativas */}
-                <Route path="/admin" element={<AdminPage />} />
-                <Route 
-                  path="/admin/tutoriais/novo" 
-                  element={
-                    <ProtectedRoute requiredPermission="create_tutorial">
-                      <TutorialEditPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/tutoriais/:id/editar" 
-                  element={
-                    <ProtectedRoute requiredPermission="edit_tutorial">
-                      <TutorialEditPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                {/* Rotas de autenticação */}
-                <Route path="/register" element={<RegisterPage />} />
-                
-                {/* Rotas protegidas */}
-                <Route 
-                  path="/profile" 
-                  element={
-                    <ProtectedRoute>
-                      <ProfilePage />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                {/* Editor Visual */}
-                <Route 
-                  path="/editor" 
-                  element={
-                    <ProtectedRoute requiredPermission="manage_content">
-                      <EditorPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-              </Routes>
+          {/* Rotas dos Tutoriais Lukos */}
+          <Route path="/tutoriais" element={<TutorialsUnified />} />
+          <Route path="/tutoriais/:slug" element={<TutorialViewPage />} />
+          <Route path="/tutoriais/treinamentos" element={<TreinamentosPage />} />
+          <Route path="/video-tutoriais" element={<VideoTutorialsPage />} />
+          <Route path="/video-tutorial/:id" element={<VideoTutorialDetailPage />} />
+          <Route path="/categoria/:category" element={<CategoryTutorialsPage />} />
+
+          {/* Rotas Hierárquicas */}
+          <Route path="/cadastros" element={<CadastrosPage />} />
+
+          {/* Rotas Dashboard */}
+          <Route path="/pages/GeradorSenha" element={<GeradorSenha />} />
+          <Route path="/pages/PrecoCombustivel" element={<PrecoCombustivel />} />
+
+          {/* Rotas de Tutoriais por Seção - Redirecionadas para filtros de URL */}
+          <Route
+            path="/retaguarda-tutoriais"
+            element={<Navigate to="/tutoriais?categoria=retaguarda" replace />}
+          />
+          <Route
+            path="/conveniencia-tutoriais"
+            element={<Navigate to="/tutoriais?categoria=conveniencia" replace />}
+          />
+          <Route
+            path="/dashboard-tutoriais"
+            element={<Navigate to="/tutoriais?categoria=dashboard" replace />}
+          />
+          <Route
+            path="/pista-tutoriais"
+            element={<Navigate to="/tutoriais?categoria=pista" replace />}
+          />
+
+          {/* Nova Página */}
+          <Route path="/nova-pagina" element={<NovaPagina />} />
+          <Route path="/conciliacao" element={<ConciliacaoPage />} />
+          <Route path="/fullcheck" element={<FullcheckPage />} />
+          <Route path="/fidelidade" element={<FidelidadePage />} />
+
+
+
+          {/* Página de IA */}
+          <Route path="/ia" element={<IAPage />} />
+
+          {/* Página de Serviços */}
+          <Route path="/servicos" element={<ServicosPage />} />
+
+          {/* Página do Blog */}
+          <Route path="/blog/:id" element={<BlogPostDetailPage />} />
+          <Route path="/blog-posts" element={<BlogPostsPage />} />
+          <Route path="/artigo/:id" element={<BlogPostPage />} />
+
+          {/* Página de Aplicativos */}
+          <Route path="/apps" element={<AppsPage />} />
+
+          {/* Página de Visualização */}
+          <Route path="/ver" element={<VerPage />} />
+
+          {/* Página de Apresentação dos Sistemas */}
+          <Route path="/apresentacao-sistemas" element={<ApresentacaoSistemasPage />} />
+          <Route path="/sistemas" element={<ApresentacaoSistemasPage />} />
+          <Route path="/erp" element={<ERPPage />} />
+
+          {/* Rotas administrativas */}
+          <Route path="/admin" element={<AdminPage />} />
+          <Route
+            path="/admin/tutoriais/novo"
+            element={
+              <ProtectedRoute requiredPermission="create_tutorial">
+                <TutorialEditPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/tutoriais/:id/editar"
+            element={
+              <ProtectedRoute requiredPermission="edit_tutorial">
+                <TutorialEditPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Rotas de autenticação */}
+          <Route path="/register" element={<RegisterPage />} />
+
+          {/* Rotas protegidas */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Editor Visual */}
+          <Route
+            path="/editor"
+            element={
+              <ProtectedRoute requiredPermission="manage_content">
+                <EditorPage />
+              </ProtectedRoute>
+            }
+          />
+
+        </Routes>
       </main>
       <Footer />
       <TutorialModal />

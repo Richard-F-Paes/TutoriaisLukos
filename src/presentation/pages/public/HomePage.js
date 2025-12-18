@@ -1,6 +1,7 @@
 import React from 'react';
 import InputSearch from '../../components/search/InputSearch/InputSearch';
 import HeroTutorial from '../../components/features/HeroTutorial/HeroTutorial';
+import BentoGrid from '../../components/custom/BentoGrid/BentoGrid';
 import VideoTutorialsPage from './VideoTutorialsPage';
 import VideoShowcase from '../../components/videos/VideoShowcase/VideoShowcase';
 import { CourseDetail } from '../../components/content/Courses/CousesDetail';
@@ -13,27 +14,32 @@ import TrainingScheduler from '../../components/custom/TrainingScheduler/Trainin
 import ServicesSection from '../../components/custom/ServicesSection/ServicesSection';
 import TrainingSection from '../../components/custom/TrainingSection/TrainingSection';
 import { Chatbot } from '../../components/custom/Chatbot/Chatbot';
+import ExpertiseSection from '../../components/custom/ExpertiseSection/ExpertiseSection';
+import ProcessSection from '../../components/custom/ProcessSection/ProcessSection';
 
 
 function HomePage() {
   return (
     <>
       <LandingHero />
+      <ExpertiseSection />
       <HeroTutorial />
+      <BentoGrid />
+      <ProcessSection />
       <TrainingSection />
-      <VideoShowcase />  
+      <VideoShowcase />
       <ServicesSection />
       <TeamSection />
       <TrainingScheduler />
       <CustomSection />
       <Chatbot />
-   
-    
-     
-      
-    
-     
-   
+
+
+
+
+
+
+
     </>
   );
 }

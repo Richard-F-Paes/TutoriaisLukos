@@ -109,29 +109,6 @@ function IAPage() {
           
         </div>
       </div>
-      <div className="mt-[-10px] pt-16 pb-16 bg-white relative  px-4">
-        <div className="max-w-7xl mx-auto">
-          {/* O que é IA */}
-      
-      
-
-          {/* Call to Action */}
-          <section className="text-center mt-20">
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl p-12 shadow-2xl">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Sobre a IA da LUKOS
-              </h2>
-              <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              A inteligência artificial da Lukos foi criada para auxiliar o comerciante nos trabalhos operacionais do dia-a-dia.
-              </p>
-              
-              
-            </div>
-          </section>
-          
-        </div>
-        
-      </div>
     </div>
   );
 }

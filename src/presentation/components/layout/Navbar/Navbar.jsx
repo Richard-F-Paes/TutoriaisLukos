@@ -97,6 +97,27 @@ const Navbar = () => {
           Categorias
         </Link>
         <Link
+          to="/conciliacao"
+          className={`hover:text-indigo-600 ${location.pathname === '/conciliacao' ? 'text-indigo-600 font-semibold' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          Conciliação
+        </Link>
+        <Link
+          to="/fullcheck"
+          className={`hover:text-indigo-600 ${location.pathname === '/fullcheck' ? 'text-indigo-600 font-semibold' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          Fullcheck
+        </Link>
+        <Link
+          to="/fidelidade"
+          className={`hover:text-indigo-600 ${location.pathname === '/fidelidade' ? 'text-indigo-600 font-semibold' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          Fidelidade
+        </Link>
+        <Link
           to="/sobre-nos"
           className={`hover:text-indigo-600 ${location.pathname === '/sobre-nos' ? 'text-indigo-600 font-semibold' : ''}`}
           onClick={() => setMenuOpen(false)}

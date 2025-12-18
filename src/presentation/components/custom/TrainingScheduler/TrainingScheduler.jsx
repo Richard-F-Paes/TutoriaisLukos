@@ -26,7 +26,7 @@ export default function TrainingScheduler() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Formata a mensagem para WhatsApp
     const message = `Olá! Gostaria de agendar um treinamento.
 
@@ -43,15 +43,15 @@ ${formData.message || 'Sem mensagem adicional'}`;
 
     // Codifica a mensagem para URL
     const encodedMessage = encodeURIComponent(message);
-    
+
     // Número do WhatsApp (substitua pelo número real)
     const whatsappNumber = '5511999999999';
-    
+
     // Abre o WhatsApp Web/App
     window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
-    
+
     setIsSubmitted(true);
-    
+
     // Reset form after 3 seconds
     setTimeout(() => {
       setFormData({
@@ -69,29 +69,30 @@ ${formData.message || 'Sem mensagem adicional'}`;
   };
 
   return (
-    <section id="agendamento" className="py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="agendamento" className="py-32 bg-[#0a0a0f] relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-20"
         >
           <motion.div
             whileHover={{ scale: 1.1, rotate: 5 }}
             transition={{ type: "spring", stiffness: 300 }}
-            className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl shadow-lg mb-6"
+            className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-tr from-[#8B5CF6] to-blue-500 rounded-3xl shadow-xl mb-8 border border-white/10"
           >
-            <Calendar className="text-white" size={40} />
+            <Calendar className="text-white" size={44} />
           </motion.div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Agende seu Treinamento
-            </span>
+          <h2 className="text-4xl md:text-6xl font-black text-white uppercase mb-6 tracking-tighter">
+            AGENDE <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-blue-400">SEU TREINAMENTO</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Preencha o formulário abaixo e nossa equipe entrará em contato via WhatsApp para confirmar o agendamento
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed">
+            Nossa equipe entrará em contato via WhatsApp para confirmar o melhor horário para sua equipe. Tecnologia é sobre pessoas.
           </p>
         </motion.div>
 
@@ -100,236 +101,168 @@ ${formData.message || 'Sem mensagem adicional'}`;
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100"
+          className="bg-white/5 backdrop-blur-md rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/10"
         >
-          <form onSubmit={handleSubmit} className="p-8 md:p-12">
-            {/* Nome e Email */}
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
-              <div className="relative">
-                <label className="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                  <User size={18} className="text-blue-600" />
-                  Nome Completo *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="Seu nome completo"
-                />
-                <User size={20} className="absolute left-4 top-11 text-gray-400" />
+          <form onSubmit={handleSubmit} className="p-10 md:p-16">
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className="space-y-2">
+                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Nome Completo *</label>
+                <div className="relative group">
+                  <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#8B5CF6] transition-colors" />
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-white focus:outline-none focus:border-[#8B5CF6] focus:bg-white/10 transition-all placeholder:text-gray-600"
+                    placeholder="Seu nome"
+                  />
+                </div>
               </div>
-              <div className="relative">
-                <label className="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                  <Mail size={18} className="text-blue-600" />
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="seu@email.com"
-                />
-                <Mail size={20} className="absolute left-4 top-11 text-gray-400" />
+              <div className="space-y-2">
+                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Email Corporativo *</label>
+                <div className="relative group">
+                  <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#8B5CF6] transition-colors" />
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-white focus:outline-none focus:border-[#8B5CF6] focus:bg-white/10 transition-all placeholder:text-gray-600"
+                    placeholder="seu@email.com"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Telefone e Empresa */}
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
-              <div className="relative">
-                <label className="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                  <Phone size={18} className="text-blue-600" />
-                  Telefone *
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  required
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="(11) 99999-9999"
-                />
-                <Phone size={20} className="absolute left-4 top-11 text-gray-400" />
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className="space-y-2">
+                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Whatsapp *</label>
+                <div className="relative group">
+                  <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#8B5CF6] transition-colors" />
+                  <input
+                    type="tel"
+                    name="phone"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-white focus:outline-none focus:border-[#8B5CF6] focus:bg-white/10 transition-all placeholder:text-gray-600"
+                    placeholder="(11) 99999-9999"
+                  />
+                </div>
               </div>
-              <div className="relative">
-                <label className="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                  <Building size={18} className="text-blue-600" />
-                  Empresa
-                </label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="Nome da empresa"
-                />
-                <Building size={20} className="absolute left-4 top-11 text-gray-400" />
+              <div className="space-y-2">
+                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Nome da Empresa</label>
+                <div className="relative group">
+                  <Building size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#8B5CF6] transition-colors" />
+                  <input
+                    type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-white focus:outline-none focus:border-[#8B5CF6] focus:bg-white/10 transition-all placeholder:text-gray-600"
+                    placeholder="Sua empresa"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Tipo de Treinamento */}
-            <div className="mb-6">
-              <label className="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                <Calendar size={18} className="text-blue-600" />
-                Tipo de Treinamento *
-              </label>
+            <div className="mb-8 space-y-2">
+              <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">O que deseja aprender? *</label>
               <select
                 name="trainingType"
                 required
                 value={formData.trainingType}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-[#8B5CF6] focus:bg-white/10 transition-all appearance-none cursor-pointer"
               >
-                <option value="">Selecione o tipo de treinamento...</option>
-                <option value="Conciliação Bancária">Conciliação Bancária</option>
-                <option value="Atendimento ao Cliente">Atendimento ao Cliente</option>
-                <option value="Sistema ERP">Sistema ERP</option>
-                <option value="Sistema PDV">Sistema PDV</option>
-                <option value="Processos Operacionais">Processos Operacionais</option>
-                <option value="Treinamento Personalizado">Treinamento Personalizado</option>
-                <option value="Outro">Outro</option>
+                <option value="" className="bg-[#0a0a0f]">Selecione o treinamento...</option>
+                <option value="Conciliação Bancária" className="bg-[#0a0a0f]">Conciliação Bancária</option>
+                <option value="Atendimento ao Cliente" className="bg-[#0a0a0f]">Atendimento ao Cliente</option>
+                <option value="Sistema ERP" className="bg-[#0a0a0f]">Sistema ERP</option>
+                <option value="Sistema PDV" className="bg-[#0a0a0f]">Sistema PDV</option>
+                <option value="Processos Operacionais" className="bg-[#0a0a0f]">Processos Operacionais</option>
               </select>
             </div>
 
-            {/* Data e Horário */}
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                  <Calendar size={18} className="text-blue-600" />
-                  Data Preferencial
-                </label>
-                <input
-                  type="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                  <Clock size={18} className="text-blue-600" />
-                  Horário Preferencial
-                </label>
-                <input
-                  type="time"
-                  name="time"
-                  value={formData.time}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Mensagem */}
-            <div className="mb-8">
-              <label className="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                <MessageSquare size={18} className="text-blue-600" />
-                Mensagem Adicional
-              </label>
+            <div className="mb-12 space-y-2">
+              <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Mensagem ou Dúvida</label>
               <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                rows={5}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                placeholder="Conte-nos mais sobre suas necessidades ou dúvidas..."
+                rows={4}
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-[#8B5CF6] focus:bg-white/10 transition-all resize-none placeholder:text-gray-600"
+                placeholder="Como podemos ajudar você hoje?"
               ></textarea>
             </div>
 
-            {/* Botão de Envio */}
             <motion.button
               type="submit"
               disabled={isSubmitted}
-              whileHover={!isSubmitted ? { scale: 1.02 } : {}}
+              whileHover={!isSubmitted ? { scale: 1.02, y: -2 } : {}}
               whileTap={!isSubmitted ? { scale: 0.98 } : {}}
-              className={`w-full py-4 rounded-lg font-semibold text-lg transition-all flex items-center justify-center gap-3 ${
-                isSubmitted
-                  ? 'bg-green-500 text-white cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl'
-              }`}
+              className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-sm md:text-base transition-all flex items-center justify-center gap-4 ${isSubmitted
+                ? 'bg-green-500/20 text-green-400 border border-green-500/50 cursor-not-allowed shadow-[0_0_20px_rgba(34,197,94,0.1)]'
+                : 'bg-white text-[#0a0a0f] hover:bg-[#8B5CF6] hover:text-white shadow-xl shadow-black/20'
+                }`}
             >
               {isSubmitted ? (
                 <>
-                  <CheckCircle2 className="w-6 h-6" />
-                  Enviado com sucesso!
+                  <CheckCircle2 className="w-6 h-6" /> AGENDADO COM SUCESSO
                 </>
               ) : (
                 <>
-                  <Send size={24} />
-                  Enviar Agendamento via WhatsApp
+                  <Send size={20} /> INICIAR AGENDAMENTO
                 </>
               )}
             </motion.button>
-
-            {isSubmitted && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center text-green-600 mt-4 text-sm font-medium"
-              >
-                Redirecionando para o WhatsApp...
-              </motion.p>
-            )}
           </form>
         </motion.div>
 
         {/* Informações Adicionais */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6"
-        >
+        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
             {
               icon: Clock,
-              title: 'Horário de Atendimento',
+              title: 'Atendimento',
               content: 'Segunda a Sexta\n8h às 18h',
-              color: 'from-blue-500 to-blue-600'
+              border: 'border-blue-500/20'
             },
             {
               icon: Phone,
               title: 'Contato Direto',
               content: '(11) 98765-4321\ncontato@lukos.com.br',
-              color: 'from-purple-500 to-purple-600'
+              border: 'border-[#8B5CF6]/20'
             },
             {
               icon: Calendar,
-              title: 'Confirmação Rápida',
+              title: 'Confirmação',
               content: 'Resposta em até\n24 horas úteis',
-              color: 'from-indigo-500 to-indigo-600'
+              border: 'border-purple-500/20'
             }
           ].map((info, index) => {
             const Icon = info.icon;
             return (
               <motion.div
                 key={info.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="p-6 bg-white rounded-xl shadow-md hover:shadow-lg border border-gray-100 transition-all"
+                transition={{ delay: 0.1 * index }}
+                className={`p-10 bg-white/5 border ${info.border} rounded-3xl backdrop-blur-sm hover:border-[#8B5CF6]/40 transition-all group`}
               >
-                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${info.color} mb-4`}>
-                  <Icon className="text-white" size={32} />
+                <div className="inline-flex p-4 rounded-2xl bg-white/[0.03] border border-white/5 mb-6 group-hover:scale-110 group-hover:bg-[#8B5CF6]/10 group-hover:border-[#8B5CF6]/30 transition-all duration-500">
+                  <Icon className="text-[#8B5CF6]" size={32} />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2 text-lg">{info.title}</h3>
-                <p className="text-gray-600 text-sm whitespace-pre-line">{info.content}</p>
+                <h3 className="font-black text-white uppercase tracking-widest mb-3 text-lg">{info.title}</h3>
+                <p className="text-gray-500 text-sm font-bold uppercase leading-relaxed whitespace-pre-line tracking-wider">{info.content}</p>
               </motion.div>
             );
           })}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

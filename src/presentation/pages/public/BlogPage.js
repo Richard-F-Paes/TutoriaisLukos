@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Calendar, Clock, User, ArrowRight, BookOpen, Tag, FileText, Cloud, CreditCard, Gift, Smartphone, Wallet, Receipt, ShoppingCart, BarChart3, Database, Package, DollarSign, TrendingUp, ChevronLeft, ChevronRight, HelpCircle, ChevronDown, ChevronUp, CheckCircle, ArrowUp, Percent, MessageCircle, Play, X, Rocket, Users, Edit, Zap, Brain, Cpu, Eye } from 'lucide-react';
 import VideoShowcase from '../../components/custom/VideoShowcase/VideoShowcase';
 import BentoGrid from '../../components/custom/BentoGrid/BentoGrid';
+import ExpertiseSection from '@/presentation/components/custom/ExpertiseSection/ExpertiseSection';
 
 // Componente Feature2 adaptado
 const Feature2 = ({
@@ -152,7 +153,7 @@ function BlogPage() {
   ];
 
   return (
-    <div className="bg-white min-h-screen" style={{ marginTop: 0, paddingTop: 0 }}>
+    <div className="bg-[#0a0a0f] min-h-screen text-white" style={{ marginTop: 0, paddingTop: 0 }}>
       <style>{`
         @keyframes fade-in {
           from {
@@ -307,7 +308,7 @@ function BlogPage() {
           </div>
         </div>
       </section>
-
+      <ExpertiseSection />
       {/* Seção: Trusted by Brands */}
       <section className="py-16 md:py-24 relative" style={{ backgroundColor: '#0a0a0f' }}>
         {/* Overlay */}
@@ -750,7 +751,8 @@ function BlogPage() {
       </section>
 
       {/* Seção: O que é LUKOS (Fundo Roxo) */}
-      <section className="py-16 md:py-24" style={{ backgroundColor: '#c44cf4' }}>
+      <section className="py-24 relative overflow-hidden" style={{ backgroundColor: '#0a0a0f' }}>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#c44cf4]/10 to-transparent"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Coluna Esquerda */}
@@ -788,39 +790,6 @@ function BlogPage() {
         </div>
       </section>
 
-      {/* Seção do Vídeo */}
-      <div
-        className="h-[700px] relative bg-gradient-to-br from-[#690093] via-[#5a008f] to-[#4a007a]"
-        style={{
-          backgroundImage: 'url(https://i.pinimg.com/1200x/ab/d9/c4/abd9c48d4eb80e27af7efe3042853e6d.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
-        {/* Overlay com gradiente para melhorar legibilidade */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#690093]/80 via-[#5a008f]/80 to-[#4a007a]/80"></div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[50px]">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 text-center">
-            Transforme a gestão do seu posto de combustível
-          </h2>
-
-          {/* Vídeo */}
-          <div className="mt-12 max-w-4xl mx-auto group">
-            <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
-              <iframe
-                className="absolute top-0 left-0 w-full h-full rounded-3xl"
-                src="https://www.youtube.com/embed/F_itCCQd0nk"
-                title="Vídeo LUKOS"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-          </div>
-        </div>
-      </div>
 
 
 

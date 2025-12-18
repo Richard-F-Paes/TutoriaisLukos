@@ -14,14 +14,18 @@ import TrainingScheduler from '../../components/custom/TrainingScheduler/Trainin
 import ServicesSection from '../../components/custom/ServicesSection/ServicesSection';
 import TrainingSection from '../../components/custom/TrainingSection/TrainingSection';
 import { Chatbot } from '../../components/custom/Chatbot/Chatbot';
+import ExpertiseSection from '../../components/custom/ExpertiseSection/ExpertiseSection';
+import ProcessSection from '../../components/custom/ProcessSection/ProcessSection';
 
 
 function HomePage() {
   return (
     <>
       <LandingHero />
+      <ExpertiseSection />
       <HeroTutorial />
       <BentoGrid />
+      <ProcessSection />
       <TrainingSection />
       <VideoShowcase />
       <ServicesSection />

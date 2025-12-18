@@ -42,6 +42,11 @@ import VerPage from '../presentation/pages/public/VerPage';
 import ApresentacaoSistemasPage from '../presentation/pages/public/ApresentacaoSistemasPage';
 import ERPPage from '../presentation/pages/public/ERPPage';
 import SobreNos from '../presentation/pages/public/SobreNos';
+import ConciliacaoPage from '../presentation/pages/public/ConciliacaoPage';
+import FullcheckPage from '../presentation/pages/public/FullcheckPage';
+import FidelidadePage from '../presentation/pages/public/FidelidadePage';
+
+
 
 // Importar páginas administrativas
 import EditorPage from '../presentation/pages/admin/EditorPage';
@@ -58,7 +63,9 @@ function AppContent() {
   const isTutorial = isTutorialRoute(location.pathname);
   const showCategoryNavbar = shouldShowCategoryNavbar(location.pathname);
   const showPageNavbar = shouldShowPageNavbar(location.pathname);
-  const isBlogPage = location.pathname === '/' || location.pathname === '/blog' || location.pathname === '/sobre-nos';
+  const isBlogPage = location.pathname === '/' || location.pathname === '/blog' || location.pathname === '/sobre-nos' || location.pathname === '/conciliacao' || location.pathname === '/fullcheck' || location.pathname === '/fidelidade' || location.pathname === '/servicos';
+
+
 
   // Remover padding-top do body quando estiver na rota do blog
   useEffect(() => {
@@ -123,6 +130,11 @@ function AppContent() {
 
           {/* Nova Página */}
           <Route path="/nova-pagina" element={<NovaPagina />} />
+          <Route path="/conciliacao" element={<ConciliacaoPage />} />
+          <Route path="/fullcheck" element={<FullcheckPage />} />
+          <Route path="/fidelidade" element={<FidelidadePage />} />
+
+
 
           {/* Página de IA */}
           <Route path="/ia" element={<IAPage />} />

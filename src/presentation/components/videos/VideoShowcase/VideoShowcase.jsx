@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Play, Pause, Volume2, Maximize, Clock, Eye, ThumbsUp, Share2, Download} from 'lucide-react';
+import { Play, Pause, Volume2, Maximize, Clock, Eye, ThumbsUp, Share2, Download } from 'lucide-react';
 
 const VideoShowcase = () => {
   const [selectedVideo, setSelectedVideo] = useState(0);
@@ -87,21 +87,27 @@ const VideoShowcase = () => {
   const currentVideo = videos[selectedVideo];
 
   return (
-    <section id="videos" className="py-20 bg-white text-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4 text-gray-900">
-            Veja o Lukos ERP em Ação
+    <section id="videos" className="py-32 bg-[#0a0a0f] text-white overflow-hidden relative">
+      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-blue-500/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="mb-20">
+          <span className="text-[#8B5CF6] text-sm font-bold uppercase tracking-[0.2em] mb-4 block border-l-2 border-[#8B5CF6] pl-4">
+            Demonstrações
+          </span>
+          <h2 className="text-5xl md:text-7xl font-black text-white uppercase leading-none tracking-tighter mb-6">
+            LUKOS ERP <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-blue-400">EM AÇÃO</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Demonstrações práticas de como nosso sistema pode transformar a gestão do seu posto de gasolina
+          <p className="text-xl text-gray-400 max-w-2xl font-light leading-relaxed">
+            Demonstrações práticas de como nosso sistema pode transformar a gestão do seu posto de gasolina com tecnologia de ponta.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-12">
           {/* Main Video Player */}
-          <div className="lg:col-span-2">
-            <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl">
+          <div className="lg:col-span-2 space-y-8">
+            <div className="relative group rounded-3xl overflow-hidden shadow-2xl border border-white/5 bg-white/5">
               <div className="aspect-video relative">
                 {isPlaying ? (
                   <iframe
@@ -114,17 +120,17 @@ const VideoShowcase = () => {
                   />
                 ) : (
                   <>
-                    <img 
+                    <img
                       src={currentVideo.thumbnail}
                       alt={currentVideo.title}
-                      className="w-full h-full object-cover absolute inset-0"
+                      className="w-full h-full object-cover absolute inset-0 transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                      <button 
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center transition-all duration-500 group-hover:bg-black/20">
+                      <button
                         onClick={() => setIsPlaying(true)}
-                        className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 group"
+                        className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 hover:scale-110 hover:bg-[#8B5CF6] hover:border-[#8B5CF6] transition-all duration-500 group/btn"
                       >
-                        <Play className="w-8 h-8 text-white ml-1" />
+                        <Play className="w-10 h-10 text-white ml-1 transition-transform group-hover/btn:translate-x-1" />
                       </button>
                     </div>
                   </>
@@ -133,99 +139,80 @@ const VideoShowcase = () => {
             </div>
 
             {/* Video Info */}
-            <div className="mt-6">
-              <h3 className="text-2xl font-bold mb-2 text-gray-900">{currentVideo.title}</h3>
-              <p className="text-gray-600 mb-4">{currentVideo.description}</p>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-6 text-sm text-gray-500">
-                  <div className="flex items-center space-x-1">
-                    <Eye className="w-4 h-4 text-gray-600" />
-                    <span>{currentVideo.views} visualizações</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <ThumbsUp className="w-4 h-4 text-gray-600" />
-                    <span>{currentVideo.likes} likes</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Clock className="w-4 h-4 text-gray-600" />
-                    <span>{currentVideo.duration}</span>
+            <div className="bg-white/5 border border-white/5 rounded-3xl p-8 backdrop-blur-sm">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                <div>
+                  <h3 className="text-3xl font-black text-white uppercase tracking-tight mb-2">{currentVideo.title}</h3>
+                  <div className="flex items-center gap-6 text-sm font-bold text-gray-500 uppercase tracking-widest">
+                    <span className="flex items-center gap-2"><Eye size={16} className="text-[#8B5CF6]" /> {currentVideo.views} views</span>
+                    <span className="flex items-center gap-2"><Clock size={16} className="text-[#8B5CF6]" /> {currentVideo.duration}</span>
                   </div>
                 </div>
-                
-                <div className="flex items-center space-x-2">
-                  <button className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                    <Share2 className="w-4 h-4 text-gray-700" />
+
+                <div className="flex items-center gap-3">
+                  <button className="p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl transition-all">
+                    <Share2 className="w-5 h-5 text-white" />
                   </button>
-                  <button className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                    <Download className="w-4 h-4 text-gray-700" />
+                  <button className="flex items-center gap-2 px-6 py-4 bg-[#8B5CF6] hover:bg-purple-600 rounded-2xl text-white font-bold uppercase text-xs tracking-widest transition-all">
+                    <Download className="w-4 h-4" /> Download App
                   </button>
                 </div>
               </div>
 
+              <p className="text-gray-400 text-lg font-light leading-relaxed mb-8 border-l-2 border-[#8B5CF6]/30 pl-6">
+                {currentVideo.description}
+              </p>
+
               {/* Video Highlights */}
-              <div className="mt-6 bg-gray-50 rounded-xl p-6">
-                <h4 className="font-semibold mb-3 text-gray-900">Destaques deste vídeo:</h4>
-                <div className="grid md:grid-cols-2 gap-2">
-                  {currentVideo.highlights.map((highlight, index) => (
-                    <div key={index} className="flex items-center space-x-2 text-sm text-gray-700">
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                      <span>{highlight}</span>
-                    </div>
-                  ))}
-                </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                {currentVideo.highlights.map((highlight, index) => (
+                  <div key={index} className="flex items-center space-x-3 p-4 bg-white/[0.02] border border-white/5 rounded-2xl transition-all hover:bg-white/[0.05]">
+                    <div className="w-2 h-2 bg-[#8B5CF6] rounded-full shadow-[0_0_10px_rgba(139,92,246,0.5)]"></div>
+                    <span className="text-sm text-gray-300 font-medium uppercase tracking-wide">{highlight}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
           {/* Video Playlist */}
           <div className="lg:col-span-1">
-            <div className="bg-gray-50 rounded-2xl p-6">
-              <h3 className="text-xl font-bold mb-6 text-gray-900">Playlist Completa</h3>
-              
-              {/* Category Filter */}
-              <div className="flex flex-wrap gap-2 mb-6">
-                {categories.slice(0, 3).map((category) => (
-                  <button
-                    key={category.id}
-                    className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-full text-xs font-medium transition-colors text-gray-700"
-                  >
-                    {category.name}
-                  </button>
-                ))}
-              </div>
+            <div className="bg-white/5 border border-white/5 rounded-3xl p-8 backdrop-blur-sm h-full flex flex-col">
+              <h3 className="text-xl font-black text-white uppercase tracking-widest mb-8 flex items-center gap-3">
+                <LayoutDashboard className="text-[#8B5CF6]" size={20} /> Playlist Completa
+              </h3>
 
-              <div className="space-y-4">
+              <div className="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar">
                 {videos.map((video, index) => (
                   <button
                     key={video.id}
-                    onClick={() => setSelectedVideo(index)}
-                    className={`w-full text-left p-4 rounded-xl transition-all ${
-                      selectedVideo === index
-                        ? 'bg-blue-100 border border-blue-500'
-                        : 'bg-white hover:bg-gray-100 border border-gray-200'
-                    }`}
+                    onClick={() => {
+                      setSelectedVideo(index);
+                      setIsPlaying(false);
+                    }}
+                    className={`w-full text-left p-4 rounded-2xl transition-all group/item ${selectedVideo === index
+                      ? 'bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 shadow-lg shadow-[#8B5CF6]/5'
+                      : 'bg-white/[0.02] hover:bg-white/[0.05] border border-white/5'
+                      }`}
                   >
-                    <div className="flex space-x-3 items-center">
-                      <div className="relative flex-shrink-0 w-32 h-20 overflow-hidden rounded-lg">
-                        <img 
+                    <div className="flex gap-4 items-center">
+                      <div className="relative flex-shrink-0 w-24 h-16 overflow-hidden rounded-xl border border-white/10">
+                        <img
                           src={video.thumbnail}
                           alt={video.title}
-                          className="w-full h-full object-cover object-center rounded-lg absolute inset-0"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover/item:scale-110"
                         />
-                        <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center">
-                          <Play className="w-4 h-4 text-white" />
-                        </div>
-                        <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1 rounded">
-                          {video.duration}
+                        <div className="absolute inset-0 bg-[#8B5CF6]/20 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity">
+                          <Play className="w-4 h-4 text-white fill-white" />
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-sm mb-1 truncate text-gray-900">{video.title}</h4>
-                        <p className="text-xs text-gray-600 line-clamp-2">{video.description}</p>
-                        <div className="flex items-center space-x-2 mt-1 text-xs text-gray-500">
-                          <span>{video.views} views</span>
-                          <span>•</span>
+                        <h4 className={`font-bold text-xs uppercase tracking-wider mb-1 truncate ${selectedVideo === index ? 'text-[#8B5CF6]' : 'text-white'}`}>
+                          {video.title}
+                        </h4>
+                        <div className="flex items-center gap-3 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                          <span>{video.duration}</span>
+                          <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
                           <span>{video.category}</span>
                         </div>
                       </div>
@@ -234,25 +221,22 @@ const VideoShowcase = () => {
                 ))}
               </div>
 
-              {/* Stats */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-blue-600">32k+</div>
-                    <div className="text-xs text-gray-600">Total de Views</div>
+              {/* Stats Bar */}
+              <div className="mt-8 pt-8 border-t border-white/10">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-white/5 rounded-2xl text-center">
+                    <div className="text-2xl font-black text-white">32K+</div>
+                    <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Views</div>
                   </div>
-                  <div>
-                    <div className="text-2xl font-bold text-green-600">2.3k</div>
-                    <div className="text-xs text-gray-600">Likes</div>
+                  <div className="p-4 bg-white/5 rounded-2xl text-center">
+                    <div className="text-2xl font-black text-[#8B5CF6]">2.3K</div>
+                    <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Likes</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Call to Action */}
- 
       </div>
     </section>
   );

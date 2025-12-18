@@ -120,6 +120,14 @@ const ExpertiseSection = () => {
 
                 </div>
             </div>
+
+            {/* Bottom decorative line */}
+            <motion.div
+                initial={{ scaleX: 0, opacity: 0 }}
+                whileInView={{ scaleX: 1, opacity: 1 }}
+                transition={{ duration: 1.5, ease: "circOut" }}
+                className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#8B5CF6]/50 to-transparent origin-center"
+            />
         </section>
     );
 };

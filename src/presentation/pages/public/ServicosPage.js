@@ -1,60 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Settings, Smartphone, Layout, Monitor, LineChart, ShieldCheck, Zap, Users, Trophy, Clock, Play, CreditCard, Search, Heart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowRight, Zap, Users, Trophy, Clock } from 'lucide-react';
 import ExpertiseSection from '../../components/custom/ExpertiseSection/ExpertiseSection';
+import ERPSection from '../../components/custom/ERPSection/ERPSection';
+import PDVSection from '../../components/custom/PDVSection/PDVSection';
+import FuelCheckSection from '../../components/custom/FuelCheckSection/FuelCheckSection';
+import FidelitySection from '../../components/custom/FidelitySection/FidelitySection';
+import ConciliationSection from '../../components/custom/ConciliationSection/ConciliationSection';
+import FaturaWebSection from '../../components/custom/FaturaWebSection/FaturaWebSection';
+import SmartPosSection from '../../components/custom/SmartPosSection/SmartPosSection';
+import IASection from '../../components/custom/IASection/IASection';
+import PixLukosSection from '../../components/custom/PixLukosSection/PixLukosSection';
 import ProcessSection from '../../components/custom/ProcessSection/ProcessSection';
 
 function ServicosPage() {
   const purpleColor = '#8B5CF6';
-
-  const mainServices = [
-    {
-      title: "LUKOS ERP",
-      subtitle: "Gestão Integrada",
-      description: "O cérebro tecnológico do seu negócio. Integramos todos os processos da sua empresa em uma única plataforma robusta e intuitiva.",
-      icon: LineChart,
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
-      video: "https://www.youtube.com/embed/F_itCCQd0nk",
-      link: "/erp"
-    },
-    {
-      title: "LUKOS PDV",
-      subtitle: "Agilidade na Pista",
-      description: "Sistema de frente de caixa ultrarrápido, integrado e à prova de falhas. Desenvolvido especificamente para o fluxo intenso de postos e varejo.",
-      icon: Smartphone,
-      image: "https://images.unsplash.com/photo-1556742044-3c52d6e88c62?q=80&w=2070&auto=format&fit=crop",
-      video: "https://www.youtube.com/embed/sjWk3XpdH3s",
-      link: "/sistemas"
-    },
-    {
-      title: "LUKOS CONCILIAÇÃO",
-      subtitle: "Controle Financeiro",
-      description: "Automatize a conferência de suas vendas em cartões. Identifique taxas abusivas e garanta que cada centavo chegue à sua conta.",
-      icon: CreditCard,
-      image: "/card_conciliation_dashboard_1766005546413.png",
-      video: "https://www.youtube.com/embed/diPZayPotMU",
-      link: "/conciliacao"
-    },
-    {
-      title: "LUKOS FULLCHECK",
-      subtitle: "Auditoria Total",
-      description: "Segurança e transparência absoluta. Auditoria profunda de transações para prevenir fraudes e inconsistências sistêmicas.",
-      icon: Search,
-      image: "/fullcheck_security_audit_1766006734760.png",
-      video: "https://www.youtube.com/embed/F_itCCQd0nk",
-      link: "/fullcheck"
-    },
-    {
-      title: "LUKOS FIDELIDADE",
-      subtitle: "Retenção Premiada",
-      description: "Engaje seus clientes com tecnologia de ponta. Cashbacks, pontos e marketing de precisão para aumentar sua recorrência.",
-      icon: Heart,
-      image: "/fidelidade_customer_experience_1766006754976.png",
-      video: "https://www.youtube.com/embed/sjWk3XpdH3s",
-      link: "/fidelidade"
-    }
-  ];
 
   const stats = [
     { label: 'Especialistas', value: '30+', icon: Users },
@@ -101,7 +61,16 @@ function ServicosPage() {
         </div>
       </section>
 
-      <ExpertiseSection />
+
+      <ERPSection />
+      <PDVSection />
+      <FuelCheckSection />
+      <FidelitySection />
+      <ConciliationSection />
+      <FaturaWebSection />
+      <SmartPosSection />
+      <IASection />
+      <PixLukosSection />
 
       {/* Stats Band - Clean Style */}
       <section className="py-16 bg-[#0a0a0f] border-y border-white/5">
@@ -117,55 +86,6 @@ function ServicosPage() {
         </div>
       </section>
 
-      {/* Services Detailed Sections */}
-      {mainServices.map((service, index) => (
-        <section key={index} className={`py-32 relative overflow-hidden ${index % 2 !== 0 ? 'bg-[#111111]' : 'bg-[#0a0a0f]'}`}>
-          <div className="container mx-auto px-4">
-            <div className={`grid grid-cols-1 lg:grid-cols-2 gap-20 items-center ${index % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}>
-              <div className={index % 2 !== 0 ? 'lg:order-2' : ''}>
-                <span className="text-[#8B5CF6] text-sm uppercase tracking-widest font-bold mb-4 block border-l-2 border-[#8B5CF6] pl-3">
-                  {service.subtitle}
-                </span>
-                <h2 className="text-4xl md:text-6xl font-black text-white uppercase mb-8 leading-tight tracking-tighter">
-                  {service.title.split(' ')[0]} <br />
-                  <span className="text-[#8B5CF6]">{service.title.split(' ')[1]}</span>
-                </h2>
-                <p className="text-gray-400 text-lg md:text-xl leading-relaxed mb-10 font-light">
-                  {service.description}
-                </p>
-                <div className="grid grid-cols-2 gap-6 mb-10">
-                  <div className="bg-white/5 p-6 rounded-2xl border border-white/5 shadow-sm hover:shadow-md hover:border-[#8B5CF6]/20 transition-all">
-                    <service.icon className="w-8 h-8 text-[#8B5CF6] mb-4" />
-                    <h4 className="text-white font-bold uppercase text-xs tracking-wider">Alta Performance</h4>
-                  </div>
-                  <div className="bg-white/5 p-6 rounded-2xl border border-white/5 shadow-sm hover:shadow-md hover:border-[#8B5CF6]/20 transition-all">
-                    <ShieldCheck className="w-8 h-8 text-[#8B5CF6] mb-4" />
-                    <h4 className="text-white font-bold uppercase text-xs tracking-wider">Segurança Total</h4>
-                  </div>
-                </div>
-
-                <Link to={service.link} className="inline-flex items-center gap-2 text-[#8B5CF6] font-bold uppercase text-sm hover:underline">
-                  Ver detalhes da solução <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-
-              <div className={`relative group ${index % 2 !== 0 ? 'lg:order-1' : ''}`}>
-                <div className="aspect-video bg-white/5 rounded-3xl overflow-hidden shadow-xl relative border border-white/5 group-hover:border-[#8B5CF6]/30 transition-all duration-500">
-                  <iframe
-                    className="w-full h-full opacity-90 group-hover:opacity-100 transition-all duration-700"
-                    src={service.video}
-                    title={service.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-[#8B5CF6] -z-10 opacity-5 blur-3xl"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-      ))}
 
       <ProcessSection />
 

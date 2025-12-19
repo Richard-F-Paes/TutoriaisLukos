@@ -4,6 +4,8 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
+import { authenticate } from '../middleware/auth.middleware.js';
+import { requirePermission } from '../middleware/permissions.middleware.js';
 
 const router = express.Router();
 
@@ -81,7 +83,40 @@ router.get('/:id', async (req, res) => {
 });
 
 // Upload de mídia
-router.post('/', upload.single('file'), async (req, res) => {
+router.post('/', authenticate, requirePermission('upload_media'), upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+    }
+
+    const prisma = getPrisma();
+    const { uploadedBy } = req.body;
+
+    const media = await prisma.media.create({
+      data: {
+        fileName: req.file.filename,
+        originalName: req.file.originalname,
+        mimeType: req.file.mimetype,
+        size: BigInt(req.file.size),
+        url: `/uploads/${req.file.filename}`,
+        uploadedBy: parseInt(uploadedBy),
+      },
+      include: {
+        uploader: {
+          select: { id: true, name: true, username: true },
+        },
+      },
+    });
+
+    res.status(201).json(media);
+  } catch (error) {
+    console.error('Erro ao fazer upload:', error);
+    res.status(500).json({ error: 'Erro ao fazer upload' });
+  }
+});
+
+// Compat: upload em /upload (frontend usa /media/upload)
+router.post('/upload', authenticate, requirePermission('upload_media'), upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'Nenhum arquivo enviado' });
@@ -114,7 +149,7 @@ router.post('/', upload.single('file'), async (req, res) => {
 });
 
 // Deletar mídia
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, requirePermission('delete_media'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const media = await prisma.media.findUnique({

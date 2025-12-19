@@ -1,15 +1,19 @@
 // TutorialManager - Gerenciamento de tutoriais no admin
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTutorials, useDeleteTutorial } from '../../../hooks/useTutorials.js';
 import { useCategories } from '../../../hooks/useCategories.js';
 import { Plus, Edit, Trash2, Eye, Search, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTutorialModal } from '../../../contexts/TutorialModalContext';
+import TutorialEditorPanel from './TutorialEditorPanel.jsx';
 
 const TutorialManager = () => {
+  const { openModal } = useTutorialModal();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [view, setView] = useState('list'); // 'list' | 'edit'
+  const [editingId, setEditingId] = useState(null);
 
   const { data: tutorialsData, isLoading } = useTutorials({
     search: searchTerm || undefined,
@@ -22,6 +26,20 @@ const TutorialManager = () => {
 
   const tutorials = tutorialsData?.data || [];
   const categories = categoriesData?.data || [];
+
+  const openCreate = () => {
+    setEditingId(null);
+    setView('edit');
+  };
+
+  const openEdit = (id) => {
+    setEditingId(id);
+    setView('edit');
+  };
+
+  const openView = (slug) => {
+    if (slug) openModal(slug);
+  };
 
   const handleDelete = async (id, title) => {
     if (!window.confirm(`Tem certeza que deseja excluir o tutorial "${title}"?`)) {
@@ -36,14 +54,27 @@ const TutorialManager = () => {
     }
   };
 
+  if (view === 'edit') {
+    return (
+      <TutorialEditorPanel
+        tutorialId={editingId}
+        onCancel={() => setView('list')}
+        onSaved={() => {
+          setView('list');
+          setEditingId(null);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="tutorial-manager">
       <div className="manager-header">
         <h2>Gerenciar Tutoriais</h2>
-        <Link to="/admin/tutoriais/novo" className="btn-primary">
+        <button type="button" onClick={openCreate} className="btn-primary">
           <Plus size={18} />
           Novo Tutorial
-        </Link>
+        </button>
       </div>
 
       <div className="manager-filters">
@@ -108,9 +139,14 @@ const TutorialManager = () => {
                 tutorials.map(tutorial => (
                   <tr key={tutorial.Id}>
                     <td>
-                      <Link to={`/tutoriais/${tutorial.Slug}`}>
+                      <button
+                        type="button"
+                        className="btn-link"
+                        onClick={() => openView(tutorial.Slug)}
+                        title="Visualizar"
+                      >
                         {tutorial.Title}
-                      </Link>
+                      </button>
                     </td>
                     <td>{tutorial.CategoryName || '-'}</td>
                     <td>
@@ -122,20 +158,22 @@ const TutorialManager = () => {
                     <td>{new Date(tutorial.CreatedAt).toLocaleDateString('pt-BR')}</td>
                     <td>
                       <div className="action-buttons">
-                        <Link
-                          to={`/tutoriais/${tutorial.Slug}`}
+                        <button
+                          type="button"
+                          onClick={() => openView(tutorial.Slug)}
                           className="btn-icon"
                           title="Visualizar"
                         >
                           <Eye size={16} />
-                        </Link>
-                        <Link
-                          to={`/admin/tutoriais/${tutorial.Id}/editar`}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openEdit(tutorial.Id)}
                           className="btn-icon"
                           title="Editar"
                         >
                           <Edit size={16} />
-                        </Link>
+                        </button>
                         <button
                           onClick={() => handleDelete(tutorial.Id, tutorial.Title)}
                           className="btn-icon btn-danger"

@@ -133,3 +133,29 @@ model AuditLog {
 
   @@map("AuditLog")
 }
+
+model HeaderMenu {
+  id        Int      @id @default(autoincrement())
+  label     String   @db.NVarChar(100)
+  order     Int      @default(0) @map("Order")
+  createdAt DateTime @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt DateTime @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  items HeaderMenuItem[]
+
+  @@map("HeaderMenus")
+}
+
+model HeaderMenuItem {
+  id          Int      @id @default(autoincrement())
+  headerMenuId Int     @map("HeaderMenuId")
+  label       String   @db.NVarChar(120)
+  tutorialSlug String? @map("TutorialSlug") @db.NVarChar(300)
+  order       Int      @default(0) @map("Order")
+  createdAt   DateTime @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt   DateTime @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  menu HeaderMenu @relation(fields: [headerMenuId], references: [id], onDelete: Cascade)
+
+  @@map("HeaderMenuItems")
+}

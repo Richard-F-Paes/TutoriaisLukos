@@ -14,7 +14,7 @@ import { connectDatabase, getPrisma } from '../config/database.js';
 import bcrypt from 'bcryptjs';
 
 const ADMIN_USER = {
-  username: 'Lukos',
+  username: 'lukos',
   email: 'suporte@lukos.com',
   password: 'lks@123241',
   name: 'Lukos',

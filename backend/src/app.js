@@ -17,6 +17,7 @@ import categoriesRoutes from './routes/categories.routes.js';
 import usersRoutes from './routes/users.routes.js';
 import mediaRoutes from './routes/media.routes.js';
 import auditRoutes from './routes/audit.routes.js';
+import headerMenusRoutes from './routes/headerMenus.routes.js';
 
 dotenv.config();
 
@@ -59,11 +60,18 @@ const __agentAllowedOrigins = (() => {
     ? raw.split(',').map((s) => s.trim()).filter(Boolean)
     : [];
 
-  // Em dev, sempre permitir portas comuns do Vite/React (mesmo se CORS_ORIGIN estiver setado)
+  // Em dev, sempre permitir portas comuns do Vite/React e IPs da rede local
   const isProduction = process.env.NODE_ENV === 'production';
   if (!isProduction) {
-    if (!origins.includes('http://localhost:3000')) origins.push('http://localhost:3000');
-    if (!origins.includes('http://localhost:5173')) origins.push('http://localhost:5173');
+    // Permitir localhost em várias portas
+    ['3000', '5173', '5174', '8080'].forEach(port => {
+      const localhost = `http://localhost:${port}`;
+      if (!origins.includes(localhost)) origins.push(localhost);
+    });
+    
+    // Em desenvolvimento, permitir qualquer IP da rede local (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+    // Isso permite acesso de outros dispositivos na mesma rede
+    // Em produção, isso deve ser desabilitado e usar apenas CORS_ORIGIN
   }
 
   // Fallback final (caso nada tenha sido adicionado)
@@ -79,9 +87,25 @@ app.use(cors({
     // Requests sem Origin (ex.: curl/healthcheck) devem passar
     if (!origin) return callback(null, true);
 
-    const allowed = __agentAllowedOrigins.includes(origin);
+    // Verificar se está na lista de origens permitidas
+    let allowed = __agentAllowedOrigins.includes(origin);
+    
+    // Em desenvolvimento, permitir IPs da rede local (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (!isProduction && !allowed) {
+      // Verificar se é um IP da rede local
+      const localNetworkPatterns = [
+        /^http:\/\/192\.168\.\d+\.\d+:\d+$/,  // 192.168.x.x:port
+        /^http:\/\/10\.\d+\.\d+\.\d+:\d+$/,   // 10.x.x.x:port
+        /^http:\/\/172\.(1[6-9]|2[0-9]|3[01])\.\d+\.\d+:\d+$/, // 172.16-31.x.x:port
+        /^http:\/\/127\.0\.0\.1:\d+$/,        // 127.0.0.1:port
+      ];
+      
+      allowed = localNetworkPatterns.some(pattern => pattern.test(origin));
+    }
+    
     // #region agent log
-    __agentLog({location:'backend/src/app.js:CORS_DECISION',message:'CORS origin decision',data:{origin,allowed,allowedOrigins:__agentAllowedOrigins},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H4'});
+    __agentLog({location:'backend/src/app.js:CORS_DECISION',message:'CORS origin decision',data:{origin,allowed,allowedOrigins:__agentAllowedOrigins,isProduction},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H4'});
     // #endregion
 
     return callback(null, allowed ? origin : false);
@@ -120,6 +144,7 @@ app.use(`${API_VERSION}/categories`, categoriesRoutes);
 app.use(`${API_VERSION}/users`, usersRoutes);
 app.use(`${API_VERSION}/media`, mediaRoutes);
 app.use(`${API_VERSION}/audit`, auditRoutes);
+app.use(`${API_VERSION}/header-menus`, headerMenusRoutes);
 
 // Middleware de erro 404
 app.use(notFoundHandler);

@@ -1,12 +1,41 @@
 // Configuração da Aplicação
 
+// #region agent log
+const __agentLog = (payload) => {
+  try {
+    fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
+  } catch (_) {}
+};
+// #endregion
+
 export const appConfig = {
   name: import.meta.env.VITE_APP_NAME || 'Tutoriais Lukos',
   version: import.meta.env.VITE_APP_VERSION || '1.0.0',
   description: import.meta.env.VITE_APP_DESCRIPTION || 'Plataforma de tutoriais do sistema Lukos',
   
   // URLs
-  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:3001',
+  apiUrl: (() => {
+    const envValue = import.meta.env.VITE_API_URL;
+    const defaultValue = 'http://localhost:3001';
+    let finalValue = envValue || defaultValue;
+    
+    // Normalizar: remover /api do final se presente, pois os endpoints já incluem /api/v1
+    if (finalValue.endsWith('/api')) {
+      finalValue = finalValue.slice(0, -4);
+    } else if (finalValue.endsWith('/api/')) {
+      finalValue = finalValue.slice(0, -5);
+    }
+    
+    // Remover barra final para evitar // na concatenação com endpoints que começam com /
+    if (finalValue.endsWith('/')) {
+      finalValue = finalValue.slice(0, -1);
+    }
+    
+    // #region agent log
+    __agentLog({location:'src/infrastructure/config/app.config.js:apiUrl',message:'API URL configuration',data:{envValue:String(envValue||'undefined'),defaultValue,finalValue,hasTrailingSlash:finalValue.endsWith('/'),endsWithApi:finalValue.endsWith('/api'),normalized:true},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'});
+    // #endregion
+    return finalValue;
+  })(),
   
   // Configurações de desenvolvimento
   devMode: import.meta.env.DEV,

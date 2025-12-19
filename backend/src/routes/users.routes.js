@@ -1,11 +1,13 @@
 import express from 'express';
 import { getPrisma } from '../config/database.js';
 import bcrypt from 'bcryptjs';
+import { authenticate } from '../middleware/auth.middleware.js';
+import { requirePermission } from '../middleware/permissions.middleware.js';
 
 const router = express.Router();
 
 // Listar usuários
-router.get('/', async (req, res) => {
+router.get('/', authenticate, requirePermission('manage_users'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const users = await prisma.user.findMany({
@@ -30,7 +32,7 @@ router.get('/', async (req, res) => {
 });
 
 // Obter usuário por ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticate, requirePermission('manage_users'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const user = await prisma.user.findUnique({
@@ -60,7 +62,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Criar usuário
-router.post('/', async (req, res) => {
+router.post('/', authenticate, requirePermission('manage_users'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const { username, email, password, name, role } = req.body;
@@ -97,7 +99,7 @@ router.post('/', async (req, res) => {
 });
 
 // Atualizar usuário
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticate, requirePermission('manage_users'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const { username, email, password, name, role, isActive } = req.body;
@@ -136,7 +138,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Deletar usuário
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, requirePermission('manage_users'), async (req, res) => {
   try {
     const prisma = getPrisma();
     await prisma.user.update({

@@ -5,25 +5,37 @@ import ReactDOM from 'react-dom';
 import { useRef, useState, useEffect } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useTutorialModal } from '../../../contexts/TutorialModalContext';
+import { useEditorModal } from '../../../contexts/EditorModalContext';
 import { useQuery } from '@tanstack/react-query';
 import { headerMenuService } from '../../../services/headerMenuService';
 import AdminPasswordModal from '../ui/AdminPasswordModal/AdminPasswordModal';
 import './Navbarcategoria.css';
 
 // Component que renderiza conteúdo do menu via portal
-const PortalMenuContent = ({ buttonRef, children, className, isOpen }) => {
+const PortalMenuContent = ({ buttonRef, children, className, isOpen, align = 'left' }) => {
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
+  const [transform, setTransform] = useState(undefined);
 
   useEffect(() => {
     if (!isOpen || !buttonRef.current) return;
     
     const updatePosition = () => {
       const rect = buttonRef.current.getBoundingClientRect();
-      setPosition({
-        top: rect.bottom + window.scrollY + 4, // 4px gap
-        left: rect.left + window.scrollX,
-      });
+      const top = rect.bottom + window.scrollY + 4; // 4px gap
+      if (align === 'right') {
+        setPosition({
+          top,
+          left: rect.right + window.scrollX,
+        });
+        setTransform('translateX(-100%)');
+      } else {
+        setPosition({
+          top,
+          left: rect.left + window.scrollX,
+        });
+        setTransform(undefined);
+      }
     };
 
     updatePosition();
@@ -55,6 +67,7 @@ const PortalMenuContent = ({ buttonRef, children, className, isOpen }) => {
         position: 'absolute',
         top: `${position.top}px`,
         left: `${position.left}px`,
+        transform,
         zIndex: 1001,
       }}
     >
@@ -69,6 +82,7 @@ export default function Navbarcateria() {
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
   const { openModal } = useTutorialModal();
+  const { openEditorModal } = useEditorModal();
   
   const [openMenus, setOpenMenus] = useState({});
   const [fixedMenus, setFixedMenus] = useState({});
@@ -78,6 +92,68 @@ export default function Navbarcateria() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const timeoutsRef = useRef({});
+  const userDropdownRef = useRef(null);
+  const userMenuButtonRef = useRef(null);
+  
+  // #region agent log
+  const __agentLog = (payload) => {
+    try {
+      fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
+    } catch (_) {}
+  };
+  // #endregion
+
+  useEffect(() => {
+    // #region agent log
+    __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:showUserMenu:effect',message:'Navbarcategoria showUserMenu state changed',data:{showUserMenu,isAuthenticated,hasUser:!!user,userNameLen:(user?.name||'').length},timestamp:Date.now()});
+    // #endregion
+  }, [showUserMenu, isAuthenticated, user]);
+
+  // Inspeção do DOM para diagnosticar dropdown invisível (sem dados sensíveis)
+  useEffect(() => {
+    if (!showUserMenu) return;
+    // Usar 2 RAFs para garantir que o Portal montou no DOM
+    const raf1 = requestAnimationFrame(() => {});
+    const raf2 = requestAnimationFrame(() => {
+      const portalRoot = document.querySelector('.category-user-dropdown-portal');
+      const dropdownEl = portalRoot || userDropdownRef.current;
+      const buttonEl = userMenuButtonRef.current;
+
+      const rect = dropdownEl?.getBoundingClientRect?.();
+      const btnRect = buttonEl?.getBoundingClientRect?.();
+      const cs = dropdownEl ? window.getComputedStyle(dropdownEl) : null;
+
+      const centerX = rect ? rect.left + rect.width / 2 : null;
+      const centerY = rect ? rect.top + Math.min(rect.height / 2, 10) : null; // pega ponto perto do topo do dropdown
+      const topEl = (centerX != null && centerY != null) ? document.elementFromPoint(centerX, centerY) : null;
+      const topElIsInside = topEl && dropdownEl ? dropdownEl.contains(topEl) : null;
+
+      // #region agent log
+      __agentLog({
+        sessionId:'debug-session',
+        runId:'post-fix',
+        hypothesisId:'H6',
+        location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:userDropdown:domProbe',
+        message:'Navbarcategoria user dropdown DOM probe',
+        data:{
+          portalRootExists:!!portalRoot,
+          dropdownExists:!!dropdownEl,
+          buttonExists:!!buttonEl,
+          rect:rect?{x:Math.round(rect.x),y:Math.round(rect.y),w:Math.round(rect.width),h:Math.round(rect.height)}:null,
+          buttonRect:btnRect?{x:Math.round(btnRect.x),y:Math.round(btnRect.y),w:Math.round(btnRect.width),h:Math.round(btnRect.height)}:null,
+          computed:cs?{display:cs.display,visibility:cs.visibility,opacity:cs.opacity,position:cs.position,zIndex:cs.zIndex}:null,
+          viewport:{w:window.innerWidth,h:window.innerHeight},
+          overlap:{probeX:centerX!=null?Math.round(centerX):null,probeY:centerY!=null?Math.round(centerY):null,topTag:topEl?.tagName||null,topClass:topEl?.className?String(topEl.className).slice(0,120):null,topElIsInside},
+        },
+        timestamp:Date.now()
+      });
+      // #endregion
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [showUserMenu]);
 
   // Carregar menus do banco de dados
   const { data: headerMenusData } = useQuery({
@@ -199,12 +275,21 @@ export default function Navbarcateria() {
     navigate('/');
   };
 
+  const handleOpenEditor = () => {
+    setShowUserMenu(false);
+    openEditorModal('tutorials');
+  };
+
   // Fecha menu do usuário se clicar fora
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (showUserMenu && !event.target.closest('.user-menu')) {
-        setShowUserMenu(false);
-      }
+      const target = event.target;
+      const insideUserMenu = !!target?.closest?.('.user-menu');
+      const willCloseUserMenu = !!showUserMenu && !insideUserMenu;
+      // #region agent log
+      __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:clickOutside:userMenu',message:'Navbarcategoria document click (user menu close check)',data:{targetTag:target?.tagName||null,showUserMenu,insideUserMenu,willCloseUserMenu},timestamp:Date.now()});
+      // #endregion
+      if (willCloseUserMenu) setShowUserMenu(false);
       if (menuOpen && !event.target.closest('.category-mobile-menu') && !event.target.closest('.category-mobile-menu-button')) {
         setMenuOpen(false);
       }
@@ -218,7 +303,11 @@ export default function Navbarcateria() {
     const handleDocumentClick = (e) => {
       const isInsideMenu = e.target.closest('.category-dropdown');
       const isInsideUserMenu = e.target.closest('.user-menu');
-      if (!isInsideMenu && !isInsideUserMenu) {
+      const isInsidePortalMenu = e.target.closest('.category-dropdown-menu');
+      // #region agent log
+      __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H1',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:handleDocumentClick',message:'Navbarcategoria doc click - outside detection',data:{targetTag:e.target?.tagName||null,isInsideMenu:!!isInsideMenu,isInsidePortalMenu:!!isInsidePortalMenu,isInsideUserMenu:!!isInsideUserMenu,willClose:(!isInsideMenu && !isInsideUserMenu && !isInsidePortalMenu)},timestamp:Date.now()});
+      // #endregion
+      if (!isInsideMenu && !isInsideUserMenu && !isInsidePortalMenu) {
         handleClickOutside();
       }
     };
@@ -437,11 +526,20 @@ export default function Navbarcateria() {
           {isAuthenticated ? (
             <div className="relative user-menu">
               <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
+                ref={userMenuButtonRef}
+                onClick={() => {
+                  // #region agent log
+                  __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:userMenuButton:onClick',message:'Navbarcategoria user menu button clicked',data:{prevShowUserMenu:showUserMenu,isAuthenticated,hasUser:!!user,target:'click'},timestamp:Date.now()});
+                  // #endregion
+                  setShowUserMenu(prev => !prev);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    setShowUserMenu(!showUserMenu);
+                    // #region agent log
+                    __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:userMenuButton:onKeyDown',message:'Navbarcategoria user menu button keydown toggle',data:{key:e.key,prevShowUserMenu:showUserMenu,isAuthenticated,hasUser:!!user},timestamp:Date.now()});
+                    // #endregion
+                    setShowUserMenu(prev => !prev);
                   }
                 }}
                 aria-expanded={showUserMenu}
@@ -460,77 +558,52 @@ export default function Navbarcateria() {
               </button>
 
               {showUserMenu && (
-                <div className="category-user-dropdown" role="menu" aria-label="Menu do usuário">
-                  <Link
-                    to="/profile"
-                    onClick={() => setShowUserMenu(false)}
-                    className="category-user-action"
-                    role="menuitem"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        setShowUserMenu(false);
-                      }
-                    }}
-                  >
-                    Meu Perfil
-                  </Link>
-
-                  {(user?.role === 'admin' ||
-                    user?.role === 'super_admin' ||
-                    user?.role === 'editor') && (
-                    <Link
-                      to="/editor"
-                      onClick={() => setShowUserMenu(false)}
+                <PortalMenuContent
+                  buttonRef={{ current: userMenuButtonRef.current }}
+                  className="category-user-dropdown-portal"
+                  isOpen={showUserMenu}
+                  align="right"
+                >
+                  <div ref={userDropdownRef} role="menu" aria-label="Menu do usuário">
+                    <button
+                      onClick={handleOpenEditor}
                       className="category-user-action"
                       role="menuitem"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
                           e.preventDefault();
-                          setShowUserMenu(false);
+                          handleOpenEditor();
                         }
                       }}
                     >
-                      Editor Visual
-                    </Link>
-                  )}
+                      Editar
+                    </button>
 
-                  {(user?.role === 'admin' || user?.role === 'super_admin') && (
-                    <Link
-                      to="/admin"
-                      onClick={() => setShowUserMenu(false)}
-                      className="category-user-action"
+                    <button
+                      onClick={handleLogout}
+                      className="category-user-action logout"
                       role="menuitem"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
                           e.preventDefault();
-                          setShowUserMenu(false);
+                          handleLogout();
                         }
                       }}
                     >
-                      Administração
-                    </Link>
-                  )}
-
-                  <button
-                    onClick={handleLogout}
-                    className="category-user-action logout"
-                    role="menuitem"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleLogout();
-                      }
-                    }}
-                  >
-                    Sair
-                  </button>
-                </div>
+                      Sair
+                    </button>
+                  </div>
+                </PortalMenuContent>
               )}
             </div>
           ) : (
             <button
-              onClick={() => setShowAdminModal(true)}
+              onClick={() => {
+                // #region agent log
+                __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:openLoginModal',message:'Open AdminPasswordModal',data:{wasOpen:showAdminModal,isAuthenticated,menuOpen,showUserMenu},timestamp:Date.now()});
+                // #endregion
+                setShowAdminModal(true);
+              }}
               className="category-login-button"
               title="Acesso Administrativo"
               aria-label="Acesso Administrativo"
@@ -672,33 +745,15 @@ export default function Navbarcateria() {
                   <i className="fas fa-user"></i>
                   <span>{user?.name}</span>
                 </div>
-                <Link
-                  to="/profile"
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    openEditorModal('tutorials');
+                  }}
                   className="category-mobile-link"
-                  onClick={() => setMenuOpen(false)}
                 >
-                  Meu Perfil
-                </Link>
-                {(user?.role === 'admin' ||
-                  user?.role === 'super_admin' ||
-                  user?.role === 'editor') && (
-                  <Link
-                    to="/editor"
-                    className="category-mobile-link"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Editor Visual
-                  </Link>
-                )}
-                {(user?.role === 'admin' || user?.role === 'super_admin') && (
-                  <Link
-                    to="/admin"
-                    className="category-mobile-link"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Administração
-                  </Link>
-                )}
+                  Editar
+                </button>
                 <button
                   onClick={() => {
                     handleLogout();

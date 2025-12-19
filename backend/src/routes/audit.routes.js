@@ -1,10 +1,12 @@
 import express from 'express';
 import { getPrisma } from '../config/database.js';
+import { authenticate } from '../middleware/auth.middleware.js';
+import { requirePermission } from '../middleware/permissions.middleware.js';
 
 const router = express.Router();
 
 // Listar logs de auditoria
-router.get('/', async (req, res) => {
+router.get('/', authenticate, requirePermission('view_audit_logs'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const { userId, entityType, entityId, limit = 100 } = req.query;
@@ -33,7 +35,7 @@ router.get('/', async (req, res) => {
 });
 
 // Obter log por ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticate, requirePermission('view_audit_logs'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const log = await prisma.auditLog.findUnique({
@@ -57,7 +59,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Criar log de auditoria
-router.post('/', async (req, res) => {
+router.post('/', authenticate, requirePermission('view_audit_logs'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const {

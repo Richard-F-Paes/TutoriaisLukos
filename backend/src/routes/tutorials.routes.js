@@ -1,8 +1,160 @@
 import express from 'express';
 import { getPrisma } from '../config/database.js';
 import slugify from 'slugify';
+import { authenticate } from '../middleware/auth.middleware.js';
+import { requirePermission } from '../middleware/permissions.middleware.js';
 
 const router = express.Router();
+
+// =========================
+// Passos do Tutorial (CRUD)
+// =========================
+
+// Listar passos de um tutorial
+router.get('/:tutorialId/steps', async (req, res) => {
+  try {
+    const prisma = getPrisma();
+    const tutorialId = parseInt(req.params.tutorialId);
+    const steps = await prisma.tutorialStep.findMany({
+      where: { tutorialId },
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json({ data: steps });
+  } catch (error) {
+    console.error('Erro ao listar passos:', error);
+    res.status(500).json({ error: 'Erro ao listar passos' });
+  }
+});
+
+// Criar passo
+router.post('/:tutorialId/steps', authenticate, requirePermission('edit_tutorial'), async (req, res) => {
+  try {
+    const prisma = getPrisma();
+    const tutorialId = parseInt(req.params.tutorialId);
+    const { title, content, videoUrl, imageUrl, sortOrder, duration } = req.body;
+
+    // sortOrder default: last
+    let finalSortOrder = sortOrder ? parseInt(sortOrder) : null;
+    if (!finalSortOrder) {
+      const last = await prisma.tutorialStep.findFirst({
+        where: { tutorialId },
+        orderBy: { sortOrder: 'desc' },
+        select: { sortOrder: true },
+      });
+      finalSortOrder = (last?.sortOrder || 0) + 1;
+    }
+
+    const step = await prisma.tutorialStep.create({
+      data: {
+        tutorialId,
+        title,
+        content,
+        videoUrl,
+        imageUrl,
+        sortOrder: finalSortOrder,
+        duration: duration ? parseInt(duration) : null,
+      },
+    });
+
+    res.status(201).json({ data: step });
+  } catch (error) {
+    console.error('Erro ao criar passo:', error);
+    res.status(500).json({ error: 'Erro ao criar passo' });
+  }
+});
+
+// Atualizar passo
+router.put('/:tutorialId/steps/:stepId', authenticate, requirePermission('edit_tutorial'), async (req, res) => {
+  try {
+    const prisma = getPrisma();
+    const tutorialId = parseInt(req.params.tutorialId);
+    const stepId = parseInt(req.params.stepId);
+    const { title, content, videoUrl, imageUrl, sortOrder, duration } = req.body;
+
+    const step = await prisma.tutorialStep.update({
+      where: { id: stepId },
+      data: {
+        title,
+        content,
+        videoUrl,
+        imageUrl,
+        sortOrder: sortOrder ? parseInt(sortOrder) : undefined,
+        duration: duration === null || duration === undefined ? undefined : parseInt(duration),
+      },
+    });
+
+    // Safety: ensure belongs to tutorial
+    if (step.tutorialId !== tutorialId) {
+      return res.status(400).json({ error: 'Step does not belong to tutorial' });
+    }
+
+    res.json({ data: step });
+  } catch (error) {
+    console.error('Erro ao atualizar passo:', error);
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Passo não encontrado' });
+    }
+    res.status(500).json({ error: 'Erro ao atualizar passo' });
+  }
+});
+
+// Deletar passo
+router.delete('/:tutorialId/steps/:stepId', authenticate, requirePermission('edit_tutorial'), async (req, res) => {
+  try {
+    const prisma = getPrisma();
+    const tutorialId = parseInt(req.params.tutorialId);
+    const stepId = parseInt(req.params.stepId);
+
+    const step = await prisma.tutorialStep.findUnique({ where: { id: stepId } });
+    if (!step || step.tutorialId !== tutorialId) {
+      return res.status(404).json({ error: 'Passo não encontrado' });
+    }
+
+    await prisma.tutorialStep.delete({ where: { id: stepId } });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Erro ao deletar passo:', error);
+    res.status(500).json({ error: 'Erro ao deletar passo' });
+  }
+});
+
+// Reordenar passos
+router.post('/:tutorialId/steps/reorder', authenticate, requirePermission('edit_tutorial'), async (req, res) => {
+  try {
+    const prisma = getPrisma();
+    const tutorialId = parseInt(req.params.tutorialId);
+    const { stepIds, steps } = req.body;
+
+    let orderedIds = stepIds;
+    if (!orderedIds && Array.isArray(steps)) {
+      orderedIds = steps.map((s) => s.id);
+    }
+
+    if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
+      return res.status(400).json({ error: 'stepIds is required' });
+    }
+
+    // Transaction: update sortOrder based on order
+    await prisma.$transaction(
+      orderedIds.map((id, idx) =>
+        prisma.tutorialStep.update({
+          where: { id: parseInt(id) },
+          data: { sortOrder: idx + 1 },
+        })
+      )
+    );
+
+    const updated = await prisma.tutorialStep.findMany({
+      where: { tutorialId },
+      orderBy: { sortOrder: 'asc' },
+    });
+
+    res.json({ data: updated });
+  } catch (error) {
+    console.error('Erro ao reordenar passos:', error);
+    res.status(500).json({ error: 'Erro ao reordenar passos' });
+  }
+});
 
 // Listar tutoriais
 router.get('/', async (req, res) => {
@@ -77,7 +229,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Criar tutorial
-router.post('/', async (req, res) => {
+router.post('/', authenticate, requirePermission('create_tutorial'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const {
@@ -145,7 +297,7 @@ router.post('/', async (req, res) => {
 });
 
 // Atualizar tutorial
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticate, requirePermission('edit_tutorial'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const {
@@ -211,7 +363,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Deletar tutorial
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, requirePermission('delete_tutorial'), async (req, res) => {
   try {
     const prisma = getPrisma();
     await prisma.tutorial.delete({

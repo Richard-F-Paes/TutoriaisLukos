@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../../contexts/AuthContext';
+import { useEditorModal } from '../../../../contexts/EditorModalContext';
 import AdminPasswordModal from '../../ui/AdminPasswordModal/AdminPasswordModal';
 import './Navbar.css';
 
@@ -14,6 +15,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, isAuthenticated } = useAuth();
+  const { openEditorModal } = useEditorModal();
 
   // Efeito de rolagem
   useEffect(() => {
@@ -37,6 +39,11 @@ const Navbar = () => {
     logout();
     setShowUserMenu(false);
     navigate('/');
+  };
+
+  const handleOpenEditor = () => {
+    setShowUserMenu(false);
+    openEditorModal('tutorials');
   };
 
   // Fecha menu do usuário se clicar fora
@@ -195,35 +202,12 @@ const Navbar = () => {
 
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-2 z-50 border">
-                <Link
-                  to="/profile"
-                  onClick={() => setShowUserMenu(false)}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                <button
+                  onClick={handleOpenEditor}
+                  className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
-                  Meu Perfil
-                </Link>
-
-                {(user?.role === 'admin' ||
-                  user?.role === 'super_admin' ||
-                  user?.role === 'editor') && (
-                    <Link
-                      to="/editor"
-                      onClick={() => setShowUserMenu(false)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      Editor Visual
-                    </Link>
-                  )}
-
-                {(user?.role === 'admin' || user?.role === 'super_admin') && (
-                  <Link
-                    to="/admin"
-                    onClick={() => setShowUserMenu(false)}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Administração
-                  </Link>
-                )}
+                  Editar
+                </button>
 
                 <button
                   onClick={handleLogout}

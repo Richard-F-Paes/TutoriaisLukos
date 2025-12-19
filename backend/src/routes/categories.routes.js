@@ -1,6 +1,8 @@
 import express from 'express';
 import { getPrisma } from '../config/database.js';
 import slugify from 'slugify';
+import { authenticate } from '../middleware/auth.middleware.js';
+import { requirePermission } from '../middleware/permissions.middleware.js';
 
 const router = express.Router();
 
@@ -45,7 +47,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Criar categoria
-router.post('/', async (req, res) => {
+router.post('/', authenticate, requirePermission('manage_categories'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const { name, description, icon, color, imageUrl, sortOrder } = req.body;
@@ -75,7 +77,7 @@ router.post('/', async (req, res) => {
 });
 
 // Atualizar categoria
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticate, requirePermission('manage_categories'), async (req, res) => {
   try {
     const prisma = getPrisma();
     const { name, description, icon, color, imageUrl, sortOrder, isActive } = req.body;
@@ -103,7 +105,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Deletar categoria
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, requirePermission('manage_categories'), async (req, res) => {
   try {
     const prisma = getPrisma();
     await prisma.category.delete({

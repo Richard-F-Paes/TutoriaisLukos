@@ -1,0 +1,219 @@
+.editor-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  overflow: hidden;
+  animation: editorModalFadeIn 140ms ease-out;
+}
+
+@keyframes editorModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.editor-modal-container {
+  width: min(1200px, 96vw);
+  height: min(760px, 92vh);
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  outline: none;
+  animation: editorModalPopIn 160ms ease-out;
+}
+
+@keyframes editorModalPopIn {
+  from {
+    transform: translateY(10px) scale(0.99);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.editor-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.editor-modal-title-top {
+  font-weight: 700;
+  color: #2b0a3d;
+  letter-spacing: -0.01em;
+}
+
+.editor-modal-title-sub {
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.75);
+  margin-top: 2px;
+}
+
+.editor-modal-header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.editor-modal-close {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.95);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 120ms ease-out, transform 120ms ease-out, border-color 120ms ease-out;
+}
+
+.editor-modal-close:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+.editor-modal-close:active {
+  transform: translateY(0);
+}
+
+.editor-modal-close:focus-visible {
+  outline: 3px solid rgba(108, 35, 150, 0.35);
+  outline-offset: 2px;
+}
+
+.editor-modal-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.92);
+  overflow-x: auto;
+  scrollbar-gutter: stable both-edges;
+}
+
+.editor-modal-tab {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: rgba(15, 23, 42, 0.9);
+  transition: background 120ms ease-out, border-color 120ms ease-out, transform 120ms ease-out;
+}
+
+.editor-modal-tab:hover {
+  background: rgba(15, 23, 42, 0.03);
+  transform: translateY(-1px);
+}
+
+.editor-modal-tab:active {
+  transform: translateY(0);
+}
+
+.editor-modal-tab:focus-visible {
+  outline: 3px solid rgba(108, 35, 150, 0.35);
+  outline-offset: 2px;
+}
+
+.editor-modal-tab.active {
+  background: rgba(108, 35, 150, 0.12);
+  border-color: rgba(108, 35, 150, 0.25);
+}
+
+.editor-modal-content {
+  flex: 1;
+  overflow: auto;
+  padding: 18px 18px 22px;
+  background: #f8fafc;
+  scrollbar-gutter: stable both-edges;
+}
+
+.editor-modal-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.editor-modal-mode-label {
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.75);
+  padding-left: 6px;
+}
+
+.editor-modal-mode-btn {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 120ms ease-out, border-color 120ms ease-out;
+}
+
+.editor-modal-mode-btn.active {
+  background: rgba(108, 35, 150, 0.16);
+  border-color: rgba(108, 35, 150, 0.25);
+}
+
+.editor-modal-mode-btn:focus-visible {
+  outline: 3px solid rgba(108, 35, 150, 0.35);
+  outline-offset: 2px;
+}
+
+.editor-modal-unauth {
+  padding: 22px;
+}
+
+@media (max-width: 768px) {
+  .editor-modal-overlay {
+    padding: 0;
+  }
+
+  .editor-modal-container {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .editor-modal-header {
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .editor-modal-tabs {
+    padding: 10px;
+  }
+
+  .editor-modal-content {
+    padding: 14px;
+  }
+}
+
+

@@ -163,12 +163,30 @@ export async function connectDatabase() {
     prisma = {
       $connect: async () => {},
       $disconnect: async () => {},
+      $transaction: async (ops) => Promise.all(ops),
       user: {},
       category: {},
       tutorial: {},
       tutorialStep: {},
       media: {},
       auditLog: {},
+      headerMenu: {
+        findMany: async () => [],
+        findUnique: async () => null,
+        create: async () => {
+          throw new Error('Database offline: headerMenu.create unavailable');
+        },
+        update: async () => {
+          throw new Error('Database offline: headerMenu.update unavailable');
+        },
+        delete: async () => {
+          throw new Error('Database offline: headerMenu.delete unavailable');
+        },
+      },
+      headerMenuItem: {
+        deleteMany: async () => ({ count: 0 }),
+        createMany: async () => ({ count: 0 }),
+      },
     };
     
     return prisma;

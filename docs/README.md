@@ -1,22 +1,14 @@
 # 📚 Documentação - TutorialLukos React
 
-Bem-vindo à documentação completa da plataforma de tutoriais do sistema Lukos. Esta documentação está organizada por categorias para facilitar a navegação e encontrar rapidamente as informações que você precisa.
+Bem-vindo à documentação completa da plataforma de tutoriais do sistema Lukos. Esta documentação está organizada para facilitar a navegação e encontrar rapidamente as informações que você precisa.
 
 ## 📑 Índice
 
-### 🎯 [Guias de Uso](./guias/)
-Guias práticos para trabalhar com o sistema de tutoriais:
+### 📋 Documentos Principais
 
-- **[Como Adicionar/Editar Tutoriais](./guias/adicionar-tutoriais.md)** - Guia completo para criar e editar tutoriais no sistema
-- **[Como Ajustar Imagens e Elementos Visuais](./guias/ajustar-imagens-visual.md)** - Personalização de imagens, cores e estilos
-- **[Sistema de Tutoriais - Guia de Uso](./guias/sistema-tutoriais.md)** - Visão geral do sistema e funcionalidades
-
-### 🏢 [Módulos do Sistema](./modulos/)
-Documentação específica de cada módulo:
-
-- **[Dashboard](./modulos/dashboard.md)** - Tutoriais do Dashboard e Relatórios (30+ tutoriais)
-- **[Retaguarda](./modulos/retaguarda.md)** - Tutoriais da Retaguarda (45+ tutoriais)
-- **[Tutoriais Completos](./modulos/tutoriais-completos.md)** - Visão geral de todos os tutoriais (25+ tutoriais)
+- **[Guia Completo](./GUIA.md)** - Guia completo com todas as informações sobre como adicionar tutoriais, ajustar imagens e entender a estrutura do sistema
+- **[Regras do Projeto](./regras.md)** - Stack técnica, princípios e diretrizes do projeto
+- **[Changelog](./CHANGELOG.md)** - Histórico de mudanças e atualizações do projeto
 
 ## 🚀 Início Rápido
 
@@ -24,37 +16,33 @@ Documentação específica de cada módulo:
 
 1. **Começando com o projeto**
    - Leia o [README principal](../README.md) para instalação e configuração
-   - Consulte [Como Adicionar Tutoriais](./guias/adicionar-tutoriais.md) para criar seu primeiro tutorial
+   - Consulte o [Guia Completo](./GUIA.md) para criar seu primeiro tutorial
+   - Revise as [Regras do Projeto](./regras.md) para entender a stack técnica
 
-2. **Personalizando a aparência**
-   - Veja [Como Ajustar Imagens e Visual](./guias/ajustar-imagens-visual.md) para customizar cores e estilos
+2. **Trabalhando com tutoriais**
+   - [Como Adicionar/Editar Tutoriais](./GUIA.md#como-adicionareditar-tutoriais) - Guia completo para criar e editar tutoriais
+   - [Como Ajustar Imagens](./GUIA.md#como-ajustar-imagens-e-elementos-visuais) - Personalização de imagens e elementos visuais
+   - [Estrutura do Sistema](./GUIA.md#estrutura-do-sistema) - Arquitetura e componentes
 
-3. **Entendendo o sistema**
-   - Explore [Sistema de Tutoriais](./guias/sistema-tutoriais.md) para entender a arquitetura
+3. **Contribuindo**
+   - Sempre atualize o [CHANGELOG.md](./CHANGELOG.md) ao fazer mudanças significativas
+   - Siga as [Regras do Projeto](./regras.md) e mantenha o código consistente
 
 ### Para Usuários
 
 1. **Navegando pelos tutoriais**
    - Acesse a [página principal de tutoriais](../README.md#-funcionalidades)
    - Use os filtros por categoria e busca para encontrar tutoriais específicos
-
-2. **Módulos disponíveis**
-   - **[Dashboard](./modulos/dashboard.md)** - Relatórios e análises
-   - **[Retaguarda](./modulos/retaguarda.md)** - Cadastros, produtos, comercial e compras
+   - Explore tutoriais por módulo (Dashboard, Retaguarda, PDV, etc.)
 
 ## 📖 Estrutura da Documentação
 
 ```
 docs/
-├── README.md                    # Este arquivo - Índice principal
-├── guias/                       # Guias práticos
-│   ├── adicionar-tutoriais.md
-│   ├── ajustar-imagens-visual.md
-│   └── sistema-tutoriais.md
-└── modulos/                     # Documentação por módulo
-    ├── dashboard.md
-    ├── retaguarda.md
-    └── tutoriais-completos.md
+├── README.md          # Este arquivo - Índice principal
+├── GUIA.md            # Guia completo do sistema
+├── regras.md          # Regras, stack técnica e diretrizes
+└── CHANGELOG.md       # Histórico de mudanças
 ```
 
 ## 🔗 Links Úteis
@@ -72,9 +60,11 @@ Para dúvidas sobre a documentação ou o sistema:
 
 ## 🔄 Atualizações
 
-Esta documentação é atualizada regularmente. Se você encontrar informações desatualizadas ou tiver sugestões de melhoria, por favor entre em contato.
+Esta documentação é atualizada regularmente. Para ver o histórico completo de mudanças, consulte o [CHANGELOG.md](./CHANGELOG.md).
+
+Se você encontrar informações desatualizadas ou tiver sugestões de melhoria, por favor entre em contato.
 
 ---
 
-**Última atualização**: 2024
+**Última atualização**: 2025-01-20
 

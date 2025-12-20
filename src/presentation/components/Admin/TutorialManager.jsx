@@ -1,7 +1,7 @@
 // TutorialManager - Gerenciamento de tutoriais no admin
 import React, { useState } from 'react';
 import { useTutorials, useDeleteTutorial } from '../../../hooks/useTutorials.js';
-import { useCategories } from '../../../hooks/useCategories.js';
+import { useCategoriesHierarchical } from '../../../hooks/useCategories.js';
 import { Plus, Edit, Trash2, Eye, Search, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useTutorialModal } from '../../../contexts/TutorialModalContext';
@@ -18,14 +18,39 @@ const TutorialManager = () => {
   const { data: tutorialsData, isLoading } = useTutorials({
     search: searchTerm || undefined,
     categorySlug: categoryFilter || undefined,
-    isPublished: statusFilter === 'all' ? undefined : statusFilter === 'published',
+    isPublished: statusFilter === 'all' 
+      ? undefined 
+      : statusFilter === 'published' 
+        ? true 
+        : false, // 'draft' = false
   });
 
-  const { data: categoriesData } = useCategories();
+  const { data: categoriesData } = useCategoriesHierarchical();
   const deleteMutation = useDeleteTutorial();
 
   const tutorials = tutorialsData?.data || [];
-  const categories = categoriesData?.data || [];
+  const categories = categoriesData || [];
+
+  // Flatten categories for dropdown (include subcategories with hierarchy indicator)
+  const flattenCategoriesForSelect = (cats, level = 0, excludeId = null) => {
+    const result = [];
+    cats.forEach(cat => {
+      if (cat.id !== excludeId) {
+        const prefix = '  '.repeat(level);
+        result.push({
+          ...cat,
+          displayName: `${prefix}${cat.name || cat.Name}`,
+          level,
+        });
+        if (cat.children && cat.children.length > 0) {
+          result.push(...flattenCategoriesForSelect(cat.children, level + 1, excludeId));
+        }
+      }
+    });
+    return result;
+  };
+
+  const allCategoriesFlat = flattenCategoriesForSelect(categories);
 
   const openCreate = () => {
     setEditingId(null);
@@ -95,8 +120,10 @@ const TutorialManager = () => {
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
             <option value="">Todas as categorias</option>
-            {categories.map(cat => (
-              <option key={cat.Id} value={cat.Slug}>{cat.Name}</option>
+            {allCategoriesFlat.map(cat => (
+              <option key={cat.id || cat.Id} value={cat.slug || cat.Slug}>
+                {cat.displayName || cat.name || cat.Name}
+              </option>
             ))}
           </select>
         </div>
@@ -136,55 +163,74 @@ const TutorialManager = () => {
                   </td>
                 </tr>
               ) : (
-                tutorials.map(tutorial => (
-                  <tr key={tutorial.Id}>
-                    <td>
-                      <button
-                        type="button"
-                        className="btn-link"
-                        onClick={() => openView(tutorial.Slug)}
-                        title="Visualizar"
-                      >
-                        {tutorial.Title}
-                      </button>
-                    </td>
-                    <td>{tutorial.CategoryName || '-'}</td>
-                    <td>
-                      <span className={`status-badge ${tutorial.IsPublished ? 'published' : 'draft'}`}>
-                        {tutorial.IsPublished ? 'Publicado' : 'Rascunho'}
-                      </span>
-                    </td>
-                    <td>{tutorial.ViewCount || 0}</td>
-                    <td>{new Date(tutorial.CreatedAt).toLocaleDateString('pt-BR')}</td>
-                    <td>
-                      <div className="action-buttons">
+                tutorials.map(tutorial => {
+                  // Suportar tanto camelCase quanto PascalCase
+                  const tutorialId = tutorial.id || tutorial.Id;
+                  const tutorialTitle = tutorial.title || tutorial.Title;
+                  const tutorialSlug = tutorial.slug || tutorial.Slug;
+                  const tutorialIsPublished = tutorial.isPublished !== undefined ? tutorial.isPublished : tutorial.IsPublished;
+                  const tutorialViewCount = tutorial.viewCount !== undefined ? tutorial.viewCount : tutorial.ViewCount;
+                  const tutorialCreatedAt = tutorial.createdAt || tutorial.CreatedAt;
+                  const tutorialCategory = tutorial.category || tutorial.Category;
+                  
+                  return (
+                    <tr key={tutorialId}>
+                      <td>
                         <button
                           type="button"
-                          onClick={() => openView(tutorial.Slug)}
-                          className="btn-icon"
+                          className="btn-link"
+                          onClick={() => openView(tutorialSlug)}
                           title="Visualizar"
                         >
-                          <Eye size={16} />
+                          {tutorialTitle}
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => openEdit(tutorial.Id)}
-                          className="btn-icon"
-                          title="Editar"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(tutorial.Id, tutorial.Title)}
-                          className="btn-icon btn-danger"
-                          title="Excluir"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td>
+                        {tutorialCategory?.parent ? (
+                          <span>
+                            {tutorialCategory.parent.name || tutorialCategory.parent.Name} &gt; {tutorialCategory?.name || '-'}
+                          </span>
+                        ) : (
+                          tutorialCategory?.name || '-'
+                        )}
+                      </td>
+                      <td>
+                        <span className={`status-badge ${tutorialIsPublished ? 'published' : 'draft'}`}>
+                          {tutorialIsPublished ? 'Publicado' : 'Rascunho'}
+                        </span>
+                      </td>
+                      <td>{tutorialViewCount || 0}</td>
+                      <td>{tutorialCreatedAt ? new Date(tutorialCreatedAt).toLocaleDateString('pt-BR') : '-'}</td>
+                      <td>
+                        <div className="action-buttons">
+                          <button
+                            type="button"
+                            onClick={() => openView(tutorialSlug)}
+                            className="btn-icon"
+                            title="Visualizar"
+                          >
+                            <Eye size={16} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openEdit(tutorialId)}
+                            className="btn-icon"
+                            title="Editar"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(tutorialId, tutorialTitle)}
+                            className="btn-icon btn-danger"
+                            title="Excluir"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

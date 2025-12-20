@@ -1,13 +1,5 @@
 // Configuração da Aplicação
 
-// #region agent log
-const __agentLog = (payload) => {
-  try {
-    fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-  } catch (_) {}
-};
-// #endregion
-
 export const appConfig = {
   name: import.meta.env.VITE_APP_NAME || 'Tutoriais Lukos',
   version: import.meta.env.VITE_APP_VERSION || '1.0.0',
@@ -31,9 +23,6 @@ export const appConfig = {
       finalValue = finalValue.slice(0, -1);
     }
     
-    // #region agent log
-    __agentLog({location:'src/infrastructure/config/app.config.js:apiUrl',message:'API URL configuration',data:{envValue:String(envValue||'undefined'),defaultValue,finalValue,hasTrailingSlash:finalValue.endsWith('/'),endsWithApi:finalValue.endsWith('/api'),normalized:true},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'});
-    // #endregion
     return finalValue;
   })(),
   

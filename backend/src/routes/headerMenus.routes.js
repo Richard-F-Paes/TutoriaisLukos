@@ -5,18 +5,101 @@ import { requirePermission } from '../middleware/permissions.middleware.js';
 
 const router = express.Router();
 
+const normalizeItem = (it) => ({
+  ...it,
+  Label: it.label,
+  TutorialSlug: it.tutorialSlug,
+  Order: it.order,
+  ParentId: it.parentId ?? null,
+  IsSubmenu: it.isSubmenu ?? false,
+  isSubmenu: it.isSubmenu ?? false,
+});
+
+const buildItemsTree = (flatItems) => {
+  const items = (flatItems || []).map(normalizeItem);
+  const byParent = new Map();
+  for (const it of items) {
+    const key = it.parentId ?? null;
+    const list = byParent.get(key) || [];
+    list.push(it);
+    byParent.set(key, list);
+  }
+
+  const sortByOrder = (a, b) => (a.Order ?? 0) - (b.Order ?? 0);
+
+  const attach = (parentId) => {
+    const children = (byParent.get(parentId ?? null) || []).sort(sortByOrder);
+    return children.map((child) => {
+      const grandChildren = attach(child.id);
+      // compat: expor tanto Children quanto children
+      return {
+        ...child,
+        Children: grandChildren,
+        children: grandChildren,
+      };
+    });
+  };
+
+  return attach(null);
+};
+
+const coerceInputChildren = (it) => it?.Children ?? it?.children ?? [];
+
+const sanitizeInputItem = (it) => ({
+  label: it?.Label ?? it?.label ?? '',
+  tutorialSlug: it?.TutorialSlug ?? it?.tutorialSlug ?? null,
+  isSubmenu: it?.IsSubmenu ?? it?.isSubmenu ?? false,
+  order: it?.Order ?? it?.order,
+  children: coerceInputChildren(it),
+});
+
+const createItemsRecursive = async (prisma, headerMenuId, items, parentId = null) => {
+  if (!Array.isArray(items) || items.length === 0) return;
+
+  // manter a ordem de criação estável (Order ou índice)
+  const normalized = items.map(sanitizeInputItem).map((it, idx) => ({
+    ...it,
+    order: it.order === undefined ? idx : parseInt(it.order) || 0,
+  }));
+
+  for (let idx = 0; idx < normalized.length; idx += 1) {
+    const it = normalized[idx];
+    const label = String(it.label || '').trim();
+    if (!label) continue;
+
+    // Regra: se isSubmenu=true OU tiver children, vira "pai" e não deve navegar (tutorialSlug é ignorado)
+    const isSubmenu = Boolean(it.isSubmenu);
+    const hasChildren = Array.isArray(it.children) && it.children.length > 0;
+    // Se for submenu (explicito ou implícito por ter filhos), não pode ter tutorialSlug
+    const tutorialSlug = (isSubmenu || hasChildren) ? null : (it.tutorialSlug ? String(it.tutorialSlug) : null);
+    // Se tiver filhos, garantir que isSubmenu=true
+    const finalIsSubmenu = isSubmenu || hasChildren;
+
+    const created = await prisma.headerMenuItem.create({
+      data: {
+        headerMenuId,
+        parentId,
+        label,
+        tutorialSlug,
+        isSubmenu: finalIsSubmenu,
+        order: it.order,
+      },
+    });
+
+    if (hasChildren) {
+      // eslint-disable-next-line no-await-in-loop
+      await createItemsRecursive(prisma, headerMenuId, it.children, created.id);
+    }
+  }
+};
+
 const normalizeMenu = (menu) => {
   // Expõe também em formato compatível com frontend (Label/Items/Order)
   return {
     ...menu,
     Label: menu.label,
     Order: menu.order,
-    Items: (menu.items || []).map((it) => ({
-      ...it,
-      Label: it.label,
-      TutorialSlug: it.tutorialSlug,
-      Order: it.order,
-    })),
+    Items: buildItemsTree(menu.items || []),
   };
 };
 
@@ -63,26 +146,29 @@ router.get('/:id', async (req, res) => {
 router.post('/', authenticate, requirePermission('manage_categories'), async (req, res) => {
   try {
     const prisma = getPrisma();
-    if (!prisma?.headerMenu?.create) {
+    if (!prisma?.headerMenu?.create || !prisma?.$transaction) {
       return res.status(503).json({ error: 'Header menus indisponível (DB offline ou Prisma client desatualizado)' });
     }
     const label = req.body.Label ?? req.body.label;
     const order = req.body.Order ?? req.body.order ?? 0;
     const items = req.body.Items ?? req.body.items ?? [];
 
-    const created = await prisma.headerMenu.create({
-      data: {
-        label,
-        order: parseInt(order) || 0,
-        items: {
-          create: (items || []).map((it, idx) => ({
-            label: it.Label ?? it.label,
-            tutorialSlug: it.TutorialSlug ?? it.tutorialSlug ?? null,
-            order: it.Order ?? it.order ?? idx,
-          })),
+    const created = await prisma.$transaction(async (tx) => {
+      const menu = await tx.headerMenu.create({
+        data: {
+          label,
+          order: parseInt(order) || 0,
         },
-      },
-      include: { items: { orderBy: { order: 'asc' } } },
+      });
+
+      if (Array.isArray(items) && items.length > 0) {
+        await createItemsRecursive(tx, menu.id, items, null);
+      }
+
+      return tx.headerMenu.findUnique({
+        where: { id: menu.id },
+        include: { items: { orderBy: { order: 'asc' } } },
+      });
     });
 
     res.status(201).json({ data: normalizeMenu(created) });
@@ -96,7 +182,7 @@ router.post('/', authenticate, requirePermission('manage_categories'), async (re
 router.put('/:id', authenticate, requirePermission('manage_categories'), async (req, res) => {
   try {
     const prisma = getPrisma();
-    if (!prisma?.headerMenu?.update || !prisma?.headerMenuItem?.deleteMany || !prisma?.headerMenuItem?.createMany) {
+    if (!prisma?.headerMenu?.update || !prisma?.headerMenuItem?.deleteMany || !prisma?.headerMenuItem?.create || !prisma?.$transaction) {
       return res.status(503).json({ error: 'Header menus indisponível (DB offline ou Prisma client desatualizado)' });
     }
     const id = parseInt(req.params.id);
@@ -104,29 +190,24 @@ router.put('/:id', authenticate, requirePermission('manage_categories'), async (
     const order = req.body.Order ?? req.body.order;
     const items = req.body.Items ?? req.body.items;
 
-    // Atualiza menu
-    await prisma.headerMenu.update({
-      where: { id },
-      data: {
-        label: label ?? undefined,
-        order: order === undefined ? undefined : parseInt(order),
-      },
-    });
+    await prisma.$transaction(async (tx) => {
+      // Atualiza menu
+      await tx.headerMenu.update({
+        where: { id },
+        data: {
+          label: label ?? undefined,
+          order: order === undefined ? undefined : parseInt(order),
+        },
+      });
 
-    // Se veio items, substituir coleção
-    if (Array.isArray(items)) {
-      await prisma.headerMenuItem.deleteMany({ where: { headerMenuId: id } });
-      if (items.length > 0) {
-        await prisma.headerMenuItem.createMany({
-          data: items.map((it, idx) => ({
-            headerMenuId: id,
-            label: it.Label ?? it.label,
-            tutorialSlug: it.TutorialSlug ?? it.tutorialSlug ?? null,
-            order: it.Order ?? it.order ?? idx,
-          })),
-        });
+      // Se veio items, substituir coleção
+      if (Array.isArray(items)) {
+        await tx.headerMenuItem.deleteMany({ where: { headerMenuId: id } });
+        if (items.length > 0) {
+          await createItemsRecursive(tx, id, items, null);
+        }
       }
-    }
+    });
 
     const updated = await prisma.headerMenu.findUnique({
       where: { id },

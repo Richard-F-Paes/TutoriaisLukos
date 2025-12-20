@@ -6,6 +6,25 @@ import { requirePermission } from '../middleware/permissions.middleware.js';
 
 const router = express.Router();
 
+// Helper function to get all category IDs including children (recursive)
+async function getAllCategoryIds(prisma, categoryId) {
+  const categoryIds = [categoryId];
+  
+  // Get direct children
+  const children = await prisma.category.findMany({
+    where: { parentId: categoryId },
+    select: { id: true },
+  });
+  
+  // Recursively get children of children
+  for (const child of children) {
+    const childIds = await getAllCategoryIds(prisma, child.id);
+    categoryIds.push(...childIds);
+  }
+  
+  return categoryIds;
+}
+
 // =========================
 // Passos do Tutorial (CRUD)
 // =========================
@@ -160,17 +179,32 @@ router.post('/:tutorialId/steps/reorder', authenticate, requirePermission('edit_
 router.get('/', async (req, res) => {
   try {
     const prisma = getPrisma();
-    const { categoryId, published, featured } = req.query;
+    const { categoryId, published, isPublished, featured } = req.query;
 
     const where = {};
-    if (categoryId) where.categoryId = parseInt(categoryId);
-    if (published !== undefined) where.isPublished = published === 'true';
+    
+    // If categoryId is provided, include tutorials from that category and all its subcategories
+    if (categoryId) {
+      const categoryIdInt = parseInt(categoryId);
+      const allCategoryIds = await getAllCategoryIds(prisma, categoryIdInt);
+      where.categoryId = { in: allCategoryIds };
+    }
+    
+    // Aceitar tanto 'published' quanto 'isPublished' no query string
+    const publishedParam = published !== undefined ? published : isPublished;
+    if (publishedParam !== undefined) {
+      where.isPublished = publishedParam === 'true' || publishedParam === true;
+    }
     if (featured !== undefined) where.isFeatured = featured === 'true';
 
     const tutorials = await prisma.tutorial.findMany({
       where,
       include: {
-        category: true,
+        category: {
+          include: {
+            parent: true,
+          },
+        },
         creator: {
           select: { id: true, name: true, username: true },
         },
@@ -184,7 +218,7 @@ router.get('/', async (req, res) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    res.json(tutorials);
+    res.json({ data: tutorials });
   } catch (error) {
     console.error('Erro ao listar tutoriais:', error);
     res.status(500).json({ error: 'Erro ao listar tutoriais' });
@@ -198,7 +232,11 @@ router.get('/:id', async (req, res) => {
     const tutorial = await prisma.tutorial.findUnique({
       where: { id: parseInt(req.params.id) },
       include: {
-        category: true,
+        category: {
+          include: {
+            parent: true,
+          },
+        },
         creator: {
           select: { id: true, name: true, username: true },
         },
@@ -221,7 +259,7 @@ router.get('/:id', async (req, res) => {
       data: { viewCount: { increment: 1 } },
     });
 
-    res.json(tutorial);
+    res.json({ data: tutorial });
   } catch (error) {
     console.error('Erro ao obter tutorial:', error);
     res.status(500).json({ error: 'Erro ao obter tutorial' });
@@ -244,38 +282,47 @@ router.post('/', authenticate, requirePermission('create_tutorial'), async (req,
       tags,
       metaTitle,
       metaDescription,
-      createdBy,
-      updatedBy,
       tutorialSteps,
     } = req.body;
+
+    // Validar título obrigatório
+    if (!title || !title.trim()) {
+      return res.status(400).json({ error: 'Título é obrigatório' });
+    }
+
+    // Usar o ID do usuário autenticado
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Usuário não autenticado' });
+    }
 
     const slug = slugify(title, { lower: true, strict: true });
 
     const tutorial = await prisma.tutorial.create({
       data: {
-        title,
+        title: title.trim(),
         slug,
-        description,
-        content,
+        description: description?.trim() || null,
+        content: content?.trim() || '', // Conteúdo pode ser vazio se tutorial usa passos
         categoryId: categoryId ? parseInt(categoryId) : null,
-        thumbnailUrl,
-        videoUrl,
-        difficulty,
+        thumbnailUrl: thumbnailUrl?.trim() || null,
+        videoUrl: videoUrl?.trim() || null,
+        difficulty: difficulty || null,
         estimatedDuration: estimatedDuration ? parseInt(estimatedDuration) : null,
-        tags: tags ? JSON.stringify(tags) : null,
-        metaTitle,
-        metaDescription,
-        createdBy: parseInt(createdBy),
-        updatedBy: parseInt(updatedBy),
+        tags: tags ? (Array.isArray(tags) ? JSON.stringify(tags) : tags) : null,
+        metaTitle: metaTitle?.trim() || null,
+        metaDescription: metaDescription?.trim() || null,
+        createdBy: userId,
+        updatedBy: userId,
         tutorialSteps: tutorialSteps
           ? {
               create: tutorialSteps.map((step, index) => ({
                 title: step.title,
-                content: step.content,
-                videoUrl: step.videoUrl,
-                imageUrl: step.imageUrl,
+                content: step.content || null,
+                videoUrl: step.videoUrl || null,
+                imageUrl: step.imageUrl || null,
                 sortOrder: step.sortOrder || index + 1,
-                duration: step.duration,
+                duration: step.duration ? parseInt(step.duration) : null,
               })),
             }
           : undefined,
@@ -286,13 +333,19 @@ router.post('/', authenticate, requirePermission('create_tutorial'), async (req,
       },
     });
 
-    res.status(201).json(tutorial);
+    res.status(201).json({ data: tutorial });
   } catch (error) {
     console.error('Erro ao criar tutorial:', error);
     if (error.code === 'P2002') {
       return res.status(400).json({ error: 'Slug já existe' });
     }
-    res.status(500).json({ error: 'Erro ao criar tutorial' });
+    if (error.code === 'P2003') {
+      return res.status(400).json({ error: 'Categoria ou usuário inválido' });
+    }
+    res.status(500).json({ 
+      error: 'Erro ao criar tutorial',
+      message: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
@@ -314,24 +367,29 @@ router.put('/:id', authenticate, requirePermission('edit_tutorial'), async (req,
       tags,
       metaTitle,
       metaDescription,
-      updatedBy,
       tutorialSteps,
     } = req.body;
 
+    // Usar o ID do usuário autenticado
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Usuário não autenticado' });
+    }
+
     const updateData = {
-      description,
-      content,
+      description: description?.trim() || null,
+      content: content?.trim() || '',
       categoryId: categoryId ? parseInt(categoryId) : null,
-      thumbnailUrl,
-      videoUrl,
-      difficulty,
+      thumbnailUrl: thumbnailUrl?.trim() || null,
+      videoUrl: videoUrl?.trim() || null,
+      difficulty: difficulty || null,
       estimatedDuration: estimatedDuration ? parseInt(estimatedDuration) : null,
-      isPublished,
-      isFeatured,
-      tags: tags ? JSON.stringify(tags) : null,
-      metaTitle,
-      metaDescription,
-      updatedBy: parseInt(updatedBy),
+      isPublished: isPublished || false,
+      isFeatured: isFeatured || false,
+      tags: tags ? (Array.isArray(tags) ? JSON.stringify(tags) : tags) : null,
+      metaTitle: metaTitle?.trim() || null,
+      metaDescription: metaDescription?.trim() || null,
+      updatedBy: userId,
     };
 
     if (title) {
@@ -352,13 +410,22 @@ router.put('/:id', authenticate, requirePermission('edit_tutorial'), async (req,
       },
     });
 
-    res.json(tutorial);
+    res.json({ data: tutorial });
   } catch (error) {
     console.error('Erro ao atualizar tutorial:', error);
     if (error.code === 'P2025') {
       return res.status(404).json({ error: 'Tutorial não encontrado' });
     }
-    res.status(500).json({ error: 'Erro ao atualizar tutorial' });
+    if (error.code === 'P2002') {
+      return res.status(400).json({ error: 'Slug já existe' });
+    }
+    if (error.code === 'P2003') {
+      return res.status(400).json({ error: 'Categoria ou usuário inválido' });
+    }
+    res.status(500).json({ 
+      error: 'Erro ao atualizar tutorial',
+      message: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 

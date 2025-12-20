@@ -7,11 +7,7 @@ export const headerMenuService = {
   async list() {
     try {
       // #region agent log
-      const __agentLog = (payload) => {
-        try {
-          fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-        } catch (_) {}
-      };
+      const __agentLog = () => {};
       const endpointValue = endpoints.headerMenus?.list || '/api/v1/header-menus';
       __agentLog({location:'src/services/headerMenuService.js:list',message:'headerMenuService.list called',data:{endpointValue,hasEndpoints:!!endpoints.headerMenus},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H1'});
       // #endregion
@@ -19,11 +15,7 @@ export const headerMenuService = {
       return response.data;
     } catch (error) {
       // #region agent log
-      const __agentLog = (payload) => {
-        try {
-          fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-        } catch (_) {}
-      };
+      const __agentLog = () => {};
       __agentLog({location:'src/services/headerMenuService.js:list:error',message:'headerMenuService.list error',data:{errorMessage:String(error.message||''),errorStatus:error.response?.status||null,errorURL:String(error.config?.url||'')},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H1'});
       // #endregion
       // Se o endpoint não existir, retornar menus padrão

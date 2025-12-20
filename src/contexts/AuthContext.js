@@ -17,11 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   // #region agent log
-  const __agentLog = (payload) => {
-    try {
-      fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-    } catch (_) {}
-  };
+  const __agentLog = () => {};
   // #endregion
 
   // Verificar se há token válido ao carregar a aplicação

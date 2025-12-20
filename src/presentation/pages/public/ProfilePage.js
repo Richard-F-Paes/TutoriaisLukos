@@ -10,10 +10,7 @@ import './ProfilePage.css';
 const profileSchema = z.object({
   name: z
     .string({ required_error: 'Nome é obrigatório' })
-    .min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  email: z
-    .string({ required_error: 'Email é obrigatório' })
-    .email('Email inválido')
+    .min(2, 'Nome deve ter pelo menos 2 caracteres')
 });
 
 const passwordSchema = z.object({
@@ -41,8 +38,7 @@ function ProfilePage() {
   } = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: user?.name || '',
-      email: user?.email || ''
+      name: user?.name || ''
     }
   });
 
@@ -215,26 +211,14 @@ function ProfilePage() {
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="email">Email</label>
+                    <label>Username</label>
                     <input
-                      id="email"
-                      type="email"
-                      {...registerProfile('email')}
-                      className={`form-input ${profileErrors.email ? 'error' : ''}`}
+                      type="text"
+                      value={user?.username || ''}
+                      className="form-input"
+                      disabled
                     />
-                    {profileErrors.email && (
-                      <span className="error-message">{profileErrors.email.message}</span>
-                    )}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Status da conta</label>
-                    <div className="account-status">
-                      <span className={`status-badge ${user?.emailVerified ? 'verified' : 'unverified'}`}>
-                        <i className={`fas ${user?.emailVerified ? 'fa-check-circle' : 'fa-exclamation-circle'}`}></i>
-                        {user?.emailVerified ? 'Email verificado' : 'Email não verificado'}
-                      </span>
-                    </div>
+                    <small className="form-hint">O username não pode ser alterado</small>
                   </div>
 
                   <button type="submit" className="btn btn-primary">

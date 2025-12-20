@@ -33,6 +33,12 @@ export const userService = {
     return response.data;
   },
 
+  // Excluir usuário permanentemente (hard delete)
+  async deletePermanent(id) {
+    const response = await apiClient.delete(endpoints.users.deletePermanent(id));
+    return response.data;
+  },
+
   // Alterar senha
   async changePassword(id, password) {
     const response = await apiClient.post(endpoints.users.changePassword(id), { password });

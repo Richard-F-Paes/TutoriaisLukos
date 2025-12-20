@@ -1,5 +1,5 @@
 // HeadlessUI removido - usando implementação customizada com hover e click fix
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import { useRef, useState, useEffect } from 'react';
@@ -8,6 +8,7 @@ import { useTutorialModal } from '../../../contexts/TutorialModalContext';
 import { useEditorModal } from '../../../contexts/EditorModalContext';
 import { useQuery } from '@tanstack/react-query';
 import { headerMenuService } from '../../../services/headerMenuService';
+import { defaultHeaderMenus } from '../../../shared/constants/defaultHeaderMenus.js';
 import AdminPasswordModal from '../ui/AdminPasswordModal/AdminPasswordModal';
 import './Navbarcategoria.css';
 
@@ -16,29 +17,51 @@ const PortalMenuContent = ({ buttonRef, children, className, isOpen, align = 'le
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
   const [transform, setTransform] = useState(undefined);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (!isOpen || !buttonRef.current) return;
     
     const updatePosition = () => {
       const rect = buttonRef.current.getBoundingClientRect();
-      const top = rect.bottom + window.scrollY + 4; // 4px gap
       if (align === 'right') {
-        setPosition({
-          top,
-          left: rect.right + window.scrollX,
-        });
-        setTransform('translateX(-100%)');
+        // Para submenus: posicionar ao lado direito do item pai
+        const top = rect.top + window.scrollY;
+        let left = rect.right + window.scrollX + 4; // 4px gap à direita
+        const menuWidth = 200; // Largura do submenu
+        const windowWidth = window.innerWidth;
+        
+        // Se o submenu sair da tela à direita, posicionar à esquerda
+        if (left + menuWidth > windowWidth - 16) {
+          left = rect.left + window.scrollX - menuWidth - 4;
+        }
+        
+        setPosition({ top, left });
+        setTransform(undefined);
       } else {
+        // Para menus principais: posicionar abaixo do botão
+        const top = rect.bottom + window.scrollY + 4; // 4px gap
+        // Para menu do usuário, alinhar à direita do botão
+        const isUserMenu = className?.includes('category-user-dropdown-portal');
+        let left = rect.left + window.scrollX;
+        
+        if (isUserMenu) {
+          // Alinhar à direita do botão - usar largura padrão do menu (200-250px)
+          const dropdownWidth = dropdownRef.current?.offsetWidth || 220;
+          left = rect.right + window.scrollX - dropdownWidth;
+        }
+        
         setPosition({
           top,
-          left: rect.left + window.scrollX,
+          left,
         });
         setTransform(undefined);
       }
     };
 
     updatePosition();
+    // Atualizar após render para pegar a largura correta
+    requestAnimationFrame(updatePosition);
     window.addEventListener('scroll', updatePosition, true);
     window.addEventListener('resize', updatePosition);
 
@@ -46,7 +69,7 @@ const PortalMenuContent = ({ buttonRef, children, className, isOpen, align = 'le
       window.removeEventListener('scroll', updatePosition, true);
       window.removeEventListener('resize', updatePosition);
     };
-  }, [isOpen, buttonRef]);
+  }, [isOpen, buttonRef, className, align]);
 
   useEffect(() => {
     if (isOpen) {
@@ -62,6 +85,7 @@ const PortalMenuContent = ({ buttonRef, children, className, isOpen, align = 'le
 
   return ReactDOM.createPortal(
     <div
+      ref={dropdownRef}
       className={`${className} ${!isOpen ? 'dropdown-exit' : ''}`}
       style={{
         position: 'absolute',
@@ -86,6 +110,8 @@ export default function Navbarcateria() {
   
   const [openMenus, setOpenMenus] = useState({});
   const [fixedMenus, setFixedMenus] = useState({});
+  const [openSubmenus, setOpenSubmenus] = useState({});
+  const [fixedSubmenus, setFixedSubmenus] = useState({});
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -96,11 +122,7 @@ export default function Navbarcateria() {
   const userMenuButtonRef = useRef(null);
   
   // #region agent log
-  const __agentLog = (payload) => {
-    try {
-      fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-    } catch (_) {}
-  };
+  const __agentLog = () => {};
   // #endregion
 
   useEffect(() => {
@@ -170,6 +192,7 @@ export default function Navbarcateria() {
 
   // Criar refs para cada botão de menu
   const menuRefs = useRef({});
+  const submenuRefs = useRef({});
 
   // Função para limpar todos os timeouts
   const clearAllTimeouts = () => {
@@ -183,6 +206,8 @@ export default function Navbarcateria() {
   const closeAllMenus = () => {
     clearAllTimeouts();
     setOpenMenus({});
+    setOpenSubmenus({});
+    setFixedSubmenus({});
   };
 
   // Funções para controlar hover e click
@@ -190,16 +215,32 @@ export default function Navbarcateria() {
     // Limpar todos os timeouts e fechar outros menus instantaneamente
     clearAllTimeouts();
     
-    // Fechar todos os outros menus instantaneamente
-    setOpenMenus(prev => {
-      const newState = {};
-      Object.keys(prev).forEach(key => {
-        if (key !== menuLabel) {
-          newState[key] = false;
+      // Fechar todos os outros menus instantaneamente
+      setOpenMenus(prev => {
+        const newState = {};
+        const menusToClose = [];
+        Object.keys(prev).forEach(key => {
+          if (key !== menuLabel) {
+            newState[key] = false;
+            menusToClose.push(key);
+          }
+        });
+        // Fechar submenus dos menus que estão fechando
+        if (menusToClose.length > 0) {
+          setOpenSubmenus(submenuPrev => {
+            const newSubmenus = { ...submenuPrev };
+          menusToClose.forEach(menuKey => {
+            Object.keys(newSubmenus).forEach(submenuKey => {
+              if (submenuKey.startsWith(`${menuKey}::`)) {
+                delete newSubmenus[submenuKey];
+              }
+            });
+          });
+            return newSubmenus;
+          });
         }
+        return newState;
       });
-      return newState;
-    });
     
     if (!fixedMenus[menuLabel]) {
       setOpenMenus(prev => ({ ...prev, [menuLabel]: true }));
@@ -216,6 +257,27 @@ export default function Navbarcateria() {
       // Criar novo timeout de 150ms (melhor UX)
       timeoutsRef.current[menuLabel] = setTimeout(() => {
         setOpenMenus(prev => ({ ...prev, [menuLabel]: false }));
+        // Fechar todos os submenus deste menu quando o menu principal fechar
+        setOpenSubmenus(prev => {
+          const newSubmenus = { ...prev };
+          // Remover todos os submenus que começam com o label deste menu
+          Object.keys(newSubmenus).forEach(key => {
+            if (key.startsWith(`${menuLabel}::`)) {
+              delete newSubmenus[key];
+            }
+          });
+          return newSubmenus;
+        });
+        // Remover fixação dos submenus deste menu
+        setFixedSubmenus(prev => {
+          const newFixed = { ...prev };
+          Object.keys(newFixed).forEach(key => {
+            if (key.startsWith(`${menuLabel}::`)) {
+              delete newFixed[key];
+            }
+          });
+          return newFixed;
+        });
         delete timeoutsRef.current[menuLabel];
       }, 150);
     }
@@ -225,6 +287,9 @@ export default function Navbarcateria() {
     // Limpar todos os timeouts e fechar outros menus instantaneamente
     clearAllTimeouts();
     
+    // Verificar se o menu estava aberto e fixo para toggle
+    const wasOpenAndFixed = fixedMenus[menuLabel] && openMenus[menuLabel];
+    
     // Remover estado "fixo" de todos os menus anteriores
     // e marcar apenas o menu clicado como "fixo"
     setFixedMenus({ [menuLabel]: true });
@@ -232,22 +297,63 @@ export default function Navbarcateria() {
     // Fechar todos os outros menus e abrir o menu clicado
     setOpenMenus(prev => {
       const newState = {};
+      const menusToClose = [];
       // Fechar todos os outros menus
       Object.keys(prev).forEach(key => {
         if (key !== menuLabel) {
           newState[key] = false;
+          menusToClose.push(key);
         }
       });
+      // Fechar submenus dos menus que estão fechando
+      if (menusToClose.length > 0) {
+        setOpenSubmenus(submenuPrev => {
+          const newSubmenus = { ...submenuPrev };
+          menusToClose.forEach(menuKey => {
+            Object.keys(newSubmenus).forEach(submenuKey => {
+              if (submenuKey.startsWith(`${menuKey}::`)) {
+                delete newSubmenus[submenuKey];
+              }
+            });
+          });
+          return newSubmenus;
+        });
+      }
       // Sempre abrir o menu clicado (sem toggle)
       newState[menuLabel] = true;
       return newState;
     });
+    
+    // Se estava aberto e fixo, apenas remover fixo e fechar submenus
+    if (wasOpenAndFixed) {
+      setFixedMenus({});
+      setOpenSubmenus(prev => {
+        const newSubmenus = { ...prev };
+        Object.keys(newSubmenus).forEach(key => {
+          if (key.startsWith(`${menuLabel}::`)) {
+            delete newSubmenus[key];
+          }
+        });
+        return newSubmenus;
+      });
+      setFixedSubmenus(prev => {
+        const newFixed = { ...prev };
+        Object.keys(newFixed).forEach(key => {
+          if (key.startsWith(`${menuLabel}::`)) {
+            delete newFixed[key];
+          }
+        });
+        return newFixed;
+      });
+    }
   };
 
   const handleClickOutside = () => {
     clearAllTimeouts();
     setFixedMenus({});
     setOpenMenus({});
+    setOpenSubmenus({});
+    setFixedSubmenus({});
   };
 
   // Efeito de rolagem
@@ -329,51 +435,86 @@ export default function Navbarcateria() {
     };
   }, []);
 
-  // Menus padrão (fallback se não houver no banco)
-  const defaultMenus = [
-    {
-      label: 'PDV',
-      items: [
-        { label: 'PDV Pista', tutorialSlug: null },
-        { label: 'PDV Loja', tutorialSlug: null },
-      ],
-    },
-    {
-      label: 'Retaguarda',
-      items: [
-        { label: 'Cadastros', tutorialSlug: null },
-        { label: 'Produtos', tutorialSlug: null },
-      ],
-    },
-    {
-      label: 'Aplicativos',
-      items: [
-        { label: 'Pré-venda', tutorialSlug: null },
-        { label: 'Inventário', tutorialSlug: null },
-        { label: 'Instalar Lukos Pay', tutorialSlug: null },
-        { label: 'Venda de Combustível', tutorialSlug: null },
-        { label: 'Venda de Produto', tutorialSlug: null },
-      ],
-    },
-    {
-      label: 'Web',
-      items: [
-        { label: 'Dashboard', tutorialSlug: null },
-        { label: 'Fatura Web', tutorialSlug: null },
-      ],
-    },
-  ];
-
   // Usar menus do banco ou menus padrão
-  const menus = headerMenusData?.data?.length > 0 
+  const mapTreeItem = (item) => {
+    const children = (item.Children || item.children || []).map(mapTreeItem);
+    const hasChildren = children.length > 0;
+    const isSubmenu = Boolean(item.IsSubmenu ?? item.isSubmenu ?? false);
+    // Se for submenu (explícito ou tem filhos), não navega (tutorialSlug é null)
+    const tutorialSlug = (isSubmenu || hasChildren) ? null : (item.TutorialSlug || item.tutorialSlug || null);
+    return {
+      label: item.Label || item.label,
+      tutorialSlug,
+      isSubmenu: isSubmenu || hasChildren,
+      children,
+    };
+  };
+
+  const menus = headerMenusData?.data?.length > 0
     ? headerMenusData.data.map(menu => ({
         label: menu.Label || menu.label,
-        items: (menu.Items || menu.items || []).map(item => ({
-          label: item.Label || item.label,
-          tutorialSlug: item.TutorialSlug || item.tutorialSlug || null,
-        })),
+        items: (menu.Items || menu.items || []).map(mapTreeItem),
       }))
-    : defaultMenus;
+    : defaultHeaderMenus;
+
+  const pathKey = (menuLabel, pathArr) => `${menuLabel}::${pathArr.join('.')}`;
+  const isSubmenuOpen = (menuLabel, pathArr) => {
+    const key = pathKey(menuLabel, pathArr);
+    return !!openSubmenus[key];
+  };
+  const isSubmenuFixed = (menuLabel, pathArr) => {
+    const key = pathKey(menuLabel, pathArr);
+    return !!fixedSubmenus[key];
+  };
+  const toggleSubmenu = (menuLabel, pathArr) => {
+    const key = pathKey(menuLabel, pathArr);
+    const isCurrentlyFixed = fixedSubmenus[key];
+    
+    if (isCurrentlyFixed) {
+      // Se está fixo, desfixar e fechar
+      setFixedSubmenus(prev => {
+        const newState = { ...prev };
+        delete newState[key];
+        return newState;
+      });
+      setOpenSubmenus(prev => {
+        const newState = { ...prev };
+        delete newState[key];
+        return newState;
+      });
+    } else {
+      // Se não está fixo, fixar e abrir
+      setFixedSubmenus(prev => ({ ...prev, [key]: true }));
+      setOpenSubmenus(prev => ({ ...prev, [key]: true }));
+    }
+  };
+  
+  // Função para abrir submenu temporariamente no hover (se não estiver fixo)
+  const openSubmenuOnHover = (menuLabel, pathArr) => {
+    const key = pathKey(menuLabel, pathArr);
+    if (!fixedSubmenus[key]) {
+      setOpenSubmenus(prev => ({ ...prev, [key]: true }));
+    }
+  };
+  
+  // Função para fechar submenu no mouse leave (se não estiver fixo)
+  const closeSubmenuOnLeave = (menuLabel, pathArr) => {
+    const key = pathKey(menuLabel, pathArr);
+    // Delay para permitir movimento entre item e submenu
+    const timeoutId = setTimeout(() => {
+      setOpenSubmenus(prev => {
+        // Verificar se não está fixo antes de fechar
+        if (!fixedSubmenus[key] && prev[key]) {
+          const newState = { ...prev };
+          delete newState[key];
+          return newState;
+        }
+        return prev;
+      });
+    }, 150);
+    // Armazenar timeout para possível cancelamento
+    return timeoutId;
+  };
 
   // Handler para clicar em item do menu
   const handleMenuItemClick = (item, e) => {
@@ -474,33 +615,105 @@ export default function Navbarcateria() {
                   isOpen={isOpen}
                 >
                   <div className="py-1" role="menu" id={`menu-${menu.label}`} aria-label={`Submenu ${menu.label}`}>
-                    {menu.items.map((item) => (
-                      item.tutorialSlug ? (
-                        <button
-                          key={item.label}
-                          onClick={(e) => handleMenuItemClick({ ...item, parentLabel: menu.label }, e)}
-                          className={menuItemClasses(false, '')}
-                          role="menuitem"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              handleMenuItemClick({ ...item, parentLabel: menu.label }, e);
-                            }
-                          }}
-                        >
-                          {item.label}
-                        </button>
-                      ) : (
-                        <span
-                          key={item.label}
-                          className={menuItemClasses(false, '')}
-                          style={{ opacity: 0.5, cursor: 'not-allowed' }}
-                          title="Tutorial não configurado"
-                        >
-                          {item.label}
-                        </span>
-                      )
-                    ))}
+                    {(function renderItems(items, parentPath = []) {
+                      return items.map((item, idx) => {
+                        const pathArr = [...parentPath, idx];
+                        const hasChildren = (item.children || []).length > 0;
+                        const isSubmenuItem = item.isSubmenu || hasChildren;
+                        const open = isSubmenuItem ? isSubmenuOpen(menu.label, pathArr) : false;
+
+                        if (isSubmenuItem) {
+                          const submenuId = `submenu-${menu.label}-${pathArr.join('-')}`;
+                          const submenuKey = `${menu.label}-${pathArr.join('-')}`;
+                          const isFixed = isSubmenuFixed(menu.label, pathArr);
+                          
+                          // Inicializar ref se não existir
+                          if (!submenuRefs.current[submenuKey]) {
+                            submenuRefs.current[submenuKey] = { current: null };
+                          }
+                          const submenuRef = submenuRefs.current[submenuKey];
+                          
+                          return (
+                            <div 
+                              key={`${item.label}-${pathArr.join('.')}`}
+                              style={{ position: 'relative' }}
+                              onMouseEnter={() => {
+                                if (!isFixed) {
+                                  openSubmenuOnHover(menu.label, pathArr);
+                                }
+                              }}
+                              onMouseLeave={() => {
+                                if (!isFixed) {
+                                  closeSubmenuOnLeave(menu.label, pathArr);
+                                }
+                              }}
+                            >
+                              <button
+                                ref={submenuRef}
+                                type="button"
+                                onClick={() => toggleSubmenu(menu.label, pathArr)}
+                                className={menuItemClasses(false, '')}
+                                role="menuitem"
+                                aria-expanded={open}
+                                title={isFixed ? "Fechar submenu" : "Abrir submenu"}
+                              >
+                                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                                  <span>{item.label}</span>
+                                  <ChevronRightIcon
+                                    aria-hidden="true"
+                                    style={{
+                                      width: 16,
+                                      height: 16,
+                                      transition: 'transform 0.2s ease',
+                                    }}
+                                  />
+                                </span>
+                              </button>
+                              <PortalMenuContent
+                                buttonRef={submenuRef}
+                                className="category-dropdown-menu submenu-flyout"
+                                isOpen={open}
+                                align="right"
+                              >
+                                <div className="py-1" role="menu" id={submenuId} aria-label={`Submenu ${item.label}`}>
+                                  {renderItems(item.children, pathArr)}
+                                </div>
+                              </PortalMenuContent>
+                            </div>
+                          );
+                        }
+
+                        if (item.tutorialSlug) {
+                          return (
+                            <button
+                              key={`${item.label}-${pathArr.join('.')}`}
+                              onClick={(e) => handleMenuItemClick({ ...item, parentLabel: menu.label }, e)}
+                              className={menuItemClasses(false, '')}
+                              role="menuitem"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  handleMenuItemClick({ ...item, parentLabel: menu.label }, e);
+                                }
+                              }}
+                            >
+                              {item.label}
+                            </button>
+                          );
+                        }
+
+                        return (
+                          <span
+                            key={`${item.label}-${pathArr.join('.')}`}
+                            className={menuItemClasses(false, '')}
+                            style={{ opacity: 0.5, cursor: 'not-allowed' }}
+                            title="Tutorial não configurado"
+                          >
+                            {item.label}
+                          </span>
+                        );
+                      });
+                    })(menu.items)}
                   </div>
                 </PortalMenuContent>
               </div>
@@ -697,32 +910,52 @@ export default function Navbarcateria() {
             {menus.map((menu) => (
               <div key={menu.label} className="category-mobile-dropdown" role="group" aria-label={menu.label}>
                 <div className="category-mobile-dropdown-header">{menu.label}</div>
-                {menu.items.map((item) => (
-                  item.tutorialSlug ? (
-                    <button
-                      key={item.label}
-                      onClick={() => {
-                        setMenuOpen(false);
-                        if (item.tutorialSlug) {
-                          openModal(item.tutorialSlug);
-                        }
-                      }}
-                      className="category-mobile-link sub"
-                      role="menuitem"
-                    >
-                      {item.label}
-                    </button>
-                  ) : (
-                    <span
-                      key={item.label}
-                      className="category-mobile-link sub"
-                      style={{ opacity: 0.5, cursor: 'not-allowed' }}
-                      title="Tutorial não configurado"
-                    >
-                      {item.label}
-                    </span>
-                  )
-                ))}
+                {(function renderMobileItems(items, depth = 0) {
+                  return items.map((item, idx) => {
+                    const hasChildren = (item.children || []).length > 0;
+                    const isSubmenuItem = item.isSubmenu || hasChildren;
+                    const pad = { paddingLeft: `${Math.min(depth, 6) * 12}px` };
+
+                    if (isSubmenuItem) {
+                      return (
+                        <div key={`${item.label}-${depth}-${idx}`} style={pad}>
+                          <div className="category-mobile-link sub" style={{ fontWeight: 600 }}>
+                            {item.label}
+                          </div>
+                          {hasChildren && renderMobileItems(item.children, depth + 1)}
+                        </div>
+                      );
+                    }
+
+                    if (item.tutorialSlug) {
+                      return (
+                        <button
+                          key={`${item.label}-${depth}-${idx}`}
+                          onClick={() => {
+                            setMenuOpen(false);
+                            openModal(item.tutorialSlug);
+                          }}
+                          className="category-mobile-link sub"
+                          role="menuitem"
+                          style={pad}
+                        >
+                          {item.label}
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <span
+                        key={`${item.label}-${depth}-${idx}`}
+                        className="category-mobile-link sub"
+                        style={{ ...pad, opacity: 0.5, cursor: 'not-allowed' }}
+                        title="Tutorial não configurado"
+                      >
+                        {item.label}
+                      </span>
+                    );
+                  });
+                })(menu.items)}
               </div>
             ))}
             

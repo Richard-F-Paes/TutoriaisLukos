@@ -7,7 +7,7 @@ import CategoryManager from '../../components/Admin/CategoryManager.jsx';
 import UserManager from '../../components/Admin/UserManager.jsx';
 import MediaLibrary from '../../components/Admin/MediaLibrary.jsx';
 import AuditLogs from '../../components/Admin/AuditLogs.jsx';
-import HeaderMenuManager from '../../components/Admin/HeaderMenuManager.jsx';
+import HeaderMenuManager from '../../components/Admin/HeaderMenuManager/HeaderMenuManager.jsx';
 import './AdminPage.css';
 
 const AdminPage = () => {

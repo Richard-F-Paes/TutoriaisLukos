@@ -17,14 +17,6 @@ const apiClient = axios.create({
 // Interceptor para adicionar token automaticamente
 apiClient.interceptors.request.use(
   (config) => {
-    // #region agent log
-    const __agentLog = (payload) => {
-      try {
-        fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-      } catch (_) {}
-    };
-    __agentLog({location:'src/infrastructure/api/client.js:request_interceptor',message:'API request interceptor - URL construction',data:{baseURL:String(config.baseURL||''),url:String(config.url||''),method:String(config.method||''),finalURL:String((config.baseURL||'')+(config.url||'')),baseURLEndsWithSlash:(config.baseURL||'').endsWith('/'),urlStartsWithSlash:(config.url||'').startsWith('/')},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H1'});
-    // #endregion
     // Obter access token de sessionStorage
     const accessToken = sessionStorage.getItem('accessToken');
     if (accessToken) {

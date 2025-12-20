@@ -2,7 +2,6 @@ import express from 'express';
 import { getPrisma } from '../config/database.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { authenticate } from '../middleware/auth.middleware.js';
@@ -14,15 +13,7 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const __agentLogPath = join(__dirname, '../../../.cursor/debug.log');
-const __agentLog = (payload) => {
-  try {
-    if (typeof fetch === 'function') {
-      fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-      return;
-    }
-    fs.appendFileSync(__agentLogPath, `${JSON.stringify(payload)}\n`, 'utf8');
-  } catch (_) {}
-};
+const __agentLog = () => {};
 // #endregion
 
 // Login
@@ -100,7 +91,6 @@ router.post('/login', async (req, res) => {
     const responseUser = {
       id: user.id,
       username: user.username,
-      email: user.email,
       name: user.name,
       role: user.role,
       permissions,
@@ -140,7 +130,6 @@ router.get('/me', authenticate, async (req, res) => {
       select: {
         id: true,
         username: true,
-        email: true,
         name: true,
         role: true,
         isActive: true,
@@ -169,7 +158,6 @@ router.get('/verify', authenticate, async (req, res) => {
       select: {
         id: true,
         username: true,
-        email: true,
         name: true,
         role: true,
         isActive: true,

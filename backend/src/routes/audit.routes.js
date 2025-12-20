@@ -9,12 +9,27 @@ const router = express.Router();
 router.get('/', authenticate, requirePermission('view_audit_logs'), async (req, res) => {
   try {
     const prisma = getPrisma();
-    const { userId, entityType, entityId, limit = 100 } = req.query;
+    const { userId, entityType, entityId, action, startDate, endDate, limit = 100 } = req.query;
 
     const where = {};
     if (userId) where.userId = parseInt(userId);
     if (entityType) where.entityType = entityType;
     if (entityId) where.entityId = parseInt(entityId);
+    if (action) where.action = action;
+    
+    // Filtros de data
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) {
+        where.createdAt.gte = new Date(startDate);
+      }
+      if (endDate) {
+        // Adicionar 23:59:59 ao final do dia
+        const endDateTime = new Date(endDate);
+        endDateTime.setHours(23, 59, 59, 999);
+        where.createdAt.lte = endDateTime;
+      }
+    }
 
     const logs = await prisma.auditLog.findMany({
       where,

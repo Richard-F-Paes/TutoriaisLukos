@@ -15,7 +15,6 @@ import bcrypt from 'bcryptjs';
 
 const ADMIN_USER = {
   username: 'lukos',
-  email: 'suporte@lukos.com',
   password: 'lks@123241',
   name: 'Lukos',
   role: 'admin',
@@ -40,7 +39,6 @@ async function seedAdminUser() {
     if (existingUser) {
       console.log(`⚠️  Usuário "${ADMIN_USER.username}" já existe no banco de dados.`);
       console.log(`   ID: ${existingUser.id}`);
-      console.log(`   Email: ${existingUser.email}`);
       console.log(`   Role: ${existingUser.role}`);
       console.log(`   Status: ${existingUser.isActive ? 'Ativo' : 'Inativo'}\n`);
       
@@ -64,7 +62,6 @@ async function seedAdminUser() {
     const user = await prisma.user.create({
       data: {
         username: ADMIN_USER.username,
-        email: ADMIN_USER.email,
         passwordHash: passwordHash,
         name: ADMIN_USER.name,
         role: ADMIN_USER.role,
@@ -73,7 +70,6 @@ async function seedAdminUser() {
       select: {
         id: true,
         username: true,
-        email: true,
         name: true,
         role: true,
         isActive: true,
@@ -85,7 +81,6 @@ async function seedAdminUser() {
     console.log('📋 Detalhes do usuário:');
     console.log(`   ID: ${user.id}`);
     console.log(`   Username: ${user.username}`);
-    console.log(`   Email: ${user.email}`);
     console.log(`   Nome: ${user.name}`);
     console.log(`   Role: ${user.role}`);
     console.log(`   Status: ${user.isActive ? 'Ativo' : 'Inativo'}`);
@@ -104,7 +99,7 @@ async function seedAdminUser() {
     console.error('❌ Erro ao executar seed:', error.message);
     
     if (error.code === 'P2002') {
-      console.error('\n💡 O usuário ou email já existe no banco de dados.');
+      console.error('\n💡 O usuário já existe no banco de dados.');
     } else if (error.code === 'P2021' || error.message?.includes('does not exist')) {
       console.error('\n⚠️  As tabelas do banco de dados ainda não foram criadas!');
       console.error('\n📝 Execute as migrations primeiro:');

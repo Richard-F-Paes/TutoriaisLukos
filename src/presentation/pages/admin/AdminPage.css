@@ -339,8 +339,40 @@ input:checked + .slider:before {
 
 .status-badge.draft,
 .status-badge.inactive {
-  background: #fef3c7;
-  color: #92400e;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* When used as a button (UserManager status toggle) */
+button.status-badge {
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button.status-badge:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+button.status-badge:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px -8px rgba(0, 0, 0, 0.35);
+}
+
+button.status-badge.active:not(:disabled):hover {
+  background: #a7f3d0;
+  color: #064e3b;
+}
+
+button.status-badge.inactive:not(:disabled):hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+button.status-badge:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
 }
 
 .action-buttons {

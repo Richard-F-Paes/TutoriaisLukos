@@ -12,7 +12,6 @@ datasource db {
 model User {
   id           Int       @id @default(autoincrement())
   username     String    @db.NVarChar(100) @unique
-  email        String    @db.NVarChar(255) @unique
   passwordHash String    @map("PasswordHash") @db.NVarChar(255)
   name         String    @db.NVarChar(200)
   role         String    @db.NVarChar(50) // 'admin' ou 'suporte'
@@ -40,11 +39,14 @@ model Category {
   imageUrl    String?    @map("ImageUrl") @db.NVarChar(500)
   sortOrder   Int        @default(0) @map("SortOrder")
   isActive    Boolean    @default(true) @map("IsActive")
+  parentId    Int?       @map("ParentId")
   createdAt   DateTime   @default(now()) @map("CreatedAt") @db.DateTime2
   updatedAt   DateTime   @updatedAt @map("UpdatedAt") @db.DateTime2
 
   // Relações
   tutorials Tutorial[]
+  parent    Category?    @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children  Category[]   @relation("CategoryHierarchy")
 
   @@map("Categories")
 }
@@ -149,13 +151,17 @@ model HeaderMenu {
 model HeaderMenuItem {
   id          Int      @id @default(autoincrement())
   headerMenuId Int     @map("HeaderMenuId")
+  parentId    Int?     @map("ParentId")
   label       String   @db.NVarChar(120)
   tutorialSlug String? @map("TutorialSlug") @db.NVarChar(300)
+  isSubmenu   Boolean  @default(false) @map("IsSubmenu")
   order       Int      @default(0) @map("Order")
   createdAt   DateTime @default(now()) @map("CreatedAt") @db.DateTime2
   updatedAt   DateTime @updatedAt @map("UpdatedAt") @db.DateTime2
 
   menu HeaderMenu @relation(fields: [headerMenuId], references: [id], onDelete: Cascade)
+  parent   HeaderMenuItem?  @relation("HeaderMenuItemHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children HeaderMenuItem[] @relation("HeaderMenuItemHierarchy")
 
   @@map("HeaderMenuItems")
 }

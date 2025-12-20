@@ -8,17 +8,13 @@ import { endpoints } from '../api/endpoints.js';
 export const authService = {
   /**
    * Login - Autentica com API e retorna tokens
-   * @param {string} username - Nome de usuário (ou email)
+   * @param {string} username - Nome de usuário
    * @param {string} password - Senha
    * @returns {Promise<{user: Object, accessToken: string, refreshToken: string}>}
    */
   async login(username, password) {
     // #region agent log
-    const __agentLog = (payload) => {
-      try {
-        fetch('http://127.0.0.1:7243/ingest/46d63257-3d3d-4b19-b340-327acd66351f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-      } catch (_) {}
-    };
+    const __agentLog = () => {};
     // #endregion
     try {
       const endpointValue = endpoints.auth.login;

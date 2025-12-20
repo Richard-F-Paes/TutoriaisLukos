@@ -6,13 +6,52 @@ import { requirePermission } from '../middleware/permissions.middleware.js';
 
 const router = express.Router();
 
+// Helper function to check for circular references
+async function checkCircularReference(prisma, categoryId, parentId) {
+  if (!parentId || categoryId === parentId) {
+    return false; // No parent or self-reference
+  }
+
+  // Check if parentId is an ancestor of categoryId
+  let currentParentId = parentId;
+  const visited = new Set([categoryId]);
+
+  while (currentParentId) {
+    if (visited.has(currentParentId)) {
+      return true; // Circular reference detected
+    }
+    visited.add(currentParentId);
+
+    const parent = await prisma.category.findUnique({
+      where: { id: currentParentId },
+      select: { parentId: true },
+    });
+
+    if (!parent) {
+      break;
+    }
+
+    currentParentId = parent.parentId;
+  }
+
+  return false;
+}
+
 // Listar todas as categorias
 router.get('/', async (req, res) => {
   try {
     const prisma = getPrisma();
+    const includeChildren = req.query.includeChildren === 'true';
+    
     const categories = await prisma.category.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: 'asc' },
+      include: includeChildren ? {
+        children: {
+          where: { isActive: true },
+          orderBy: { sortOrder: 'asc' },
+        },
+      } : undefined,
     });
     res.json(categories);
   } catch (error) {
@@ -32,6 +71,11 @@ router.get('/:id', async (req, res) => {
           where: { isPublished: true },
           orderBy: { createdAt: 'desc' },
         },
+        parent: true,
+        children: {
+          where: { isActive: true },
+          orderBy: { sortOrder: 'asc' },
+        },
       },
     });
 
@@ -46,11 +90,40 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Listar subcategorias de uma categoria
+router.get('/:id/children', async (req, res) => {
+  try {
+    const prisma = getPrisma();
+    const children = await prisma.category.findMany({
+      where: {
+        parentId: parseInt(req.params.id),
+        isActive: true,
+      },
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json(children);
+  } catch (error) {
+    console.error('Erro ao listar subcategorias:', error);
+    res.status(500).json({ error: 'Erro ao listar subcategorias' });
+  }
+});
+
 // Criar categoria
 router.post('/', authenticate, requirePermission('manage_categories'), async (req, res) => {
   try {
     const prisma = getPrisma();
-    const { name, description, icon, color, imageUrl, sortOrder } = req.body;
+    const { name, description, icon, color, imageUrl, sortOrder, parentId } = req.body;
+
+    // Validate parentId if provided
+    if (parentId) {
+      const parent = await prisma.category.findUnique({
+        where: { id: parseInt(parentId) },
+      });
+
+      if (!parent) {
+        return res.status(400).json({ error: 'Categoria pai não encontrada' });
+      }
+    }
 
     const slug = slugify(name, { lower: true, strict: true });
 
@@ -63,6 +136,7 @@ router.post('/', authenticate, requirePermission('manage_categories'), async (re
         color,
         imageUrl,
         sortOrder: sortOrder || 0,
+        parentId: parentId ? parseInt(parentId) : null,
       },
     });
 
@@ -72,6 +146,9 @@ router.post('/', authenticate, requirePermission('manage_categories'), async (re
     if (error.code === 'P2002') {
       return res.status(400).json({ error: 'Slug já existe' });
     }
+    if (error.code === 'P2003') {
+      return res.status(400).json({ error: 'Categoria pai inválida' });
+    }
     res.status(500).json({ error: 'Erro ao criar categoria' });
   }
 });
@@ -80,9 +157,44 @@ router.post('/', authenticate, requirePermission('manage_categories'), async (re
 router.put('/:id', authenticate, requirePermission('manage_categories'), async (req, res) => {
   try {
     const prisma = getPrisma();
-    const { name, description, icon, color, imageUrl, sortOrder, isActive } = req.body;
+    const categoryId = parseInt(req.params.id);
+    const { name, description, icon, color, imageUrl, sortOrder, isActive, parentId } = req.body;
+
+    // Check if category exists
+    const existingCategory = await prisma.category.findUnique({
+      where: { id: categoryId },
+    });
+
+    if (!existingCategory) {
+      return res.status(404).json({ error: 'Categoria não encontrada' });
+    }
+
+    // Validate parentId if provided
+    if (parentId !== undefined) {
+      if (parentId === null) {
+        // Removing parent is allowed
+      } else {
+        const parent = await prisma.category.findUnique({
+          where: { id: parseInt(parentId) },
+        });
+
+        if (!parent) {
+          return res.status(400).json({ error: 'Categoria pai não encontrada' });
+        }
+
+        // Check for circular reference
+        const hasCircularRef = await checkCircularReference(prisma, categoryId, parseInt(parentId));
+        if (hasCircularRef) {
+          return res.status(400).json({ error: 'Não é possível criar referência circular' });
+        }
+      }
+    }
 
     const updateData = { description, icon, color, imageUrl, sortOrder, isActive };
+    
+    if (parentId !== undefined) {
+      updateData.parentId = parentId ? parseInt(parentId) : null;
+    }
 
     if (name) {
       updateData.name = name;
@@ -90,7 +202,7 @@ router.put('/:id', authenticate, requirePermission('manage_categories'), async (
     }
 
     const category = await prisma.category.update({
-      where: { id: parseInt(req.params.id) },
+      where: { id: categoryId },
       data: updateData,
     });
 
@@ -100,6 +212,9 @@ router.put('/:id', authenticate, requirePermission('manage_categories'), async (
     if (error.code === 'P2025') {
       return res.status(404).json({ error: 'Categoria não encontrada' });
     }
+    if (error.code === 'P2003') {
+      return res.status(400).json({ error: 'Categoria pai inválida' });
+    }
     res.status(500).json({ error: 'Erro ao atualizar categoria' });
   }
 });
@@ -108,8 +223,21 @@ router.put('/:id', authenticate, requirePermission('manage_categories'), async (
 router.delete('/:id', authenticate, requirePermission('manage_categories'), async (req, res) => {
   try {
     const prisma = getPrisma();
+    const categoryId = parseInt(req.params.id);
+
+    // Check if category has children
+    const children = await prisma.category.findMany({
+      where: { parentId: categoryId },
+    });
+
+    if (children.length > 0) {
+      return res.status(400).json({ 
+        error: 'Não é possível deletar categoria que possui subcategorias. Remova ou mova as subcategorias primeiro.' 
+      });
+    }
+
     await prisma.category.delete({
-      where: { id: parseInt(req.params.id) },
+      where: { id: categoryId },
     });
 
     res.json({ message: 'Categoria deletada com sucesso' });

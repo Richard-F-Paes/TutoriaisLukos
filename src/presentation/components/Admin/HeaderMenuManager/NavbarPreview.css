@@ -1,0 +1,441 @@
+/* NavbarPreview - Estilos para preview do navbar editável */
+
+.navbar-preview-container {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.navbar-preview-header {
+  margin-bottom: 1rem;
+}
+
+.navbar-preview-header h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.preview-subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.navbar-preview {
+  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 50%, #ffffff 100%);
+  border: 1px solid rgba(212, 179, 255, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 80px;
+}
+
+.category-navbar-menu-preview {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 48px;
+}
+
+/* SortableMenu Styles */
+.sortable-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.sortable-menu.dragging {
+  opacity: 0.5;
+  z-index: 1000;
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(90, 0, 143, 0.3);
+}
+
+.sortable-menu.editing {
+  border: 2px solid #3b82f6;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.sortable-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(212, 179, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.sortable-menu-header:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(212, 179, 255, 0.5);
+  box-shadow: 0 2px 8px rgba(212, 179, 255, 0.2);
+}
+
+.sortable-menu-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(135deg, #5a008f 0%, #6c2396 100%);
+  border-radius: 8px 0 0 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.sortable-menu-header:hover::before {
+  opacity: 1;
+}
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  cursor: grab;
+  color: #9ca3af;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  transition: all 0.2s;
+  border-radius: 4px;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+  background: rgba(212, 179, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.drag-handle:hover {
+  color: #5a008f;
+  background: rgba(212, 179, 255, 0.1);
+}
+
+.menu-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #5a008f;
+  flex: 1;
+}
+
+.menu-toggle:hover {
+  color: #6c2396;
+}
+
+.menu-inline-edit {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.menu-label {
+  white-space: nowrap;
+}
+
+.chevron {
+  transition: transform 0.3s ease;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+.menu-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.btn-icon.danger:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-icon.success:hover {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.sortable-menu-content {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 179, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(90, 0, 143, 0.15);
+  min-width: 200px;
+  z-index: 1000;
+  padding: 8px;
+  margin-top: 4px;
+}
+
+.menu-items-dropdown-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.empty-items-message {
+  padding: 12px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.btn-add-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 8px;
+  background: rgba(212, 179, 255, 0.1);
+  border: 1px dashed rgba(212, 179, 255, 0.5);
+  border-radius: 6px;
+  color: #5a008f;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add-item:hover {
+  background: rgba(212, 179, 255, 0.2);
+  border-color: rgba(212, 179, 255, 0.7);
+}
+
+/* SortableMenuItem Styles */
+.sortable-menu-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(212, 179, 255, 0.2);
+  border-radius: 6px;
+  transition: all 0.2s;
+  margin-bottom: 4px;
+}
+
+.sortable-menu-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.sortable-menu-item:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(212, 179, 255, 0.4);
+}
+
+.sortable-menu-item.dragging {
+  opacity: 0.5;
+  z-index: 1001;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(90, 0, 143, 0.2);
+  background: rgba(212, 179, 255, 0.1);
+}
+
+.sortable-menu-item.editing {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.drag-handle-item {
+  display: flex;
+  align-items: center;
+  cursor: grab;
+  color: #9ca3af;
+  padding: 2px;
+  border: none;
+  background: transparent;
+  transition: all 0.2s;
+  border-radius: 4px;
+}
+
+.drag-handle-item:active {
+  cursor: grabbing;
+  background: rgba(212, 179, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.drag-handle-item:hover {
+  color: #5a008f;
+  background: rgba(212, 179, 255, 0.1);
+}
+
+.item-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.item-label {
+  flex: 1;
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.item-label:hover {
+  background: #f3f4f6;
+}
+
+.item-tutorial-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(212, 179, 255, 0.2);
+  color: #5a008f;
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-tutorial-badge.warning {
+  background: rgba(251, 191, 36, 0.2);
+  color: #d97706;
+}
+
+.item-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-icon-small {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-icon-small:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.btn-icon-small.danger:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.item-edit-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.form-input-small {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 0.875rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  color: #374151;
+  min-width: 0;
+}
+
+.form-input-small:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-select-small {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 0.875rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  color: #374151;
+  min-width: 120px;
+  max-width: 200px;
+}
+
+.form-select-small:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.item-edit-actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* Scrollbar styling */
+.menu-items-dropdown-preview::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-items-dropdown-preview::-webkit-scrollbar-track {
+  background: rgba(212, 179, 255, 0.1);
+  border-radius: 3px;
+}
+
+.menu-items-dropdown-preview::-webkit-scrollbar-thumb {
+  background: rgba(212, 179, 255, 0.3);
+  border-radius: 3px;
+}
+
+.menu-items-dropdown-preview::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 179, 255, 0.5);
+}
+

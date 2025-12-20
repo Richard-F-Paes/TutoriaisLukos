@@ -19,8 +19,9 @@ import {
   X
 } from 'lucide-react';
 import { useTutorials, useSearchTutorials } from '../../../hooks/useTutorials.js';
-import { useCategories } from '../../../hooks/useCategories.js';
+import { useCategoriesHierarchical } from '../../../hooks/useCategories.js';
 import { useTutorialModal } from '../../../contexts/TutorialModalContext';
+import ExpandableCategoryCard from '../../components/ui/ExpandableCategoryCard/ExpandableCategoryCard.jsx';
 
 // Componentes da HomePage original
 import { Chatbot } from '../../components/custom/Chatbot/Chatbot';
@@ -31,10 +32,12 @@ const TutorialsUnified = () => {
   const { openModal } = useTutorialModal();
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState(new Set());
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const searchRef = useRef(null);
   
   const { data: tutorialsData, isLoading: tutorialsLoading } = useTutorials();
-  const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
+  const { data: categoriesData, isLoading: categoriesLoading } = useCategoriesHierarchical();
   
   // Busca de tutoriais
   const { data: searchData, isLoading: isSearching } = useSearchTutorials(
@@ -45,21 +48,67 @@ const TutorialsUnified = () => {
   const searchResults = searchData?.data || [];
   
   const allTutorials = tutorialsData?.data || [];
-  const categories = categoriesData?.data || [];
+  const categories = categoriesData || [];
   
   // Filtrar tutoriais por categoria se houver query param
   const tutorials = useMemo(() => {
     if (!categoriaParam) return allTutorials;
     
     return allTutorials.filter(t => {
-      const catName = t.Category?.Name || t.CategoryName || '';
-      const catSlug = t.Category?.Slug || '';
-      return catName.toLowerCase() === categoriaParam.toLowerCase() || 
-             catSlug.toLowerCase() === categoriaParam.toLowerCase();
+      const catName =
+        t.Category?.Name ||
+        t.Category?.name ||
+        t.category?.name ||
+        t.CategoryName ||
+        t.categoryName ||
+        '';
+      const catSlug =
+        t.Category?.Slug ||
+        t.Category?.slug ||
+        t.category?.slug ||
+        t.CategorySlug ||
+        t.categorySlug ||
+        '';
+      const key = String(categoriaParam || '').toLowerCase();
+      return (
+        String(catName || '').toLowerCase() === key ||
+        String(catSlug || '').toLowerCase() === key
+      );
     });
   }, [allTutorials, categoriaParam]);
   
   const isLoading = tutorialsLoading || categoriesLoading;
+
+  // Compat: alguns trechos antigos deste componente ainda usam esse helper.
+  // Conta tutoriais por nome/slug de categoria, tentando cobrir formatos diferentes do payload.
+  const getTutorialCountByCategory = (categoryKey) => {
+    if (!allTutorials || allTutorials.length === 0) return 0;
+    const key = String(categoryKey || '').toLowerCase();
+    if (!key) return 0;
+
+    return allTutorials.filter((t) => {
+      const catName =
+        t.Category?.Name ||
+        t.Category?.name ||
+        t.category?.name ||
+        t.CategoryName ||
+        t.categoryName ||
+        t.category ||
+        '';
+      const catSlug =
+        t.Category?.Slug ||
+        t.Category?.slug ||
+        t.category?.slug ||
+        t.CategorySlug ||
+        t.categorySlug ||
+        '';
+
+      return (
+        String(catName || '').toLowerCase() === key ||
+        String(catSlug || '').toLowerCase() === key
+      );
+    }).length;
+  };
 
   // Fechar resultados ao clicar fora
   useEffect(() => {
@@ -111,15 +160,50 @@ const TutorialsUnified = () => {
     }
   };
 
-  // Mapear categorias da API para o formato esperado
-  // Se não houver categorias na API, usar categorias padrão
-  const getTutorialCountByCategory = (categoryName) => {
-    if (!tutorials || tutorials.length === 0) return 0;
-    // Buscar por CategoryId ou CategoryName dependendo da estrutura da API
-    return tutorials.filter(t => {
-      const catName = t.Category?.Name || t.CategoryName || t.category;
-      return catName === categoryName || catName?.toLowerCase() === categoryName.toLowerCase();
+  // Função para contar tutoriais em uma categoria (incluindo subcategorias)
+  const getTutorialCountForCategory = (category) => {
+    if (!allTutorials || allTutorials.length === 0) return 0;
+    
+    // Contar tutoriais diretamente na categoria
+    let count = allTutorials.filter(t => {
+      const catId =
+        t.categoryId ??
+        t.CategoryId ??
+        t.category?.id ??
+        t.Category?.Id ??
+        t.Category?.id;
+      return Number(catId) === Number(category.id);
     }).length;
+    
+    // Contar tutoriais nas subcategorias recursivamente
+    if (category.children && category.children.length > 0) {
+      category.children.forEach(child => {
+        count += getTutorialCountForCategory(child);
+      });
+    }
+    
+    return count;
+  };
+
+  // Função para toggle de expansão
+  const toggleCategory = (categoryId) => {
+    setExpandedCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(categoryId)) {
+        newSet.delete(categoryId);
+      } else {
+        newSet.add(categoryId);
+      }
+      return newSet;
+    });
+  };
+
+  // Função para selecionar categoria
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    // Navegar para a página da categoria
+    const slug = category.slug || category.Slug || category.id;
+    window.location.href = `/tutoriais?categoria=${slug}`;
   };
 
   // Categorias de tutoriais do componente Tutorials.jsx
@@ -131,7 +215,7 @@ const TutorialsUnified = () => {
         description: cat.Description || cat.description || "Tutoriais sobre " + (cat.Name || cat.name),
         icon: FileText,
         color: cat.Color || "blue",
-        tutorials: getTutorialCountByCategory(cat.Name || cat.name),
+        tutorials: getTutorialCountForCategory(cat),
         duration: "45 min",
         image: cat.ImageUrl || cat.imageUrl || "https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=800",
         link: `/tutoriais?categoria=${cat.Slug || cat.slug || cat.id}`
@@ -435,6 +519,27 @@ const TutorialsUnified = () => {
                     </div>
                   </div>
                 </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Mostrar categorias expansíveis apenas se não houver filtro */}
+        {!categoriaParam && categories.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Categorias</h2>
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              {categories.map(category => (
+                <ExpandableCategoryCard
+                  key={category.id}
+                  category={category}
+                  isExpanded={expandedCategories.has(category.id)}
+                  onToggle={toggleCategory}
+                  onSelect={handleCategorySelect}
+                  isSelected={selectedCategory?.id === category.id}
+                  getTutorialCount={getTutorialCountForCategory}
+                  expandedCategories={expandedCategories}
+                />
               ))}
             </div>
           </div>

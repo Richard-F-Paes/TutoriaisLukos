@@ -49,6 +49,11 @@ const PortalMenuContent = ({ buttonRef, children, className, isOpen, align = 'le
           // Alinhar à direita do botão - usar largura padrão do menu (200-250px)
           const dropdownWidth = dropdownRef.current?.offsetWidth || 220;
           left = rect.right + window.scrollX - dropdownWidth;
+          
+          // Garantir que não saia da tela à esquerda
+          if (left < window.scrollX) {
+            left = rect.left + window.scrollX;
+          }
         }
         
         setPosition({
@@ -113,7 +118,6 @@ export default function Navbarcateria() {
   const [openSubmenus, setOpenSubmenus] = useState({});
   const [fixedSubmenus, setFixedSubmenus] = useState({});
   const [isScrolled, setIsScrolled] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
@@ -364,15 +368,6 @@ export default function Navbarcateria() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Lida com busca
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/busca?q=${encodeURIComponent(searchTerm)}`);
-      setSearchTerm('');
-    }
-  };
 
   // Logout
   const handleLogout = () => {
@@ -723,18 +718,6 @@ export default function Navbarcateria() {
 
         {/* Ações da direita */}
         <div className="category-navbar-actions">
-          {/* Campo de busca */}
-          <form onSubmit={handleSearch} className="category-search-form">
-            <i className="fas fa-search category-search-icon"></i>
-            <input
-              type="text"
-              placeholder="Buscar..."
-              className="category-search-input"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </form>
-
           {/* Autenticação / Usuário */}
           {isAuthenticated ? (
             <div className="relative user-menu">
@@ -775,7 +758,7 @@ export default function Navbarcateria() {
                   buttonRef={{ current: userMenuButtonRef.current }}
                   className="category-user-dropdown-portal"
                   isOpen={showUserMenu}
-                  align="right"
+                  align="left"
                 >
                   <div ref={userDropdownRef} role="menu" aria-label="Menu do usuário">
                     <button
@@ -958,18 +941,6 @@ export default function Navbarcateria() {
                 })(menu.items)}
               </div>
             ))}
-            
-            {/* Busca mobile */}
-            <form onSubmit={handleSearch} className="category-mobile-search">
-              <i className="fas fa-search category-mobile-search-icon"></i>
-              <input
-                type="text"
-                placeholder="Buscar..."
-                className="category-mobile-search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </form>
 
             {/* Autenticação mobile */}
             {isAuthenticated ? (

@@ -8,12 +8,39 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Tipos de arquivos permitidos
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/ogg'];
+const ALLOWED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/bmp',
+  'image/svg+xml',
+  'image/tiff',
+  'image/x-icon',
+  'image/vnd.microsoft.icon',
+  'image/heic',
+  'image/heif',
+  'image/avif'
+];
+const ALLOWED_VIDEO_TYPES = [
+  'video/mp4',
+  'video/mpeg',
+  'video/quicktime', // .mov
+  'video/x-msvideo', // .avi
+  'video/x-ms-wmv', // .wmv
+  'video/webm',
+  'video/ogg',
+  'video/x-matroska', // .mkv
+  'video/x-flv', // .flv
+  'video/3gpp', // .3gp
+  'video/3gpp2', // .3g2
+  'video/x-m4v' // .m4v
+];
 const ALLOWED_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES];
 
-// Tamanho máximo de arquivo (10MB por padrão)
-const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE, 10) || 10 * 1024 * 1024;
+// Tamanho máximo de arquivo (50MB por padrão)
+const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE, 10) || 50 * 1024 * 1024;
 
 // Diretório de uploads
 const UPLOAD_PATH = process.env.UPLOAD_PATH || path.join(__dirname, '../../uploads');

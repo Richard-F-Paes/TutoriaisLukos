@@ -2,11 +2,10 @@ BEGIN TRY
 
 BEGIN TRAN;
 
--- CreateTable
+-- CreateTable: Users
 CREATE TABLE [dbo].[Users] (
     [id] INT NOT NULL IDENTITY(1,1),
     [username] NVARCHAR(100) NOT NULL,
-    [email] NVARCHAR(255) NOT NULL,
     [PasswordHash] NVARCHAR(255) NOT NULL,
     [name] NVARCHAR(200) NOT NULL,
     [role] NVARCHAR(50) NOT NULL,
@@ -15,11 +14,10 @@ CREATE TABLE [dbo].[Users] (
     [UpdatedAt] DATETIME2 NOT NULL,
     [LastLoginAt] DATETIME2,
     CONSTRAINT [Users_pkey] PRIMARY KEY CLUSTERED ([id]),
-    CONSTRAINT [Users_username_key] UNIQUE NONCLUSTERED ([username]),
-    CONSTRAINT [Users_email_key] UNIQUE NONCLUSTERED ([email])
+    CONSTRAINT [Users_username_key] UNIQUE NONCLUSTERED ([username])
 );
 
--- CreateTable
+-- CreateTable: Categories
 CREATE TABLE [dbo].[Categories] (
     [id] INT NOT NULL IDENTITY(1,1),
     [name] NVARCHAR(100) NOT NULL,
@@ -30,13 +28,17 @@ CREATE TABLE [dbo].[Categories] (
     [ImageUrl] NVARCHAR(500),
     [SortOrder] INT NOT NULL CONSTRAINT [Categories_SortOrder_df] DEFAULT 0,
     [IsActive] BIT NOT NULL CONSTRAINT [Categories_IsActive_df] DEFAULT 1,
+    [ParentId] INT NULL,
     [CreatedAt] DATETIME2 NOT NULL CONSTRAINT [Categories_CreatedAt_df] DEFAULT CURRENT_TIMESTAMP,
     [UpdatedAt] DATETIME2 NOT NULL,
     CONSTRAINT [Categories_pkey] PRIMARY KEY CLUSTERED ([id]),
     CONSTRAINT [Categories_slug_key] UNIQUE NONCLUSTERED ([slug])
 );
 
--- CreateTable
+-- CreateIndex: Categories ParentId
+CREATE NONCLUSTERED INDEX [Categories_ParentId_idx] ON [dbo].[Categories]([ParentId]);
+
+-- CreateTable: Tutorials
 CREATE TABLE [dbo].[Tutorials] (
     [id] INT NOT NULL IDENTITY(1,1),
     [title] NVARCHAR(300) NOT NULL,
@@ -54,6 +56,7 @@ CREATE TABLE [dbo].[Tutorials] (
     [tags] NVARCHAR(500),
     [MetaTitle] NVARCHAR(200),
     [MetaDescription] NVARCHAR(300),
+    [ShareHash] NVARCHAR(100) NULL,
     [CreatedBy] INT NOT NULL,
     [UpdatedBy] INT NOT NULL,
     [CreatedAt] DATETIME2 NOT NULL CONSTRAINT [Tutorials_CreatedAt_df] DEFAULT CURRENT_TIMESTAMP,
@@ -63,7 +66,14 @@ CREATE TABLE [dbo].[Tutorials] (
     CONSTRAINT [Tutorials_slug_key] UNIQUE NONCLUSTERED ([slug])
 );
 
--- CreateTable
+-- CreateIndex: Tutorials ShareHash
+CREATE UNIQUE NONCLUSTERED INDEX [Tutorials_ShareHash_key] ON [dbo].[Tutorials]
+(
+    [ShareHash] ASC
+)
+WHERE [ShareHash] IS NOT NULL;
+
+-- CreateTable: TutorialSteps
 CREATE TABLE [dbo].[TutorialSteps] (
     [id] INT NOT NULL IDENTITY(1,1),
     [TutorialId] INT NOT NULL,
@@ -78,7 +88,7 @@ CREATE TABLE [dbo].[TutorialSteps] (
     CONSTRAINT [TutorialSteps_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
--- CreateTable
+-- CreateTable: Media
 CREATE TABLE [dbo].[Media] (
     [id] INT NOT NULL IDENTITY(1,1),
     [FileName] NVARCHAR(255) NOT NULL,
@@ -92,7 +102,7 @@ CREATE TABLE [dbo].[Media] (
     CONSTRAINT [Media_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
--- CreateTable
+-- CreateTable: AuditLog
 CREATE TABLE [dbo].[AuditLog] (
     [id] INT NOT NULL IDENTITY(1,1),
     [UserId] INT,
@@ -107,23 +117,59 @@ CREATE TABLE [dbo].[AuditLog] (
     CONSTRAINT [AuditLog_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
--- AddForeignKey
+-- CreateTable: HeaderMenus
+CREATE TABLE [dbo].[HeaderMenus] (
+    [id] INT NOT NULL IDENTITY(1,1),
+    [label] NVARCHAR(100) NOT NULL,
+    [Order] INT NOT NULL CONSTRAINT [HeaderMenus_Order_df] DEFAULT 0,
+    [CreatedAt] DATETIME2 NOT NULL CONSTRAINT [HeaderMenus_CreatedAt_df] DEFAULT CURRENT_TIMESTAMP,
+    [UpdatedAt] DATETIME2 NOT NULL,
+    CONSTRAINT [HeaderMenus_pkey] PRIMARY KEY CLUSTERED ([id])
+);
+
+-- CreateTable: HeaderMenuItems
+CREATE TABLE [dbo].[HeaderMenuItems] (
+    [id] INT NOT NULL IDENTITY(1,1),
+    [HeaderMenuId] INT NOT NULL,
+    [ParentId] INT NULL,
+    [label] NVARCHAR(120) NOT NULL,
+    [TutorialSlug] NVARCHAR(300),
+    [IsSubmenu] BIT NOT NULL CONSTRAINT [HeaderMenuItems_IsSubmenu_df] DEFAULT 0,
+    [Order] INT NOT NULL CONSTRAINT [HeaderMenuItems_Order_df] DEFAULT 0,
+    [CreatedAt] DATETIME2 NOT NULL CONSTRAINT [HeaderMenuItems_CreatedAt_df] DEFAULT CURRENT_TIMESTAMP,
+    [UpdatedAt] DATETIME2 NOT NULL,
+    CONSTRAINT [HeaderMenuItems_pkey] PRIMARY KEY CLUSTERED ([id])
+);
+
+-- CreateIndex: HeaderMenuItems ParentId
+CREATE INDEX [HeaderMenuItems_ParentId_idx] ON [dbo].[HeaderMenuItems]([ParentId]);
+
+-- AddForeignKey: Categories ParentId (self-reference)
+ALTER TABLE [dbo].[Categories] ADD CONSTRAINT [Categories_ParentId_fkey] FOREIGN KEY ([ParentId]) REFERENCES [dbo].[Categories]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey: Tutorials CategoryId
 ALTER TABLE [dbo].[Tutorials] ADD CONSTRAINT [Tutorials_CategoryId_fkey] FOREIGN KEY ([CategoryId]) REFERENCES [dbo].[Categories]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
 
--- AddForeignKey
+-- AddForeignKey: Tutorials CreatedBy
 ALTER TABLE [dbo].[Tutorials] ADD CONSTRAINT [Tutorials_CreatedBy_fkey] FOREIGN KEY ([CreatedBy]) REFERENCES [dbo].[Users]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
--- AddForeignKey
+-- AddForeignKey: Tutorials UpdatedBy
 ALTER TABLE [dbo].[Tutorials] ADD CONSTRAINT [Tutorials_UpdatedBy_fkey] FOREIGN KEY ([UpdatedBy]) REFERENCES [dbo].[Users]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
--- AddForeignKey
+-- AddForeignKey: TutorialSteps TutorialId
 ALTER TABLE [dbo].[TutorialSteps] ADD CONSTRAINT [TutorialSteps_TutorialId_fkey] FOREIGN KEY ([TutorialId]) REFERENCES [dbo].[Tutorials]([id]) ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
+-- AddForeignKey: Media UploadedBy
 ALTER TABLE [dbo].[Media] ADD CONSTRAINT [Media_UploadedBy_fkey] FOREIGN KEY ([UploadedBy]) REFERENCES [dbo].[Users]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
--- AddForeignKey
+-- AddForeignKey: AuditLog UserId
 ALTER TABLE [dbo].[AuditLog] ADD CONSTRAINT [AuditLog_UserId_fkey] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey: HeaderMenuItems HeaderMenuId
+ALTER TABLE [dbo].[HeaderMenuItems] ADD CONSTRAINT [HeaderMenuItems_HeaderMenuId_fkey] FOREIGN KEY ([HeaderMenuId]) REFERENCES [dbo].[HeaderMenus]([id]) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey: HeaderMenuItems ParentId (self-reference)
+ALTER TABLE [dbo].[HeaderMenuItems] ADD CONSTRAINT [HeaderMenuItems_ParentId_fkey] FOREIGN KEY ([ParentId]) REFERENCES [dbo].[HeaderMenuItems]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 COMMIT TRAN;
 
@@ -137,3 +183,4 @@ END;
 THROW
 
 END CATCH
+

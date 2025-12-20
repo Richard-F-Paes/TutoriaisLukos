@@ -423,7 +423,6 @@ const AuditLogs = () => {
                   type="text"
                   value={filters.startDate ? formatDateToDisplay(filters.startDate) : ''}
                   onChange={(e) => handleDateChange('startDate', e.target.value)}
-                  onBlur={(e) => handleDateBlur('startDate', e.target.value)}
                   placeholder="dd/mm/aaaa"
                   maxLength={10}
                   style={{
@@ -483,7 +482,6 @@ const AuditLogs = () => {
                   type="text"
                   value={filters.endDate ? formatDateToDisplay(filters.endDate) : ''}
                   onChange={(e) => handleDateChange('endDate', e.target.value)}
-                  onBlur={(e) => handleDateBlur('endDate', e.target.value)}
                   placeholder="dd/mm/aaaa"
                   maxLength={10}
                   style={{

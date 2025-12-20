@@ -1,6 +1,7 @@
 // TutorialMedia - Player de vídeo e galeria de imagens
 import React from 'react';
 import ReactPlayer from 'react-player';
+import './TutorialMedia.css';
 
 const TutorialMedia = ({ tutorial }) => {
   if (!tutorial.VideoUrl && !tutorial.ThumbnailUrl) {

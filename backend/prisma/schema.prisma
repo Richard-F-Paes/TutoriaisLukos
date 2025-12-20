@@ -68,6 +68,7 @@ model Tutorial {
   tags              String?   @db.NVarChar(500) // JSON array
   metaTitle         String?   @map("MetaTitle") @db.NVarChar(200)
   metaDescription   String?   @map("MetaDescription") @db.NVarChar(300)
+  shareHash         String?   @map("ShareHash") @db.NVarChar(100) @unique
   createdBy         Int       @map("CreatedBy")
   updatedBy         Int       @map("UpdatedBy")
   createdAt         DateTime  @default(now()) @map("CreatedAt") @db.DateTime2

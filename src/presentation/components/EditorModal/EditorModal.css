@@ -123,21 +123,36 @@
   overflow-x: hidden;
 }
 
+/* Scrollbar styling - cinza e sutil */
 .editor-modal-sidebar::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .editor-modal-sidebar::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f9fafb;
+  border-radius: 10px;
+  margin: 8px 0;
 }
 
 .editor-modal-sidebar::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.2);
-  border-radius: 3px;
+  background: #d1d5db;
+  border-radius: 10px;
+  border: 2px solid #f9fafb;
+  transition: all 0.2s ease;
 }
 
 .editor-modal-sidebar::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 23, 42, 0.3);
+  background: #9ca3af;
+  border-color: #f3f4f6;
+}
+
+.editor-modal-sidebar::-webkit-scrollbar-thumb:active {
+  background: #6b7280;
+}
+
+.editor-modal-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
 }
 
 .editor-modal-tab {
@@ -203,22 +218,36 @@
   min-width: 0;
 }
 
+/* Scrollbar styling - cinza e sutil */
 .editor-modal-content::-webkit-scrollbar {
   width: 8px;
 }
 
 .editor-modal-content::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.05);
-  border-radius: 4px;
+  background: #f9fafb;
+  border-radius: 10px;
+  margin: 8px 0;
 }
 
 .editor-modal-content::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.2);
-  border-radius: 4px;
+  background: #d1d5db;
+  border-radius: 10px;
+  border: 2px solid #f9fafb;
+  transition: all 0.2s ease;
 }
 
 .editor-modal-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 23, 42, 0.3);
+  background: #9ca3af;
+  border-color: #f3f4f6;
+}
+
+.editor-modal-content::-webkit-scrollbar-thumb:active {
+  background: #6b7280;
+}
+
+.editor-modal-content {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
 }
 
 .editor-modal-mode {

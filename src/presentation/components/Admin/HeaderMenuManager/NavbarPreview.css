@@ -421,21 +421,35 @@
 }
 
 /* Scrollbar styling */
+/* Scrollbar styling - cinza e sutil */
 .menu-items-dropdown-preview::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .menu-items-dropdown-preview::-webkit-scrollbar-track {
-  background: rgba(212, 179, 255, 0.1);
-  border-radius: 3px;
+  background: #f9fafb;
+  border-radius: 10px;
+  margin: 8px 0;
 }
 
 .menu-items-dropdown-preview::-webkit-scrollbar-thumb {
-  background: rgba(212, 179, 255, 0.3);
-  border-radius: 3px;
+  background: #d1d5db;
+  border-radius: 10px;
+  border: 2px solid #f9fafb;
+  transition: all 0.2s ease;
 }
 
 .menu-items-dropdown-preview::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 179, 255, 0.5);
+  background: #9ca3af;
+  border-color: #f3f4f6;
+}
+
+.menu-items-dropdown-preview::-webkit-scrollbar-thumb:active {
+  background: #6b7280;
+}
+
+.menu-items-dropdown-preview {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
 }
 

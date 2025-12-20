@@ -4,9 +4,12 @@ import { endpoints } from '../infrastructure/api/endpoints.js';
 
 export const mediaService = {
   // Upload de arquivo
-  async upload(file) {
+  async upload(file, userId = null) {
     const formData = new FormData();
     formData.append('file', file);
+    if (userId) {
+      formData.append('uploadedBy', userId.toString());
+    }
     const response = await apiClient.post(endpoints.media.upload, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

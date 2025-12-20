@@ -1,36 +1,16 @@
 import express from 'express';
 import { getPrisma } from '../config/database.js';
-import multer from 'multer';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { requirePermission } from '../middleware/permissions.middleware.js';
+import { upload } from '../config/upload.js'; // Usar configuração centralizada
 
 const router = express.Router();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-// Configurar multer para upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = join(__dirname, '../../uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
-});
 
 // Listar mídias
 router.get('/', async (req, res) => {
@@ -91,6 +71,12 @@ router.post('/', authenticate, requirePermission('upload_media'), upload.single(
 
     const prisma = getPrisma();
     const { uploadedBy } = req.body;
+    // Usar req.user.id como fallback se uploadedBy não for fornecido
+    const userId = uploadedBy ? parseInt(uploadedBy) : (req.user?.id || null);
+
+    if (!userId) {
+      return res.status(400).json({ error: 'Usuário não identificado' });
+    }
 
     const media = await prisma.media.create({
       data: {
@@ -99,7 +85,7 @@ router.post('/', authenticate, requirePermission('upload_media'), upload.single(
         mimeType: req.file.mimetype,
         size: BigInt(req.file.size),
         url: `/uploads/${req.file.filename}`,
-        uploadedBy: parseInt(uploadedBy),
+        uploadedBy: userId,
       },
       include: {
         uploader: {
@@ -124,6 +110,12 @@ router.post('/upload', authenticate, requirePermission('upload_media'), upload.s
 
     const prisma = getPrisma();
     const { uploadedBy } = req.body;
+    // Usar req.user.id como fallback se uploadedBy não for fornecido
+    const userId = uploadedBy ? parseInt(uploadedBy) : (req.user?.id || null);
+
+    if (!userId) {
+      return res.status(400).json({ error: 'Usuário não identificado' });
+    }
 
     const media = await prisma.media.create({
       data: {
@@ -132,7 +124,7 @@ router.post('/upload', authenticate, requirePermission('upload_media'), upload.s
         mimeType: req.file.mimetype,
         size: BigInt(req.file.size),
         url: `/uploads/${req.file.filename}`,
-        uploadedBy: parseInt(uploadedBy),
+        uploadedBy: userId,
       },
       include: {
         uploader: {

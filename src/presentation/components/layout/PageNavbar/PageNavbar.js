@@ -715,24 +715,32 @@ function PageNavbar({ transparent = false }) {
           overflow-x: auto;
           overflow-y: visible;
           scrollbar-width: thin;
-          scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+          scrollbar-color: #d1d5db #f9fafb;
         }
 
         .products-grid-container::-webkit-scrollbar {
-          height: 6px;
+          height: 8px;
         }
 
         .products-grid-container::-webkit-scrollbar-track {
-          background: transparent;
+          background: #f9fafb;
+          border-radius: 10px;
         }
 
         .products-grid-container::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.3);
-          border-radius: 3px;
+          background: #d1d5db;
+          border-radius: 10px;
+          border: 2px solid #f9fafb;
+          transition: all 0.2s ease;
         }
 
         .products-grid-container::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.5);
+          background: #9ca3af;
+          border-color: #f3f4f6;
+        }
+
+        .products-grid-container::-webkit-scrollbar-thumb:active {
+          background: #6b7280;
         }
 
         @media (min-width: 641px) and (max-width: 768px) {

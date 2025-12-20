@@ -40,7 +40,7 @@ function TabButton({ isActive, onClick, children, disabled, tabId }) {
 
 export default function EditorModal() {
   const { isAuthenticated, user, hasPermission } = useAuth();
-  const { isOpen, initialTab, closeEditorModal } = useEditorModal();
+  const { isOpen, initialTab, initialTutorialId, closeEditorModal } = useEditorModal();
   const [activeTab, setActiveTab] = useState(initialTab || 'tutorials');
   const [mode, setMode] = useState('edit'); // 'view' | 'edit'
   const containerRef = useRef(null);
@@ -169,7 +169,7 @@ export default function EditorModal() {
       case 'dashboard':
         return <AdminDashboard />;
       case 'tutorials':
-        return <TutorialManager editorMode={mode} />;
+        return <TutorialManager editorMode={mode} initialTutorialId={initialTutorialId} />;
       case 'categories':
         return <CategoryManager editorMode={mode} />;
       case 'header-menus':

@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { 
   FileText, 
   Fuel, 
@@ -18,43 +18,36 @@ import {
   Search,
   X
 } from 'lucide-react';
-import { useTutorials, useSearchTutorials } from '../../../hooks/useTutorials.js';
+import { useTutorials } from '../../../hooks/useTutorials.js';
 import { useCategoriesHierarchical } from '../../../hooks/useCategories.js';
 import { useTutorialModal } from '../../../contexts/TutorialModalContext';
-import ExpandableCategoryCard from '../../components/ui/ExpandableCategoryCard/ExpandableCategoryCard.jsx';
-
-// Componentes da HomePage original
-import { Chatbot } from '../../components/custom/Chatbot/Chatbot';
+import LukUnifiedSearch from '../../components/search/LukUnifiedSearch/LukUnifiedSearch';
 
 const TutorialsUnified = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const categoriaParam = searchParams.get('categoria');
   const { openModal } = useTutorialModal();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearchResults, setShowSearchResults] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState(new Set());
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const searchRef = useRef(null);
   
   const { data: tutorialsData, isLoading: tutorialsLoading } = useTutorials();
   const { data: categoriesData, isLoading: categoriesLoading } = useCategoriesHierarchical();
   
-  // Busca de tutoriais
-  const { data: searchData, isLoading: isSearching } = useSearchTutorials(
-    searchQuery.trim().length > 2 ? searchQuery : '',
-    { limit: 10 }
-  );
-  
-  const searchResults = searchData?.data || [];
-  
   const allTutorials = tutorialsData?.data || [];
   const categories = categoriesData || [];
   
-  // Filtrar tutoriais por categoria se houver query param
-  const tutorials = useMemo(() => {
-    if (!categoriaParam) return allTutorials;
-    
+  // Filtrar apenas tutoriais publicados
+  const publishedTutorials = useMemo(() => {
     return allTutorials.filter(t => {
+      const isPublished = t.isPublished || t.IsPublished || false;
+      return isPublished === true;
+    });
+  }, [allTutorials]);
+  
+  // Filtrar tutoriais por categoria se houver query param e agrupar por subcategorias
+  const tutorials = useMemo(() => {
+    if (!categoriaParam) return [];
+    
+    const filtered = publishedTutorials.filter(t => {
       const catName =
         t.Category?.Name ||
         t.Category?.name ||
@@ -75,18 +68,69 @@ const TutorialsUnified = () => {
         String(catSlug || '').toLowerCase() === key
       );
     });
-  }, [allTutorials, categoriaParam]);
+    
+    // Agrupar por subcategorias
+    const groupedBySubcategory = {};
+    
+    // Criar um mapa de categorias para facilitar busca
+    const categoryMap = new Map();
+    categories.forEach(cat => {
+      categoryMap.set(cat.id || cat.Id, cat);
+      if (cat.children) {
+        cat.children.forEach(child => {
+          categoryMap.set(child.id || child.Id, child);
+        });
+      }
+    });
+    
+    filtered.forEach(tutorial => {
+      const category = tutorial.Category || tutorial.category;
+      const categoryId = category?.id || category?.Id;
+      const categoryData = categoryId ? categoryMap.get(categoryId) : null;
+      
+      // Verificar se a categoria do tutorial tem parentId (é uma subcategoria)
+      const parentId = categoryData?.parentId || categoryData?.ParentId || 
+                       category?.parentId || category?.ParentId;
+      
+      let groupKey, groupName;
+      
+      if (parentId) {
+        // É uma subcategoria, buscar o nome da categoria pai
+        const parentCategory = categoryMap.get(parentId);
+        groupKey = `subcat_${parentId}`;
+        groupName = parentCategory?.name || parentCategory?.Name || 
+                   category?.parent?.name || category?.parent?.Name || 
+                   'Subcategoria';
+      } else {
+        // É uma categoria principal
+        groupKey = 'main_category';
+        groupName = category?.name || category?.Name || categoryData?.name || categoryData?.Name || 'Categoria Principal';
+      }
+      
+      if (!groupedBySubcategory[groupKey]) {
+        groupedBySubcategory[groupKey] = {
+          id: parentId || 'main',
+          name: groupName,
+          tutorials: []
+        };
+      }
+      
+      groupedBySubcategory[groupKey].tutorials.push(tutorial);
+    });
+    
+    return Object.values(groupedBySubcategory);
+  }, [publishedTutorials, categoriaParam]);
   
   const isLoading = tutorialsLoading || categoriesLoading;
 
   // Compat: alguns trechos antigos deste componente ainda usam esse helper.
-  // Conta tutoriais por nome/slug de categoria, tentando cobrir formatos diferentes do payload.
+  // Conta tutoriais publicados por nome/slug de categoria, tentando cobrir formatos diferentes do payload.
   const getTutorialCountByCategory = (categoryKey) => {
-    if (!allTutorials || allTutorials.length === 0) return 0;
+    if (!publishedTutorials || publishedTutorials.length === 0) return 0;
     const key = String(categoryKey || '').toLowerCase();
     if (!key) return 0;
 
-    return allTutorials.filter((t) => {
+    return publishedTutorials.filter((t) => {
       const catName =
         t.Category?.Name ||
         t.Category?.name ||
@@ -110,62 +154,13 @@ const TutorialsUnified = () => {
     }).length;
   };
 
-  // Fechar resultados ao clicar fora
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setShowSearchResults(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  // Mostrar resultados quando houver busca
-  useEffect(() => {
-    if (searchQuery.trim().length > 2) {
-      setShowSearchResults(true);
-    } else {
-      setShowSearchResults(false);
-    }
-  }, [searchQuery]);
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleTutorialClick = (tutorial) => {
-    const tutorialSlug = tutorial.Slug || tutorial.slug;
-    if (tutorialSlug) {
-      openModal(tutorialSlug);
-      setSearchQuery('');
-      setShowSearchResults(false);
-    }
-  };
-
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    setShowSearchResults(false);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && searchResults.length > 0) {
-      e.preventDefault();
-      handleTutorialClick(searchResults[0]);
-    } else if (e.key === 'Escape') {
-      setShowSearchResults(false);
-    }
-  };
-
-  // Função para contar tutoriais em uma categoria (incluindo subcategorias)
+  // Função para contar tutoriais publicados em uma categoria (incluindo subcategorias)
   const getTutorialCountForCategory = (category) => {
-    if (!allTutorials || allTutorials.length === 0) return 0;
+    if (!publishedTutorials || publishedTutorials.length === 0) return 0;
     
-    // Contar tutoriais diretamente na categoria
-    let count = allTutorials.filter(t => {
+    // Contar tutoriais publicados diretamente na categoria
+    let count = publishedTutorials.filter(t => {
       const catId =
         t.categoryId ??
         t.CategoryId ??
@@ -175,7 +170,7 @@ const TutorialsUnified = () => {
       return Number(catId) === Number(category.id);
     }).length;
     
-    // Contar tutoriais nas subcategorias recursivamente
+    // Contar tutoriais publicados nas subcategorias recursivamente
     if (category.children && category.children.length > 0) {
       category.children.forEach(child => {
         count += getTutorialCountForCategory(child);
@@ -183,27 +178,6 @@ const TutorialsUnified = () => {
     }
     
     return count;
-  };
-
-  // Função para toggle de expansão
-  const toggleCategory = (categoryId) => {
-    setExpandedCategories(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(categoryId)) {
-        newSet.delete(categoryId);
-      } else {
-        newSet.add(categoryId);
-      }
-      return newSet;
-    });
-  };
-
-  // Função para selecionar categoria
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-    // Navegar para a página da categoria
-    const slug = category.slug || category.Slug || category.id;
-    window.location.href = `/tutoriais?categoria=${slug}`;
   };
 
   // Categorias de tutoriais do componente Tutorials.jsx
@@ -377,106 +351,8 @@ const TutorialsUnified = () => {
             </span>
           </h1>
           
-          {/* Barra de Pesquisa Gigante */}
-          <div ref={searchRef} className="relative max-w-4xl mx-auto mb-8">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                <Search className="h-8 w-8 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                onKeyDown={handleKeyDown}
-                onFocus={() => searchQuery.trim().length > 2 && setShowSearchResults(true)}
-                placeholder="Busque tutoriais, funcionalidades, PDV, Retaguarda, Fatura Web..."
-                className="w-full pl-16 pr-16 py-6 text-base md:text-lg bg-white border-4 border-blue-200 rounded-2xl shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-blue-500 transition-all duration-300 placeholder-gray-500 text-gray-900 font-medium leading-relaxed"
-                style={{
-                  fontSize: 'clamp(0.95rem, 2vw, 1.25rem)',
-                  letterSpacing: '0.01em'
-                }}
-              />
-              {searchQuery && (
-                <button
-                  onClick={handleClearSearch}
-                  className="absolute inset-y-0 right-0 pr-6 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              )}
-            </div>
-
-            {/* Dropdown de Resultados */}
-            {showSearchResults && searchQuery.trim().length > 2 && (
-              <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border-2 border-blue-100 max-h-96 overflow-y-auto">
-                {isSearching ? (
-                  <div className="p-6 text-center text-gray-500">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                    Buscando tutoriais...
-                  </div>
-                ) : searchResults.length > 0 ? (
-                  <div className="py-2">
-                    {searchResults.map((tutorial) => (
-                      <button
-                        key={tutorial.Id || tutorial.id}
-                        onClick={() => handleTutorialClick(tutorial)}
-                        className="w-full px-6 py-4 text-left hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0 group"
-                      >
-                        <div className="flex items-start gap-4">
-                          <div className="flex-shrink-0 mt-1">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                              <BookOpen className="h-5 w-5 text-white" />
-                            </div>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-1">
-                              {tutorial.Title || tutorial.title}
-                            </h3>
-                            {tutorial.Description || tutorial.description ? (
-                              <p className="text-sm text-gray-600 line-clamp-2">
-                                {tutorial.Description || tutorial.description}
-                              </p>
-                            ) : null}
-                            <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-                              {tutorial.CategoryName && (
-                                <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                                  {tutorial.CategoryName}
-                                </span>
-                              )}
-                              {tutorial.EstimatedDuration && (
-                                <span className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3" />
-                                  {tutorial.EstimatedDuration} min
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex-shrink-0">
-                            <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="p-8 text-center">
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <Search className="h-8 w-8 text-gray-400" />
-                      </div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        Nenhum tutorial encontrado
-                      </h3>
-                      <p className="text-base text-gray-600 max-w-md mx-auto leading-relaxed">
-                        Não encontramos tutoriais para "<span className="font-medium text-gray-900">{searchQuery}</span>". 
-                        Tente buscar com outras palavras-chave ou explore as categorias abaixo.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          {/* Barra de Pesquisa Gigante - Luk Unified Search */}
+          <LukUnifiedSearch />
 
           {categoriaParam && (
             <Link 
@@ -488,85 +364,68 @@ const TutorialsUnified = () => {
           )}
         </div>
 
-        {/* Mostrar tutoriais filtrados se houver categoria selecionada */}
+        {/* Mostrar tutoriais filtrados se houver categoria selecionada, agrupados por subcategorias */}
         {categoriaParam && tutorials.length > 0 && (
           <div className="mb-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {tutorials.length} {tutorials.length === 1 ? 'tutorial encontrado' : 'tutoriais encontrados'}
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {tutorials.map((tutorial) => (
-                <Link
-                  key={tutorial.Id}
-                  to={`/tutoriais/${tutorial.Slug || tutorial.Id}`}
-                  className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden"
-                >
-                  {tutorial.ThumbnailUrl && (
-                    <img 
-                      src={tutorial.ThumbnailUrl} 
-                      alt={tutorial.Title}
-                      className="w-full h-48 object-cover"
-                    />
-                  )}
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{tutorial.Title}</h3>
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                      {tutorial.Description || ''}
-                    </p>
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <span>{tutorial.EstimatedDuration ? `${tutorial.EstimatedDuration} min` : 'N/A'}</span>
-                      <span className="text-blue-600 font-semibold">Ver tutorial →</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Mostrar categorias expansíveis apenas se não houver filtro */}
-        {!categoriaParam && categories.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">Categorias</h2>
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              {categories.map(category => (
-                <ExpandableCategoryCard
-                  key={category.id}
-                  category={category}
-                  isExpanded={expandedCategories.has(category.id)}
-                  onToggle={toggleCategory}
-                  onSelect={handleCategorySelect}
-                  isSelected={selectedCategory?.id === category.id}
-                  getTutorialCount={getTutorialCountForCategory}
-                  expandedCategories={expandedCategories}
-                />
-              ))}
-            </div>
+            {tutorials.map((subcategoryGroup) => (
+              <div key={subcategoryGroup.id} className="mb-12">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4 pb-2 border-b-2 border-blue-200">
+                  {subcategoryGroup.name}
+                </h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                  {subcategoryGroup.tutorials.map((tutorial) => {
+                    const tutorialSlug = tutorial.Slug || tutorial.slug;
+                    return (
+                      <button
+                        key={tutorial.Id || tutorial.id}
+                        onClick={() => {
+                          if (tutorialSlug) {
+                            openModal(tutorialSlug);
+                          }
+                        }}
+                        className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden text-left w-full cursor-pointer"
+                        disabled={!tutorialSlug}
+                      >
+                        {tutorial.ThumbnailUrl && (
+                          <img 
+                            src={tutorial.ThumbnailUrl} 
+                            alt={tutorial.Title || tutorial.title}
+                            className="w-full h-48 object-cover"
+                          />
+                        )}
+                        <div className="p-4">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">{tutorial.Title || tutorial.title}</h3>
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                            {tutorial.Description || tutorial.description || ''}
+                          </p>
+                          <div className="flex items-center justify-between text-sm text-gray-500">
+                            <span>{tutorial.EstimatedDuration || tutorial.estimatedDuration ? `${tutorial.EstimatedDuration || tutorial.estimatedDuration} min` : 'N/A'}</span>
+                            <span className="text-blue-600 font-semibold">Ver tutorial →</span>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
         {/* Mostrar grid de categorias apenas se não houver filtro */}
         {!categoriaParam && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <>
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Categorias</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {tutorialCategories.map((category) => {
             const Icon = category.icon;
             const colors = getColorClasses(category.color);
             
-            // Encontrar o primeiro tutorial desta categoria
-            const categoryTutorials = allTutorials.filter(t => {
-              const catName = t.Category?.Name || t.CategoryName || '';
-              const catSlug = t.Category?.Slug || '';
-              return catName === category.title || 
-                     catSlug === category.id ||
-                     catName?.toLowerCase() === category.title?.toLowerCase();
-            });
-            const firstTutorial = categoryTutorials.length > 0 ? categoryTutorials[0] : null;
-            const tutorialSlug = firstTutorial?.Slug || firstTutorial?.slug || null;
-            
             const handleCategoryClick = (e) => {
               e.preventDefault();
-              if (tutorialSlug) {
-                openModal(tutorialSlug);
+              // Navegar para a página da categoria usando o link definido
+              if (category.link) {
+                navigate(category.link);
               }
             };
             
@@ -574,8 +433,7 @@ const TutorialsUnified = () => {
               <button
                 key={category.id}
                 onClick={handleCategoryClick}
-                disabled={!tutorialSlug}
-                className={`group text-left w-full ${!tutorialSlug ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                className="group text-left w-full cursor-pointer"
               >
                 <div className={`bg-gradient-to-br ${colors.bg} rounded-2xl overflow-hidden border-2 ${colors.border} hover:shadow-2xl transition-all duration-300 hover:-translate-y-2`}>
                   {/* Image */}
@@ -618,12 +476,10 @@ const TutorialsUnified = () => {
             );
           })}
           </div>
+          </>
         )}
 
       </div>
-
-      {/* Componentes adicionais da HomePage */}
-      <Chatbot />
     </div>
   );
 };

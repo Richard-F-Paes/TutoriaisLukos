@@ -9,10 +9,12 @@ const EditorModalContext = createContext();
 export function EditorModalProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [initialTab, setInitialTab] = useState('tutorials');
+  const [initialTutorialId, setInitialTutorialId] = useState(null);
   const previousBodyOverflowRef = useRef(null);
 
-  const openEditorModal = useCallback((tab = 'tutorials') => {
+  const openEditorModal = useCallback((tab = 'tutorials', tutorialId = null) => {
     setInitialTab(tab);
+    setInitialTutorialId(tutorialId);
     setIsOpen(true);
     if (previousBodyOverflowRef.current === null) {
       previousBodyOverflowRef.current = document.body.style.overflow ?? '';
@@ -30,10 +32,11 @@ export function EditorModalProvider({ children }) {
     () => ({
       isOpen,
       initialTab,
+      initialTutorialId,
       openEditorModal,
       closeEditorModal,
     }),
-    [isOpen, initialTab, openEditorModal, closeEditorModal]
+    [isOpen, initialTab, initialTutorialId, openEditorModal, closeEditorModal]
   );
 
   return <EditorModalContext.Provider value={value}>{children}</EditorModalContext.Provider>;

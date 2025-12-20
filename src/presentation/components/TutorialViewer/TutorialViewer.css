@@ -1,8 +1,16 @@
 /* TutorialViewer Styles */
 .tutorial-viewer {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: #1f2937;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .tutorial-viewer-loading,
@@ -22,33 +30,161 @@
 
 .tutorial-viewer-content-wrapper {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 360px;
   gap: 2rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
+  flex: 1;
+  min-height: 0;
 }
 
 .tutorial-viewer-main {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .tutorial-viewer-sidebar {
   position: sticky;
   top: 2rem;
   height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+}
+
+.tutorial-related {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.tutorial-related-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.related-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.related-list li {
+  margin: 0;
+}
+
+.related-list a {
+  display: block;
+  padding: 0.625rem 0.75rem;
+  color: #374151;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.related-list a:hover {
+  background: #f9fafb;
+  color: #6c2396;
+  border-left-color: #6c2396;
+  padding-left: 1rem;
 }
 
 @media (max-width: 1024px) {
   .tutorial-viewer-content-wrapper {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
   }
   
   .tutorial-viewer-sidebar {
     position: static;
+    max-height: none;
   }
+}
+
+/* Modo "somente passo" */
+.tutorial-viewer-step-only {
+  padding: 0;
+}
+
+.tutorial-step-only-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tutorial-step-only-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #6c2396 0%, #5a008f 100%);
+  color: white;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.tutorial-step-only-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+  line-height: 1.2;
+}
+
+.tutorial-step-only-button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.tutorial-step-only-button:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.4);
+  transform: translateY(-1px);
+}
+
+.tutorial-viewer-step-only .tutorial-viewer-content-wrapper {
+  grid-template-columns: 1fr;
+  margin-top: 0;
 }
 
 @media (max-width: 768px) {
   .tutorial-viewer {
-    padding: 1rem;
+    padding: 0;
+  }
+  
+  .tutorial-viewer-content-wrapper {
+    gap: 1rem;
+    margin-top: 0.75rem;
+  }
+  
+  .tutorial-viewer-sidebar {
+    gap: 1rem;
+  }
+
+  .tutorial-step-only-title {
+    font-size: 1.5rem;
   }
 }

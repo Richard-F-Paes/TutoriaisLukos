@@ -259,19 +259,34 @@
 }
 
 /* Scrollbar personalizada */
+/* Scrollbar styling - cinza e sutil */
 .panel-content::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .panel-content::-webkit-scrollbar-track {
-  background: var(--gray-100);
+  background: #f9fafb;
+  border-radius: 10px;
+  margin: 8px 0;
 }
 
 .panel-content::-webkit-scrollbar-thumb {
-  background: var(--gray-300);
-  border-radius: var(--radius-full);
+  background: #d1d5db;
+  border-radius: 10px;
+  border: 2px solid #f9fafb;
+  transition: all 0.2s ease;
 }
 
 .panel-content::-webkit-scrollbar-thumb:hover {
-  background: var(--gray-400);
+  background: #9ca3af;
+  border-color: #f3f4f6;
+}
+
+.panel-content::-webkit-scrollbar-thumb:active {
+  background: #6b7280;
+}
+
+.panel-content {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
 }

@@ -1,6 +1,7 @@
 import express from 'express';
 import { getPrisma } from '../config/database.js';
 import slugify from 'slugify';
+import { randomUUID } from 'crypto';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { requirePermission } from '../middleware/permissions.middleware.js';
 
@@ -225,12 +226,55 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Obter tutorial por ID
+// Buscar tutorial por hash de compartilhamento (deve vir antes de /:id)
+router.get('/by-hash/:hash', async (req, res) => {
+  try {
+    const prisma = getPrisma();
+    const hash = req.params.hash;
+    
+    const tutorial = await prisma.tutorial.findUnique({
+      where: { shareHash: hash },
+      include: {
+        category: {
+          include: {
+            parent: true,
+          },
+        },
+        creator: {
+          select: { id: true, name: true, username: true },
+        },
+        updater: {
+          select: { id: true, name: true, username: true },
+        },
+        tutorialSteps: {
+          orderBy: { sortOrder: 'asc' },
+        },
+      },
+    });
+
+    if (!tutorial) {
+      return res.status(404).json({ error: 'Tutorial não encontrado' });
+    }
+
+    res.json({ data: tutorial });
+  } catch (error) {
+    console.error('Erro ao obter tutorial por hash:', error);
+    res.status(500).json({ error: 'Erro ao obter tutorial' });
+  }
+});
+
+// Obter tutorial por ID ou slug
 router.get('/:id', async (req, res) => {
   try {
     const prisma = getPrisma();
+    const param = req.params.id;
+    
+    // Tentar determinar se é ID numérico ou slug
+    const isNumeric = !isNaN(param) && !isNaN(parseInt(param));
+    
+    // Buscar por ID ou slug
     const tutorial = await prisma.tutorial.findUnique({
-      where: { id: parseInt(req.params.id) },
+      where: isNumeric ? { id: parseInt(param) } : { slug: param },
       include: {
         category: {
           include: {
@@ -297,6 +341,7 @@ router.post('/', authenticate, requirePermission('create_tutorial'), async (req,
     }
 
     const slug = slugify(title, { lower: true, strict: true });
+    const shareHash = randomUUID().replace(/-/g, '').substring(0, 32); // Hash único de 32 caracteres
 
     const tutorial = await prisma.tutorial.create({
       data: {
@@ -312,6 +357,7 @@ router.post('/', authenticate, requirePermission('create_tutorial'), async (req,
         tags: tags ? (Array.isArray(tags) ? JSON.stringify(tags) : tags) : null,
         metaTitle: metaTitle?.trim() || null,
         metaDescription: metaDescription?.trim() || null,
+        shareHash,
         createdBy: userId,
         updatedBy: userId,
         tutorialSteps: tutorialSteps
@@ -376,6 +422,12 @@ router.put('/:id', authenticate, requirePermission('edit_tutorial'), async (req,
       return res.status(401).json({ error: 'Usuário não autenticado' });
     }
 
+    // Verificar se tutorial já tem shareHash, se não, gerar
+    const existingTutorial = await prisma.tutorial.findUnique({
+      where: { id: parseInt(req.params.id) },
+      select: { shareHash: true },
+    });
+
     const updateData = {
       description: description?.trim() || null,
       content: content?.trim() || '',
@@ -384,21 +436,39 @@ router.put('/:id', authenticate, requirePermission('edit_tutorial'), async (req,
       videoUrl: videoUrl?.trim() || null,
       difficulty: difficulty || null,
       estimatedDuration: estimatedDuration ? parseInt(estimatedDuration) : null,
-      isPublished: isPublished || false,
-      isFeatured: isFeatured || false,
       tags: tags ? (Array.isArray(tags) ? JSON.stringify(tags) : tags) : null,
       metaTitle: metaTitle?.trim() || null,
       metaDescription: metaDescription?.trim() || null,
       updatedBy: userId,
     };
 
+    // Adicionar isPublished e isFeatured apenas se foram enviados
+    if (isPublished !== undefined) {
+      updateData.isPublished = Boolean(isPublished);
+    }
+    if (isFeatured !== undefined) {
+      updateData.isFeatured = Boolean(isFeatured);
+    }
+
+    // Se não tem shareHash, gerar um novo
+    if (!existingTutorial?.shareHash) {
+      updateData.shareHash = randomUUID().replace(/-/g, '').substring(0, 32);
+    }
+
     if (title) {
       updateData.title = title;
       updateData.slug = slugify(title, { lower: true, strict: true });
     }
 
-    if (isPublished && !req.body.publishedAt) {
-      updateData.publishedAt = new Date();
+    // Atualizar publishedAt baseado em isPublished
+    if (isPublished !== undefined) {
+      if (isPublished && !req.body.publishedAt) {
+        // Se está sendo publicado e não tem publishedAt, definir agora
+        updateData.publishedAt = new Date();
+      } else if (!isPublished) {
+        // Se está sendo despublicado, limpar publishedAt (opcional)
+        // updateData.publishedAt = null; // Descomente se quiser limpar ao despublicar
+      }
     }
 
     const tutorial = await prisma.tutorial.update({

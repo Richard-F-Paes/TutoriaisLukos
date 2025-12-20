@@ -48,7 +48,10 @@ export const useUpdateTutorial = () => {
     mutationFn: ({ id, data }) => tutorialService.update(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['tutorials'] });
-      queryClient.invalidateQueries({ queryKey: ['tutorial', variables.slug] });
+      // Invalidar tanto por ID quanto por slug (caso tenha mudado)
+      queryClient.invalidateQueries({ queryKey: ['tutorial', variables.id] });
+      // Invalidar todas as queries de tutorial para garantir atualização
+      queryClient.invalidateQueries({ queryKey: ['tutorial'] });
     },
   });
 };

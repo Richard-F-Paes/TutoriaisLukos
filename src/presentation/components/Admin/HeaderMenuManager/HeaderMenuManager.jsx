@@ -1,5 +1,5 @@
 // HeaderMenuManager - Gerenciamento de menus do header no admin com preview e drag & drop
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   useHeaderMenus, 
   useCreateHeaderMenu, 
@@ -9,7 +9,6 @@ import {
 } from '../../../../hooks/useHeaderMenus';
 import { useTutorials } from '../../../../hooks/useTutorials';
 import { NavbarPreview } from './NavbarPreview';
-import { Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { defaultHeaderMenus } from '../../../../shared/constants/defaultHeaderMenus.js';
 import './HeaderMenuManager.css';
@@ -17,12 +16,11 @@ import './HeaderMenuManager.css';
 const HeaderMenuManager = () => {
   const [editingMenuId, setEditingMenuId] = useState(null);
   const [addingItemMenuId, setAddingItemMenuId] = useState(null);
-  const [showAddMenu, setShowAddMenu] = useState(false);
-  const [newMenuLabel, setNewMenuLabel] = useState('');
   const [newItemLabel, setNewItemLabel] = useState('');
   const [newItemType, setNewItemType] = useState('tutorial');
   const [newItemTutorialSlug, setNewItemTutorialSlug] = useState('');
   const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const hasImportedDefaults = useRef(false);
 
   const { data: menusData, isLoading } = useHeaderMenus();
   const { data: tutorialsData } = useTutorials();
@@ -74,43 +72,6 @@ const HeaderMenuManager = () => {
     return fallback;
   };
 
-  const handleCreateMenu = async () => {
-    if (!newMenuLabel.trim()) {
-      toast.error('O label do menu é obrigatório');
-      return;
-    }
-
-    // Modo rascunho: cria localmente
-    if (!hasDbMenus) {
-      setDraftMenus((prev) => {
-        const minId = prev.reduce((min, m) => Math.min(min, m.id ?? 0), 0);
-        const nextId = minId <= 0 ? minId - 1 : -1;
-        const nextOrder = prev.length;
-        return [
-          ...prev,
-          { id: nextId, Label: newMenuLabel.trim(), Order: nextOrder, Items: [] },
-        ];
-      });
-      toast.success('Menu criado no rascunho. Clique em “Salvar no banco” para persistir.');
-      setNewMenuLabel('');
-      setShowAddMenu(false);
-      return;
-    }
-
-    try {
-      await createMutation.mutateAsync({
-        Label: newMenuLabel,
-        Items: [],
-        Order: menus.length,
-      });
-      toast.success('Menu criado com sucesso!');
-      setNewMenuLabel('');
-      setShowAddMenu(false);
-    } catch (error) {
-      toast.error(formatApiError(error, 'Erro ao criar menu'));
-    }
-  };
-
   const handleUpdateMenu = async (menuId, updates) => {
     // Modo rascunho: atualiza localmente
     if (!hasDbMenus || menuId < 0) {
@@ -151,8 +112,6 @@ const HeaderMenuManager = () => {
   };
 
   const handleEditMenu = (menuId) => {
-    // Evita sobreposição visual com formulários de adicionar
-    setShowAddMenu(false);
     setAddingItemMenuId(null);
     setEditingMenuId(menuId);
   };
@@ -356,12 +315,45 @@ const HeaderMenuManager = () => {
         });
       }
       toast.success('Configuração salva no banco! O navbar vai refletir em tempo real.');
+      hasImportedDefaults.current = true;
     } catch (error) {
       toast.error(formatApiError(error, 'Erro ao salvar rascunho no banco'));
     } finally {
       setIsSavingDraft(false);
     }
   };
+
+  // Importa automaticamente os menus padrão quando não há menus no banco
+  useEffect(() => {
+    const importDefaults = async () => {
+      if (isLoading || hasDbMenus || hasImportedDefaults.current || draftMenus.length === 0) {
+        return;
+      }
+
+      hasImportedDefaults.current = true;
+      setIsSavingDraft(true);
+      try {
+        const ordered = [...draftMenus].sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0));
+        for (let i = 0; i < ordered.length; i += 1) {
+          const m = ordered[i];
+          await createMutation.mutateAsync({
+            Label: m.Label,
+            Order: i,
+            Items: serializeItemsTree(m.Items || []),
+          });
+        }
+        toast.success('Navbar padrão importado automaticamente!');
+      } catch (error) {
+        toast.error(formatApiError(error, 'Erro ao importar navbar padrão'));
+        hasImportedDefaults.current = false; // Permite tentar novamente em caso de erro
+      } finally {
+        setIsSavingDraft(false);
+      }
+    };
+
+    importDefaults();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, hasDbMenus]);
 
   if (isLoading) {
     return <div className="loading">Carregando menus...</div>;
@@ -382,47 +374,8 @@ const HeaderMenuManager = () => {
               {isSavingDraft ? 'Salvando...' : 'Salvar no banco'}
             </button>
           )}
-          <button
-            onClick={() => setShowAddMenu(true)}
-            className="btn-secondary"
-          >
-            <Plus size={18} />
-            Adicionar Menu
-          </button>
         </div>
       </div>
-
-      {showAddMenu && (
-        <div className="add-menu-form">
-          <input
-            type="text"
-            placeholder="Label do menu (ex: PDV, Retaguarda)"
-            value={newMenuLabel}
-            onChange={(e) => setNewMenuLabel(e.target.value)}
-            className="form-input"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleCreateMenu();
-              } else if (e.key === 'Escape') {
-                setShowAddMenu(false);
-                setNewMenuLabel('');
-              }
-            }}
-            autoFocus
-          />
-          <div className="form-actions">
-            <button onClick={handleCreateMenu} className="btn-primary">
-              Criar
-            </button>
-            <button onClick={() => {
-              setShowAddMenu(false);
-              setNewMenuLabel('');
-            }} className="btn-secondary">
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
 
       {currentMenus.length > 0 && (
         <NavbarPreview
@@ -456,9 +409,9 @@ const HeaderMenuManager = () => {
         />
       )}
 
-      {currentMenus.length === 0 && !showAddMenu && (
+      {currentMenus.length === 0 && !isLoading && (
         <div className="empty-state">
-          Nenhum menu para exibir. Adicione um menu para começar.
+          Importando navbar padrão...
         </div>
       )}
     </div>

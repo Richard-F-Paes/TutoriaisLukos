@@ -1,10 +1,12 @@
 // TutorialEditorPanel - Editor embutido (modal-only) para criar/editar tutoriais
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import toast from 'react-hot-toast';
-import { Plus, Edit, Trash2, X, ChevronUp, ChevronDown, Save, Clock, Video, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, X, ChevronUp, ChevronDown, Save, Clock } from 'lucide-react';
 import { useCategoriesHierarchical } from '../../../hooks/useCategories.js';
 import { useCreateTutorial, useTutorial, useUpdateTutorial } from '../../../hooks/useTutorials.js';
 import { useCreateStep, useDeleteStep, useReorderSteps, useSteps, useUpdateStep } from '../../../hooks/useSteps.js';
+import StepMediaUploader from './StepMediaUploader.jsx';
+import './TutorialEditorPanel.css';
 
 export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSaved }) {
   const isNew = !tutorialId;
@@ -40,7 +42,33 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
   const [categoryId, setCategoryId] = useState('');
+  const [subcategoryId, setSubcategoryId] = useState('');
   const [isPublished, setIsPublished] = useState(false);
+  
+  // Ref para rastrear se já inicializamos o formulário
+  const initializedRef = useRef(false);
+  const lastInitialIdRef = useRef(null);
+
+  // Resetar ref quando tutorialId mudar
+  useEffect(() => {
+    const currentId = !isNew ? Number(tutorialId) : null;
+    if (lastInitialIdRef.current !== currentId) {
+      initializedRef.current = false;
+    }
+  }, [tutorialId, isNew]);
+
+  // Separar categorias principais e subcategorias (após categoryId ser declarado)
+  const parentCategories = useMemo(() => {
+    return allCategoriesFlat.filter(cat => !cat.parentId && !cat.ParentId);
+  }, [allCategoriesFlat]);
+
+  const subcategories = useMemo(() => {
+    if (!categoryId) return [];
+    return allCategoriesFlat.filter(cat => {
+      const parentId = cat.parentId || cat.ParentId;
+      return parentId && Number(parentId) === Number(categoryId);
+    });
+  }, [allCategoriesFlat, categoryId]);
 
   const initial = useMemo(() => tutorialData?.data || null, [tutorialData]);
   const normalizedId = !isNew ? Number(tutorialId) : null;
@@ -63,21 +91,52 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
   });
 
   useEffect(() => {
-    if (!isNew && initial) {
-      setTitle(initial.Title || initial.title || '');
-      setDescription(initial.Description || initial.description || '');
-      setContent(''); // Conteúdo removido - tutorial será dividido em passos
-      setCategoryId(initial.CategoryId ? String(initial.CategoryId) : initial.categoryId ? String(initial.categoryId) : '');
-      setIsPublished(!!(initial.IsPublished ?? initial.isPublished));
+    const currentId = !isNew ? Number(tutorialId) : null;
+    
+    // Só inicializar se for um novo tutorial ou se o ID mudou
+    const shouldInitialize = isNew || 
+      (initial && (lastInitialIdRef.current !== currentId || !initializedRef.current));
+    
+    if (shouldInitialize) {
+      if (!isNew && initial) {
+        setTitle(initial.Title || initial.title || '');
+        setDescription(initial.Description || initial.description || '');
+        setContent(''); // Conteúdo removido - tutorial será dividido em passos
+        const catId = initial.CategoryId || initial.categoryId;
+        const category = allCategoriesFlat.find(c => (c.id || c.Id) === catId);
+        
+        // Se a categoria selecionada é uma subcategoria, separar categoria pai e subcategoria
+        if (category && (category.parentId || category.ParentId)) {
+          const parentId = category.parentId || category.ParentId;
+          setCategoryId(String(parentId));
+          setSubcategoryId(String(catId));
+        } else {
+          setCategoryId(catId ? String(catId) : '');
+          setSubcategoryId('');
+        }
+        setIsPublished(!!(initial.IsPublished ?? initial.isPublished));
+        lastInitialIdRef.current = currentId;
+        initializedRef.current = true;
+      }
+      if (isNew) {
+        setTitle('');
+        setDescription('');
+        setContent('');
+        setCategoryId('');
+        setSubcategoryId('');
+        setIsPublished(false);
+        lastInitialIdRef.current = null;
+        initializedRef.current = true;
+      }
     }
-    if (isNew) {
-      setTitle('');
-      setDescription('');
-      setContent('');
-      setCategoryId('');
-      setIsPublished(false);
+  }, [isNew, initial, allCategoriesFlat, tutorialId]);
+
+  // Limpar subcategoria quando categoria mudar
+  useEffect(() => {
+    if (!categoryId) {
+      setSubcategoryId('');
     }
-  }, [isNew, initial]);
+  }, [categoryId]);
 
   const handleSave = async () => {
     if (!title.trim()) {
@@ -85,11 +144,14 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
       return;
     }
 
+    // Usar subcategoria se selecionada, senão usar categoria principal
+    const finalCategoryId = subcategoryId ? Number(subcategoryId) : (categoryId ? Number(categoryId) : null);
+    
     const payload = {
       title: title.trim(),
       description: description?.trim() || '',
       content: '', // Conteúdo removido - tutorial será dividido em passos
-      categoryId: categoryId ? Number(categoryId) : null,
+      categoryId: finalCategoryId,
       isPublished,
     };
 
@@ -100,6 +162,8 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
       } else {
         await updateMutation.mutateAsync({ id: tutorialId, data: payload });
         toast.success('Tutorial atualizado com sucesso!');
+        // O estado isPublished já está correto, mas vamos garantir que o cache seja atualizado
+        // O React Query vai refazer a query automaticamente devido à invalidação
       }
       onSaved?.();
     } catch (e) {
@@ -223,38 +287,44 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
           >
             Voltar
           </button>
-          <label style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.5rem', 
-            cursor: 'pointer',
-            padding: '0.5rem 1rem',
-            backgroundColor: '#f9fafb',
-            borderRadius: '6px',
-            border: '1px solid #e5e7eb',
-            fontWeight: 500,
-            fontSize: '0.875rem',
-            color: '#374151',
-            transition: 'all 0.15s',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#f3f4f6';
-            e.currentTarget.style.borderColor = '#d1d5db';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#f9fafb';
-            e.currentTarget.style.borderColor = '#e5e7eb';
-          }}
+          <label 
+            htmlFor="publish-checkbox"
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem', 
+              cursor: 'pointer',
+              padding: '0.5rem 1rem',
+              backgroundColor: '#f9fafb',
+              borderRadius: '6px',
+              border: '1px solid #e5e7eb',
+              fontWeight: 500,
+              fontSize: '0.875rem',
+              color: '#374151',
+              transition: 'all 0.15s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f3f4f6';
+              e.currentTarget.style.borderColor = '#d1d5db';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f9fafb';
+              e.currentTarget.style.borderColor = '#e5e7eb';
+            }}
           >
             <input 
+              id="publish-checkbox"
               type="checkbox" 
               checked={isPublished} 
-              onChange={(e) => setIsPublished(e.target.checked)}
+              onChange={(e) => {
+                const newValue = e.target.checked;
+                setIsPublished(newValue);
+              }}
               style={{ 
                 cursor: 'pointer',
                 width: '16px',
                 height: '16px',
-                accentColor: '#3b82f6',
+                accentColor: '#6c2396',
               }}
             />
             <span>Publicar</span>
@@ -265,7 +335,7 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
             disabled={createMutation.isPending || updateMutation.isPending}
             style={{
               padding: '0.5rem 1rem',
-              background: createMutation.isPending || updateMutation.isPending ? '#9ca3af' : '#3b82f6',
+              background: createMutation.isPending || updateMutation.isPending ? '#9ca3af' : 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
@@ -279,12 +349,12 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
             }}
             onMouseEnter={(e) => {
               if (!createMutation.isPending && !updateMutation.isPending) {
-                e.target.style.background = '#2563eb';
+                e.target.style.background = 'linear-gradient(135deg, #5a008f 0%, #4a0073 100%)';
               }
             }}
             onMouseLeave={(e) => {
               if (!createMutation.isPending && !updateMutation.isPending) {
-                e.target.style.background = '#3b82f6';
+                e.target.style.background = 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)';
               }
             }}
           >
@@ -297,7 +367,7 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
         <div>Carregando...</div>
       ) : (
         <div className="edit-form" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
+          <div className="edit-form-grid">
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label style={{ 
                 display: 'block', 
@@ -326,9 +396,9 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
                   boxSizing: 'border-box',
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#3b82f6';
+                  e.target.style.borderColor = '#6c2396';
                   e.target.style.outline = 'none';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(108, 35, 150, 0.1)';
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = '#d1d5db';
@@ -350,7 +420,10 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
               </label>
               <select 
                 value={categoryId} 
-                onChange={(e) => setCategoryId(e.target.value)}
+                onChange={(e) => {
+                  setCategoryId(e.target.value);
+                  setSubcategoryId(''); // Limpar subcategoria ao mudar categoria
+                }}
                 style={{
                   width: '100%',
                   padding: '0.75rem 1rem',
@@ -364,9 +437,9 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
                   boxSizing: 'border-box',
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#3b82f6';
+                  e.target.style.borderColor = '#6c2396';
                   e.target.style.outline = 'none';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(108, 35, 150, 0.1)';
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = '#d1d5db';
@@ -374,9 +447,57 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
                 }}
               >
                 <option value="">Sem categoria</option>
-                {allCategoriesFlat.map((cat) => (
+                {parentCategories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
-                    {cat.displayName || cat.name || cat.Name}
+                    {cat.name || cat.Name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '0.5rem', 
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                color: '#374151',
+                letterSpacing: '0.025em',
+              }}>
+                Subcategoria
+              </label>
+              <select 
+                value={subcategoryId} 
+                onChange={(e) => setSubcategoryId(e.target.value)}
+                disabled={!categoryId || subcategories.length === 0}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  fontSize: '0.9375rem',
+                  color: !categoryId || subcategories.length === 0 ? '#9ca3af' : '#1f2937',
+                  backgroundColor: !categoryId || subcategories.length === 0 ? '#f9fafb' : '#ffffff',
+                  cursor: !categoryId || subcategories.length === 0 ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                  boxSizing: 'border-box',
+                }}
+                onFocus={(e) => {
+                  if (categoryId && subcategories.length > 0) {
+                    e.target.style.borderColor = '#6c2396';
+                    e.target.style.outline = 'none';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(108, 35, 150, 0.1)';
+                  }
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#d1d5db';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                <option value="">Sem subcategoria</option>
+                {subcategories.map((subcat) => (
+                  <option key={subcat.id} value={subcat.id}>
+                    {subcat.name || subcat.Name}
                   </option>
                 ))}
               </select>
@@ -412,11 +533,11 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
                 fontFamily: 'inherit',
                 resize: 'vertical',
               }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#3b82f6';
-                e.target.style.outline = 'none';
-                e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-              }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#6c2396';
+                  e.target.style.outline = 'none';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(108, 35, 150, 0.1)';
+                }}
               onBlur={(e) => {
                 e.target.style.borderColor = '#d1d5db';
                 e.target.style.boxShadow = 'none';
@@ -533,11 +654,11 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
                         transition: 'all 0.2s',
                         boxSizing: 'border-box',
                       }}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = '#3b82f6';
-                        e.target.style.outline = 'none';
-                        e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                      }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#6c2396';
+                  e.target.style.outline = 'none';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(108, 35, 150, 0.1)';
+                }}
                       onBlur={(e) => {
                         e.target.style.borderColor = '#d1d5db';
                         e.target.style.boxShadow = 'none';
@@ -573,11 +694,11 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
                         fontFamily: 'inherit',
                         resize: 'vertical',
                       }}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = '#3b82f6';
-                        e.target.style.outline = 'none';
-                        e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                      }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#6c2396';
+                  e.target.style.outline = 'none';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(108, 35, 150, 0.1)';
+                }}
                       onBlur={(e) => {
                         e.target.style.borderColor = '#d1d5db';
                         e.target.style.boxShadow = 'none';
@@ -585,128 +706,56 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 120px', gap: '0.75rem' }}>
-                    <div>
-                      <label style={{ 
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.375rem',
-                        marginBottom: '0.5rem', 
-                        fontWeight: 500,
-                        fontSize: '0.875rem',
-                        color: '#374151',
-                      }}>
-                        <Video size={14} />
-                        URL do Vídeo
-                      </label>
-                      <input
-                        type="text"
-                        value={stepDraft.videoUrl}
-                        onChange={(e) => setStepDraft((s) => ({ ...s, videoUrl: e.target.value }))}
-                        placeholder="https://..."
-                        style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '8px',
-                          fontSize: '0.9375rem',
-                          color: '#1f2937',
-                          backgroundColor: '#ffffff',
-                          transition: 'all 0.2s',
-                          boxSizing: 'border-box',
-                        }}
-                        onFocus={(e) => {
-                          e.target.style.borderColor = '#3b82f6';
-                          e.target.style.outline = 'none';
-                          e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                        }}
-                        onBlur={(e) => {
-                          e.target.style.borderColor = '#d1d5db';
-                          e.target.style.boxShadow = 'none';
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ 
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.375rem',
-                        marginBottom: '0.5rem', 
-                        fontWeight: 500,
-                        fontSize: '0.875rem',
-                        color: '#374151',
-                      }}>
-                        <ImageIcon size={14} />
-                        URL da Imagem
-                      </label>
-                      <input
-                        type="text"
-                        value={stepDraft.imageUrl}
-                        onChange={(e) => setStepDraft((s) => ({ ...s, imageUrl: e.target.value }))}
-                        placeholder="https://..."
-                        style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '8px',
-                          fontSize: '0.9375rem',
-                          color: '#1f2937',
-                          backgroundColor: '#ffffff',
-                          transition: 'all 0.2s',
-                          boxSizing: 'border-box',
-                        }}
-                        onFocus={(e) => {
-                          e.target.style.borderColor = '#3b82f6';
-                          e.target.style.outline = 'none';
-                          e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                        }}
-                        onBlur={(e) => {
-                          e.target.style.borderColor = '#d1d5db';
-                          e.target.style.boxShadow = 'none';
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ 
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.375rem',
-                        marginBottom: '0.5rem', 
-                        fontWeight: 500,
-                        fontSize: '0.875rem',
-                        color: '#374151',
-                      }}>
-                        <Clock size={14} />
-                        Duração (min)
-                      </label>
-                      <input
-                        type="number"
-                        value={stepDraft.duration}
-                        onChange={(e) => setStepDraft((s) => ({ ...s, duration: e.target.value }))}
-                        placeholder="0"
-                        min="0"
-                        style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '8px',
-                          fontSize: '0.9375rem',
-                          color: '#1f2937',
-                          backgroundColor: '#ffffff',
-                          transition: 'all 0.2s',
-                          boxSizing: 'border-box',
-                        }}
-                        onFocus={(e) => {
-                          e.target.style.borderColor = '#3b82f6';
-                          e.target.style.outline = 'none';
-                          e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                        }}
-                        onBlur={(e) => {
-                          e.target.style.borderColor = '#d1d5db';
-                          e.target.style.boxShadow = 'none';
-                        }}
-                      />
-                    </div>
+                  <div>
+                    <StepMediaUploader
+                      videoUrl={stepDraft.videoUrl || ''}
+                      imageUrl={stepDraft.imageUrl || ''}
+                      onVideoChange={(url) => setStepDraft((s) => ({ ...s, videoUrl: url, imageUrl: '' }))}
+                      onImageChange={(url) => setStepDraft((s) => ({ ...s, imageUrl: url, videoUrl: '' }))}
+                      onRemove={() => setStepDraft((s) => ({ ...s, videoUrl: '', imageUrl: '' }))}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label style={{ 
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.375rem',
+                      marginBottom: '0.5rem', 
+                      fontWeight: 500,
+                      fontSize: '0.875rem',
+                      color: '#374151',
+                    }}>
+                      <Clock size={14} />
+                      Duração (min)
+                    </label>
+                    <input
+                      type="number"
+                      value={stepDraft.duration}
+                      onChange={(e) => setStepDraft((s) => ({ ...s, duration: e.target.value }))}
+                      placeholder="0"
+                      min="0"
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '0.9375rem',
+                        color: '#1f2937',
+                        backgroundColor: '#ffffff',
+                        transition: 'all 0.2s',
+                        boxSizing: 'border-box',
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#6c2396';
+                        e.target.style.outline = 'none';
+                        e.target.style.boxShadow = '0 0 0 3px rgba(108, 35, 150, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = '#d1d5db';
+                        e.target.style.boxShadow = 'none';
+                      }}
+                    />
                   </div>
 
                   <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
@@ -753,7 +802,7 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
                       disabled={createStepMutation.isPending || updateStepMutation.isPending}
                       style={{
                         padding: '0.5rem 1rem',
-                        background: createStepMutation.isPending || updateStepMutation.isPending ? '#9ca3af' : '#3b82f6',
+                        background: createStepMutation.isPending || updateStepMutation.isPending ? '#9ca3af' : 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)',
                         color: 'white',
                         border: 'none',
                         borderRadius: '6px',
@@ -767,12 +816,12 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
                       }}
                       onMouseEnter={(e) => {
                         if (!createStepMutation.isPending && !updateStepMutation.isPending) {
-                          e.target.style.background = '#2563eb';
+                          e.target.style.background = 'linear-gradient(135deg, #5a008f 0%, #4a0073 100%)';
                         }
                       }}
                       onMouseLeave={(e) => {
                         if (!createStepMutation.isPending && !updateStepMutation.isPending) {
-                          e.target.style.background = '#3b82f6';
+                          e.target.style.background = 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)';
                         }
                       }}
                     >
@@ -941,8 +990,8 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
                               style={{
                                 padding: '0.5rem',
                                 background: '#ffffff',
-                                color: '#3b82f6',
-                                border: '1px solid #dbeafe',
+                                color: '#6c2396',
+                                border: '1px solid #f3e8ff',
                                 borderRadius: '6px',
                                 cursor: 'pointer',
                                 display: 'flex',
@@ -950,12 +999,12 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
                                 transition: 'all 0.15s',
                               }}
                               onMouseEnter={(e) => {
-                                e.target.style.backgroundColor = '#eff6ff';
-                                e.target.style.borderColor = '#93c5fd';
+                                e.target.style.backgroundColor = '#faf5ff';
+                                e.target.style.borderColor = '#e9d5ff';
                               }}
                               onMouseLeave={(e) => {
                                 e.target.style.backgroundColor = '#ffffff';
-                                e.target.style.borderColor = '#dbeafe';
+                                e.target.style.borderColor = '#f3e8ff';
                               }}
                               title="Editar passo"
                             >

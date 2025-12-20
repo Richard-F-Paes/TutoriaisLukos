@@ -1,41 +1,53 @@
-// TutorialSidebar - Índice e tutoriais relacionados
+// TutorialSidebar - Tutoriais relacionados
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTutorials } from '../../../hooks/useTutorials.js';
 
 const TutorialSidebar = ({ tutorial }) => {
+  // Normalizar campos
+  const categoryId = tutorial.categoryId || tutorial.CategoryId ||
+                     tutorial.category?.id || tutorial.Category?.Id;
+  const tutorialId = tutorial.id || tutorial.Id;
+  
   const { data: relatedTutorials } = useTutorials({
-    categoryId: tutorial.CategoryId,
+    categoryId: categoryId,
     limit: 5,
   });
 
+  // Filtrar apenas tutoriais publicados
+  const publishedRelated = relatedTutorials?.data?.filter(t => {
+    const isPublished = t.isPublished || t.IsPublished || false;
+    const relatedId = t.id || t.Id;
+    return isPublished && relatedId !== tutorialId;
+  }) || [];
+
   return (
     <aside className="tutorial-sidebar">
-      {tutorial.Tags && tutorial.Tags.length > 0 && (
-        <div className="tutorial-tags">
-          <h3>Tags</h3>
-          <div className="tags-list">
-            {tutorial.Tags.map((tag, index) => (
-              <span key={index} className="tag">{tag}</span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {relatedTutorials?.data && relatedTutorials.data.length > 0 && (
+      {publishedRelated.length > 0 && (
         <div className="tutorial-related">
-          <h3>Tutoriais Relacionados</h3>
+          <h3 className="tutorial-related-title">Tutoriais Relacionados</h3>
           <ul className="related-list">
-            {relatedTutorials.data
-              .filter(t => t.Id !== tutorial.Id)
-              .slice(0, 5)
-              .map(related => (
-                <li key={related.Id}>
-                  <Link to={`/tutoriais/${related.Slug}`}>
-                    {related.Title}
+            {publishedRelated.slice(0, 5).map(related => {
+              const relatedSlug = related.slug || related.Slug;
+              const relatedTitle = related.title || related.Title;
+              return (
+                <li key={related.id || related.Id}>
+                  <Link 
+                    to={`/tutoriais/${relatedSlug}`}
+                    onClick={(e) => {
+                      // Fechar modal ao clicar em um tutorial relacionado
+                      const modal = document.querySelector('.tutorial-modal-overlay');
+                      if (modal) {
+                        e.preventDefault();
+                        window.location.href = `/tutoriais/${relatedSlug}`;
+                      }
+                    }}
+                  >
+                    {relatedTitle}
                   </Link>
                 </li>
-              ))}
+              );
+            })}
           </ul>
         </div>
       )}

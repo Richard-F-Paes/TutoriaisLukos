@@ -4,13 +4,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: #ffffff;
   z-index: 9999;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  overflow-y: auto;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  overflow: hidden;
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -26,14 +26,15 @@
 .tutorial-modal-container {
   position: relative;
   background: white;
-  border-radius: 12px;
-  max-width: 1400px;
+  border-radius: 0;
   width: 100%;
-  max-height: 95vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   animation: slideUp 0.3s ease-out;
-  margin: auto;
+  margin: 0;
 }
 
 @keyframes slideUp {
@@ -47,35 +48,188 @@
   }
 }
 
-.tutorial-modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+.tutorial-modal-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
   z-index: 10000;
-  background: rgba(255, 255, 255, 0.9);
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.tutorial-modal-menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #374151;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.tutorial-modal-menu-button:hover {
+  background: #e5e7eb;
+  color: #1f2937;
+  transform: scale(1.05);
+}
+
+.tutorial-modal-menu-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+.tutorial-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.tutorial-modal-actions .tutorial-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.tutorial-modal-actions .btn-edit,
+.tutorial-modal-actions .btn-share {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.tutorial-modal-actions .btn-edit svg,
+.tutorial-modal-actions .btn-share svg {
+  width: 20px;
+  height: 20px;
+}
+
+.tutorial-modal-actions .btn-edit {
+  background: linear-gradient(135deg, #6c2396 0%, #5a008f 100%);
+  color: white;
+}
+
+.tutorial-modal-actions .btn-edit:hover {
+  background: linear-gradient(135deg, #5a008f 0%, #4a0073 100%);
+  transform: scale(1.1);
+  box-shadow: 0 4px 6px -1px rgba(108, 35, 150, 0.3);
+}
+
+.tutorial-modal-actions .btn-share {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.tutorial-modal-actions .btn-share:hover {
+  background: #e5e7eb;
+  transform: scale(1.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.tutorial-modal-close {
+  background: #ef4444;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3), 0 2px 4px -1px rgba(239, 68, 68, 0.2);
+  flex-shrink: 0;
+  margin-left: auto;
+  color: #ffffff;
 }
 
 .tutorial-modal-close:hover {
-  background: rgba(255, 255, 255, 1);
+  background: #dc2626;
   transform: scale(1.1);
+  box-shadow: 0 6px 8px -1px rgba(239, 68, 68, 0.4), 0 4px 6px -1px rgba(239, 68, 68, 0.3);
 }
 
 .tutorial-modal-close:active {
   transform: scale(0.95);
+  background: #b91c1c;
+}
+
+.tutorial-modal-close svg {
+  color: #ffffff;
+  stroke-width: 2.5;
+}
+
+.tutorial-modal-search {
+  padding: 1rem 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
 }
 
 .tutorial-modal-content {
   padding: 2rem;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #ffffff;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Scrollbar personalizado - cinza e sutil */
+.tutorial-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tutorial-modal-content::-webkit-scrollbar-track {
+  background: #f9fafb;
+  border-radius: 10px;
+  margin: 8px 0;
+}
+
+.tutorial-modal-content::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+  border: 2px solid #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.tutorial-modal-content::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+  border-color: #f3f4f6;
+}
+
+.tutorial-modal-content::-webkit-scrollbar-thumb:active {
+  background: #6b7280;
 }
 
 /* Ajustes para o TutorialViewer dentro do modal */
@@ -84,23 +238,100 @@
   max-width: 100%;
 }
 
+@media (max-width: 1024px) {
+  .tutorial-modal-content {
+    padding: 1.5rem;
+  }
+  
+  .tutorial-viewer-content-wrapper {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .tutorial-viewer-sidebar {
+    position: static;
+  }
+}
+
 @media (max-width: 768px) {
-  .tutorial-modal-overlay {
-    padding: 0;
+  .tutorial-modal-header {
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
   }
 
-  .tutorial-modal-container {
-    max-height: 100vh;
-    border-radius: 0;
+  .tutorial-modal-menu-button {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .tutorial-modal-menu-button svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .tutorial-modal-actions .btn-edit,
+  .tutorial-modal-actions .btn-share {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .tutorial-modal-actions .btn-edit svg,
+  .tutorial-modal-actions .btn-share svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .tutorial-modal-close {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .tutorial-modal-close svg {
+    width: 24px;
+    height: 24px;
   }
 
   .tutorial-modal-content {
     padding: 1rem;
   }
+  
+  .tutorial-viewer-content-wrapper {
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .tutorial-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .tutorial-title {
+    font-size: 1.75rem;
+  }
+  
+  .tutorial-steps {
+    margin-top: 2rem;
+  }
+  
+  .tutorial-step-item {
+    padding: 1rem;
+  }
+}
 
-  .tutorial-modal-close {
-    top: 0.5rem;
-    right: 0.5rem;
+@media (max-width: 480px) {
+  .tutorial-modal-header {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .tutorial-modal-content {
+    padding: 0.75rem;
+  }
+  
+  .tutorial-title {
+    font-size: 1.5rem;
+  }
+  
+  .tutorial-description {
+    font-size: 1rem;
   }
 }
 

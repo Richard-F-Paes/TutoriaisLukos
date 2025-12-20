@@ -1,5 +1,5 @@
 // TutorialManager - Gerenciamento de tutoriais no admin
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTutorials, useDeleteTutorial } from '../../../hooks/useTutorials.js';
 import { useCategoriesHierarchical } from '../../../hooks/useCategories.js';
 import { Plus, Edit, Trash2, Eye, Search, Filter } from 'lucide-react';
@@ -7,13 +7,21 @@ import toast from 'react-hot-toast';
 import { useTutorialModal } from '../../../contexts/TutorialModalContext';
 import TutorialEditorPanel from './TutorialEditorPanel.jsx';
 
-const TutorialManager = () => {
+const TutorialManager = ({ initialTutorialId = null }) => {
   const { openModal } = useTutorialModal();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [view, setView] = useState('list'); // 'list' | 'edit'
-  const [editingId, setEditingId] = useState(null);
+  const [view, setView] = useState(initialTutorialId ? 'edit' : 'list'); // 'list' | 'edit'
+  const [editingId, setEditingId] = useState(initialTutorialId);
+
+  // Abrir edição quando initialTutorialId for fornecido
+  useEffect(() => {
+    if (initialTutorialId) {
+      setEditingId(initialTutorialId);
+      setView('edit');
+    }
+  }, [initialTutorialId]);
 
   const { data: tutorialsData, isLoading } = useTutorials({
     search: searchTerm || undefined,

@@ -1,64 +1,129 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import TrainingHero from '../../components/custom/TrainingHero/TrainingHero';
-import TrainingBenefits from '../../components/custom/TrainingBenefits/TrainingBenefits';
-import TrainingFilters from '../../components/custom/TrainingFilters/TrainingFilters';
 import TrainingCard from '../../components/custom/TrainingCard/TrainingCard';
 import TrainingScheduler from '../../components/custom/TrainingScheduler/TrainingScheduler';
-import { useTutorials } from '../../../hooks/useTutorials.js';
-import { useCategories } from '../../../hooks/useCategories.js';
+import { useTrainings } from '../../../hooks/useTrainings.js';
+import { useTrainingConfigsByType } from '../../../hooks/useTrainingConfigs.js';
 
 const TreinamentosPage = () => {
-  // Buscar tutoriais e categorias da API
-  const { data: tutorialsData, isLoading: tutorialsLoading } = useTutorials();
-  const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
+  // Buscar treinamentos e configurações da API
+  const { data: trainingsData, isLoading: trainingsLoading } = useTrainings({ isPublished: true });
+  const { data: difficultyLevelsData } = useTrainingConfigsByType('difficulty_level');
+  const { data: modalitiesData } = useTrainingConfigsByType('modality');
+  const { data: trainingTypesData } = useTrainingConfigsByType('training_type');
   
-  const isLoading = tutorialsLoading || categoriesLoading;
+  const isLoading = trainingsLoading;
   
-  // Converter tutoriais da API para formato esperado pelos componentes
+  // Converter treinamentos da API para formato esperado pelos componentes
   const allTrainings = useMemo(() => {
-    if (!tutorialsData?.data) return [];
+    if (!trainingsData?.data) return [];
     
-    return tutorialsData.data.map(tutorial => ({
-      id: tutorial.Id,
-      title: tutorial.Title,
-      description: tutorial.Description || '',
-      category: tutorial.Category?.Name || tutorial.CategoryName || 'Geral',
-      level: tutorial.Difficulty === 'iniciante' ? 'Iniciante' : 
-             tutorial.Difficulty === 'intermediario' ? 'Intermediário' : 
-             tutorial.Difficulty === 'avancado' ? 'Avançado' : 'Iniciante',
-      format: 'Online', // Padrão, pode ser adicionado ao modelo depois
-      modality: tutorial.VideoUrl ? 'Gravado' : 'Ao Vivo',
-      duration: tutorial.EstimatedDuration ? `${tutorial.EstimatedDuration} min` : '1h',
-      modules: tutorial.steps?.length || 1,
-      image: tutorial.ThumbnailUrl || tutorial.Category?.ImageUrl || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
-      thumbnail: tutorial.ThumbnailUrl || tutorial.Category?.ImageUrl || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=150&h=150&fit=crop',
-      rating: 4.8, // Pode ser adicionado ao modelo depois
-      reviews: 0,
-      enrolled: 0,
-      maxStudents: 100,
-      availableDates: [],
-      benefits: ['Certificado de conclusão', 'Material de apoio', 'Suporte durante o curso'],
-      icon: 'ShoppingCart'
-    }));
-  }, [tutorialsData]);
-  
-  // Calcular estatísticas
-  const stats = useMemo(() => {
-    const totalTrainings = allTrainings.length;
-    const totalEnrolled = allTrainings.reduce((sum, t) => sum + (t.enrolled || 0), 0);
-    const totalReviews = allTrainings.reduce((sum, t) => sum + (t.reviews || 0), 0);
-    const averageRating = totalReviews > 0 
-      ? (allTrainings.reduce((sum, t) => sum + ((t.rating || 4.8) * (t.reviews || 0)), 0) / totalReviews).toFixed(1)
-      : '4.8';
+    // Criar mapas para lookup rápido das configurações
+    const difficultyMap = new Map();
+    const difficultyConfigs = difficultyLevelsData || [];
+    if (Array.isArray(difficultyConfigs)) {
+      difficultyConfigs.forEach(config => {
+        difficultyMap.set(config.value, config.label);
+      });
+    }
     
-    return {
-      totalTrainings,
-      totalEnrolled,
-      totalReviews,
-      averageRating: parseFloat(averageRating)
-    };
-  }, [allTrainings]);
+    const trainingTypeMap = new Map();
+    let trainingTypeConfigs = trainingTypesData || [];
+    
+    // Garantir que é array
+    if (!Array.isArray(trainingTypeConfigs)) {
+      trainingTypeConfigs = [];
+    }
+    
+    if (Array.isArray(trainingTypeConfigs)) {
+      trainingTypeConfigs.forEach(config => {
+        if (config.value && config.label) {
+          trainingTypeMap.set(config.value, config.label);
+        }
+      });
+    }
+    
+    // Criar mapa de modalidades
+    const modalityMap = new Map();
+    let modalityConfigs = modalitiesData || [];
+    // Garantir que é array
+    if (!Array.isArray(modalityConfigs)) {
+      modalityConfigs = [];
+    }
+    if (Array.isArray(modalityConfigs)) {
+      modalityConfigs.forEach(config => {
+        if (config.value && config.label) {
+          modalityMap.set(config.value, config.label);
+        }
+      });
+    }
+    
+    return trainingsData.data.map(training => {
+      // Mapear difficulty para label usando configurações ou fallback
+      const difficultyLabel = difficultyMap.get(training.difficulty) || 
+                            (training.difficulty === 'iniciante' ? 'Iniciante' : 
+                             training.difficulty === 'intermediario' ? 'Intermediário' : 
+                             training.difficulty === 'avancado' ? 'Avançado' : 'Iniciante');
+      
+      // Determinar format baseado em trainingType usando configurações
+      const trainingTypeValue = training.trainingType;
+      const trainingTypeLabel = trainingTypeMap.get(trainingTypeValue);
+      // Sempre usar label se disponível, caso contrário formatar o value se for técnico
+      let format = 'Online'; // fallback padrão
+      if (trainingTypeValue) {
+        if (trainingTypeLabel) {
+          format = trainingTypeLabel;
+        } else if (trainingTypeValue.includes('_')) {
+          // Formatar value técnico para label legível
+          format = trainingTypeValue
+            .split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        } else {
+          format = trainingTypeValue; // Usar value como está se não for técnico
+        }
+      }
+      
+      // Determinar modality usando configurações do banco
+      // Se training.modality existe, usar o mapa para converter value->label
+      // Caso contrário, usar fallback baseado em vídeos
+      let modality = 'Online'; // fallback padrão
+      if (training.modality) {
+        modality = modalityMap.get(training.modality) || training.modality;
+      } else {
+        // Fallback: se tem vídeos, é gravado, senão pode ser ao vivo
+        const hasVideos = training.videos && training.videos.length > 0;
+        modality = hasVideos ? 'Gravado' : 'Ao Vivo';
+      }
+      
+      return {
+        id: training.id,
+        title: training.title,
+        description: training.description || '',
+        category: training.category?.name || 'Geral',
+        categoryId: training.categoryId,
+        level: difficultyLabel,
+        difficulty: training.difficulty,
+        format: format,
+        trainingType: training.trainingType,
+        trainingTypeLabel: trainingTypeLabel || format, // Garantir que sempre temos um label
+        modality: modality,
+        duration: training.estimatedDuration ? `${training.estimatedDuration} min` : '1h',
+        modules: training.videos?.length || 1,
+        image: training.thumbnailUrl || training.category?.imageUrl || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+        thumbnail: training.thumbnailUrl || training.category?.imageUrl || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=150&h=150&fit=crop',
+        rating: 4.8,
+        reviews: 0,
+        enrolled: 0,
+        maxStudents: 100,
+        availableDates: [],
+        benefits: ['Certificado de conclusão', 'Material de apoio', 'Suporte durante o curso'],
+        icon: 'ShoppingCart',
+        slug: training.slug
+      };
+    });
+  }, [trainingsData, difficultyLevelsData, trainingTypesData, modalitiesData]);
   
   // Scroll suave para âncoras
   useEffect(() => {
@@ -90,31 +155,151 @@ const TreinamentosPage = () => {
   
   // Estados para filtros e busca
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLevel, setSelectedLevel] = useState('all');
-  const [selectedFormat, setSelectedFormat] = useState('all');
+  const [selectedTrainingType, setSelectedTrainingType] = useState('all');
   const [selectedModality, setSelectedModality] = useState('all');
 
-  // Obter opções de filtros
-  const categories = useMemo(() => {
-    if (categoriesData?.data) {
-      return categoriesData.data.map(cat => cat.Name || cat.name);
-    }
-    // Extrair categorias únicas dos tutoriais
-    return [...new Set(allTrainings.map(t => t.category))];
-  }, [categoriesData, allTrainings]);
-  
+  // Obter opções de filtros do banco de dados
   const levels = useMemo(() => {
-    return [...new Set(allTrainings.map(t => t.level))];
-  }, [allTrainings]);
+    // React Query retorna { data, isLoading, ... }, então acessamos .data
+    // O service já retorna o array diretamente, então difficultyLevelsData já é o array
+    const configs = difficultyLevelsData || [];
+    if (Array.isArray(configs) && configs.length > 0) {
+      return configs
+        .filter(config => config.isActive !== false)
+        .map(config => config.label)
+        .sort((a, b) => {
+          const order = ['Iniciante', 'Intermediário', 'Avançado'];
+          const indexA = order.indexOf(a);
+          const indexB = order.indexOf(b);
+          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+          if (indexA !== -1) return -1;
+          if (indexB !== -1) return 1;
+          return a.localeCompare(b);
+        });
+    }
+    // Fallback: extrair níveis únicos dos treinamentos
+    return [...new Set(allTrainings.map(t => t.level).filter(Boolean))];
+  }, [difficultyLevelsData, allTrainings]);
   
-  const formats = useMemo(() => {
-    return [...new Set(allTrainings.map(t => t.format))];
-  }, [allTrainings]);
+  const trainingTypes = useMemo(() => {
+    // React Query retorna { data, isLoading, ... }
+    // O service já retorna o array diretamente, então trainingTypesData já é o array
+    let configs = trainingTypesData || [];
+    
+    // Garantir que é array
+    if (!Array.isArray(configs)) {
+      configs = [];
+    }
+    
+    if (configs.length > 0) {
+      // Filtrar e mapear apenas labels, garantindo que temos a propriedade label
+      // Se label não existir ou for igual ao value (que pode ser um value técnico), usar o value como fallback
+      const labels = configs
+        .filter(config => {
+          // Filtrar apenas ativos
+          if (config.isActive === false) return false;
+          // Garantir que temos pelo menos label ou value
+          return config.label || config.value;
+        })
+        .map(config => {
+          // Priorizar label, mas se não existir ou for igual ao value (e value parece ser técnico), formatar o value
+          if (config.label && config.label !== config.value) {
+            return config.label;
+          }
+          // Se label não existe ou é igual ao value, e value parece ser técnico (tem underscore), formatar
+          if (config.value) {
+            // Se value parece ser técnico (tem underscore), formatar para label legível
+            if (config.value.includes('_')) {
+              return config.value
+                .split('_')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+            }
+            // Caso contrário, usar o value como está (pode já ser um label)
+            return config.value;
+          }
+          return null;
+        })
+        .filter(Boolean) // Remover nulls
+        .sort((a, b) => a.localeCompare(b));
+      
+      if (labels.length > 0) {
+        return labels;
+      }
+    }
+    
+    // Fallback: extrair tipos únicos dos treinamentos (já são labels porque format é convertido)
+    const uniqueFormats = [...new Set(allTrainings.map(t => t.format).filter(Boolean))];
+    return uniqueFormats.sort((a, b) => a.localeCompare(b));
+  }, [trainingTypesData, allTrainings]);
+
+  // Mapeamento de value para label para tipos de treinamento
+  const trainingTypeValueToLabel = useMemo(() => {
+    // O service já retorna o array diretamente, então trainingTypesData já é o array
+    let configs = trainingTypesData || [];
+    
+    // Garantir que é array
+    if (!Array.isArray(configs)) {
+      configs = [];
+    }
+    
+    const map = new Map();
+    configs.forEach(config => {
+      if (config.value) {
+        // Determinar o label a ser usado
+        let labelToUse = config.label;
+        
+        // Se label não existe ou é igual ao value, e value parece ser técnico, formatar
+        if (!labelToUse || labelToUse === config.value) {
+          if (config.value.includes('_')) {
+            // Formatar value técnico para label legível
+            labelToUse = config.value
+              .split('_')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+          } else {
+            // Usar o value como label
+            labelToUse = config.value;
+          }
+        }
+        
+        // Mapear value -> label
+        map.set(config.value, labelToUse);
+        // Também mapear label -> label (para casos onde o value já é um label)
+        map.set(labelToUse, labelToUse);
+      }
+    });
+    return map;
+  }, [trainingTypesData]);
   
   const modalities = useMemo(() => {
-    return [...new Set(allTrainings.map(t => t.modality))];
-  }, [allTrainings]);
+    // React Query retorna { data, isLoading, ... }, então acessamos .data
+    // O service já retorna o array diretamente, então modalitiesData já é o array
+    let configs = modalitiesData || [];
+    
+    // Garantir que é array
+    if (!Array.isArray(configs)) {
+      configs = [];
+    }
+    
+    if (configs.length > 0) {
+      const labels = configs
+        .filter(config => config.isActive !== false && config.label)
+        .map(config => config.label)
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b));
+      
+      if (labels.length > 0) {
+        return labels;
+      }
+    }
+    
+    // Fallback: extrair modalidades únicas dos treinamentos
+    const uniqueModalities = [...new Set(allTrainings.map(t => t.modality).filter(Boolean))];
+    
+    return uniqueModalities.sort((a, b) => a.localeCompare(b));
+  }, [modalitiesData, allTrainings]);
 
   // Filtrar treinamentos
   const filteredTrainings = useMemo(() => {
@@ -123,35 +308,33 @@ const TreinamentosPage = () => {
       const matchesSearch = 
         searchTerm === '' ||
         training.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        training.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        training.category.toLowerCase().includes(searchTerm.toLowerCase());
+        training.description.toLowerCase().includes(searchTerm.toLowerCase());
 
-      // Filtro por categoria
-      const matchesCategory = 
-        selectedCategory === 'all' || training.category === selectedCategory;
-
-      // Filtro por nível
+      // Filtro por nível (comparar por label formatado ou difficulty)
       const matchesLevel = 
-        selectedLevel === 'all' || training.level === selectedLevel;
+        selectedLevel === 'all' || 
+        training.level === selectedLevel ||
+        training.difficulty === selectedLevel.toLowerCase();
 
-      // Filtro por formato
-      const matchesFormat = 
-        selectedFormat === 'all' || training.format === selectedFormat;
+      // Filtro por tipo de treinamento (comparar por format que é o label)
+      // selectedTrainingType sempre é um label quando selecionado pelo usuário
+      const matchesTrainingType = 
+        selectedTrainingType === 'all' || 
+        training.format === selectedTrainingType;
 
-      // Filtro por modalidade
+      // Filtro por modalidade (comparar por label)
       const matchesModality = 
         selectedModality === 'all' || training.modality === selectedModality;
 
-      return matchesSearch && matchesCategory && matchesLevel && matchesFormat && matchesModality;
+      return matchesSearch && matchesLevel && matchesTrainingType && matchesModality;
     });
-  }, [searchTerm, selectedCategory, selectedLevel, selectedFormat, selectedModality, allTrainings]);
+  }, [searchTerm, selectedLevel, selectedTrainingType, selectedModality, allTrainings]);
 
   // Reset de filtros
   const handleResetFilters = () => {
     setSearchTerm('');
-    setSelectedCategory('all');
     setSelectedLevel('all');
-    setSelectedFormat('all');
+    setSelectedTrainingType('all');
     setSelectedModality('all');
   };
 
@@ -168,118 +351,24 @@ const TreinamentosPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <TrainingHero stats={stats} />
-
-      {/* Seção de Benefícios */}
-      <TrainingBenefits />
-
-      {/* Seção de Treinamentos */}
-      <section id="treinamentos" className="py-20 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Cabeçalho da Seção */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Treinamentos{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Disponíveis
-              </span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Escolha o treinamento ideal para suas necessidades e desenvolva suas habilidades
-              com o sistema Lukos.
-            </p>
-          </motion.div>
-
-          {/* Filtros e Busca */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-12"
-          >
-            <TrainingFilters
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
-              selectedLevel={selectedLevel}
-              onLevelChange={setSelectedLevel}
-              selectedFormat={selectedFormat}
-              onFormatChange={setSelectedFormat}
-              selectedModality={selectedModality}
-              onModalityChange={setSelectedModality}
-              categories={categories}
-              levels={levels}
-              formats={formats}
-              modalities={modalities}
-              resultCount={filteredTrainings.length}
-              onResetFilters={handleResetFilters}
-            />
-          </motion.div>
-
-          {/* Grid de Treinamentos */}
-          {filteredTrainings.length > 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              {filteredTrainings.map((training, index) => (
-                <TrainingCard
-                  key={training.id}
-                  training={training}
-                  index={index}
-                />
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-16"
-            >
-              <div className="max-w-md mx-auto">
-                <div className="bg-gray-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-                  <svg
-                    className="w-12 h-12 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Nenhum treinamento encontrado
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Tente ajustar os filtros ou fazer uma nova busca.
-                </p>
-                <button
-                  onClick={handleResetFilters}
-                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
-                >
-                  Limpar Filtros
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </div>
-      </section>
+      {/* Hero Section com Filtros e Resultados Unificados */}
+      <TrainingHero
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        selectedLevel={selectedLevel}
+        onLevelChange={setSelectedLevel}
+        selectedTrainingType={selectedTrainingType}
+        onTrainingTypeChange={setSelectedTrainingType}
+        selectedModality={selectedModality}
+        onModalityChange={setSelectedModality}
+        levels={levels}
+        trainingTypes={trainingTypes}
+        trainingTypeValueToLabel={trainingTypeValueToLabel}
+        modalities={modalities}
+        resultCount={filteredTrainings.length}
+        onResetFilters={handleResetFilters}
+        filteredTrainings={filteredTrainings}
+      />
 
       {/* Formulário de Agendamento */}
       <TrainingScheduler />

@@ -4,6 +4,7 @@ import slugify from 'slugify';
 import { randomUUID } from 'crypto';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { requirePermission } from '../middleware/permissions.middleware.js';
+import { createAuditLog, getRequestInfo } from '../utils/auditHelper.js';
 
 const router = express.Router();
 
@@ -435,6 +436,18 @@ router.post('/', authenticate, requirePermission('create_tutorial'), async (req,
       },
     });
 
+    // Criar log de auditoria
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId,
+      action: 'CREATE',
+      entityType: 'Tutorial',
+      entityId: tutorial.id,
+      newValues: { title: tutorial.title, slug: tutorial.slug },
+      ipAddress,
+      userAgent,
+    });
+
     res.status(201).json({ data: tutorial });
   } catch (error) {
     console.error('Erro ao criar tutorial:', error);
@@ -527,6 +540,12 @@ router.put('/:id', authenticate, requirePermission('edit_tutorial'), async (req,
       }
     }
 
+    // Buscar valores antigos antes de atualizar
+    const oldTutorial = await prisma.tutorial.findUnique({
+      where: { id: parseInt(req.params.id) },
+      select: { title: true, isPublished: true, categoryId: true },
+    });
+
     const tutorial = await prisma.tutorial.update({
       where: { id: parseInt(req.params.id) },
       data: updateData,
@@ -534,6 +553,19 @@ router.put('/:id', authenticate, requirePermission('edit_tutorial'), async (req,
         category: true,
         tutorialSteps: true,
       },
+    });
+
+    // Criar log de auditoria
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId,
+      action: 'UPDATE',
+      entityType: 'Tutorial',
+      entityId: tutorial.id,
+      oldValues: oldTutorial,
+      newValues: { title: tutorial.title, isPublished: tutorial.isPublished, categoryId: tutorial.categoryId },
+      ipAddress,
+      userAgent,
     });
 
     res.json({ data: tutorial });
@@ -559,8 +591,29 @@ router.put('/:id', authenticate, requirePermission('edit_tutorial'), async (req,
 router.delete('/:id', authenticate, requirePermission('delete_tutorial'), async (req, res) => {
   try {
     const prisma = getPrisma();
+    const userId = req.user?.id;
+    const tutorialId = parseInt(req.params.id);
+
+    // Buscar tutorial antes de deletar para o log
+    const tutorial = await prisma.tutorial.findUnique({
+      where: { id: tutorialId },
+      select: { id: true, title: true },
+    });
+
     await prisma.tutorial.delete({
-      where: { id: parseInt(req.params.id) },
+      where: { id: tutorialId },
+    });
+
+    // Criar log de auditoria
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId,
+      action: 'DELETE',
+      entityType: 'Tutorial',
+      entityId: tutorialId,
+      oldValues: tutorial,
+      ipAddress,
+      userAgent,
     });
 
     res.json({ message: 'Tutorial deletado com sucesso' });

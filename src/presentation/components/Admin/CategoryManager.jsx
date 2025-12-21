@@ -1,7 +1,10 @@
 // CategoryManager - Gerenciamento de categorias
 import React, { useState } from 'react';
 import { useCategoriesHierarchical, useCreateCategory, useUpdateCategory, useDeleteCategory } from '../../../hooks/useCategories.js';
-import { Plus, Edit, Trash2, X, ChevronRight, ChevronDown } from 'lucide-react';
+import { Plus, Edit, Trash2, X, ChevronRight, ChevronDown, GripVertical } from 'lucide-react';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import toast from 'react-hot-toast';
 
 const CategoryManager = () => {
@@ -25,6 +28,14 @@ const CategoryManager = () => {
   });
 
   const categories = categoriesData || [];
+
+  // Sensores para drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Flatten categories for parent selection (exclude current category being edited)
   const flattenCategories = (cats, excludeId = null, level = 0) => {
@@ -165,40 +176,135 @@ const CategoryManager = () => {
     setCategoryToDelete(null);
   };
 
-  const renderCategory = (category, level = 0) => {
+  // Handler para quando o drag termina - reordenar categorias do mesmo nível
+  const handleDragEnd = async (event, parentId = null) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    // Obter categorias do mesmo nível (mesmo parentId)
+    const sameLevelCategories = parentId === null
+      ? categories.filter(cat => !cat.parentId)
+      : categories.find(cat => cat.id === parentId)?.children || [];
+
+    const sortedSameLevel = [...sameLevelCategories].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+    const oldIndex = sortedSameLevel.findIndex(cat => cat.id.toString() === active.id.toString());
+    const newIndex = sortedSameLevel.findIndex(cat => cat.id.toString() === over.id.toString());
+
+    if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
+
+    // Reordenar localmente
+    const reorderedCategories = arrayMove(sortedSameLevel, oldIndex, newIndex);
+
+    // Atualizar sortOrder de todos os itens afetados
+    try {
+      await Promise.all(
+        reorderedCategories.map((category, index) =>
+          updateMutation.mutateAsync({
+            id: category.id,
+            data: {
+              sortOrder: index,
+              // Manter outros campos existentes
+              name: category.name,
+              description: category.description || null,
+              icon: category.icon || null,
+              color: category.color || null,
+              imageUrl: category.imageUrl || null,
+              parentId: category.parentId || null,
+              isActive: category.isActive !== undefined ? category.isActive : true,
+            },
+          })
+        )
+      );
+
+      toast.success('Ordem atualizada com sucesso!');
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || 'Erro ao atualizar ordem';
+      toast.error(errorMessage);
+    }
+  };
+
+  // Componente para categoria arrastável
+  const SortableCategoryRow = ({ category, level, parentId }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id: category.id.toString() });
+
     const hasChildren = category.children && category.children.length > 0;
     const isExpanded = expandedCategories.has(category.id);
     const indentStyle = { marginLeft: `${level * 24}px` };
 
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.5 : 1,
+    };
+
     return (
       <div 
-        key={category.id} 
+        ref={setNodeRef} 
+        style={style}
         className="category-item" 
         data-category-id={category.id}
-        style={{
-          ...indentStyle,
-          marginBottom: '0.5rem',
-        }}
       >
         <div className="category-row" style={{
+          ...indentStyle,
+          marginBottom: '0.5rem',
           display: 'flex',
           alignItems: 'center',
           gap: '0.75rem',
           padding: '0.75rem 1rem',
-          backgroundColor: '#ffffff',
+          backgroundColor: isDragging ? '#f3f4f6' : '#ffffff',
           border: '1px solid #e5e7eb',
           borderRadius: '8px',
           transition: 'all 0.15s',
+          cursor: isDragging ? 'grabbing' : 'default',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = '#f9fafb';
-          e.currentTarget.style.borderColor = '#d1d5db';
+          if (!isDragging) {
+            e.currentTarget.style.backgroundColor = '#f9fafb';
+            e.currentTarget.style.borderColor = '#d1d5db';
+          }
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = '#ffffff';
-          e.currentTarget.style.borderColor = '#e5e7eb';
+          if (!isDragging) {
+            e.currentTarget.style.backgroundColor = '#ffffff';
+            e.currentTarget.style.borderColor = '#e5e7eb';
+          }
         }}
         >
+          {/* Drag Handle */}
+          <button
+            {...attributes}
+            {...listeners}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'grab',
+              padding: '0.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#9ca3af',
+              transition: 'color 0.15s',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.color = '#6b7280';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.color = '#9ca3af';
+            }}
+            title="Arrastar para reordenar"
+          >
+            <GripVertical size={18} />
+          </button>
+
           {hasChildren && (
             <button
               className="expand-btn"
@@ -253,7 +359,6 @@ const CategoryManager = () => {
             alignItems: 'center',
             gap: '0.5rem',
           }}>
-            {/* Só mostrar botão de adicionar subcategoria se a categoria não for uma subcategoria */}
             {!(category.parentId || category.parent) && (
               <button
                 className="btn-icon"
@@ -346,18 +451,61 @@ const CategoryManager = () => {
             paddingLeft: '1rem',
             borderLeft: '2px solid #e5e7eb',
           }}>
-            {category.children.map(child => renderCategory(child, level + 1))}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={(e) => handleDragEnd(e, category.id)}
+            >
+              <SortableContext 
+                items={category.children.map(c => c.id.toString())} 
+                strategy={verticalListSortingStrategy}
+              >
+                {category.children
+                  .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+                  .map(child => (
+                    <SortableCategoryRow 
+                      key={child.id} 
+                      category={child} 
+                      level={level + 1} 
+                      parentId={category.id}
+                    />
+                  ))}
+              </SortableContext>
+            </DndContext>
           </div>
         )}
       </div>
     );
   };
 
+
   return (
     <div className="category-manager">
       <div className="manager-header">
         <h2>Gerenciar Categorias</h2>
-        <button className="btn-primary" onClick={handleNew}>
+        <button 
+          onClick={handleNew}
+          style={{
+            padding: '0.5rem 1rem',
+            background: 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: 500,
+            fontSize: '0.875rem',
+            transition: 'all 0.15s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.375rem',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = 'linear-gradient(135deg, #5a008f 0%, #4a0073 100%)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)';
+          }}
+        >
           <Plus size={18} />
           Nova Categoria
         </button>
@@ -526,7 +674,7 @@ const CategoryManager = () => {
                   className="btn-primary"
                   style={{
                     padding: '0.75rem 1.5rem',
-                    background: '#3b82f6',
+                    background: 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '8px',
@@ -537,11 +685,11 @@ const CategoryManager = () => {
                     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.background = '#2563eb';
+                    e.target.style.background = 'linear-gradient(135deg, #5a008f 0%, #4a0073 100%)';
                     e.target.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.background = '#3b82f6';
+                    e.target.style.background = 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)';
                     e.target.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
                   }}
                 >
@@ -815,7 +963,27 @@ const CategoryManager = () => {
           {categories.length === 0 ? (
             <p>Nenhuma categoria encontrada.</p>
           ) : (
-            categories.map(category => renderCategory(category))
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={(e) => handleDragEnd(e, null)}
+            >
+              <SortableContext 
+                items={categories.map(c => c.id.toString())} 
+                strategy={verticalListSortingStrategy}
+              >
+                {categories
+                  .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+                  .map(category => (
+                    <SortableCategoryRow 
+                      key={category.id} 
+                      category={category} 
+                      level={0} 
+                      parentId={null}
+                    />
+                  ))}
+              </SortableContext>
+            </DndContext>
           )}
         </div>
       )}

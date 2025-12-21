@@ -1,0 +1,155 @@
+.training-video-uploader {
+  margin-top: 1.5rem;
+}
+
+.training-video-uploader-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.training-video-uploader-header label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.video-count {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.training-video-upload-zone {
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  background-color: #f9fafb;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.training-video-upload-zone.dragging {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.training-video-upload-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.training-video-upload-button:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.training-video-upload-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.training-video-upload-hint {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.training-video-file-input {
+  display: none;
+}
+
+.training-videos-list {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.training-video-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.training-video-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.training-video-item-drag {
+  color: #9ca3af;
+  cursor: grab;
+}
+
+.training-video-item-drag:active {
+  cursor: grabbing;
+}
+
+.training-video-item-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #eff6ff;
+  border-radius: 6px;
+  color: #3b82f6;
+}
+
+.training-video-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.training-video-item-name {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.training-video-item-path {
+  font-size: 0.75rem;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.training-video-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { auditService } from '../../../services/auditService.js';
 import { userService } from '../../../services/userService.js';
 import { Search, X } from 'lucide-react';
+import { formatDate } from '../../../shared/utils/index.js';
 
 const AuditLogs = () => {
   // Função para formatar data para input (YYYY-MM-DD)
@@ -48,6 +49,17 @@ const AuditLogs = () => {
   });
 
   const [hasSearched, setHasSearched] = useState(true); // Iniciar como true para fazer busca automática com os últimos 7 dias
+
+  // Função para formatar data e hora para exibição
+  const formatDateTime = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '-';
+    const dateStr = formatDate(date);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${dateStr} ${hours}:${minutes}`;
+  };
 
   // Função para formatar data para exibição (DD/MM/AAAA)
   const formatDateToDisplay = (dateString) => {
@@ -343,9 +355,15 @@ const AuditLogs = () => {
             >
               <option value="">Todos</option>
               <option value="Tutorial">Tutorial</option>
+              <option value="Training">Treinamento</option>
               <option value="Category">Categoria</option>
               <option value="User">Usuário</option>
               <option value="Media">Mídia</option>
+              <option value="HeaderMenu">Menu do Cabeçalho</option>
+              <option value="HeaderMenuItem">Item do Menu</option>
+              <option value="TrainingConfiguration">Configuração de Treinamento</option>
+              <option value="TrainingAvailability">Disponibilidade de Treinamento</option>
+              <option value="TrainingAppointment">Agendamento de Treinamento</option>
             </select>
           </div>
 
@@ -420,11 +438,12 @@ const AuditLogs = () => {
             }}>
               <div style={{ position: 'relative', flex: '1 1 0', minWidth: '120px' }}>
                 <input
-                  type="text"
-                  value={filters.startDate ? formatDateToDisplay(filters.startDate) : ''}
-                  onChange={(e) => handleDateChange('startDate', e.target.value)}
-                  placeholder="dd/mm/aaaa"
-                  maxLength={10}
+                  type="date"
+                  value={filters.startDate || ''}
+                  onChange={(e) => {
+                    const dateValue = e.target.value;
+                    setFilters(prev => ({ ...prev, startDate: dateValue }));
+                  }}
                   style={{
                     width: '100%',
                     padding: '0.5rem 2.5rem 0.5rem 0.75rem',
@@ -437,7 +456,7 @@ const AuditLogs = () => {
                     transition: 'all 0.15s',
                     boxSizing: 'border-box',
                     height: '36px',
-                    cursor: 'text',
+                    cursor: 'pointer',
                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E")`,
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'right 0.75rem center',
@@ -453,7 +472,6 @@ const AuditLogs = () => {
                     e.target.style.borderColor = '#d1d5db';
                     e.target.style.boxShadow = 'none';
                     e.target.style.backgroundColor = '#ffffff';
-                    handleDateBlur('startDate', e.target.value);
                   }}
                   onMouseEnter={(e) => {
                     if (document.activeElement !== e.target) {
@@ -479,11 +497,12 @@ const AuditLogs = () => {
               </span>
               <div style={{ position: 'relative', flex: '1 1 0', minWidth: '120px' }}>
                 <input
-                  type="text"
-                  value={filters.endDate ? formatDateToDisplay(filters.endDate) : ''}
-                  onChange={(e) => handleDateChange('endDate', e.target.value)}
-                  placeholder="dd/mm/aaaa"
-                  maxLength={10}
+                  type="date"
+                  value={filters.endDate || ''}
+                  onChange={(e) => {
+                    const dateValue = e.target.value;
+                    setFilters(prev => ({ ...prev, endDate: dateValue }));
+                  }}
                   style={{
                     width: '100%',
                     padding: '0.5rem 2.5rem 0.5rem 0.75rem',
@@ -496,7 +515,7 @@ const AuditLogs = () => {
                     transition: 'all 0.15s',
                     boxSizing: 'border-box',
                     height: '36px',
-                    cursor: 'text',
+                    cursor: 'pointer',
                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E")`,
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'right 0.75rem center',
@@ -512,7 +531,6 @@ const AuditLogs = () => {
                     e.target.style.borderColor = '#d1d5db';
                     e.target.style.boxShadow = 'none';
                     e.target.style.backgroundColor = '#ffffff';
-                    handleDateBlur('endDate', e.target.value);
                   }}
                   onMouseEnter={(e) => {
                     if (document.activeElement !== e.target) {
@@ -626,7 +644,7 @@ const AuditLogs = () => {
             <tbody>
               {logs.map(log => (
                 <tr key={log.id || log.Id}>
-                  <td>{new Date(log.createdAt || log.CreatedAt).toLocaleString('pt-BR')}</td>
+                  <td>{formatDateTime(log.createdAt || log.CreatedAt)}</td>
                   <td>{log.user?.name || log.user?.username || log.UserName || log.Username || '-'}</td>
                   <td>
                     <span className={`action-badge ${(log.action || log.Action || '').toLowerCase()}`}>

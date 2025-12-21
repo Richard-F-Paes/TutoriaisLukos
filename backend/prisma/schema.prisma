@@ -23,6 +23,8 @@ model User {
   // Relações
   tutorialsCreated Tutorial[] @relation("TutorialCreatedBy")
   tutorialsUpdated Tutorial[] @relation("TutorialUpdatedBy")
+  trainingsCreated Training[] @relation("TrainingCreatedBy")
+  trainingsUpdated Training[] @relation("TrainingUpdatedBy")
   mediaUploaded    Media[]
   auditLogs        AuditLog[]
 
@@ -45,6 +47,7 @@ model Category {
 
   // Relações
   tutorials Tutorial[]
+  trainings Training[]
   parent    Category?    @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children  Category[]   @relation("CategoryHierarchy")
 
@@ -181,4 +184,116 @@ model TutorialView {
   @@index([tutorialId])
   @@index([createdAt])
   @@map("TutorialViews")
+}
+
+model Training {
+  id                Int       @id @default(autoincrement())
+  title             String    @db.NVarChar(300)
+  slug              String    @db.NVarChar(300) @unique
+  description       String?   @db.NVarChar(1000)
+  categoryId        Int?      @map("CategoryId")
+  trainingType      String?   @map("TrainingType") @db.NVarChar(100) // Tipo de treinamento (ex: "Conciliação Bancária", "Sistema ERP")
+  thumbnailUrl      String?   @map("ThumbnailUrl") @db.NVarChar(500)
+  difficulty        String?   @db.NVarChar(20) // 'iniciante', 'intermediario', 'avancado'
+  estimatedDuration Int?      @map("EstimatedDuration") // minutos
+  isPublished       Boolean   @default(false) @map("IsPublished")
+  isFeatured        Boolean   @default(false) @map("IsFeatured")
+  tags              String?   @db.NVarChar(500) // JSON array
+  metaTitle         String?   @map("MetaTitle") @db.NVarChar(200)
+  metaDescription   String?   @map("MetaDescription") @db.NVarChar(300)
+  shareHash         String?   @map("ShareHash") @db.NVarChar(100) @unique
+  createdBy         Int       @map("CreatedBy")
+  updatedBy         Int       @map("UpdatedBy")
+  createdAt         DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt         DateTime  @updatedAt @map("UpdatedAt") @db.DateTime2
+  publishedAt       DateTime? @map("PublishedAt") @db.DateTime2
+
+  // Relações
+  category     Category?      @relation(fields: [categoryId], references: [id])
+  creator      User           @relation("TrainingCreatedBy", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater      User           @relation("TrainingUpdatedBy", fields: [updatedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  videos       TrainingVideo[]
+  appointments TrainingAppointment[]
+
+  @@map("Trainings")
+}
+
+model TrainingVideo {
+  id          Int      @id @default(autoincrement())
+  trainingId  Int      @map("TrainingId")
+  fileName    String   @map("FileName") @db.NVarChar(255)
+  originalName String  @map("OriginalName") @db.NVarChar(255)
+  filePath    String   @map("FilePath") @db.NVarChar(500) // Caminho relativo: /uploads/trainings/filename.mp4
+  fileSize    BigInt   @map("FileSize")
+  duration    Int?     // Duração em segundos (opcional)
+  sortOrder   Int      @default(0) @map("SortOrder")
+  createdAt   DateTime @default(now()) @map("CreatedAt") @db.DateTime2
+
+  // Relações
+  training Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+
+  @@index([trainingId])
+  @@index([sortOrder])
+  @@map("TrainingVideos")
+}
+
+model TrainingAppointment {
+  id            Int       @id @default(autoincrement())
+  trainingId    Int?      @map("TrainingId")
+  name          String    @db.NVarChar(200)
+  email         String    @db.NVarChar(255)
+  phone         String    @db.NVarChar(50)
+  company       String?   @db.NVarChar(200)
+  trainingType  String?   @map("TrainingType") @db.NVarChar(100)
+  modality      String?   @map("Modality") @db.NVarChar(100)
+  scheduledDate DateTime? @map("ScheduledDate") @db.Date
+  scheduledTime String?   @map("ScheduledTime") @db.NVarChar(20) // HH:mm format
+  status        String    @default("pending") @db.NVarChar(20) // 'pending', 'confirmed', 'cancelled', 'completed'
+  message       String?                   @db.NVarChar(Max)
+  notes         String?                   @db.NVarChar(Max) // Notas administrativas
+  createdAt     DateTime                  @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt     DateTime                  @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  // Relações
+  training Training? @relation(fields: [trainingId], references: [id], onDelete: SetNull)
+
+  @@index([trainingId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@index([createdAt])
+  @@map("TrainingAppointments")
+}
+
+model TrainingConfiguration {
+  id        Int       @id @default(autoincrement())
+  type      String    @db.NVarChar(50) // 'training_type', 'difficulty_level', 'modality', etc.
+  value     String    @db.NVarChar(100) // Valor da opção (ex: "Conciliação Bancária", "iniciante")
+  label     String    @db.NVarChar(200) // Label para exibição
+  sortOrder Int       @default(0) @map("SortOrder")
+  isActive  Boolean   @default(true) @map("IsActive")
+  metadata  String?   @db.NVarChar(Max) // JSON para dados adicionais (cor, ícone, descrição)
+  createdAt DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt DateTime  @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  @@index([type])
+  @@index([isActive])
+  @@index([sortOrder])
+  @@map("TrainingConfigurations")
+}
+
+model TrainingAvailability {
+  id           Int       @id @default(autoincrement())
+  dayOfWeek    Int?      @map("DayOfWeek") // 0-6 (Sunday-Saturday), null = data específica
+  specificDate DateTime? @map("SpecificDate") @db.Date // null = dia da semana
+  startTime    String    @map("StartTime") @db.NVarChar(5) // HH:mm
+  endTime      String    @map("EndTime") @db.NVarChar(5) // HH:mm
+  slotInterval Int       @default(30) @map("SlotInterval") // minutos entre slots
+  isActive     Boolean   @default(true) @map("IsActive")
+  createdAt    DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt    DateTime  @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  @@index([dayOfWeek])
+  @@index([specificDate])
+  @@index([isActive])
+  @@map("TrainingAvailabilities")
 }

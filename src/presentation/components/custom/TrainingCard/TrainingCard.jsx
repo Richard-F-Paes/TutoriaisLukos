@@ -1,21 +1,17 @@
 import React from 'react';
 import {
   Clock,
-  Users,
   MapPin,
   Globe,
   Video,
   Monitor,
-  Star,
-  Award,
-  Calendar,
-  ArrowRight,
-  CheckCircle2
+  Award
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTrainingModal } from '../../../../contexts/TrainingModalContext';
 
 const TrainingCard = ({ training, index = 0 }) => {
-  const Icon = training.icon || Award;
+  const { openModal } = useTrainingModal();
   
   // Determinar ícone de formato
   const getFormatIcon = (format) => {
@@ -61,9 +57,13 @@ const TrainingCard = ({ training, index = 0 }) => {
     }
   };
 
-  // Calcular progresso de vagas
-  const enrollmentProgress = (training.enrolled / training.maxStudents) * 100;
-  const spotsLeft = training.maxStudents - training.enrolled;
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    if (training.slug) {
+      openModal(training.slug);
+    }
+  };
 
   return (
     <motion.div
@@ -73,7 +73,10 @@ const TrainingCard = ({ training, index = 0 }) => {
       whileHover={{ y: -8, transition: { duration: 0.2 } }}
       className="group"
     >
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+      <div
+        onClick={handleClick}
+        className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col block cursor-pointer"
+      >
         {/* Imagem do Treinamento */}
         <div className="relative h-48 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
           <img
@@ -97,34 +100,14 @@ const TrainingCard = ({ training, index = 0 }) => {
             </div>
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm bg-white/90 ${getFormatColor(training.format)}`}>
               <FormatIcon className="w-3.5 h-3.5" />
-              {training.format}
+              {training.trainingTypeLabel || training.format}
             </div>
           </div>
 
-          {/* Ícone da categoria */}
-          <div className="absolute bottom-4 left-4">
-            <div className="bg-white/90 backdrop-blur-sm p-2.5 rounded-xl">
-              <Icon className="w-6 h-6 text-gray-800" />
-            </div>
-          </div>
-
-          {/* Rating */}
-          <div className="absolute bottom-4 right-4 flex items-center gap-1 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
-            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-            <span className="text-sm font-semibold text-gray-800">{training.rating}</span>
-            <span className="text-xs text-gray-500">({training.reviews})</span>
-          </div>
         </div>
 
         {/* Conteúdo do Card */}
         <div className="p-6 flex-1 flex flex-col">
-          {/* Categoria */}
-          <div className="mb-3">
-            <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">
-              {training.category}
-            </span>
-          </div>
-
           {/* Título */}
           <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
             {training.title}
@@ -141,69 +124,8 @@ const TrainingCard = ({ training, index = 0 }) => {
               <Clock className="w-4 h-4 text-gray-400" />
               <span>{training.duration}</span>
             </div>
-            
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Users className="w-4 h-4 text-gray-400" />
-              <span>
-                {training.modality} • {training.enrolled}/{training.maxStudents} inscritos
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Calendar className="w-4 h-4 text-gray-400" />
-              <span>
-                {training.availableDates.length} data{training.availableDates.length !== 1 ? 's' : ''} disponível{training.availableDates.length !== 1 ? 'eis' : ''}
-              </span>
-            </div>
           </div>
 
-          {/* Barra de Progresso de Vagas */}
-          {spotsLeft > 0 ? (
-            <div className="mb-4">
-              <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
-                <span>Vagas disponíveis</span>
-                <span className="font-semibold text-emerald-600">{spotsLeft} restante{spotsLeft !== 1 ? 's' : ''}</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${enrollmentProgress}%` }}
-                  transition={{ duration: 0.8, delay: index * 0.1 + 0.2 }}
-                  className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="mb-4 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg">
-              <p className="text-xs font-semibold text-amber-700 flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5" />
-                Vagas esgotadas - Entre em contato para lista de espera
-              </p>
-            </div>
-          )}
-
-          {/* Benefícios */}
-          <div className="mb-4 pt-4 border-t border-gray-100">
-            <div className="flex flex-wrap gap-2">
-              {training.benefits.slice(0, 2).map((benefit, idx) => (
-                <div key={idx} className="flex items-center gap-1.5 text-xs text-gray-600">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                  <span>{benefit}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Botão de Ação */}
-          <div className="mt-auto pt-4 border-t border-gray-100">
-            <a
-              href="#agendamento"
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition-all duration-200 group-hover:shadow-lg transform group-hover:scale-[1.02]"
-            >
-              <span>Agendar Treinamento</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </a>
-          </div>
         </div>
       </div>
     </motion.div>

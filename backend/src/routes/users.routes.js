@@ -3,6 +3,7 @@ import { getPrisma } from '../config/database.js';
 import bcrypt from 'bcryptjs';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { requirePermission } from '../middleware/permissions.middleware.js';
+import { createAuditLog, getRequestInfo } from '../utils/auditHelper.js';
 
 const router = express.Router();
 
@@ -88,6 +89,19 @@ router.post('/', authenticate, requirePermission('manage_users'), async (req, re
       },
     });
 
+    // Criar log de auditoria
+    const userId = req.user?.id;
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId,
+      action: 'CREATE',
+      entityType: 'User',
+      entityId: user.id,
+      newValues: { username: user.username, name: user.name, role: user.role },
+      ipAddress,
+      userAgent,
+    });
+
     res.status(201).json(user);
   } catch (error) {
     console.error('Erro ao criar usuário:', error);
@@ -102,7 +116,19 @@ router.post('/', authenticate, requirePermission('manage_users'), async (req, re
 router.put('/:id', authenticate, requirePermission('manage_users'), async (req, res) => {
   try {
     const prisma = getPrisma();
+    const userId = req.user?.id;
+    const targetUserId = parseInt(req.params.id);
     const { username, password, name, role, isActive } = req.body;
+
+    // Buscar valores antigos antes de atualizar
+    const oldUser = await prisma.user.findUnique({
+      where: { id: targetUserId },
+      select: { id: true, username: true, name: true, role: true, isActive: true },
+    });
+
+    if (!oldUser) {
+      return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
 
     const updateData = { username, name, role, isActive };
 
@@ -111,7 +137,7 @@ router.put('/:id', authenticate, requirePermission('manage_users'), async (req, 
     }
 
     const user = await prisma.user.update({
-      where: { id: parseInt(req.params.id) },
+      where: { id: targetUserId },
       data: updateData,
       select: {
         id: true,
@@ -121,6 +147,19 @@ router.put('/:id', authenticate, requirePermission('manage_users'), async (req, 
         isActive: true,
         updatedAt: true,
       },
+    });
+
+    // Criar log de auditoria
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId,
+      action: 'UPDATE',
+      entityType: 'User',
+      entityId: targetUserId,
+      oldValues: oldUser,
+      newValues: { username: user.username, name: user.name, role: user.role, isActive: user.isActive },
+      ipAddress,
+      userAgent,
     });
 
     res.json(user);
@@ -176,6 +215,7 @@ router.post('/:id/password', authenticate, requirePermission('manage_users'), as
 router.delete('/:id/permanent', authenticate, requirePermission('manage_users'), async (req, res) => {
   try {
     const prisma = getPrisma();
+    const userId = req.user?.id;
     const id = parseInt(req.params.id);
 
     if (!id || Number.isNaN(id)) {
@@ -187,7 +227,7 @@ router.delete('/:id/permanent', authenticate, requirePermission('manage_users'),
       return res.status(400).json({ error: 'Você não pode excluir seu próprio usuário' });
     }
 
-    const existing = await prisma.user.findUnique({ where: { id }, select: { id: true, username: true } });
+    const existing = await prisma.user.findUnique({ where: { id }, select: { id: true, username: true, name: true, role: true } });
     if (!existing) {
       return res.status(404).json({ error: 'Usuário não encontrado' });
     }
@@ -214,6 +254,19 @@ router.delete('/:id/permanent', authenticate, requirePermission('manage_users'),
     }
 
     await prisma.user.delete({ where: { id } });
+
+    // Criar log de auditoria
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId,
+      action: 'DELETE',
+      entityType: 'User',
+      entityId: id,
+      oldValues: existing,
+      ipAddress,
+      userAgent,
+    });
+
     return res.json({ success: true });
   } catch (error) {
     console.error('Erro ao excluir usuário permanentemente:', error);

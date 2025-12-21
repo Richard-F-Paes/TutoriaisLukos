@@ -2,6 +2,7 @@ import express from 'express';
 import { getPrisma } from '../config/database.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { requirePermission } from '../middleware/permissions.middleware.js';
+import { createAuditLog, getRequestInfo } from '../utils/auditHelper.js';
 
 const router = express.Router();
 
@@ -171,6 +172,21 @@ router.post('/', authenticate, requirePermission('manage_categories'), async (re
       });
     });
 
+    // Criar log de auditoria
+    const userId = req.user?.id;
+    if (userId) {
+      const { ipAddress, userAgent } = getRequestInfo(req);
+      await createAuditLog({
+        userId,
+        action: 'CREATE',
+        entityType: 'HeaderMenu',
+        entityId: created.id,
+        newValues: { label: created.label, order: created.order, itemsCount: created.items?.length || 0 },
+        ipAddress,
+        userAgent,
+      });
+    }
+
     res.status(201).json({ data: normalizeMenu(created) });
   } catch (error) {
     console.error('Erro ao criar header menu:', error);
@@ -189,6 +205,16 @@ router.put('/:id', authenticate, requirePermission('manage_categories'), async (
     const label = req.body.Label ?? req.body.label;
     const order = req.body.Order ?? req.body.order;
     const items = req.body.Items ?? req.body.items;
+
+    // Buscar valores antigos antes de atualizar
+    const oldMenu = await prisma.headerMenu.findUnique({
+      where: { id },
+      include: { items: { orderBy: { order: 'asc' } } },
+    });
+
+    if (!oldMenu) {
+      return res.status(404).json({ error: 'Menu não encontrado' });
+    }
 
     await prisma.$transaction(async (tx) => {
       // Atualiza menu
@@ -213,6 +239,23 @@ router.put('/:id', authenticate, requirePermission('manage_categories'), async (
       where: { id },
       include: { items: { orderBy: { order: 'asc' } } },
     });
+
+    // Criar log de auditoria
+    const userId = req.user?.id;
+    if (userId) {
+      const { ipAddress, userAgent } = getRequestInfo(req);
+      await createAuditLog({
+        userId,
+        action: 'UPDATE',
+        entityType: 'HeaderMenu',
+        entityId: id,
+        oldValues: { label: oldMenu.label, order: oldMenu.order, itemsCount: oldMenu.items?.length || 0 },
+        newValues: { label: updated.label, order: updated.order, itemsCount: updated.items?.length || 0 },
+        ipAddress,
+        userAgent,
+      });
+    }
+
     res.json({ data: normalizeMenu(updated) });
   } catch (error) {
     console.error('Erro ao atualizar header menu:', error);
@@ -228,7 +271,34 @@ router.delete('/:id', authenticate, requirePermission('manage_categories'), asyn
       return res.status(503).json({ error: 'Header menus indisponível (DB offline ou Prisma client desatualizado)' });
     }
     const id = parseInt(req.params.id);
+    
+    // Buscar valores antes de deletar
+    const oldMenu = await prisma.headerMenu.findUnique({
+      where: { id },
+      include: { items: { orderBy: { order: 'asc' } } },
+    });
+
+    if (!oldMenu) {
+      return res.status(404).json({ error: 'Menu não encontrado' });
+    }
+
     await prisma.headerMenu.delete({ where: { id } });
+
+    // Criar log de auditoria
+    const userId = req.user?.id;
+    if (userId) {
+      const { ipAddress, userAgent } = getRequestInfo(req);
+      await createAuditLog({
+        userId,
+        action: 'DELETE',
+        entityType: 'HeaderMenu',
+        entityId: id,
+        oldValues: { label: oldMenu.label, order: oldMenu.order, itemsCount: oldMenu.items?.length || 0 },
+        ipAddress,
+        userAgent,
+      });
+    }
+
     res.json({ success: true });
   } catch (error) {
     console.error('Erro ao excluir header menu:', error);
@@ -248,6 +318,12 @@ router.post('/reorder', authenticate, requirePermission('manage_categories'), as
       return res.status(400).json({ error: 'menuIds é obrigatório' });
     }
 
+    // Buscar valores antigos antes de reordenar
+    const oldMenus = await prisma.headerMenu.findMany({
+      where: { id: { in: menuIds.map(id => parseInt(id)) } },
+      orderBy: { order: 'asc' },
+    });
+
     await prisma.$transaction(
       menuIds.map((id, idx) =>
         prisma.headerMenu.update({
@@ -261,6 +337,23 @@ router.post('/reorder', authenticate, requirePermission('manage_categories'), as
       orderBy: { order: 'asc' },
       include: { items: { orderBy: { order: 'asc' } } },
     });
+
+    // Criar log de auditoria
+    const userId = req.user?.id;
+    if (userId) {
+      const { ipAddress, userAgent } = getRequestInfo(req);
+      await createAuditLog({
+        userId,
+        action: 'UPDATE',
+        entityType: 'HeaderMenu',
+        entityId: null,
+        oldValues: { order: oldMenus.map(m => ({ id: m.id, order: m.order })) },
+        newValues: { order: menus.map(m => ({ id: m.id, order: m.order })) },
+        ipAddress,
+        userAgent,
+      });
+    }
+
     res.json({ data: menus.map(normalizeMenu) });
   } catch (error) {
     console.error('Erro ao reordenar header menus:', error);

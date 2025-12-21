@@ -53,8 +53,22 @@ router.get('/', authenticate, requirePermission('view_audit_logs'), async (req, 
 router.get('/:id', authenticate, requirePermission('view_audit_logs'), async (req, res) => {
   try {
     const prisma = getPrisma();
+    const { id } = req.params;
+    
+    // Validar se o ID foi fornecido
+    if (!id || id.trim() === '') {
+      return res.status(400).json({ error: 'ID é obrigatório' });
+    }
+    
+    const logId = parseInt(id);
+    
+    // Validar se o ID é um número válido
+    if (isNaN(logId) || logId <= 0) {
+      return res.status(400).json({ error: 'ID inválido' });
+    }
+    
     const log = await prisma.auditLog.findUnique({
-      where: { id: parseInt(req.params.id) },
+      where: { id: logId },
       include: {
         user: {
           select: { id: true, username: true, name: true },

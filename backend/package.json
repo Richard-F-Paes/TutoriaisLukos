@@ -8,6 +8,7 @@
     "start": "node src/app.js",
     "dev": "node --watch src/app.js",
     "seed": "node src/scripts/seed.js",
+    "seed:availability": "node src/scripts/seed-availability.js",
     "migrate": "node src/scripts/migrate.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",

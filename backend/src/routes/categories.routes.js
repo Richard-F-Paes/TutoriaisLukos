@@ -3,6 +3,7 @@ import { getPrisma } from '../config/database.js';
 import slugify from 'slugify';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { requirePermission } from '../middleware/permissions.middleware.js';
+import { createAuditLog, getRequestInfo } from '../utils/auditHelper.js';
 
 const router = express.Router();
 
@@ -147,6 +148,19 @@ router.post('/', authenticate, requirePermission('manage_categories'), async (re
       },
     });
 
+    // Criar log de auditoria
+    const userId = req.user?.id;
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId,
+      action: 'CREATE',
+      entityType: 'Category',
+      entityId: category.id,
+      newValues: { name: category.name, slug: category.slug },
+      ipAddress,
+      userAgent,
+    });
+
     res.status(201).json(category);
   } catch (error) {
     console.error('Erro ao criar categoria:', error);
@@ -170,6 +184,7 @@ router.put('/:id', authenticate, requirePermission('manage_categories'), async (
     // Check if category exists
     const existingCategory = await prisma.category.findUnique({
       where: { id: categoryId },
+      select: { id: true, name: true, slug: true, isActive: true, parentId: true, sortOrder: true },
     });
 
     if (!existingCategory) {
@@ -220,6 +235,26 @@ router.put('/:id', authenticate, requirePermission('manage_categories'), async (
       data: updateData,
     });
 
+    // Criar log de auditoria
+    const userId = req.user?.id;
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId,
+      action: 'UPDATE',
+      entityType: 'Category',
+      entityId: categoryId,
+      oldValues: existingCategory,
+      newValues: { 
+        name: category.name, 
+        slug: category.slug, 
+        isActive: category.isActive, 
+        parentId: category.parentId,
+        sortOrder: category.sortOrder,
+      },
+      ipAddress,
+      userAgent,
+    });
+
     res.json(category);
   } catch (error) {
     console.error('Erro ao atualizar categoria:', error);
@@ -237,7 +272,18 @@ router.put('/:id', authenticate, requirePermission('manage_categories'), async (
 router.delete('/:id', authenticate, requirePermission('manage_categories'), async (req, res) => {
   try {
     const prisma = getPrisma();
+    const userId = req.user?.id;
     const categoryId = parseInt(req.params.id);
+
+    // Buscar categoria antes de deletar para o log
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+      select: { id: true, name: true, slug: true },
+    });
+
+    if (!category) {
+      return res.status(404).json({ error: 'Categoria não encontrada' });
+    }
 
     // Check if category has children
     const children = await prisma.category.findMany({
@@ -252,6 +298,18 @@ router.delete('/:id', authenticate, requirePermission('manage_categories'), asyn
 
     await prisma.category.delete({
       where: { id: categoryId },
+    });
+
+    // Criar log de auditoria
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId,
+      action: 'DELETE',
+      entityType: 'Category',
+      entityId: categoryId,
+      oldValues: category,
+      ipAddress,
+      userAgent,
     });
 
     res.json({ message: 'Categoria deletada com sucesso' });

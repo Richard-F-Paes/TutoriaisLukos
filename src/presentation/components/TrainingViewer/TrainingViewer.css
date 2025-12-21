@@ -1,0 +1,65 @@
+/* TrainingViewer Styles */
+.training-viewer {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: #1f2937;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.training-viewer-loading,
+.training-viewer-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.loading-spinner {
+  font-size: 1.25rem;
+  color: #6b7280;
+}
+
+.training-viewer-content-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.training-viewer-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+@media (max-width: 1024px) {
+  .training-viewer-content-wrapper {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .training-viewer {
+    padding: 0;
+  }
+  
+  .training-viewer-content-wrapper {
+    gap: 1rem;
+    margin-top: 0.75rem;
+  }
+}
+

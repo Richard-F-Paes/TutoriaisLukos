@@ -403,9 +403,14 @@ button.status-badge:focus-visible {
   color: #374151;
 }
 
-.btn-icon.btn-danger:hover {
+.btn-icon.btn-danger {
   background: #fee2e2;
   color: #dc2626;
+}
+
+.btn-icon.btn-danger:hover {
+  background: #fecaca;
+  color: #b91c1c;
 }
 
 .empty-state,

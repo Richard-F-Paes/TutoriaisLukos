@@ -5,8 +5,8 @@ import { requirePermission } from '../middleware/permissions.middleware.js';
 
 const router = express.Router();
 
-// Estatísticas administrativas
-router.get('/stats', authenticate, requirePermission('view_audit_logs'), async (req, res) => {
+// Estatísticas administrativas - Acessível para todos os usuários autenticados
+router.get('/stats', authenticate, async (req, res) => {
   try {
     const prisma = getPrisma();
     
@@ -21,6 +21,23 @@ router.get('/stats', authenticate, requirePermission('view_audit_logs'), async (
       prisma.tutorial.count({ where: { isPublished: true } }),
       prisma.tutorial.count({ where: { isPublished: false } }),
       prisma.category.count({ where: { isActive: true } }),
+    ]);
+
+    // Buscar estatísticas de treinamentos
+    const [totalTrainings, publishedTrainings, unpublishedTrainings, featuredTrainings] = await Promise.all([
+      prisma.training.count(),
+      prisma.training.count({ where: { isPublished: true } }),
+      prisma.training.count({ where: { isPublished: false } }),
+      prisma.training.count({ where: { isFeatured: true } }),
+    ]);
+
+    // Buscar estatísticas de agendamentos
+    const [totalAppointments, pendingAppointments, confirmedAppointments, completedAppointments, cancelledAppointments] = await Promise.all([
+      prisma.trainingAppointment.count(),
+      prisma.trainingAppointment.count({ where: { status: 'pending' } }),
+      prisma.trainingAppointment.count({ where: { status: 'confirmed' } }),
+      prisma.trainingAppointment.count({ where: { status: 'completed' } }),
+      prisma.trainingAppointment.count({ where: { status: 'cancelled' } }),
     ]);
 
     // Buscar visualizações dos últimos 30 dias
@@ -134,6 +151,17 @@ router.get('/stats', authenticate, requirePermission('view_audit_logs'), async (
         totalViewsLast30Days,
         mostViewed,
         recentTutorials,
+        // Estatísticas de treinamentos
+        totalTrainings,
+        publishedTrainings,
+        unpublishedTrainings,
+        featuredTrainings,
+        // Estatísticas de agendamentos
+        totalAppointments,
+        pendingAppointments,
+        confirmedAppointments,
+        completedAppointments,
+        cancelledAppointments,
       },
     });
   } catch (error) {

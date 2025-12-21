@@ -169,7 +169,29 @@ const UserManager = () => {
     <div className="user-manager">
       <div className="manager-header">
         <h2>Gerenciar Usuários</h2>
-        <button className="btn-primary" onClick={handleNew}>
+        <button 
+          onClick={handleNew}
+          style={{
+            padding: '0.5rem 1rem',
+            background: 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: 500,
+            fontSize: '0.875rem',
+            transition: 'all 0.15s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.375rem',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = 'linear-gradient(135deg, #5a008f 0%, #4a0073 100%)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)';
+          }}
+        >
           <Plus size={18} />
           Novo Usuário
         </button>

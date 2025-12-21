@@ -5,6 +5,7 @@ import React from 'react';
 import { AuthProvider } from '../contexts/AuthContext';
 import { TutorialProvider } from '../contexts/TutorialContext';
 import { TutorialModalProvider } from '../contexts/TutorialModalContext';
+import { TrainingModalProvider } from '../contexts/TrainingModalContext';
 import { EditorModalProvider } from '../contexts/EditorModalContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -44,9 +45,11 @@ export function AppProviders({ children }) {
           <AuthProvider>
             <TutorialProvider>
               <TutorialModalProvider>
-                <EditorModalProvider>
-                  {children}
-                </EditorModalProvider>
+                <TrainingModalProvider>
+                  <EditorModalProvider>
+                    {children}
+                  </EditorModalProvider>
+                </TrainingModalProvider>
               </TutorialModalProvider>
             </TutorialProvider>
           </AuthProvider>

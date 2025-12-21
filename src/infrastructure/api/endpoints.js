@@ -77,8 +77,57 @@ export const endpoints = {
     delete: (id) => `${API_VERSION}/header-menus/${id}`,
     reorder: `${API_VERSION}/header-menus/reorder`,
   },
+  
+  // Treinamentos
+  trainings: {
+    list: `${API_VERSION}/trainings`,
+    get: (id) => `${API_VERSION}/trainings/${id}`,
+    create: `${API_VERSION}/trainings`,
+    update: (id) => `${API_VERSION}/trainings/${id}`,
+    delete: (id) => `${API_VERSION}/trainings/${id}`,
+  },
+  
+  // Vídeos de Treinamentos
+  trainingVideos: {
+    list: (trainingId) => `${API_VERSION}/trainings/${trainingId}/videos`,
+    upload: (trainingId) => `${API_VERSION}/trainings/${trainingId}/videos`,
+    delete: (trainingId, videoId) => `${API_VERSION}/trainings/${trainingId}/videos/${videoId}`,
+    reorder: (trainingId) => `${API_VERSION}/trainings/${trainingId}/videos/reorder`,
+  },
+  
+  // Agendamentos
+  appointments: {
+    list: `${API_VERSION}/appointments`,
+    get: (id) => `${API_VERSION}/appointments/${id}`,
+    create: `${API_VERSION}/appointments`,
+    update: (id) => `${API_VERSION}/appointments/${id}`,
+    delete: (id) => `${API_VERSION}/appointments/${id}`,
+  },
+  
+  // Configurações de Treinamento
+  trainingConfigs: {
+    list: `${API_VERSION}/training-configs`,
+    get: (id) => `${API_VERSION}/training-configs/${id}`,
+    getByType: (type) => `${API_VERSION}/training-configs/type/${type}`,
+    create: `${API_VERSION}/training-configs`,
+    update: (id) => `${API_VERSION}/training-configs/${id}`,
+    delete: (id) => `${API_VERSION}/training-configs/${id}`,
+  },
+  
+  // Disponibilidade de Treinamentos
+  availability: {
+    list: `${API_VERSION}/availability`,
+    get: (id) => `${API_VERSION}/availability/${id}`,
+    availableSlots: `${API_VERSION}/availability/available-slots`,
+    create: `${API_VERSION}/availability`,
+    update: (id) => `${API_VERSION}/availability/${id}`,
+    delete: (id) => `${API_VERSION}/availability/${id}`,
+  },
+  
+  // Admin
+  admin: {
+    stats: `${API_VERSION}/admin/stats`,
+  },
 };
 
 export default endpoints;
-
-

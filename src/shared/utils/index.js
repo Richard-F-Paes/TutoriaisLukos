@@ -10,17 +10,45 @@
 export const formatDate = (date, format = 'dd/MM/yyyy') => {
   if (!date) return '';
   
-  const d = new Date(date);
-  if (isNaN(d.getTime())) return '';
+  let day, month, year;
   
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const year = d.getFullYear();
+  // Se for uma string ISO (YYYY-MM-DD), parsear manualmente para evitar problemas de timezone
+  if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}/.test(date)) {
+    const parts = date.split('T')[0].split('-');
+    if (parts.length === 3) {
+      year = parseInt(parts[0], 10);
+      month = parseInt(parts[1], 10);
+      day = parseInt(parts[2], 10);
+      
+      // Validar se os valores são válidos
+      if (isNaN(year) || isNaN(month) || isNaN(day)) {
+        return '';
+      }
+    } else {
+      // Fallback para Date se não for formato ISO válido
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return '';
+      day = d.getDate();
+      month = d.getMonth() + 1;
+      year = d.getFullYear();
+    }
+  } else {
+    // Para objetos Date ou outros formatos, usar o construtor Date
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return '';
+    day = d.getDate();
+    month = d.getMonth() + 1;
+    year = d.getFullYear();
+  }
+  
+  const dayStr = String(day).padStart(2, '0');
+  const monthStr = String(month).padStart(2, '0');
+  const yearStr = String(year);
   
   return format
-    .replace('dd', day)
-    .replace('MM', month)
-    .replace('yyyy', year);
+    .replace('dd', dayStr)
+    .replace('MM', monthStr)
+    .replace('yyyy', yearStr);
 };
 
 /**

@@ -96,6 +96,17 @@ router.post('/login', async (req, res) => {
       permissions,
     };
 
+    // Criar log de auditoria para login
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId: user.id,
+      action: 'LOGIN',
+      entityType: 'User',
+      entityId: user.id,
+      ipAddress,
+      userAgent,
+    });
+
     // Compat: manter `token` no formato antigo, e também retornar access/refresh
     const responseData = {
       token: accessToken,

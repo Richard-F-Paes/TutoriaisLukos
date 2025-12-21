@@ -4,6 +4,7 @@ import { useAuth } from '../../../contexts/AuthContext.js';
 import { useEditorModal } from '../../../contexts/EditorModalContext.js';
 import { useTutorialModal } from '../../../contexts/TutorialModalContext.js';
 import { Edit, Share2 } from 'lucide-react';
+import './TutorialActions.css';
 
 const TutorialActions = ({ tutorial }) => {
   const { isAuthenticated, hasPermission } = useAuth();
@@ -28,9 +29,44 @@ const TutorialActions = ({ tutorial }) => {
     }
   };
 
+  const showTopNotification = (message) => {
+    // Remove notificação anterior se existir
+    const existingNotification = document.querySelector('.top-notification');
+    if (existingNotification) {
+      existingNotification.remove();
+    }
+
+    // Cria o elemento de notificação
+    const notification = document.createElement('div');
+    notification.className = 'top-notification';
+    notification.textContent = message;
+    
+    // Adiciona ao body
+    document.body.appendChild(notification);
+    
+    // Trigger reflow para garantir que a animação funciona
+    notification.offsetHeight;
+    
+    // Adiciona a classe para fazer aparecer
+    notification.classList.add('show');
+    
+    // Remove após 3 segundos com fade out
+    setTimeout(() => {
+      notification.classList.remove('show');
+      notification.classList.add('hide');
+      
+      // Remove do DOM após a animação
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    }, 2500);
+  };
+
   const handleShare = () => {
     if (!shareHash) {
-      alert('Este tutorial ainda não possui um link de compartilhamento. Por favor, salve o tutorial novamente.');
+      showTopNotification('Este tutorial ainda não possui um link de compartilhamento. Por favor, salve o tutorial novamente.');
       return;
     }
 
@@ -45,7 +81,7 @@ const TutorialActions = ({ tutorial }) => {
       });
     } else {
       navigator.clipboard.writeText(url);
-      alert('Link copiado para a área de transferência!');
+      showTopNotification('Link copiado para a área de transferência!');
     }
   };
 

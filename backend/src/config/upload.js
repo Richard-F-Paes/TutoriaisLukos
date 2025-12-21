@@ -45,7 +45,7 @@ const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE, 10) || 50 * 1024 * 102
 // Diretório de uploads
 const UPLOAD_PATH = process.env.UPLOAD_PATH || path.join(__dirname, '../../uploads');
 
-// Configuração de storage
+// Configuração de storage padrão (para mídia geral)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Separar por tipo (images ou videos)
@@ -62,6 +62,19 @@ const storage = multer.diskStorage({
   },
 });
 
+// Configuração de storage para vídeos de treinamentos
+const trainingVideoStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const fullPath = path.join(UPLOAD_PATH, 'trainings');
+    cb(null, fullPath);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const uniqueName = `${uuidv4()}${ext}`;
+    cb(null, uniqueName);
+  },
+});
+
 // Filtro de arquivos
 const fileFilter = (req, file, cb) => {
   if (ALLOWED_TYPES.includes(file.mimetype)) {
@@ -71,13 +84,32 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Configuração do multer
+// Filtro de arquivos para vídeos (apenas vídeos)
+const videoFileFilter = (req, file, cb) => {
+  if (ALLOWED_VIDEO_TYPES.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error(`Tipo de arquivo nao permitido. Apenas vídeos são permitidos: ${file.mimetype}`), false);
+  }
+};
+
+// Configuração do multer padrão
 export const upload = multer({
   storage,
   fileFilter,
   limits: {
     fileSize: MAX_FILE_SIZE,
     files: 10, // Máximo de arquivos por requisição
+  },
+});
+
+// Configuração do multer para vídeos de treinamentos (apenas vídeos)
+export const uploadTrainingVideo = multer({
+  storage: trainingVideoStorage,
+  fileFilter: videoFileFilter,
+  limits: {
+    fileSize: MAX_FILE_SIZE,
+    files: 1, // Um vídeo por vez
   },
 });
 
@@ -88,6 +120,7 @@ export const uploadConfig = {
   allowedTypes: ALLOWED_TYPES,
   maxFileSize: MAX_FILE_SIZE,
   uploadPath: UPLOAD_PATH,
+  trainingVideosPath: path.join(UPLOAD_PATH, 'trainings'),
 };
 
 export default upload;

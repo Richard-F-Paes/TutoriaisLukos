@@ -19,6 +19,10 @@ import auditRoutes from './routes/audit.routes.js';
 import headerMenusRoutes from './routes/headerMenus.routes.js';
 import searchRoutes from './routes/search.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import trainingsRoutes from './routes/trainings.routes.js';
+import appointmentsRoutes from './routes/appointments.routes.js';
+import trainingConfigsRoutes from './routes/training-configs.routes.js';
+import availabilityRoutes from './routes/availability.routes.js';
 
 dotenv.config();
 
@@ -111,7 +115,17 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Servir arquivos estáticos de uploads
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-app.use('/uploads', express.static(join(__dirname, '../uploads')));
+const uploadsDir = join(__dirname, '../uploads');
+const trainingsDir = join(uploadsDir, 'trainings');
+
+// Garantir que os diretórios de upload existam
+import fs from 'fs';
+if (!fs.existsSync(trainingsDir)) {
+  fs.mkdirSync(trainingsDir, { recursive: true });
+  console.log('📁 Diretório de treinamentos criado:', trainingsDir);
+}
+
+app.use('/uploads', express.static(uploadsDir));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -129,6 +143,10 @@ app.use(`${API_VERSION}/audit`, auditRoutes);
 app.use(`${API_VERSION}/header-menus`, headerMenusRoutes);
 app.use(`${API_VERSION}/search`, searchRoutes);
 app.use(`${API_VERSION}/admin`, adminRoutes);
+app.use(`${API_VERSION}/trainings`, trainingsRoutes);
+app.use(`${API_VERSION}/appointments`, appointmentsRoutes);
+app.use(`${API_VERSION}/training-configs`, trainingConfigsRoutes);
+app.use(`${API_VERSION}/availability`, availabilityRoutes);
 
 // Middleware de erro 404
 app.use(notFoundHandler);

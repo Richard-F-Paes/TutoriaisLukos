@@ -11,6 +11,9 @@ import HeaderMenuManager from '../Admin/HeaderMenuManager/HeaderMenuManager.jsx'
 import UserManager from '../Admin/UserManager.jsx';
 import MediaLibrary from '../Admin/MediaLibrary.jsx';
 import AuditLogs from '../Admin/AuditLogs.jsx';
+import TrainingManager from '../Admin/TrainingManager.jsx';
+import AppointmentsManager from '../Admin/AppointmentsManager.jsx';
+import TrainingConfigManager from '../Admin/TrainingConfigManager.jsx';
 import './EditorModal.css';
 
 function TabButton({ isActive, onClick, children, disabled, tabId }) {
@@ -50,16 +53,22 @@ export default function EditorModal() {
     const canManageUsers = hasPermission('manage_users');
     const canUploadMedia = hasPermission('upload_media');
     const canViewLogs = hasPermission('view_audit_logs');
+    const canManageTrainings = hasPermission('create_training') || hasPermission('edit_training');
+    const canManageAppointments = hasPermission('manage_appointments');
+    const canManageTrainingConfigs = hasPermission('manage_training_configs');
     const isAdmin = user?.role === 'admin';
 
     return [
-      { id: 'dashboard', label: 'Dashboard', visible: isAdmin },
+      { id: 'dashboard', label: 'Dashboard', visible: true }, // Todos os usuários autenticados
       { id: 'tutorials', label: 'Tutoriais', visible: canSeeTutorials },
-      { id: 'categories', label: 'Categorias', visible: canManageCategories },
-      { id: 'header-menus', label: 'Header', visible: canManageCategories },
-      { id: 'users', label: 'Usuários', visible: canManageUsers },
+      { id: 'trainings', label: 'Treinamentos', visible: canManageTrainings },
+      { id: 'appointments', label: 'Agendamentos', visible: canManageAppointments },
+      { id: 'training-configs', label: 'Config Treinamentos', visible: isAdmin }, // Apenas admin
+      { id: 'categories', label: 'Categorias', visible: isAdmin }, // Apenas admin
+      { id: 'header-menus', label: 'Header', visible: isAdmin }, // Apenas admin
+      { id: 'users', label: 'Usuários', visible: isAdmin }, // Apenas admin
       { id: 'media', label: 'Mídia', visible: canUploadMedia },
-      { id: 'logs', label: 'Logs', visible: canViewLogs },
+      { id: 'logs', label: 'Logs', visible: isAdmin }, // Apenas admin
     ].filter((t) => t.visible);
   }, [hasPermission, user]);
 
@@ -163,6 +172,10 @@ export default function EditorModal() {
         return <AdminDashboard />;
       case 'tutorials':
         return <TutorialManager initialTutorialId={initialTutorialId} />;
+      case 'trainings':
+        return <TrainingManager initialTrainingId={initialTutorialId} />;
+      case 'training-configs':
+        return <TrainingConfigManager />;
       case 'categories':
         return <CategoryManager />;
       case 'header-menus':
@@ -171,6 +184,8 @@ export default function EditorModal() {
         return <UserManager />;
       case 'media':
         return <MediaLibrary />;
+      case 'appointments':
+        return <AppointmentsManager />;
       case 'logs':
         return <AuditLogs />;
       default:

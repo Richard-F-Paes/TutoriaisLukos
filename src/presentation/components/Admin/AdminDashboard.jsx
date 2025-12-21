@@ -1,41 +1,26 @@
 // AdminDashboard - Dashboard com estatísticas administrativas
 import React from 'react';
 import { useAdminStats } from '../../../hooks/useAdminStats.js';
-import { useQuery } from '@tanstack/react-query';
-import { userService } from '../../../services/userService.js';
 import { 
   BookOpen, 
-  Users, 
   FolderOpen, 
   Eye, 
   TrendingUp,
   FileText,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  GraduationCap,
+  Calendar,
+  AlertCircle
 } from 'lucide-react';
+import { formatDate } from '../../../shared/utils/index.js';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
   const { stats, isLoading: statsLoading } = useAdminStats();
   
-  // Buscar usuários para estatísticas
-  const { data: usersData, isLoading: usersLoading } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => userService.list(),
-    enabled: true,
-  });
-
-  // Backend retorna array direto, não precisa de .data
-  const users = Array.isArray(usersData) ? usersData : [];
-  const adminUsers = users.filter(u => (u.role || u.Role) === 'admin').length;
-  const suporteUsers = users.filter(u => (u.role || u.Role) === 'suporte').length;
-  const activeUsers = users.filter(u => {
-    const isActive = u.isActive !== undefined ? u.isActive : u.IsActive;
-    return isActive === true;
-  }).length;
-
-  const isLoading = statsLoading || usersLoading;
+  const isLoading = statsLoading;
 
   if (isLoading) {
     return (
@@ -57,11 +42,18 @@ const AdminDashboard = () => {
       subtitle: `${stats?.publishedTutorials || 0} publicados`
     },
     {
-      title: 'Total de Usuários',
-      value: users.length,
-      icon: Users,
-      color: 'green',
-      subtitle: `${adminUsers} admin, ${suporteUsers} suporte`
+      title: 'Total de Treinamentos',
+      value: stats?.totalTrainings || 0,
+      icon: GraduationCap,
+      color: 'purple',
+      subtitle: `${stats?.publishedTrainings || 0} publicados`
+    },
+    {
+      title: 'Total de Agendamentos',
+      value: stats?.totalAppointments || 0,
+      icon: Calendar,
+      color: 'teal',
+      subtitle: `${stats?.pendingAppointments || 0} pendentes`
     },
     {
       title: 'Visualizações',
@@ -116,11 +108,60 @@ const AdminDashboard = () => {
               <p className="status-label">Não Publicados</p>
             </div>
           </div>
-          <div className="status-card status-users">
-            <Users size={20} />
+        </div>
+      </div>
+
+      {/* Status dos Treinamentos */}
+      <div className="dashboard-section">
+        <h3 className="dashboard-section-title">Status dos Treinamentos</h3>
+        <div className="dashboard-status-grid">
+          <div className="status-card status-published">
+            <CheckCircle size={20} />
             <div>
-              <p className="status-value">{activeUsers}</p>
-              <p className="status-label">Usuários Ativos</p>
+              <p className="status-value">{stats?.publishedTrainings || 0}</p>
+              <p className="status-label">Publicados</p>
+            </div>
+          </div>
+          <div className="status-card status-unpublished">
+            <XCircle size={20} />
+            <div>
+              <p className="status-value">{stats?.unpublishedTrainings || 0}</p>
+              <p className="status-label">Não Publicados</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Status dos Agendamentos */}
+      <div className="dashboard-section">
+        <h3 className="dashboard-section-title">Status dos Agendamentos</h3>
+        <div className="dashboard-status-grid">
+          <div className="status-card" style={{ backgroundColor: '#d1fae5', borderColor: '#10b981' }}>
+            <CheckCircle size={20} style={{ color: '#059669' }} />
+            <div>
+              <p className="status-value">{stats?.completedAppointments || 0}</p>
+              <p className="status-label">Concluídos</p>
+            </div>
+          </div>
+          <div className="status-card" style={{ backgroundColor: '#dbeafe', borderColor: '#3b82f6' }}>
+            <CheckCircle size={20} style={{ color: '#1e40af' }} />
+            <div>
+              <p className="status-value">{stats?.confirmedAppointments || 0}</p>
+              <p className="status-label">Confirmados</p>
+            </div>
+          </div>
+          <div className="status-card" style={{ backgroundColor: '#fef3c7', borderColor: '#fbbf24' }}>
+            <AlertCircle size={20} style={{ color: '#f59e0b' }} />
+            <div>
+              <p className="status-value">{stats?.pendingAppointments || 0}</p>
+              <p className="status-label">Pendentes</p>
+            </div>
+          </div>
+          <div className="status-card" style={{ backgroundColor: '#fee2e2', borderColor: '#ef4444' }}>
+            <XCircle size={20} style={{ color: '#991b1b' }} />
+            <div>
+              <p className="status-value">{stats?.cancelledAppointments || 0}</p>
+              <p className="status-label">Cancelados</p>
             </div>
           </div>
         </div>
@@ -140,11 +181,7 @@ const AdminDashboard = () => {
               const categoryName = tutorial.category?.name || tutorial.Category?.Name || 'Sem categoria';
               const subcategoryName = tutorial.category?.parent?.name || tutorial.Category?.Parent?.Name;
               const updatedAt = tutorial.updatedAt || tutorial.UpdatedAt;
-              const updatedDate = updatedAt ? new Date(updatedAt).toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-              }) : 'Data não disponível';
+              const updatedDate = updatedAt ? formatDate(updatedAt) : 'Data não disponível';
 
               return (
                 <div key={tutorial.id || tutorial.Id || index} className="dashboard-list-item">
@@ -182,21 +219,8 @@ const AdminDashboard = () => {
               const categoryName = tutorial.category?.name || tutorial.Category?.Name || 'Sem categoria';
               const subcategoryName = tutorial.category?.parent?.name || tutorial.Category?.Parent?.Name;
               
-              const formatDate = (date) => {
-                if (!date) return 'Data não disponível';
-                try {
-                  return new Date(date).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                  });
-                } catch (e) {
-                  return 'Data inválida';
-                }
-              };
-
-              const updatedDate = formatDate(updatedAt);
-              const createdDate = formatDate(createdAt);
+              const updatedDate = updatedAt ? formatDate(updatedAt) : 'Data não disponível';
+              const createdDate = createdAt ? formatDate(createdAt) : 'Data não disponível';
 
               // Montar string de categoria/subcategoria
               let categoryInfo = '';

@@ -6,6 +6,7 @@ import fs from 'fs';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { requirePermission } from '../middleware/permissions.middleware.js';
 import { upload } from '../config/upload.js'; // Usar configuração centralizada
+import { createAuditLog, getRequestInfo } from '../utils/auditHelper.js';
 
 const router = express.Router();
 
@@ -94,6 +95,18 @@ router.post('/', authenticate, requirePermission('upload_media'), upload.single(
       },
     });
 
+    // Criar log de auditoria
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId,
+      action: 'CREATE',
+      entityType: 'Media',
+      entityId: media.id,
+      newValues: { fileName: media.fileName, originalName: media.originalName, mimeType: media.mimeType, size: media.size.toString() },
+      ipAddress,
+      userAgent,
+    });
+
     res.status(201).json(media);
   } catch (error) {
     console.error('Erro ao fazer upload:', error);
@@ -133,6 +146,18 @@ router.post('/upload', authenticate, requirePermission('upload_media'), upload.s
       },
     });
 
+    // Criar log de auditoria
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId,
+      action: 'CREATE',
+      entityType: 'Media',
+      entityId: media.id,
+      newValues: { fileName: media.fileName, originalName: media.originalName, mimeType: media.mimeType, size: media.size.toString() },
+      ipAddress,
+      userAgent,
+    });
+
     res.status(201).json(media);
   } catch (error) {
     console.error('Erro ao fazer upload:', error);
@@ -162,6 +187,21 @@ router.delete('/:id', authenticate, requirePermission('delete_media'), async (re
     await prisma.media.delete({
       where: { id: parseInt(req.params.id) },
     });
+
+    // Criar log de auditoria
+    const userId = req.user?.id;
+    if (userId) {
+      const { ipAddress, userAgent } = getRequestInfo(req);
+      await createAuditLog({
+        userId,
+        action: 'DELETE',
+        entityType: 'Media',
+        entityId: media.id,
+        oldValues: { fileName: media.fileName, originalName: media.originalName, mimeType: media.mimeType, size: media.size.toString() },
+        ipAddress,
+        userAgent,
+      });
+    }
 
     res.json({ message: 'Mídia deletada com sucesso' });
   } catch (error) {

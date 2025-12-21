@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 import { X, Menu } from 'lucide-react';
 import { useTutorialModal } from '../../../contexts/TutorialModalContext';
 import { useTutorial } from '../../../hooks/useTutorials.js';
@@ -13,6 +14,21 @@ const TutorialModal = () => {
   const { isOpen, tutorialSlug, viewMode, stepId, closeModal } = useTutorialModal();
   const { data: tutorialData, isLoading: tutorialLoading } = useTutorial(tutorialSlug);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // Escutar evento de navegação quando o modal é fechado via hash
+  useEffect(() => {
+    const handleNavigate = (event) => {
+      if (event.detail && event.detail.path) {
+        navigate(event.detail.path, { replace: true });
+      }
+    };
+
+    window.addEventListener('tutorial-modal-close-navigate', handleNavigate);
+    return () => {
+      window.removeEventListener('tutorial-modal-close-navigate', handleNavigate);
+    };
+  }, [navigate]);
 
   // Fechar modal com ESC
   useEffect(() => {

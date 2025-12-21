@@ -26,6 +26,10 @@ export const useAdminStats = () => {
   const { data: tutorialsData } = useTutorials();
   const { data: categoriesData } = useCategories();
 
+  // Calcular data de 30 dias atrás
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
   // Calcular estatísticas localmente se API não retornar
   const localStats = {
     totalTutorials: tutorialsData?.data?.length || 0,
@@ -33,11 +37,24 @@ export const useAdminStats = () => {
     unpublishedTutorials: tutorialsData?.data?.filter(t => !t.IsPublished)?.length || 0,
     totalCategories: categoriesData?.data?.length || 0,
     totalViews: tutorialsData?.data?.reduce((sum, t) => sum + (t.ViewCount || 0), 0) || 0,
+    // Visualizações dos últimos 30 dias: considera tutoriais atualizados nos últimos 30 dias
+    totalViewsLast30Days: tutorialsData?.data
+      ?.filter(t => {
+        const updatedAt = t.UpdatedAt ? new Date(t.UpdatedAt) : null;
+        const publishedAt = t.PublishedAt ? new Date(t.PublishedAt) : null;
+        // Considera se foi atualizado ou publicado nos últimos 30 dias
+        return (updatedAt && updatedAt >= thirtyDaysAgo) || (publishedAt && publishedAt >= thirtyDaysAgo);
+      })
+      ?.reduce((sum, t) => sum + (t.ViewCount || 0), 0) || 0,
     mostViewed: tutorialsData?.data
-      ?.sort((a, b) => (b.ViewCount || 0) - (a.ViewCount || 0))
+      ?.sort((a, b) => (b.ViewCount || b.viewCount || 0) - (a.ViewCount || a.viewCount || 0))
       ?.slice(0, 5) || [],
     recentTutorials: tutorialsData?.data
-      ?.sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt))
+      ?.sort((a, b) => {
+        const dateA = new Date(a.UpdatedAt || a.updatedAt || a.CreatedAt || a.createdAt || 0);
+        const dateB = new Date(b.UpdatedAt || b.updatedAt || b.CreatedAt || b.createdAt || 0);
+        return dateB - dateA;
+      })
       ?.slice(0, 5) || []
   };
 

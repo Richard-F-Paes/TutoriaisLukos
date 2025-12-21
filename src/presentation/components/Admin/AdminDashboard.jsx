@@ -26,10 +26,14 @@ const AdminDashboard = () => {
     enabled: true,
   });
 
-  const users = usersData?.data || [];
-  const adminUsers = users.filter(u => u.Role === 'admin').length;
-  const suporteUsers = users.filter(u => u.Role === 'suporte').length;
-  const activeUsers = users.filter(u => u.IsActive).length;
+  // Backend retorna array direto, não precisa de .data
+  const users = Array.isArray(usersData) ? usersData : [];
+  const adminUsers = users.filter(u => (u.role || u.Role) === 'admin').length;
+  const suporteUsers = users.filter(u => (u.role || u.Role) === 'suporte').length;
+  const activeUsers = users.filter(u => {
+    const isActive = u.isActive !== undefined ? u.isActive : u.IsActive;
+    return isActive === true;
+  }).length;
 
   const isLoading = statsLoading || usersLoading;
 
@@ -60,18 +64,11 @@ const AdminDashboard = () => {
       subtitle: `${adminUsers} admin, ${suporteUsers} suporte`
     },
     {
-      title: 'Categorias',
-      value: stats?.totalCategories || 0,
-      icon: FolderOpen,
-      color: 'purple',
-      subtitle: 'Categorias ativas'
-    },
-    {
       title: 'Visualizações',
-      value: stats?.totalViews || 0,
+      value: stats?.totalViewsLast30Days || 0,
       icon: Eye,
       color: 'orange',
-      subtitle: 'Total de visualizações'
+      subtitle: 'Últimos 30 dias'
     }
   ];
 
@@ -137,17 +134,34 @@ const AdminDashboard = () => {
             Tutoriais Mais Visualizados
           </h3>
           <div className="dashboard-list">
-            {stats.mostViewed.map((tutorial, index) => (
-              <div key={tutorial.Id || index} className="dashboard-list-item">
-                <div className="list-item-number">{index + 1}</div>
-                <div className="list-item-content">
-                  <h4>{tutorial.Title}</h4>
-                  <p className="list-item-meta">
-                    {tutorial.ViewCount || 0} visualizações • {tutorial.Category?.Name || 'Sem categoria'}
-                  </p>
+            {stats.mostViewed.map((tutorial, index) => {
+              const title = tutorial.title || tutorial.Title || 'Sem título';
+              const viewCount = tutorial.viewCount || tutorial.ViewCount || 0;
+              const categoryName = tutorial.category?.name || tutorial.Category?.Name || 'Sem categoria';
+              const subcategoryName = tutorial.category?.parent?.name || tutorial.Category?.Parent?.Name;
+              const updatedAt = tutorial.updatedAt || tutorial.UpdatedAt;
+              const updatedDate = updatedAt ? new Date(updatedAt).toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+              }) : 'Data não disponível';
+
+              return (
+                <div key={tutorial.id || tutorial.Id || index} className="dashboard-list-item">
+                  <div className="list-item-number">{index + 1}</div>
+                  <div className="list-item-content">
+                    <h4>{title}</h4>
+                    <p className="list-item-meta">
+                      {viewCount.toLocaleString('pt-BR')} visualizações
+                      {subcategoryName && ` • ${subcategoryName}`}
+                      {categoryName && !subcategoryName && ` • ${categoryName}`}
+                      {subcategoryName && categoryName && ` (${categoryName})`}
+                      {` • Atualizado em ${updatedDate}`}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -160,24 +174,62 @@ const AdminDashboard = () => {
             Tutoriais Recentes
           </h3>
           <div className="dashboard-list">
-            {stats.recentTutorials.map((tutorial, index) => (
-              <div key={tutorial.Id || index} className="dashboard-list-item">
-                <div className="list-item-icon">
-                  <FileText size={20} />
+            {stats.recentTutorials.map((tutorial, index) => {
+              const title = tutorial.title || tutorial.Title || 'Sem título';
+              const updatedAt = tutorial.updatedAt || tutorial.UpdatedAt;
+              const createdAt = tutorial.createdAt || tutorial.CreatedAt;
+              const isPublished = tutorial.isPublished !== undefined ? tutorial.isPublished : tutorial.IsPublished;
+              const categoryName = tutorial.category?.name || tutorial.Category?.Name || 'Sem categoria';
+              const subcategoryName = tutorial.category?.parent?.name || tutorial.Category?.Parent?.Name;
+              
+              const formatDate = (date) => {
+                if (!date) return 'Data não disponível';
+                try {
+                  return new Date(date).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                  });
+                } catch (e) {
+                  return 'Data inválida';
+                }
+              };
+
+              const updatedDate = formatDate(updatedAt);
+              const createdDate = formatDate(createdAt);
+
+              // Montar string de categoria/subcategoria
+              let categoryInfo = '';
+              if (subcategoryName && categoryName) {
+                categoryInfo = ` • ${subcategoryName} (${categoryName})`;
+              } else if (subcategoryName) {
+                categoryInfo = ` • ${subcategoryName}`;
+              } else if (categoryName && categoryName !== 'Sem categoria') {
+                categoryInfo = ` • ${categoryName}`;
+              }
+
+              return (
+                <div key={tutorial.id || tutorial.Id || index} className="dashboard-list-item">
+                  <div className="list-item-icon">
+                    <FileText size={20} />
+                  </div>
+                  <div className="list-item-content">
+                    <h4>{title}</h4>
+                    <p className="list-item-meta">
+                      Atualizado em {updatedDate}
+                      {createdDate !== updatedDate && ` • Criado em ${createdDate}`}
+                      {categoryInfo}
+                      {` • `}
+                      {isPublished ? (
+                        <span className="status-badge published">Publicado</span>
+                      ) : (
+                        <span className="status-badge unpublished">Rascunho</span>
+                      )}
+                    </p>
+                  </div>
                 </div>
-                <div className="list-item-content">
-                  <h4>{tutorial.Title}</h4>
-                  <p className="list-item-meta">
-                    Criado em {new Date(tutorial.CreatedAt).toLocaleDateString('pt-BR')} • 
-                    {tutorial.IsPublished ? (
-                      <span className="status-badge published">Publicado</span>
-                    ) : (
-                      <span className="status-badge unpublished">Rascunho</span>
-                    )}
-                  </p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

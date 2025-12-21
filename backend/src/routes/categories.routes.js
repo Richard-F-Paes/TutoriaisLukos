@@ -123,6 +123,13 @@ router.post('/', authenticate, requirePermission('manage_categories'), async (re
       if (!parent) {
         return res.status(400).json({ error: 'Categoria pai não encontrada' });
       }
+
+      // Validar que a categoria pai não é uma subcategoria (não pode ter parentId)
+      if (parent.parentId !== null) {
+        return res.status(400).json({ 
+          error: 'Não é possível criar subcategoria de uma subcategoria. Apenas categorias principais podem ter subcategorias.' 
+        });
+      }
     }
 
     const slug = slugify(name, { lower: true, strict: true });
@@ -180,6 +187,13 @@ router.put('/:id', authenticate, requirePermission('manage_categories'), async (
 
         if (!parent) {
           return res.status(400).json({ error: 'Categoria pai não encontrada' });
+        }
+
+        // Validar que a categoria pai não é uma subcategoria (não pode ter parentId)
+        if (parent.parentId !== null) {
+          return res.status(400).json({ 
+            error: 'Não é possível criar subcategoria de uma subcategoria. Apenas categorias principais podem ter subcategorias.' 
+          });
         }
 
         // Check for circular reference

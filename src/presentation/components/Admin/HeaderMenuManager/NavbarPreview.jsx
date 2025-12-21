@@ -21,8 +21,14 @@ export const NavbarPreview = ({
   onUpdateItemAtPath,
   onDeleteItemAtPath,
   onAddSubmenuItem,
+  onAddMenu,
+  onSaveMenu,
+  onCancelAddMenu,
   editingMenuId,
   addingItemMenuId,
+  isAddingMenu,
+  newMenuLabel,
+  setNewMenuLabel,
   newItemLabel,
   newItemType,
   newItemTutorialSlug,
@@ -224,6 +230,51 @@ export const NavbarPreview = ({
             </SortableContext>
           </DndContext>
         </nav>
+        {isAddingMenu ? (
+          <div className="add-menu-form">
+            <div>
+              <input
+                type="text"
+                value={newMenuLabel}
+                onChange={(e) => setNewMenuLabel(e.target.value)}
+                className="form-input-small"
+                placeholder="Nome do menu"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    onSaveMenu();
+                  } else if (e.key === 'Escape') {
+                    onCancelAddMenu();
+                  }
+                }}
+                autoFocus
+                style={{ flex: '1', minWidth: '200px' }}
+              />
+              <button
+                onClick={onSaveMenu}
+                className="btn-icon success"
+                title="Salvar"
+              >
+                <Check size={16} />
+              </button>
+              <button
+                onClick={onCancelAddMenu}
+                className="btn-icon"
+                title="Cancelar"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={onAddMenu}
+            className="btn-add-menu"
+            style={{ marginTop: '1rem' }}
+          >
+            <Plus size={16} />
+            Adicionar Menu
+          </button>
+        )}
       </div>
     </div>
   );

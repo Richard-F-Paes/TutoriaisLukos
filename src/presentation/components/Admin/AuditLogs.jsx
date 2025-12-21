@@ -577,7 +577,7 @@ const AuditLogs = () => {
             disabled={isLoading}
             style={{
               padding: '0.5rem 1rem',
-              background: isLoading ? '#9ca3af' : '#3b82f6',
+              background: isLoading ? '#9ca3af' : 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
@@ -592,12 +592,12 @@ const AuditLogs = () => {
             }}
             onMouseEnter={(e) => {
               if (!isLoading) {
-                e.target.style.background = '#2563eb';
+                e.target.style.background = 'linear-gradient(135deg, #5a008f 0%, #4a0073 100%)';
               }
             }}
             onMouseLeave={(e) => {
               if (!isLoading) {
-                e.target.style.background = '#3b82f6';
+                e.target.style.background = 'linear-gradient(135deg, #6c2396 0%, #5a008f 100%)';
               }
             }}
           >

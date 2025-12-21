@@ -237,18 +237,21 @@ input:checked + .slider:before {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: #3b82f6;
+  background: linear-gradient(135deg, #6c2396 0%, #5a008f 100%);
   color: white;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 500;
-  transition: background 0.2s;
+  transition: all 0.2s;
   border: none;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(108, 35, 150, 0.2);
 }
 
 .btn-primary:hover {
-  background: #2563eb;
+  background: linear-gradient(135deg, #5a008f 0%, #4a0073 100%);
+  box-shadow: 0 4px 6px rgba(108, 35, 150, 0.3);
+  transform: translateY(-1px);
 }
 
 .manager-filters {

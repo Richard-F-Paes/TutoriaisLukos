@@ -242,6 +242,46 @@
   border-color: rgba(212, 179, 255, 0.7);
 }
 
+.btn-add-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(212, 179, 255, 0.1);
+  border: 1px dashed rgba(212, 179, 255, 0.5);
+  border-radius: 8px;
+  color: #5a008f;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add-menu:hover {
+  background: rgba(212, 179, 255, 0.2);
+  border-color: rgba(212, 179, 255, 0.7);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(212, 179, 255, 0.2);
+}
+
+.add-menu-form {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.add-menu-form > div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 /* SortableMenuItem Styles */
 .sortable-menu-item {
   display: flex;

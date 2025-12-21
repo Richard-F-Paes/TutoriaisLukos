@@ -13,6 +13,7 @@ const CategoryManager = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState(new Set());
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -80,6 +81,12 @@ const CategoryManager = () => {
   };
 
   const handleAddSubcategory = (parentCategory) => {
+    // Verificar se a categoria pai já é uma subcategoria (tem parentId)
+    if (parentCategory.parentId || parentCategory.parent) {
+      toast.error('Não é possível criar subcategoria de uma subcategoria. Apenas categorias principais podem ter subcategorias.');
+      return;
+    }
+    
     setEditingCategory(null); // Nova categoria, não edição
     setFormData({
       name: '',
@@ -107,6 +114,16 @@ const CategoryManager = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validar: não permitir criar/editar categoria como subcategoria de uma subcategoria
+    if (formData.parentId) {
+      const parentCategory = findCategoryById(categories, formData.parentId);
+      if (parentCategory && (parentCategory.parentId || parentCategory.parent)) {
+        toast.error('Não é possível criar subcategoria de uma subcategoria. Apenas categorias principais podem ter subcategorias.');
+        return;
+      }
+    }
+    
     try {
       if (editingCategory) {
         await updateMutation.mutateAsync({
@@ -126,18 +143,26 @@ const CategoryManager = () => {
     }
   };
 
-  const handleDelete = async (id, name) => {
-    if (!window.confirm(`Tem certeza que deseja excluir a categoria "${name}"?`)) {
-      return;
-    }
+  const handleDeleteClick = (category) => {
+    setCategoryToDelete(category);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!categoryToDelete) return;
 
     try {
-      await deleteMutation.mutateAsync(id);
+      await deleteMutation.mutateAsync(categoryToDelete.id);
       toast.success('Categoria excluída com sucesso!');
+      setCategoryToDelete(null);
     } catch (error) {
       const errorMessage = error.response?.data?.error || 'Erro ao excluir categoria';
       toast.error(errorMessage);
+      // Não fechar o modal em caso de erro, para que o usuário veja a mensagem
     }
+  };
+
+  const handleCancelDelete = () => {
+    setCategoryToDelete(null);
   };
 
   const renderCategory = (category, level = 0) => {
@@ -146,10 +171,15 @@ const CategoryManager = () => {
     const indentStyle = { marginLeft: `${level * 24}px` };
 
     return (
-      <div key={category.id} className="category-item" style={{
-        ...indentStyle,
-        marginBottom: '0.5rem',
-      }}>
+      <div 
+        key={category.id} 
+        className="category-item" 
+        data-category-id={category.id}
+        style={{
+          ...indentStyle,
+          marginBottom: '0.5rem',
+        }}
+      >
         <div className="category-row" style={{
           display: 'flex',
           alignItems: 'center',
@@ -223,33 +253,36 @@ const CategoryManager = () => {
             alignItems: 'center',
             gap: '0.5rem',
           }}>
-            <button
-              className="btn-icon"
-              title="Adicionar Subcategoria"
-              onClick={() => handleAddSubcategory(category)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '0.5rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '6px',
-                color: '#6b7280',
-                transition: 'all 0.15s',
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#f0f9ff';
-                e.target.style.color = '#0ea5e9';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-                e.target.style.color = '#6b7280';
-              }}
-            >
-              <Plus size={16} />
-            </button>
+            {/* Só mostrar botão de adicionar subcategoria se a categoria não for uma subcategoria */}
+            {!(category.parentId || category.parent) && (
+              <button
+                className="btn-icon"
+                title="Adicionar Subcategoria"
+                onClick={() => handleAddSubcategory(category)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '6px',
+                  color: '#6b7280',
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#f0f9ff';
+                  e.target.style.color = '#0ea5e9';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = '#6b7280';
+                }}
+              >
+                <Plus size={16} />
+              </button>
+            )}
             <button
               className="btn-icon"
               title="Editar"
@@ -278,7 +311,7 @@ const CategoryManager = () => {
               <Edit size={16} />
             </button>
             <button
-              onClick={() => handleDelete(category.id, category.name)}
+              onClick={() => handleDeleteClick(category)}
               className="btn-icon btn-danger"
               title="Excluir"
               style={{
@@ -454,50 +487,6 @@ const CategoryManager = () => {
                   }}
                 />
               </div>
-              {editingCategory && editingCategory.parentId && (
-                <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                  <label style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    cursor: 'pointer',
-                    padding: '0.75rem 1rem',
-                    backgroundColor: '#f9fafb',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    fontSize: '0.875rem',
-                    color: '#374151',
-                    fontWeight: 500,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#f3f4f6';
-                    e.currentTarget.style.borderColor = '#d1d5db';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#f9fafb';
-                    e.currentTarget.style.borderColor = '#e5e7eb';
-                  }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={formData.parentId === null}
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          parentId: e.target.checked ? null : editingCategory.parentId,
-                        });
-                      }}
-                      style={{
-                        cursor: 'pointer',
-                        width: '16px',
-                        height: '16px',
-                        accentColor: '#3b82f6',
-                      }}
-                    />
-                    <span>Tornar categoria principal (remover relação pai)</span>
-                  </label>
-                </div>
-              )}
               <div className="form-actions" style={{
                 display: 'flex',
                 gap: '0.75rem',
@@ -560,6 +549,261 @@ const CategoryManager = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmação de Exclusão */}
+      {categoryToDelete && (
+        <div
+          className="category-form-modal"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            backdropFilter: 'blur(4px)',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !deleteMutation.isPending) {
+              handleCancelDelete();
+            }
+          }}
+        >
+          <div
+            className="form-container"
+            style={{
+              background: 'white',
+              borderRadius: '12px',
+              padding: '1.75rem',
+              maxWidth: '480px',
+              width: '92%',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="form-header"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '1rem',
+              }}
+            >
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: '1.25rem',
+                  fontWeight: 700,
+                  color: '#111827',
+                  letterSpacing: '-0.02em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                <Trash2 size={20} style={{ color: '#dc2626' }} />
+                Excluir {categoryToDelete.parentId || categoryToDelete.parent ? 'subcategoria' : 'categoria'}?
+              </h3>
+              <button
+                type="button"
+                className="close-btn"
+                onClick={handleCancelDelete}
+                disabled={deleteMutation.isPending}
+                style={{
+                  background: '#f3f4f6',
+                  border: 'none',
+                  cursor: deleteMutation.isPending ? 'not-allowed' : 'pointer',
+                  padding: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '6px',
+                  color: '#6b7280',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  if (!deleteMutation.isPending) {
+                    e.target.style.background = '#e5e7eb';
+                    e.target.style.color = '#374151';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = '#f3f4f6';
+                  e.target.style.color = '#6b7280';
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div style={{ color: '#111827', fontSize: '1.0625rem', lineHeight: 1.7 }}>
+              <p style={{ margin: '0 0 1.25rem 0', fontWeight: 500, letterSpacing: '0.01em', color: '#0f172a' }}>
+                Tem certeza que deseja excluir a{' '}
+                <strong style={{ color: '#030712', fontWeight: 700, fontSize: '1.125rem' }}>
+                  {categoryToDelete.parentId || categoryToDelete.parent ? 'subcategoria' : 'categoria'} "{categoryToDelete.name}"
+                </strong>
+                ?
+              </p>
+
+              {/* Avisos baseados na categoria */}
+              <div
+                style={{
+                  padding: '0.875rem',
+                  backgroundColor: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  borderRadius: '8px',
+                  marginBottom: '1rem',
+                }}
+              >
+                <div style={{ color: '#991b1b', fontSize: '0.875rem', lineHeight: 1.5 }}>
+                  <strong>⚠️ Atenção:</strong>
+                  <ul style={{ margin: '0.5rem 0 0 1.25rem', padding: 0 }}>
+                    {categoryToDelete.children && categoryToDelete.children.length > 0 && (
+                      <li style={{ marginBottom: '0.25rem' }}>
+                        Esta categoria possui {categoryToDelete.children.length} subcategoria(s). 
+                        Remova ou mova as subcategorias primeiro.
+                      </li>
+                    )}
+                    <li style={{ marginBottom: '0.25rem' }}>
+                      Todos os tutoriais associados a esta {categoryToDelete.parentId || categoryToDelete.parent ? 'subcategoria' : 'categoria'} serão desvinculados.
+                    </li>
+                    <li>Esta ação não pode ser desfeita.</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Mostrar informações adicionais se for subcategoria */}
+              {categoryToDelete.parentId || categoryToDelete.parent ? (
+                <div
+                  style={{
+                    padding: '0.75rem',
+                    backgroundColor: '#f0f9ff',
+                    border: '1px solid #bae6fd',
+                    borderRadius: '8px',
+                    fontSize: '0.875rem',
+                    color: '#0369a1',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <strong>Subcategoria de:</strong>{' '}
+                  {(() => {
+                    const parentId = categoryToDelete.parentId || categoryToDelete.parent?.id;
+                    if (parentId) {
+                      const parentCategory = findCategoryById(categories, parentId);
+                      return parentCategory?.name || 'Categoria pai';
+                    }
+                    return categoryToDelete.parent?.name || 'Categoria pai';
+                  })()}
+                </div>
+              ) : null}
+            </div>
+
+            <div
+              className="form-actions"
+              style={{
+                display: 'flex',
+                gap: '0.75rem',
+                justifyContent: 'flex-end',
+                marginTop: '1.5rem',
+                paddingTop: '1rem',
+                borderTop: '1px solid #e5e7eb',
+              }}
+            >
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={handleCancelDelete}
+                disabled={deleteMutation.isPending}
+                style={{
+                  padding: '0.7rem 1.25rem',
+                  background: '#f3f4f6',
+                  color: '#374151',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  cursor: deleteMutation.isPending ? 'not-allowed' : 'pointer',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  if (!deleteMutation.isPending) {
+                    e.target.style.background = '#e5e7eb';
+                    e.target.style.borderColor = '#d1d5db';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = '#f3f4f6';
+                  e.target.style.borderColor = '#e5e7eb';
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={handleConfirmDelete}
+                disabled={
+                  deleteMutation.isPending ||
+                  (categoryToDelete.children && categoryToDelete.children.length > 0)
+                }
+                style={{
+                  padding: '0.7rem 1.25rem',
+                  background:
+                    deleteMutation.isPending ||
+                    (categoryToDelete.children && categoryToDelete.children.length > 0)
+                      ? '#9ca3af'
+                      : '#dc2626',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor:
+                    deleteMutation.isPending ||
+                    (categoryToDelete.children && categoryToDelete.children.length > 0)
+                      ? 'not-allowed'
+                      : 'pointer',
+                  fontWeight: 700,
+                  fontSize: '0.875rem',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  if (
+                    !deleteMutation.isPending &&
+                    (!categoryToDelete.children || categoryToDelete.children.length === 0)
+                  ) {
+                    e.target.style.background = '#b91c1c';
+                    e.target.style.boxShadow = '0 4px 6px -1px rgba(220, 38, 38, 0.3)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (
+                    !deleteMutation.isPending &&
+                    (!categoryToDelete.children || categoryToDelete.children.length === 0)
+                  ) {
+                    e.target.style.background = '#dc2626';
+                    e.target.style.boxShadow = 'none';
+                  }
+                }}
+                title={
+                  categoryToDelete.children && categoryToDelete.children.length > 0
+                    ? 'Remova as subcategorias primeiro'
+                    : ''
+                }
+              >
+                {deleteMutation.isPending
+                  ? 'Excluindo...'
+                  : categoryToDelete.children && categoryToDelete.children.length > 0
+                  ? 'Não é possível excluir'
+                  : 'Sim, excluir'}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
 // StepMediaUploader - Componente de upload de mídia para passos (aceita vídeo ou imagem)
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Upload, X, Image as ImageIcon, Video, Loader2, AlertCircle } from 'lucide-react';
 import { useUploadMedia } from '../../../hooks/useMedia.js';
 import { useAuth } from '../../../contexts/AuthContext.js';
@@ -13,6 +13,10 @@ const StepMediaUploader = ({ videoUrl = '', imageUrl = '', onVideoChange, onImag
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [mediaType, setMediaType] = useState(null); // 'image' ou 'video'
+  const [isUrlModalOpen, setIsUrlModalOpen] = useState(false);
+  const [urlInput, setUrlInput] = useState('');
+  const [selectedMediaType, setSelectedMediaType] = useState('image'); // 'image' ou 'video'
+  const urlInputRef = useRef(null);
 
   // Tipos de arquivo permitidos
   const ALLOWED_IMAGE_TYPES = [
@@ -57,6 +61,15 @@ const StepMediaUploader = ({ videoUrl = '', imageUrl = '', onVideoChange, onImag
       setMediaType(currentMediaType);
     }
   }, [currentMediaType]);
+
+  // Focar no input quando o modal abrir
+  useEffect(() => {
+    if (isUrlModalOpen && urlInputRef.current) {
+      setTimeout(() => {
+        urlInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isUrlModalOpen]);
 
   // Detectar tipo de arquivo
   const detectFileType = (file) => {
@@ -201,6 +214,52 @@ const StepMediaUploader = ({ videoUrl = '', imageUrl = '', onVideoChange, onImag
     fileInputRef.current?.click();
   };
 
+  const handleUrlSubmit = () => {
+    if (!urlInput.trim()) {
+      toast.error('Por favor, insira uma URL válida');
+      return;
+    }
+
+    const url = urlInput.trim();
+    
+    // Tentar detectar tipo pela URL se não foi especificado
+    let detectedType = selectedMediaType;
+    if (!detectedType) {
+      const lowerUrl = url.toLowerCase();
+      const videoExtensions = ['.mp4', '.mpeg', '.mpg', '.mov', '.avi', '.wmv', '.webm', '.ogg', '.ogv', '.mkv', '.flv', '.3gp', '.3g2', '.m4v'];
+      const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg', '.tiff', '.tif', '.ico', '.heic', '.heif', '.avif'];
+      const isVideo = videoExtensions.some(ext => lowerUrl.includes(ext)) || lowerUrl.includes('video');
+      const isImage = imageExtensions.some(ext => lowerUrl.includes(ext)) || lowerUrl.includes('image');
+      
+      if (isVideo) {
+        detectedType = 'video';
+      } else if (isImage) {
+        detectedType = 'image';
+      } else {
+        // Usar o tipo selecionado como padrão
+        detectedType = selectedMediaType || 'image';
+      }
+    }
+
+    // Atualizar o estado apropriado
+    if (detectedType === 'video') {
+      onImageChange?.(''); // Limpar imagem
+      onVideoChange?.(url);
+      setMediaType('video');
+      toast.success('URL do vídeo inserida com sucesso!');
+    } else {
+      onVideoChange?.(''); // Limpar vídeo
+      onImageChange?.(url);
+      setMediaType('image');
+      toast.success('URL da imagem inserida com sucesso!');
+    }
+
+    // Fechar modal e limpar
+    setIsUrlModalOpen(false);
+    setUrlInput('');
+    setSelectedMediaType('image');
+  };
+
   const isExternalUrl = (url) => {
     if (!url) return false;
     return !url.startsWith('/uploads') && !url.startsWith('http://localhost');
@@ -342,38 +401,92 @@ const StepMediaUploader = ({ videoUrl = '', imageUrl = '', onVideoChange, onImag
         <button
           type="button"
           onClick={() => {
-            const url = prompt('Digite a URL da mídia (imagem ou vídeo):');
-            if (url && url.trim()) {
-              // Tentar detectar tipo pela URL
-              const lowerUrl = url.toLowerCase();
-              const videoExtensions = ['.mp4', '.mpeg', '.mpg', '.mov', '.avi', '.wmv', '.webm', '.ogg', '.ogv', '.mkv', '.flv', '.3gp', '.3g2', '.m4v'];
-              const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg', '.tiff', '.tif', '.ico', '.heic', '.heif', '.avif'];
-              const isVideo = videoExtensions.some(ext => lowerUrl.includes(ext)) || lowerUrl.includes('video');
-              const isImage = imageExtensions.some(ext => lowerUrl.includes(ext)) || lowerUrl.includes('image');
-              
-              if (isVideo) {
-                onImageChange?.(''); // Limpar imagem
-                onVideoChange?.(url.trim());
-              } else if (isImage) {
-                onVideoChange?.(''); // Limpar vídeo
-                onImageChange?.(url.trim());
-              } else {
-                // Se não conseguir detectar, perguntar ao usuário
-                const choice = prompt('É uma imagem ou vídeo? Digite "imagem" ou "video":');
-                if (choice && choice.toLowerCase().includes('video')) {
-                  onImageChange?.('');
-                  onVideoChange?.(url.trim());
-                } else {
-                  onVideoChange?.('');
-                  onImageChange?.(url.trim());
-                }
-              }
-            }
+            setUrlInput('');
+            setSelectedMediaType('image');
+            setIsUrlModalOpen(true);
           }}
           className="step-media-url-button"
         >
           Ou inserir URL manualmente
         </button>
+      )}
+
+      {/* Modal para inserir URL manualmente */}
+      {isUrlModalOpen && (
+        <div className="step-media-url-modal-overlay" onClick={() => setIsUrlModalOpen(false)}>
+          <div className="step-media-url-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="step-media-url-modal-header">
+              <h3>Inserir URL da Mídia</h3>
+              <button
+                type="button"
+                onClick={() => setIsUrlModalOpen(false)}
+                className="step-media-url-modal-close"
+                aria-label="Fechar modal"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="step-media-url-modal-body">
+              <div className="step-media-url-modal-input-group">
+                <label htmlFor="media-url-input">URL da mídia:</label>
+                <input
+                  id="media-url-input"
+                  ref={urlInputRef}
+                  type="text"
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  placeholder="https://exemplo.com/imagem.jpg ou https://exemplo.com/video.mp4"
+                  className="step-media-url-modal-input"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleUrlSubmit();
+                    } else if (e.key === 'Escape') {
+                      setIsUrlModalOpen(false);
+                    }
+                  }}
+                />
+              </div>
+              <div className="step-media-url-modal-type-group">
+                <label>Tipo de mídia:</label>
+                <div className="step-media-url-modal-type-options">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedMediaType('image')}
+                    className={`step-media-url-modal-type-btn ${selectedMediaType === 'image' ? 'active' : ''}`}
+                  >
+                    <ImageIcon size={16} />
+                    Imagem
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedMediaType('video')}
+                    className={`step-media-url-modal-type-btn ${selectedMediaType === 'video' ? 'active' : ''}`}
+                  >
+                    <Video size={16} />
+                    Vídeo
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="step-media-url-modal-footer">
+              <button
+                type="button"
+                onClick={() => setIsUrlModalOpen(false)}
+                className="step-media-url-modal-cancel"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleUrlSubmit}
+                className="step-media-url-modal-submit"
+                disabled={!urlInput.trim()}
+              >
+                Inserir URL
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

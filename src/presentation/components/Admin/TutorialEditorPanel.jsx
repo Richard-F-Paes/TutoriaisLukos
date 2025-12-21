@@ -34,7 +34,14 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
 
   const allCategoriesFlat = flattenCategoriesForSelect(categories);
 
-  const { data: tutorialData, isLoading } = useTutorial(!isNew ? Number(tutorialId) : null);
+  // Garantir que tutorialId seja um número válido ou null
+  const normalizedTutorialId = useMemo(() => {
+    if (isNew || !tutorialId) return null;
+    const numId = Number(tutorialId);
+    return isNaN(numId) ? null : numId;
+  }, [tutorialId, isNew]);
+
+  const { data: tutorialData, isLoading } = useTutorial(normalizedTutorialId);
   const createMutation = useCreateTutorial();
   const updateMutation = useUpdateTutorial();
 
@@ -71,15 +78,14 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
   }, [allCategoriesFlat, categoryId]);
 
   const initial = useMemo(() => tutorialData?.data || null, [tutorialData]);
-  const normalizedId = !isNew ? Number(tutorialId) : null;
 
   // Steps (somente após tutorial existir)
-  const { data: stepsData } = useSteps(normalizedId);
+  const { data: stepsData } = useSteps(normalizedTutorialId);
   const steps = stepsData?.data || stepsData || [];
-  const createStepMutation = useCreateStep(normalizedId);
-  const updateStepMutation = useUpdateStep(normalizedId);
-  const deleteStepMutation = useDeleteStep(normalizedId);
-  const reorderStepsMutation = useReorderSteps(normalizedId);
+  const createStepMutation = useCreateStep(normalizedTutorialId);
+  const updateStepMutation = useUpdateStep(normalizedTutorialId);
+  const deleteStepMutation = useDeleteStep(normalizedTutorialId);
+  const reorderStepsMutation = useReorderSteps(normalizedTutorialId);
 
   const [stepDraft, setStepDraft] = useState({
     id: null,
@@ -90,15 +96,48 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
     duration: '',
   });
 
+  // Resetar campos quando tutorialId mudar (antes de carregar novos dados)
   useEffect(() => {
-    const currentId = !isNew ? Number(tutorialId) : null;
+    const currentId = normalizedTutorialId;
     
-    // Só inicializar se for um novo tutorial ou se o ID mudou
-    const shouldInitialize = isNew || 
-      (initial && (lastInitialIdRef.current !== currentId || !initializedRef.current));
+    // Se o ID mudou, resetar a flag de inicialização e limpar campos
+    if (lastInitialIdRef.current !== currentId) {
+      initializedRef.current = false;
+      // Se mudou para um tutorial diferente, limpar campos temporariamente
+      if (currentId !== null && lastInitialIdRef.current !== null) {
+        setTitle('');
+        setDescription('');
+        setCategoryId('');
+        setSubcategoryId('');
+        setIsPublished(false);
+      }
+    }
+  }, [normalizedTutorialId]);
+
+  // Inicializar campos quando os dados chegarem
+  useEffect(() => {
+    const currentId = normalizedTutorialId;
     
-    if (shouldInitialize) {
-      if (!isNew && initial) {
+    // Se for um novo tutorial, inicializar campos vazios
+    if (isNew) {
+      if (!initializedRef.current) {
+        setTitle('');
+        setDescription('');
+        setContent('');
+        setCategoryId('');
+        setSubcategoryId('');
+        setIsPublished(false);
+        lastInitialIdRef.current = null;
+        initializedRef.current = true;
+      }
+      return;
+    }
+
+    // Se não for novo e temos dados, inicializar campos
+    if (currentId !== null && initial && !isLoading) {
+      // Verificar se os dados correspondem ao ID atual
+      const tutorialIdFromData = initial.Id || initial.id;
+      if (tutorialIdFromData === currentId && (!initializedRef.current || lastInitialIdRef.current !== currentId)) {
         setTitle(initial.Title || initial.title || '');
         setDescription(initial.Description || initial.description || '');
         setContent(''); // Conteúdo removido - tutorial será dividido em passos
@@ -118,18 +157,8 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
         lastInitialIdRef.current = currentId;
         initializedRef.current = true;
       }
-      if (isNew) {
-        setTitle('');
-        setDescription('');
-        setContent('');
-        setCategoryId('');
-        setSubcategoryId('');
-        setIsPublished(false);
-        lastInitialIdRef.current = null;
-        initializedRef.current = true;
-      }
     }
-  }, [isNew, initial, allCategoriesFlat, tutorialId]);
+  }, [isNew, initial, isLoading, allCategoriesFlat, normalizedTutorialId]);
 
   // Limpar subcategoria quando categoria mudar
   useEffect(() => {
@@ -176,7 +205,7 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
   };
 
   const submitStep = async () => {
-    if (isNew || !normalizedId) return;
+    if (isNew || !normalizedTutorialId) return;
     if (!stepDraft.title.trim()) {
       toast.error('Título do passo é obrigatório');
       return;
@@ -216,7 +245,7 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
   };
 
   const removeStep = async (stepId) => {
-    if (!normalizedId) return;
+    if (!normalizedTutorialId) return;
     if (!window.confirm('Excluir este passo?')) return;
     try {
       await deleteStepMutation.mutateAsync(stepId);
@@ -227,7 +256,7 @@ export default function TutorialEditorPanel({ tutorialId = null, onCancel, onSav
   };
 
   const moveStep = async (fromIndex, direction) => {
-    if (!normalizedId) return;
+    if (!normalizedTutorialId) return;
     const toIndex = fromIndex + direction;
     if (toIndex < 0 || toIndex >= steps.length) return;
 

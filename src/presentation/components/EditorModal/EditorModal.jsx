@@ -27,13 +27,6 @@ function TabButton({ isActive, onClick, children, disabled, tabId }) {
       role="tab"
     >
       {children}
-      {isActive && (
-        <motion.div
-          className="editor-modal-tab-indicator"
-          layoutId="activeTabIndicator"
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        />
-      )}
     </motion.button>
   );
 }
@@ -42,7 +35,6 @@ export default function EditorModal() {
   const { isAuthenticated, user, hasPermission } = useAuth();
   const { isOpen, initialTab, initialTutorialId, closeEditorModal } = useEditorModal();
   const [activeTab, setActiveTab] = useState(initialTab || 'tutorials');
-  const [mode, setMode] = useState('edit'); // 'view' | 'edit'
   const containerRef = useRef(null);
   const previousActiveElementRef = useRef(null);
 
@@ -58,9 +50,10 @@ export default function EditorModal() {
     const canManageUsers = hasPermission('manage_users');
     const canUploadMedia = hasPermission('upload_media');
     const canViewLogs = hasPermission('view_audit_logs');
+    const isAdmin = user?.role === 'admin';
 
     return [
-      { id: 'dashboard', label: 'Dashboard', visible: true },
+      { id: 'dashboard', label: 'Dashboard', visible: isAdmin },
       { id: 'tutorials', label: 'Tutoriais', visible: canSeeTutorials },
       { id: 'categories', label: 'Categorias', visible: canManageCategories },
       { id: 'header-menus', label: 'Header', visible: canManageCategories },
@@ -68,7 +61,7 @@ export default function EditorModal() {
       { id: 'media', label: 'Mídia', visible: canUploadMedia },
       { id: 'logs', label: 'Logs', visible: canViewLogs },
     ].filter((t) => t.visible);
-  }, [hasPermission]);
+  }, [hasPermission, user]);
 
   // Focus trap e gerenciamento de foco aprimorado
   useEffect(() => {
@@ -169,17 +162,17 @@ export default function EditorModal() {
       case 'dashboard':
         return <AdminDashboard />;
       case 'tutorials':
-        return <TutorialManager editorMode={mode} initialTutorialId={initialTutorialId} />;
+        return <TutorialManager initialTutorialId={initialTutorialId} />;
       case 'categories':
-        return <CategoryManager editorMode={mode} />;
+        return <CategoryManager />;
       case 'header-menus':
-        return <HeaderMenuManager editorMode={mode} />;
+        return <HeaderMenuManager />;
       case 'users':
-        return <UserManager editorMode={mode} />;
+        return <UserManager />;
       case 'media':
-        return <MediaLibrary editorMode={mode} />;
+        return <MediaLibrary />;
       case 'logs':
-        return <AuditLogs editorMode={mode} />;
+        return <AuditLogs />;
       default:
         return <div>Selecione uma aba.</div>;
     }
@@ -285,35 +278,6 @@ export default function EditorModal() {
               </div>
 
               <div className="editor-modal-header-actions">
-                <motion.div 
-                  className="editor-modal-mode"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.15, duration: 0.2 }}
-                >
-                  <span className="editor-modal-mode-label">Modo</span>
-                  <motion.button
-                    type="button"
-                    className={`editor-modal-mode-btn ${mode === 'view' ? 'active' : ''}`}
-                    onClick={() => setMode('view')}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                  >
-                    Visualização
-                  </motion.button>
-                  <motion.button
-                    type="button"
-                    className={`editor-modal-mode-btn ${mode === 'edit' ? 'active' : ''}`}
-                    onClick={() => setMode('edit')}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                  >
-                    Edição
-                  </motion.button>
-                </motion.div>
-
                 <motion.button
                   className="editor-modal-close"
                   onClick={closeEditorModal}

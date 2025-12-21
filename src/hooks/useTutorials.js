@@ -10,6 +10,7 @@ export const useTutorials = (filters = {}) => {
       if (filters.categorySlug) {
         return tutorialService.getByCategory(filters.categorySlug);
       }
+      // categoryId é suportado diretamente pelo service.list
       return tutorialService.list(filters);
     },
     staleTime: 5 * 60 * 1000, // 5 minutos

@@ -198,6 +198,11 @@ router.get('/', async (req, res) => {
     }
     if (featured !== undefined) where.isFeatured = featured === 'true';
 
+    // Calcular data de 30 dias atrás
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    thirtyDaysAgo.setHours(0, 0, 0, 0);
+
     const tutorials = await prisma.tutorial.findMany({
       where,
       include: {
@@ -219,7 +224,31 @@ router.get('/', async (req, res) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    res.json({ data: tutorials });
+    // Adicionar contagem de views dos últimos 30 dias para cada tutorial
+    const tutorialsWithViews = await Promise.all(
+      tutorials.map(async (tutorial) => {
+        let viewsLast30Days = 0;
+        try {
+          viewsLast30Days = await prisma.tutorialView.count({
+            where: {
+              tutorialId: tutorial.id,
+              createdAt: {
+                gte: thirtyDaysAgo,
+              },
+            },
+          });
+        } catch (error) {
+          // Se a tabela TutorialView não existir ainda, retorna 0
+          console.warn(`Erro ao contar views dos últimos 30 dias para tutorial ${tutorial.id}:`, error.message);
+        }
+        return {
+          ...tutorial,
+          viewsLast30Days,
+        };
+      })
+    );
+
+    res.json({ data: tutorialsWithViews });
   } catch (error) {
     console.error('Erro ao listar tutoriais:', error);
     res.status(500).json({ error: 'Erro ao listar tutoriais' });
@@ -297,11 +326,38 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Tutorial não encontrado' });
     }
 
-    // Incrementar view count
-    await prisma.tutorial.update({
-      where: { id: tutorial.id },
-      data: { viewCount: { increment: 1 } },
-    });
+    // Obter IP e User Agent da requisição
+    const ipAddress = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress || null;
+    const userAgent = req.headers['user-agent'] || null;
+
+    // Incrementar view count e registrar visualização
+    // Fazer de forma independente para garantir que o tutorial seja retornado mesmo se houver erro
+    try {
+      await prisma.tutorial.update({
+        where: { id: tutorial.id },
+        data: { viewCount: { increment: 1 } },
+      });
+    } catch (err) {
+      console.warn('Erro ao incrementar view count:', err.message);
+    }
+
+    // Tentar registrar visualização se o modelo TutorialView estiver disponível
+    if (prisma.tutorialView && typeof prisma.tutorialView.create === 'function') {
+      try {
+        await prisma.tutorialView.create({
+          data: {
+            tutorialId: tutorial.id,
+            ipAddress: ipAddress ? ipAddress.split(',')[0].trim() : null,
+            userAgent: userAgent,
+          },
+        });
+      } catch (err) {
+        // Se a tabela TutorialView não existir ainda (migration não rodada), apenas loga o erro
+        console.warn('Erro ao registrar visualização (tabela pode não existir ainda):', err.message);
+      }
+    } else {
+      console.warn('Prisma TutorialView model não está disponível. Execute: npx prisma generate');
+    }
 
     res.json({ data: tutorial });
   } catch (error) {

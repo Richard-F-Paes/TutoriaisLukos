@@ -18,6 +18,7 @@ import mediaRoutes from './routes/media.routes.js';
 import auditRoutes from './routes/audit.routes.js';
 import headerMenusRoutes from './routes/headerMenus.routes.js';
 import searchRoutes from './routes/search.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 dotenv.config();
 
@@ -127,6 +128,7 @@ app.use(`${API_VERSION}/media`, mediaRoutes);
 app.use(`${API_VERSION}/audit`, auditRoutes);
 app.use(`${API_VERSION}/header-menus`, headerMenusRoutes);
 app.use(`${API_VERSION}/search`, searchRoutes);
+app.use(`${API_VERSION}/admin`, adminRoutes);
 
 // Middleware de erro 404
 app.use(notFoundHandler);

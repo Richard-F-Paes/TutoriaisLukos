@@ -80,6 +80,7 @@ model Tutorial {
   creator      User           @relation("TutorialCreatedBy", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
   updater      User           @relation("TutorialUpdatedBy", fields: [updatedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tutorialSteps TutorialStep[]
+  views        TutorialView[]
 
   @@map("Tutorials")
 }
@@ -165,4 +166,19 @@ model HeaderMenuItem {
   children HeaderMenuItem[] @relation("HeaderMenuItemHierarchy")
 
   @@map("HeaderMenuItems")
+}
+
+model TutorialView {
+  id         Int      @id @default(autoincrement())
+  tutorialId Int      @map("TutorialId")
+  ipAddress  String?  @map("IpAddress") @db.NVarChar(50)
+  userAgent  String?  @map("UserAgent") @db.NVarChar(500)
+  createdAt  DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+
+  // Relações
+  tutorial Tutorial @relation(fields: [tutorialId], references: [id], onDelete: Cascade)
+
+  @@index([tutorialId])
+  @@index([createdAt])
+  @@map("TutorialViews")
 }

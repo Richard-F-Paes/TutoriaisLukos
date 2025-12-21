@@ -11,15 +11,19 @@ import { useTutorials } from '../../../../hooks/useTutorials';
 import { NavbarPreview } from './NavbarPreview';
 import toast from 'react-hot-toast';
 import { defaultHeaderMenus } from '../../../../shared/constants/defaultHeaderMenus.js';
+import { Trash2, X } from 'lucide-react';
 import './HeaderMenuManager.css';
 
 const HeaderMenuManager = () => {
   const [editingMenuId, setEditingMenuId] = useState(null);
   const [addingItemMenuId, setAddingItemMenuId] = useState(null);
+  const [isAddingMenu, setIsAddingMenu] = useState(false);
+  const [newMenuLabel, setNewMenuLabel] = useState('');
   const [newItemLabel, setNewItemLabel] = useState('');
   const [newItemType, setNewItemType] = useState('tutorial');
   const [newItemTutorialSlug, setNewItemTutorialSlug] = useState('');
   const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [menuToDelete, setMenuToDelete] = useState(null);
   const hasImportedDefaults = useRef(false);
 
   const { data: menusData, isLoading } = useHeaderMenus();
@@ -91,24 +95,39 @@ const HeaderMenuManager = () => {
     }
   };
 
-  const handleDeleteMenu = async (menuId, menuLabel) => {
-    if (!window.confirm(`Tem certeza que deseja excluir o menu "${menuLabel}"?`)) {
-      return;
+  const handleDeleteMenuClick = (menuId, menuLabel) => {
+    const menu = currentMenus.find(m => (m.Id || m.id) === menuId);
+    if (menu) {
+      setMenuToDelete({ id: menuId, label: menuLabel || menu.Label || menu.label });
     }
+  };
+
+  const handleConfirmDeleteMenu = async () => {
+    if (!menuToDelete) return;
+
+    const menuId = menuToDelete.id;
+    const menuLabel = menuToDelete.label;
 
     // Modo rascunho: remove localmente
     if (!hasDbMenus || menuId < 0) {
       setDraftMenus((prev) => prev.filter((m) => m.id !== menuId));
       toast.success('Menu removido do rascunho.');
+      setMenuToDelete(null);
       return;
     }
 
     try {
       await deleteMutation.mutateAsync(menuId);
       toast.success('Menu excluído com sucesso!');
+      setMenuToDelete(null);
     } catch (error) {
       toast.error(formatApiError(error, 'Erro ao excluir menu'));
+      // Não fechar o modal em caso de erro
     }
+  };
+
+  const handleCancelDeleteMenu = () => {
+    setMenuToDelete(null);
   };
 
   const handleEditMenu = (menuId) => {
@@ -137,6 +156,54 @@ const HeaderMenuManager = () => {
 
   const handleCancelEditMenu = () => {
     setEditingMenuId(null);
+  };
+
+  const handleAddMenu = () => {
+    setEditingMenuId(null);
+    setAddingItemMenuId(null);
+    setIsAddingMenu(true);
+    setNewMenuLabel('');
+  };
+
+  const handleSaveMenu = async () => {
+    if (!newMenuLabel.trim()) {
+      toast.error('O label do menu é obrigatório');
+      return;
+    }
+
+    // Modo rascunho: adiciona localmente
+    if (!hasDbMenus) {
+      const newMenu = {
+        id: -(draftMenus.length + 1),
+        Label: newMenuLabel,
+        Order: draftMenus.length,
+        Items: [],
+      };
+      setDraftMenus((prev) => [...prev, newMenu]);
+      setNewMenuLabel('');
+      setIsAddingMenu(false);
+      toast.success('Menu adicionado ao rascunho!');
+      return;
+    }
+
+    // Modo banco: cria via API
+    try {
+      await createMutation.mutateAsync({
+        Label: newMenuLabel,
+        Order: menus.length,
+        Items: [],
+      });
+      toast.success('Menu criado com sucesso!');
+      setNewMenuLabel('');
+      setIsAddingMenu(false);
+    } catch (error) {
+      toast.error(formatApiError(error, 'Erro ao criar menu'));
+    }
+  };
+
+  const handleCancelAddMenu = () => {
+    setNewMenuLabel('');
+    setIsAddingMenu(false);
   };
 
   const handleAddItem = (menuId) => {
@@ -385,7 +452,7 @@ const HeaderMenuManager = () => {
           onEditMenu={handleEditMenu}
           onUpdateMenuLabel={handleUpdateMenuLabel}
           onCancelEditMenu={handleCancelEditMenu}
-          onDeleteMenu={handleDeleteMenu}
+          onDeleteMenu={handleDeleteMenuClick}
           onAddItem={handleAddItem}
           onSaveItem={handleSaveItem}
           onCancelAddItem={() => {
@@ -397,8 +464,14 @@ const HeaderMenuManager = () => {
           onUpdateItemAtPath={handleUpdateItemAtPath}
           onDeleteItemAtPath={handleDeleteItemAtPath}
           onAddSubmenuItem={handleAddSubmenuItem}
+          onAddMenu={handleAddMenu}
+          onSaveMenu={handleSaveMenu}
+          onCancelAddMenu={handleCancelAddMenu}
           editingMenuId={editingMenuId}
           addingItemMenuId={addingItemMenuId}
+          isAddingMenu={isAddingMenu}
+          newMenuLabel={newMenuLabel}
+          setNewMenuLabel={setNewMenuLabel}
           newItemLabel={newItemLabel}
           newItemType={newItemType}
           newItemTutorialSlug={newItemTutorialSlug}
@@ -412,6 +485,202 @@ const HeaderMenuManager = () => {
       {currentMenus.length === 0 && !isLoading && (
         <div className="empty-state">
           Importando navbar padrão...
+        </div>
+      )}
+
+      {/* Modal de Confirmação de Exclusão de Menu */}
+      {menuToDelete && (
+        <div
+          className="category-form-modal"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            backdropFilter: 'blur(4px)',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !deleteMutation.isPending) {
+              handleCancelDeleteMenu();
+            }
+          }}
+        >
+          <div
+            className="form-container"
+            style={{
+              background: 'white',
+              borderRadius: '12px',
+              padding: '1.75rem',
+              maxWidth: '480px',
+              width: '92%',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="form-header"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '1rem',
+              }}
+            >
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: '1.25rem',
+                  fontWeight: 700,
+                  color: '#111827',
+                  letterSpacing: '-0.02em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                <Trash2 size={20} style={{ color: '#dc2626' }} />
+                Excluir menu?
+              </h3>
+              <button
+                type="button"
+                className="close-btn"
+                onClick={handleCancelDeleteMenu}
+                disabled={deleteMutation.isPending}
+                style={{
+                  background: '#f3f4f6',
+                  border: 'none',
+                  cursor: deleteMutation.isPending ? 'not-allowed' : 'pointer',
+                  padding: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '6px',
+                  color: '#6b7280',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  if (!deleteMutation.isPending) {
+                    e.target.style.background = '#e5e7eb';
+                    e.target.style.color = '#374151';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = '#f3f4f6';
+                  e.target.style.color = '#6b7280';
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div style={{ color: '#1f2937', fontSize: '1rem', lineHeight: 1.6 }}>
+              <p style={{ margin: '0 0 1.25rem 0', fontWeight: 500 }}>
+                Tem certeza que deseja excluir o menu{' '}
+                <strong style={{ color: '#111827', fontWeight: 600 }}>
+                  "{menuToDelete.label}"
+                </strong>
+                ?
+              </p>
+
+              {/* Avisos */}
+              <div
+                style={{
+                  padding: '0.875rem',
+                  backgroundColor: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  borderRadius: '8px',
+                  marginBottom: '1rem',
+                }}
+              >
+                <div style={{ color: '#991b1b', fontSize: '0.875rem', lineHeight: 1.5 }}>
+                  <strong>⚠️ Atenção:</strong>
+                  <ul style={{ margin: '0.5rem 0 0 1.25rem', padding: 0 }}>
+                    <li>Todos os itens e submenus associados serão removidos.</li>
+                    <li>Esta ação não pode ser desfeita.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="form-actions"
+              style={{
+                display: 'flex',
+                gap: '0.75rem',
+                justifyContent: 'flex-end',
+                marginTop: '1.5rem',
+                paddingTop: '1rem',
+                borderTop: '1px solid #e5e7eb',
+              }}
+            >
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={handleCancelDeleteMenu}
+                disabled={deleteMutation.isPending}
+                style={{
+                  padding: '0.7rem 1.25rem',
+                  background: '#f3f4f6',
+                  color: '#374151',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  cursor: deleteMutation.isPending ? 'not-allowed' : 'pointer',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  if (!deleteMutation.isPending) {
+                    e.target.style.background = '#e5e7eb';
+                    e.target.style.borderColor = '#d1d5db';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = '#f3f4f6';
+                  e.target.style.borderColor = '#e5e7eb';
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={handleConfirmDeleteMenu}
+                disabled={deleteMutation.isPending}
+                style={{
+                  padding: '0.7rem 1.25rem',
+                  background: deleteMutation.isPending ? '#9ca3af' : '#dc2626',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: deleteMutation.isPending ? 'not-allowed' : 'pointer',
+                  fontWeight: 700,
+                  fontSize: '0.875rem',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  if (!deleteMutation.isPending) {
+                    e.target.style.background = '#b91c1c';
+                    e.target.style.boxShadow = '0 4px 6px -1px rgba(220, 38, 38, 0.3)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!deleteMutation.isPending) {
+                    e.target.style.background = '#dc2626';
+                    e.target.style.boxShadow = 'none';
+                  }
+                }}
+              >
+                {deleteMutation.isPending ? 'Excluindo...' : 'Sim, excluir'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -113,8 +113,8 @@
 .editor-modal-sidebar {
   width: 220px;
   min-width: 220px;
-  background: #f8fafc;
-  border-right: 1px solid rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+  border-right: 1px solid rgba(108, 35, 150, 0.15);
   padding: 16px 12px;
   display: flex;
   flex-direction: column;
@@ -175,7 +175,7 @@
 }
 
 .editor-modal-tab:hover {
-  background: rgba(15, 23, 42, 0.05);
+  background: rgba(108, 35, 150, 0.1);
   color: #0f172a;
 }
 
@@ -184,16 +184,16 @@
 }
 
 .editor-modal-tab:focus-visible {
-  outline: 2px solid rgba(59, 130, 246, 0.5);
+  outline: 2px solid rgba(108, 35, 150, 0.5);
   outline-offset: -2px;
   border-radius: 8px;
 }
 
 .editor-modal-tab.active {
-  background: #ffffff;
-  color: #0f172a;
+  background: linear-gradient(135deg, #6c2396 0%, #5a008f 100%);
+  color: white;
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(108, 35, 150, 0.2);
 }
 
 .editor-modal-tab-indicator {
@@ -203,7 +203,7 @@
   transform: translateY(-50%);
   width: 3px;
   height: 60%;
-  background: #3b82f6;
+  background: #6c2396;
   border-radius: 0 2px 2px 0;
 }
 

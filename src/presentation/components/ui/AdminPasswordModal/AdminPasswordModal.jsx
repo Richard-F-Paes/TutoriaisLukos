@@ -16,6 +16,10 @@ const AdminPasswordModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // #region agent log
+  const __agentLog = () => {};
+  // #endregion
+
   const {
     register,
     handleSubmit,
@@ -30,6 +34,9 @@ const AdminPasswordModal = ({ isOpen, onClose }) => {
     setLoading(true);
 
     try {
+      // #region agent log
+      __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2',location:'src/presentation/components/ui/AdminPasswordModal/AdminPasswordModal.jsx:onSubmit:entry',message:'AdminPasswordModal submit',data:{isOpen,hasUsername:!!data?.username,usernameLength:(data?.username||'').trim().length,hasPassword:!!data?.password,passwordLength:data?.password?.length||0},timestamp:Date.now()});
+      // #endregion
       const result = await login(data.username.trim(), data.password);
       
       if (result.success) {
@@ -38,8 +45,14 @@ const AdminPasswordModal = ({ isOpen, onClose }) => {
       } else {
         setError(result.error || 'Credenciais inválidas. Tente novamente.');
       }
+      // #region agent log
+      __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H3',location:'src/presentation/components/ui/AdminPasswordModal/AdminPasswordModal.jsx:onSubmit:result',message:'AdminPasswordModal submit result',data:{success:!!result?.success,hasError:!!result?.error,errorPreview:result?.error?String(result.error).slice(0,120):null},timestamp:Date.now()});
+      // #endregion
     } catch (err) {
       setError('Erro ao fazer login. Tente novamente.');
+      // #region agent log
+      __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2',location:'src/presentation/components/ui/AdminPasswordModal/AdminPasswordModal.jsx:onSubmit:catch',message:'AdminPasswordModal submit threw',data:{errorMessage:String(err?.message||''),errorName:String(err?.name||'')},timestamp:Date.now()});
+      // #endregion
     } finally {
       setLoading(false);
     }

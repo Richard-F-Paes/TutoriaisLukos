@@ -4,14 +4,35 @@ import { endpoints } from '../infrastructure/api/endpoints.js';
 
 export const categoryService = {
   // Listar categorias
-  async list() {
-    const response = await apiClient.get(endpoints.categories.list);
+  async list(includeChildren = false) {
+    const endpointValue = endpoints.categories.list;
+    const response = await apiClient.get(endpointValue, {
+      params: { includeChildren: includeChildren.toString() },
+    });
     return response.data;
   },
 
   // Obter categoria por slug
   async getBySlug(slug) {
     const response = await apiClient.get(endpoints.categories.get(slug));
+    return response.data;
+  },
+
+  // Obter categoria por ID
+  async getById(id) {
+    const response = await apiClient.get(endpoints.categories.getById(id));
+    return response.data;
+  },
+
+  // Obter categoria com subcategorias
+  async getWithChildren(id) {
+    const response = await apiClient.get(endpoints.categories.getById(id));
+    return response.data;
+  },
+
+  // Listar subcategorias de uma categoria
+  async getChildren(id) {
+    const response = await apiClient.get(endpoints.categories.getChildren(id));
     return response.data;
   },
 

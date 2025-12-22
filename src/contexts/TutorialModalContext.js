@@ -1,30 +1,121 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
+import apiClient from '../infrastructure/api/client.js';
 
 const TutorialModalContext = createContext();
 
 export function TutorialModalProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [tutorialSlug, setTutorialSlug] = useState(null);
+  const [viewMode, setViewMode] = useState('full'); // 'full' | 'step'
+  const [stepId, setStepId] = useState(null);
+  // Rastrear se o modal foi aberto através de um hash de tutorial compartilhado
+  const openedViaHashRef = useRef(false);
 
-  const openModal = useCallback((slug) => {
+  const openModal = useCallback((slug, options = {}) => {
     setTutorialSlug(slug);
+    setViewMode(options.viewMode || 'full');
+    setStepId(options.stepId || null);
     setIsOpen(true);
     // Prevenir scroll do body quando modal está aberto
     document.body.style.overflow = 'hidden';
+    // Se o modal foi aberto manualmente (não via hash), resetar a flag
+    // Isso garante que apenas aberturas via hash redirecionem para /tutoriais
+    if (!window.location.hash || !window.location.hash.startsWith('#tutorial-')) {
+      openedViaHashRef.current = false;
+    }
   }, []);
 
-  const closeModal = useCallback(() => {
+  const closeModal = useCallback((shouldNavigateToTutorials = false) => {
     setIsOpen(false);
     setTutorialSlug(null);
+    setViewMode('full');
+    setStepId(null);
     // Restaurar scroll do body
     document.body.style.overflow = 'unset';
+    
+    // Se o modal foi aberto via hash de tutorial compartilhado, sinalizar para navegar
+    // A navegação será feita pelo componente TutorialModal que está dentro do Router
+    if (openedViaHashRef.current || shouldNavigateToTutorials) {
+      openedViaHashRef.current = false;
+      // Disparar evento customizado para que o TutorialModal faça a navegação
+      window.dispatchEvent(new CustomEvent('tutorial-modal-close-navigate', { 
+        detail: { path: '/tutoriais' } 
+      }));
+    } else {
+      // Limpar hash da URL sem redirecionar
+      if (window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    }
+  }, []);
+
+  // Detectar hash na URL e abrir modal automaticamente
+  useEffect(() => {
+    const checkHashAndOpenModal = async () => {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#tutorial-')) {
+        const hashValue = hash.substring(10); // Remove '#tutorial-'
+        // Separar hash de parâmetros de query se houver (ex: #tutorial-abc123?step=5)
+        const [shareHash, queryString] = hashValue.split('?');
+        
+        try {
+          const response = await apiClient.get(`/api/v1/tutorials/by-hash/${shareHash}`);
+          const tutorial = response.data?.data;
+          
+          if (tutorial && tutorial.slug) {
+            // Marcar que o modal foi aberto via hash de tutorial compartilhado
+            openedViaHashRef.current = true;
+            
+            // Verificar se há parâmetro de passo na query string
+            let stepParam = null;
+            if (queryString) {
+              const urlParams = new URLSearchParams(queryString);
+              stepParam = urlParams.get('step');
+            }
+            
+            openModal(tutorial.slug, {
+              viewMode: stepParam ? 'step' : 'full',
+              stepId: stepParam ? parseInt(stepParam) : null,
+            });
+          }
+        } catch (error) {
+          console.error('Erro ao buscar tutorial por hash:', error);
+          // Se não encontrar, limpar hash inválido
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+      } else {
+        // Se não há hash de tutorial, resetar a flag
+        openedViaHashRef.current = false;
+      }
+    };
+
+    // Verificar hash ao montar
+    checkHashAndOpenModal();
+
+    // Listener para mudanças no hash
+    const handleHashChange = () => {
+      checkHashAndOpenModal();
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, [openModal]);
+
+  const switchToFullView = useCallback(() => {
+    setViewMode('full');
+    setStepId(null);
   }, []);
 
   const value = {
     isOpen,
     tutorialSlug,
+    viewMode,
+    stepId,
     openModal,
     closeModal,
+    switchToFullView,
   };
 
   return (
@@ -41,4 +132,3 @@ export function useTutorialModal() {
   }
   return context;
 }
-

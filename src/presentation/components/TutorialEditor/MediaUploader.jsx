@@ -14,14 +14,19 @@ const MediaUploader = ({ editor, type = 'image' }) => {
 
     try {
       toast.loading('Fazendo upload...');
-      const response = await uploadMutation.mutateAsync(file);
-      const media = response.data;
+      const response = await uploadMutation.mutateAsync({ file });
+      const media = response?.data || response;
+
+      const mediaUrl = media?.url || media?.Url;
+      if (!mediaUrl) {
+        throw new Error('URL não retornada pelo servidor');
+      }
 
       if (type === 'image') {
-        editor.chain().focus().setImage({ src: media.Url }).run();
+        editor.chain().focus().setImage({ src: mediaUrl }).run();
       } else if (type === 'video') {
         // Para vídeos, inserir como iframe ou link
-        editor.chain().focus().insertContent(`<iframe src="${media.Url}" width="560" height="315" frameborder="0" allowfullscreen></iframe>`).run();
+        editor.chain().focus().insertContent(`<iframe src="${mediaUrl}" width="560" height="315" frameborder="0" allowfullscreen></iframe>`).run();
       }
 
       toast.dismiss();

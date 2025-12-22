@@ -7,24 +7,24 @@ import {
   Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import TrainingCard from '../TrainingCard/TrainingCard';
 
 const TrainingFilters = ({
   searchTerm,
   onSearchChange,
-  selectedCategory,
-  onCategoryChange,
   selectedLevel,
   onLevelChange,
-  selectedFormat,
-  onFormatChange,
+  selectedTrainingType,
+  onTrainingTypeChange,
   selectedModality,
   onModalityChange,
-  categories,
   levels,
-  formats,
+  trainingTypes,
+  trainingTypeValueToLabel,
   modalities,
   resultCount,
-  onResetFilters
+  onResetFilters,
+  filteredTrainings = []
 }) => {
   const [activeFilter, setActiveFilter] = useState(null);
   const filterRef = useRef(null);
@@ -44,19 +44,33 @@ const TrainingFilters = ({
   }, [activeFilter]);
 
   const hasActiveFilters = 
-    selectedCategory !== 'all' ||
     selectedLevel !== 'all' ||
-    selectedFormat !== 'all' ||
+    selectedTrainingType !== 'all' ||
     selectedModality !== 'all';
 
   const handleFilterToggle = (filterType) => {
     setActiveFilter(activeFilter === filterType ? null : filterType);
   };
 
-  const FilterDropdown = ({ label, value, options, onChange, icon: Icon }) => {
+  const FilterDropdown = ({ label, value, options, onChange, icon: Icon, valueToLabelMap }) => {
     const isActive = activeFilter === label.toLowerCase();
     const hasSelection = value !== 'all';
     const dropdownRef = useRef(null);
+
+    // Encontrar o label correspondente ao value
+    // Prioridade: 1) Se está nas options (já é label), 2) Tentar converter via map, 3) Usar value original
+    let displayValue = value;
+    if (hasSelection && value !== 'all') {
+      // Primeiro, tentar usar o mapeamento (funciona para value e label)
+      if (valueToLabelMap && valueToLabelMap instanceof Map && valueToLabelMap.has(value)) {
+        displayValue = valueToLabelMap.get(value);
+      }
+      // Se não encontrou no map, verificar se está nas options (já é um label válido)
+      else if (options.includes(value)) {
+        displayValue = value;
+      }
+      // Caso contrário, manter o value original (pode ser um label que não está nas options filtradas)
+    }
 
     return (
       <div className="relative" ref={dropdownRef}>
@@ -74,7 +88,7 @@ const TrainingFilters = ({
           <span className="text-sm font-medium">{label}</span>
           {hasSelection && (
             <span className="bg-blue-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
-              {value}
+              {displayValue}
             </span>
           )}
           <ChevronDown
@@ -110,25 +124,34 @@ const TrainingFilters = ({
                   {value === 'all' && <Check className="w-4 h-4" />}
                   <span className={value === 'all' ? 'ml-0' : 'ml-7'}>Todos</span>
                 </button>
-                {options.map((option) => (
-                  <button
-                    key={option}
-                    onClick={() => {
-                      onChange(option);
-                      setActiveFilter(null);
-                    }}
-                    className={`
-                      w-full text-left px-4 py-3 flex items-center gap-3 transition-colors
-                      ${value === option
-                        ? 'bg-blue-50 text-blue-700 font-semibold'
-                        : 'text-gray-700 hover:bg-gray-50'
-                      }
-                    `}
-                  >
-                    {value === option && <Check className="w-4 h-4" />}
-                    <span className={value === option ? 'ml-0' : 'ml-7'}>{option}</span>
-                  </button>
-                ))}
+                {options.map((option) => {
+                  // Garantir que option é sempre um label válido
+                  const displayOption = option;
+                  // Verificar se o value atual corresponde a esta option (pode ser label ou value)
+                  const isSelected = value === option || 
+                    (valueToLabelMap && valueToLabelMap.has(value) && valueToLabelMap.get(value) === option) ||
+                    (valueToLabelMap && valueToLabelMap.has(option) && valueToLabelMap.get(option) === value);
+                  
+                  return (
+                    <button
+                      key={option}
+                      onClick={() => {
+                        onChange(option); // Sempre passar o label
+                        setActiveFilter(null);
+                      }}
+                      className={`
+                        w-full text-left px-4 py-3 flex items-center gap-3 transition-colors
+                        ${isSelected
+                          ? 'bg-blue-50 text-blue-700 font-semibold'
+                          : 'text-gray-700 hover:bg-gray-50'
+                        }
+                      `}
+                    >
+                      {isSelected && <Check className="w-4 h-4" />}
+                      <span className={isSelected ? 'ml-0' : 'ml-7'}>{displayOption}</span>
+                    </button>
+                  );
+                })}
               </div>
             </motion.div>
           )}
@@ -142,80 +165,91 @@ const TrainingFilters = ({
       {/* Barra de Busca */}
       <div className="relative mb-6">
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Search className="w-5 h-5 text-gray-400" />
+          <Search className="w-5 h-5 text-gray-500" />
         </div>
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Buscar treinamentos..."
-          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-400"
+          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white text-gray-900 placeholder-gray-500 shadow-sm hover:border-gray-400"
         />
         {searchTerm && (
           <button
             onClick={() => onSearchChange('')}
-            className="absolute inset-y-0 right-0 pr-4 flex items-center"
+            className="absolute inset-y-0 right-0 pr-4 flex items-center hover:bg-gray-50 rounded-r-lg transition-colors"
+            aria-label="Limpar busca"
           >
-            <X className="w-5 h-5 text-gray-400 hover:text-gray-600 transition-colors" />
+            <X className="w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors" />
           </button>
         )}
       </div>
 
       {/* Filtros */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2 mb-4">
-          <Filter className="w-5 h-5 text-gray-600" />
-          <h3 className="text-sm font-semibold text-gray-700">Filtros</h3>
-          {hasActiveFilters && (
+        {hasActiveFilters && (
+          <div className="flex justify-end mb-4">
             <button
               onClick={onResetFilters}
-              className="ml-auto flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium"
+              className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium"
             >
               <X className="w-3.5 h-3.5" />
               Limpar filtros
             </button>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <FilterDropdown
-            label="Categoria"
-            value={selectedCategory}
-            options={categories}
-            onChange={onCategoryChange}
-            icon={Filter}
-          />
+        <div className="flex flex-wrap justify-center gap-3">
           <FilterDropdown
             label="Nível"
             value={selectedLevel}
-            options={levels}
+            options={levels || []}
             onChange={onLevelChange}
             icon={Filter}
           />
           <FilterDropdown
-            label="Formato"
-            value={selectedFormat}
-            options={formats}
-            onChange={onFormatChange}
+            label="Tipo de Treinamento"
+            value={selectedTrainingType}
+            options={trainingTypes || []}
+            onChange={onTrainingTypeChange}
             icon={Filter}
+            valueToLabelMap={trainingTypeValueToLabel}
           />
           <FilterDropdown
             label="Modalidade"
             value={selectedModality}
-            options={modalities}
+            options={modalities || []}
             onChange={onModalityChange}
             icon={Filter}
           />
         </div>
       </div>
 
-      {/* Contador de Resultados */}
-      {resultCount !== null && (
-        <div className="mt-6 pt-6 border-t border-gray-100">
-          <p className="text-sm text-gray-600">
-            <span className="font-semibold text-gray-900">{resultCount}</span>
-            {' '}
-            {resultCount === 1 ? 'treinamento encontrado' : 'treinamentos encontrados'}
+      {/* Grid de Treinamentos */}
+      {filteredTrainings.length > 0 && (
+        <div className="mt-8 pt-8 border-t border-gray-200">
+          <div className="max-h-[950px] overflow-y-auto overflow-x-hidden pr-2" style={{
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#cbd5e1 #f1f5f9'
+          }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredTrainings.map((training, index) => (
+                <TrainingCard
+                  key={training.id}
+                  training={training}
+                  index={index}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mensagem quando não há resultados */}
+      {filteredTrainings.length === 0 && resultCount === 0 && (
+        <div className="mt-8 pt-8 border-t border-gray-200 text-center py-12">
+          <p className="text-lg text-gray-600">
+            Nenhum treinamento encontrado com os filtros selecionados.
           </p>
         </div>
       )}

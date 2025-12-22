@@ -1,14 +1,17 @@
 /* TutorialContent Styles */
 .tutorial-content {
-  line-height: 1.75;
+  line-height: 1.8;
   color: #374151;
+  font-size: 1.0625rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .tutorial-content h1,
 .tutorial-content h2,
 .tutorial-content h3 {
-  margin-top: 2rem;
-  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.875rem;
   font-weight: 600;
   color: #1f2937;
 }
@@ -70,7 +73,7 @@
 }
 
 .tutorial-content blockquote {
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #6c2396;
   padding-left: 1rem;
   margin: 1.5rem 0;
   color: #6b7280;
@@ -93,4 +96,50 @@
 .tutorial-content table th {
   background: #f9fafb;
   font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tutorial-content {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  
+  .tutorial-content h1 {
+    font-size: 1.75rem;
+  }
+  
+  .tutorial-content h2 {
+    font-size: 1.375rem;
+  }
+  
+  .tutorial-content h3 {
+    font-size: 1.125rem;
+  }
+  
+  .tutorial-content h1,
+  .tutorial-content h2,
+  .tutorial-content h3 {
+    margin-top: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tutorial-content {
+    font-size: 0.9375rem;
+  }
+  
+  .tutorial-content h1 {
+    font-size: 1.5rem;
+  }
+  
+  .tutorial-content h2 {
+    font-size: 1.25rem;
+  }
+  
+  .tutorial-content h3 {
+    font-size: 1.0625rem;
+  }
 }

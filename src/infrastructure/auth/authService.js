@@ -8,30 +8,61 @@ import { endpoints } from '../api/endpoints.js';
 export const authService = {
   /**
    * Login - Autentica com API e retorna tokens
-   * @param {string} username - Nome de usuário (ou email)
+   * @param {string} username - Nome de usuário
    * @param {string} password - Senha
    * @returns {Promise<{user: Object, accessToken: string, refreshToken: string}>}
    */
   async login(username, password) {
+    // #region agent log
+    const __agentLog = () => {};
+    // #endregion
     try {
-      const response = await apiClient.post(endpoints.auth.login, {
+      const endpointValue = endpoints.auth.login;
+      // #region agent log
+      __agentLog({location:'src/infrastructure/auth/authService.js:login',message:'authService.login called',data:{endpointValue},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H1'});
+      // #endregion
+      // #region agent log
+      __agentLog({location:'src/infrastructure/auth/authService.js:login:before_request',message:'Before API request',data:{username,hasPassword:!!password,passwordLength:password?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2'});
+      // #endregion
+      const response = await apiClient.post(endpointValue, {
         username,
         password,
       });
+      // #region agent log
+      __agentLog({location:'src/infrastructure/auth/authService.js:login:response',message:'API response received',data:{status:response.status,hasData:!!response.data,dataKeys:response.data?Object.keys(response.data):[],dataStructure:JSON.stringify(response.data).substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2'});
+      // #endregion
 
-      const { user, accessToken, refreshToken } = response.data.data;
+      // Verificar estrutura da resposta - pode ser response.data.data ou response.data
+      const responseData = response.data?.data || response.data;
+      const { user, accessToken, refreshToken, token } = responseData;
+      
+      // #region agent log
+      __agentLog({location:'src/infrastructure/auth/authService.js:login:parsing',message:'Parsing response data',data:{hasUser:!!user,hasAccessToken:!!accessToken,hasRefreshToken:!!refreshToken,hasToken:!!token,userKeys:user?Object.keys(user):[]},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2'});
+      // #endregion
+      
+      // Se o backend retornar apenas 'token' (formato antigo), usar como accessToken
+      const finalAccessToken = accessToken || token;
+      const finalRefreshToken = refreshToken || token; // Fallback temporário
 
       // Salvar tokens em sessionStorage
-      sessionStorage.setItem('accessToken', accessToken);
-      sessionStorage.setItem('refreshToken', refreshToken);
+      sessionStorage.setItem('accessToken', finalAccessToken);
+      if (finalRefreshToken && finalRefreshToken !== finalAccessToken) {
+        sessionStorage.setItem('refreshToken', finalRefreshToken);
+      }
+      // #region agent log
+      __agentLog({location:'src/infrastructure/auth/authService.js:login:success',message:'Login successful',data:{userId:user?.id,username:user?.username,hasAccessToken:!!finalAccessToken,hasRefreshToken:!!finalRefreshToken},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2'});
+      // #endregion
 
       return {
         user,
-        accessToken,
-        refreshToken,
+        accessToken: finalAccessToken,
+        refreshToken: finalRefreshToken,
       };
     } catch (error) {
-      throw new Error(error.response?.data?.error || 'Erro ao fazer login');
+      // #region agent log
+      __agentLog({location:'src/infrastructure/auth/authService.js:login:error',message:'Login error',data:{errorMessage:String(error.message||''),errorStatus:error.response?.status||null,errorData:error.response?.data?JSON.stringify(error.response.data).substring(0,300):null,hasResponse:!!error.response},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2'});
+      // #endregion
+      throw new Error(error.response?.data?.error || error.message || 'Erro ao fazer login');
     }
   },
 

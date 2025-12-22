@@ -397,22 +397,36 @@ a, button, .clickable {
   transition: all 0.3s ease;
 }
 
-/* Scrollbar customizada */
+/* Scrollbar customizada - cinza e sutil (aplicado globalmente) */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f9fafb;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+  background: #d1d5db;
+  border-radius: 10px;
+  border: 2px solid #f9fafb;
+  transition: all 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #9ca3af;
+  border-color: #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #6b7280;
+}
+
+/* Para navegadores Firefox - aplicado globalmente */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
 }
 
 /* ========================================

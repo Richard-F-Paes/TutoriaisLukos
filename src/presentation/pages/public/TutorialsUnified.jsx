@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { 
   FileText, 
   Fuel, 
@@ -18,108 +18,265 @@ import {
   Search,
   X
 } from 'lucide-react';
-import { useTutorials, useSearchTutorials } from '../../../hooks/useTutorials.js';
-import { useCategories } from '../../../hooks/useCategories.js';
+import { useTutorials } from '../../../hooks/useTutorials.js';
+import { useCategoriesHierarchical } from '../../../hooks/useCategories.js';
 import { useTutorialModal } from '../../../contexts/TutorialModalContext';
-
-// Componentes da HomePage original
-import { Chatbot } from '../../components/custom/Chatbot/Chatbot';
+import LukUnifiedSearch from '../../components/search/LukUnifiedSearch/LukUnifiedSearch';
 
 const TutorialsUnified = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const categoriaParam = searchParams.get('categoria');
   const { openModal } = useTutorialModal();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearchResults, setShowSearchResults] = useState(false);
-  const searchRef = useRef(null);
+  const [activeTab, setActiveTab] = useState(null);
+  const tabsRef = useRef(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
   
   const { data: tutorialsData, isLoading: tutorialsLoading } = useTutorials();
-  const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
-  
-  // Busca de tutoriais
-  const { data: searchData, isLoading: isSearching } = useSearchTutorials(
-    searchQuery.trim().length > 2 ? searchQuery : '',
-    { limit: 10 }
-  );
-  
-  const searchResults = searchData?.data || [];
+  const { data: categoriesData, isLoading: categoriesLoading } = useCategoriesHierarchical();
   
   const allTutorials = tutorialsData?.data || [];
-  const categories = categoriesData?.data || [];
+  const categories = categoriesData || [];
   
-  // Filtrar tutoriais por categoria se houver query param
-  const tutorials = useMemo(() => {
-    if (!categoriaParam) return allTutorials;
-    
+  // Filtrar apenas tutoriais publicados
+  const publishedTutorials = useMemo(() => {
     return allTutorials.filter(t => {
-      const catName = t.Category?.Name || t.CategoryName || '';
-      const catSlug = t.Category?.Slug || '';
-      return catName.toLowerCase() === categoriaParam.toLowerCase() || 
-             catSlug.toLowerCase() === categoriaParam.toLowerCase();
+      const isPublished = t.isPublished || t.IsPublished || false;
+      return isPublished === true;
     });
-  }, [allTutorials, categoriaParam]);
+  }, [allTutorials]);
+  
+  // Filtrar tutoriais por categoria se houver query param e agrupar por subcategorias
+  const tutorials = useMemo(() => {
+    if (!categoriaParam) return [];
+    
+    // Criar um mapa de categorias para facilitar busca
+    const categoryMap = new Map();
+    const categoryIdMap = new Map(); // Mapa por ID
+    const categorySlugMap = new Map(); // Mapa por slug
+    const categoryNameMap = new Map(); // Mapa por nome
+    
+    categories.forEach(cat => {
+      const catId = cat.id || cat.Id;
+      const catSlug = (cat.slug || cat.Slug || '').toLowerCase();
+      const catName = (cat.name || cat.Name || '').toLowerCase();
+      
+      categoryMap.set(catId, cat);
+      if (catSlug) categorySlugMap.set(catSlug, cat);
+      if (catName) categoryNameMap.set(catName, cat);
+      
+      if (cat.children) {
+        cat.children.forEach(child => {
+          const childId = child.id || child.Id;
+          const childSlug = (child.slug || child.Slug || '').toLowerCase();
+          const childName = (child.name || child.Name || '').toLowerCase();
+          
+          categoryMap.set(childId, child);
+          if (childSlug) categorySlugMap.set(childSlug, child);
+          if (childName) categoryNameMap.set(childName, child);
+        });
+      }
+    });
+    
+    // Encontrar a categoria principal pelo parâmetro
+    const paramKey = String(categoriaParam || '').toLowerCase();
+    const mainCategory = categorySlugMap.get(paramKey) || categoryNameMap.get(paramKey);
+    
+    if (!mainCategory) {
+      // Se não encontrou a categoria, retornar array vazio
+      return [];
+    }
+    
+    const mainCategoryId = mainCategory.id || mainCategory.Id;
+    
+    // Coletar todos os IDs de categorias válidas (categoria principal + suas subcategorias)
+    const validCategoryIds = new Set([mainCategoryId]);
+    if (mainCategory.children && mainCategory.children.length > 0) {
+      mainCategory.children.forEach(child => {
+        const childId = child.id || child.Id;
+        if (childId) validCategoryIds.add(childId);
+      });
+    }
+    
+    // Filtrar tutoriais que pertencem à categoria principal OU às suas subcategorias
+    const filtered = publishedTutorials.filter(t => {
+      const tutorialCategory = t.Category || t.category;
+      const tutorialCategoryId = tutorialCategory?.id || tutorialCategory?.Id || 
+                                 t.categoryId || t.CategoryId;
+      
+      // Verificar se o tutorial pertence à categoria principal ou suas subcategorias
+      return tutorialCategoryId && validCategoryIds.has(Number(tutorialCategoryId));
+    });
+    
+    // Agrupar por subcategorias (ou categoria principal se não houver subcategoria)
+    const groupedBySubcategory = {};
+    
+    filtered.forEach(tutorial => {
+      const tutorialCategory = tutorial.Category || tutorial.category;
+      const tutorialCategoryId = tutorialCategory?.id || tutorialCategory?.Id || 
+                                 tutorial.categoryId || tutorial.CategoryId;
+      const categoryData = tutorialCategoryId ? categoryMap.get(Number(tutorialCategoryId)) : null;
+      
+      // Verificar se a categoria do tutorial tem parentId (é uma subcategoria)
+      const parentId = categoryData?.parentId || categoryData?.ParentId || 
+                       tutorialCategory?.parentId || tutorialCategory?.ParentId;
+      
+      let groupKey, groupName, groupId;
+      
+      if (parentId && parentId === mainCategoryId) {
+        // É uma subcategoria da categoria principal
+        groupId = tutorialCategoryId;
+        groupKey = `subcat_${tutorialCategoryId}`;
+        groupName = categoryData?.name || categoryData?.Name || 
+                   tutorialCategory?.name || tutorialCategory?.Name || 
+                   'Subcategoria';
+      } else {
+        // É um tutorial diretamente na categoria principal (sem subcategoria)
+        groupId = mainCategoryId;
+        groupKey = 'main_category';
+        groupName = mainCategory.name || mainCategory.Name || 'Categoria Principal';
+      }
+      
+      if (!groupedBySubcategory[groupKey]) {
+        groupedBySubcategory[groupKey] = {
+          id: groupId,
+          name: groupName,
+          tutorials: []
+        };
+      }
+      
+      groupedBySubcategory[groupKey].tutorials.push(tutorial);
+    });
+    
+    // Ordenar grupos: categoria principal primeiro, depois subcategorias por nome
+    const sortedGroups = Object.values(groupedBySubcategory).sort((a, b) => {
+      if (a.id === mainCategoryId) return -1;
+      if (b.id === mainCategoryId) return 1;
+      return a.name.localeCompare(b.name);
+    });
+    
+    return sortedGroups;
+  }, [publishedTutorials, categoriaParam, categories]);
+  
+  // Definir aba ativa quando os tutoriais carregarem ou categoria mudar
+  useEffect(() => {
+    if (tutorials.length > 0) {
+      // Se a aba ativa não está mais na lista ou é null, definir para a primeira
+      const activeGroupExists = tutorials.some(group => group.id === activeTab);
+      if (!activeGroupExists || activeTab === null) {
+        setActiveTab(tutorials[0].id);
+      }
+    } else {
+      setActiveTab(null);
+    }
+  }, [tutorials, categoriaParam]);
+
+  // Função para navegar para próxima/anterior aba
+  const navigateTab = (direction) => {
+    if (tutorials.length === 0) return;
+    
+    const currentIndex = tutorials.findIndex(group => group.id === activeTab);
+    if (currentIndex === -1) return;
+
+    if (direction === 'next' && currentIndex < tutorials.length - 1) {
+      setActiveTab(tutorials[currentIndex + 1].id);
+    } else if (direction === 'prev' && currentIndex > 0) {
+      setActiveTab(tutorials[currentIndex - 1].id);
+    }
+  };
+
+  // Handlers para swipe nas abas
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    
+    const distance = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50; // Distância mínima para considerar um swipe
+
+    if (distance > minSwipeDistance) {
+      // Swipe para a esquerda = próxima aba
+      navigateTab('next');
+    } else if (distance < -minSwipeDistance) {
+      // Swipe para a direita = aba anterior
+      navigateTab('prev');
+    }
+
+    // Reset
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
+  
+  // Obter tutorial ativo baseado na aba selecionada
+  const activeTutorialGroup = useMemo(() => {
+    if (!activeTab || !tutorials.length) return null;
+    return tutorials.find(group => group.id === activeTab) || tutorials[0];
+  }, [activeTab, tutorials]);
   
   const isLoading = tutorialsLoading || categoriesLoading;
 
-  // Fechar resultados ao clicar fora
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setShowSearchResults(false);
-      }
-    };
+  // Compat: alguns trechos antigos deste componente ainda usam esse helper.
+  // Conta tutoriais publicados por nome/slug de categoria, tentando cobrir formatos diferentes do payload.
+  const getTutorialCountByCategory = (categoryKey) => {
+    if (!publishedTutorials || publishedTutorials.length === 0) return 0;
+    const key = String(categoryKey || '').toLowerCase();
+    if (!key) return 0;
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+    return publishedTutorials.filter((t) => {
+      const catName =
+        t.Category?.Name ||
+        t.Category?.name ||
+        t.category?.name ||
+        t.CategoryName ||
+        t.categoryName ||
+        t.category ||
+        '';
+      const catSlug =
+        t.Category?.Slug ||
+        t.Category?.slug ||
+        t.category?.slug ||
+        t.CategorySlug ||
+        t.categorySlug ||
+        '';
 
-  // Mostrar resultados quando houver busca
-  useEffect(() => {
-    if (searchQuery.trim().length > 2) {
-      setShowSearchResults(true);
-    } else {
-      setShowSearchResults(false);
-    }
-  }, [searchQuery]);
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleTutorialClick = (tutorial) => {
-    const tutorialSlug = tutorial.Slug || tutorial.slug;
-    if (tutorialSlug) {
-      openModal(tutorialSlug);
-      setSearchQuery('');
-      setShowSearchResults(false);
-    }
-  };
-
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    setShowSearchResults(false);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && searchResults.length > 0) {
-      e.preventDefault();
-      handleTutorialClick(searchResults[0]);
-    } else if (e.key === 'Escape') {
-      setShowSearchResults(false);
-    }
-  };
-
-  // Mapear categorias da API para o formato esperado
-  // Se não houver categorias na API, usar categorias padrão
-  const getTutorialCountByCategory = (categoryName) => {
-    if (!tutorials || tutorials.length === 0) return 0;
-    // Buscar por CategoryId ou CategoryName dependendo da estrutura da API
-    return tutorials.filter(t => {
-      const catName = t.Category?.Name || t.CategoryName || t.category;
-      return catName === categoryName || catName?.toLowerCase() === categoryName.toLowerCase();
+      return (
+        String(catName || '').toLowerCase() === key ||
+        String(catSlug || '').toLowerCase() === key
+      );
     }).length;
+  };
+
+
+  // Função para contar tutoriais publicados em uma categoria (incluindo subcategorias)
+  const getTutorialCountForCategory = (category) => {
+    if (!publishedTutorials || publishedTutorials.length === 0) return 0;
+    
+    // Contar tutoriais publicados diretamente na categoria
+    let count = publishedTutorials.filter(t => {
+      const catId =
+        t.categoryId ??
+        t.CategoryId ??
+        t.category?.id ??
+        t.Category?.Id ??
+        t.Category?.id;
+      return Number(catId) === Number(category.id);
+    }).length;
+    
+    // Contar tutoriais publicados nas subcategorias recursivamente
+    if (category.children && category.children.length > 0) {
+      category.children.forEach(child => {
+        count += getTutorialCountForCategory(child);
+      });
+    }
+    
+    return count;
   };
 
   // Categorias de tutoriais do componente Tutorials.jsx
@@ -131,7 +288,7 @@ const TutorialsUnified = () => {
         description: cat.Description || cat.description || "Tutoriais sobre " + (cat.Name || cat.name),
         icon: FileText,
         color: cat.Color || "blue",
-        tutorials: getTutorialCountByCategory(cat.Name || cat.name),
+        tutorials: getTutorialCountForCategory(cat),
         duration: "45 min",
         image: cat.ImageUrl || cat.imageUrl || "https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=800",
         link: `/tutoriais?categoria=${cat.Slug || cat.slug || cat.id}`
@@ -293,106 +450,8 @@ const TutorialsUnified = () => {
             </span>
           </h1>
           
-          {/* Barra de Pesquisa Gigante */}
-          <div ref={searchRef} className="relative max-w-4xl mx-auto mb-8">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                <Search className="h-8 w-8 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                onKeyDown={handleKeyDown}
-                onFocus={() => searchQuery.trim().length > 2 && setShowSearchResults(true)}
-                placeholder="Busque tutoriais, funcionalidades, PDV, Retaguarda, Fatura Web..."
-                className="w-full pl-16 pr-16 py-6 text-base md:text-lg bg-white border-4 border-blue-200 rounded-2xl shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-blue-500 transition-all duration-300 placeholder-gray-500 text-gray-900 font-medium leading-relaxed"
-                style={{
-                  fontSize: 'clamp(0.95rem, 2vw, 1.25rem)',
-                  letterSpacing: '0.01em'
-                }}
-              />
-              {searchQuery && (
-                <button
-                  onClick={handleClearSearch}
-                  className="absolute inset-y-0 right-0 pr-6 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              )}
-            </div>
-
-            {/* Dropdown de Resultados */}
-            {showSearchResults && searchQuery.trim().length > 2 && (
-              <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border-2 border-blue-100 max-h-96 overflow-y-auto">
-                {isSearching ? (
-                  <div className="p-6 text-center text-gray-500">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                    Buscando tutoriais...
-                  </div>
-                ) : searchResults.length > 0 ? (
-                  <div className="py-2">
-                    {searchResults.map((tutorial) => (
-                      <button
-                        key={tutorial.Id || tutorial.id}
-                        onClick={() => handleTutorialClick(tutorial)}
-                        className="w-full px-6 py-4 text-left hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0 group"
-                      >
-                        <div className="flex items-start gap-4">
-                          <div className="flex-shrink-0 mt-1">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                              <BookOpen className="h-5 w-5 text-white" />
-                            </div>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-1">
-                              {tutorial.Title || tutorial.title}
-                            </h3>
-                            {tutorial.Description || tutorial.description ? (
-                              <p className="text-sm text-gray-600 line-clamp-2">
-                                {tutorial.Description || tutorial.description}
-                              </p>
-                            ) : null}
-                            <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-                              {tutorial.CategoryName && (
-                                <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                                  {tutorial.CategoryName}
-                                </span>
-                              )}
-                              {tutorial.EstimatedDuration && (
-                                <span className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3" />
-                                  {tutorial.EstimatedDuration} min
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex-shrink-0">
-                            <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="p-8 text-center">
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <Search className="h-8 w-8 text-gray-400" />
-                      </div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        Nenhum tutorial encontrado
-                      </h3>
-                      <p className="text-base text-gray-600 max-w-md mx-auto leading-relaxed">
-                        Não encontramos tutoriais para "<span className="font-medium text-gray-900">{searchQuery}</span>". 
-                        Tente buscar com outras palavras-chave ou explore as categorias abaixo.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          {/* Barra de Pesquisa Gigante - Luk Unified Search */}
+          <LukUnifiedSearch />
 
           {categoriaParam && (
             <Link 
@@ -404,64 +463,106 @@ const TutorialsUnified = () => {
           )}
         </div>
 
-        {/* Mostrar tutoriais filtrados se houver categoria selecionada */}
+        {/* Mostrar tutoriais filtrados se houver categoria selecionada, em abas por subcategorias */}
         {categoriaParam && tutorials.length > 0 && (
           <div className="mb-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {tutorials.length} {tutorials.length === 1 ? 'tutorial encontrado' : 'tutoriais encontrados'}
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {tutorials.map((tutorial) => (
-                <Link
-                  key={tutorial.Id}
-                  to={`/tutoriais/${tutorial.Slug || tutorial.Id}`}
-                  className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden"
+            {/* Abas de Subcategorias */}
+            <div className="mb-8">
+              <div className="border-b border-gray-200">
+                <nav 
+                  ref={tabsRef}
+                  className="-mb-px flex space-x-8 overflow-x-auto justify-center" 
+                  aria-label="Tabs"
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
                 >
-                  {tutorial.ThumbnailUrl && (
-                    <img 
-                      src={tutorial.ThumbnailUrl} 
-                      alt={tutorial.Title}
-                      className="w-full h-48 object-cover"
-                    />
-                  )}
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{tutorial.Title}</h3>
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                      {tutorial.Description || ''}
-                    </p>
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <span>{tutorial.EstimatedDuration ? `${tutorial.EstimatedDuration} min` : 'N/A'}</span>
-                      <span className="text-blue-600 font-semibold">Ver tutorial →</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  {tutorials.map((subcategoryGroup) => {
+                    const isActive = activeTab === subcategoryGroup.id;
+                    return (
+                      <button
+                        key={subcategoryGroup.id}
+                        onClick={() => setActiveTab(subcategoryGroup.id)}
+                        className={`
+                          whitespace-nowrap py-5 px-4 border-b-2 font-bold text-lg transition-all duration-200
+                          ${isActive 
+                            ? 'border-blue-500 text-blue-600 shadow-sm' 
+                            : 'border-transparent text-gray-800 hover:text-gray-900 hover:border-gray-300'
+                          }
+                        `}
+                      >
+                        {subcategoryGroup.name}
+                      </button>
+                    );
+                  })}
+                </nav>
+              </div>
             </div>
+
+            {/* Conteúdo da aba ativa */}
+            {activeTutorialGroup && (
+              <div className="flex justify-center">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 w-full place-items-center">
+                  {activeTutorialGroup.tutorials.map((tutorial) => {
+                    const tutorialSlug = tutorial.Slug || tutorial.slug;
+                    return (
+                      <button
+                        key={tutorial.Id || tutorial.id}
+                        onClick={() => {
+                          if (tutorialSlug) {
+                            openModal(tutorialSlug);
+                          }
+                        }}
+                        className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden text-left w-full max-w-sm cursor-pointer transform hover:-translate-y-1"
+                        disabled={!tutorialSlug}
+                      >
+                      {tutorial.ThumbnailUrl && (
+                        <img 
+                          src={tutorial.ThumbnailUrl} 
+                          alt={tutorial.Title || tutorial.title}
+                          className="w-full h-48 object-cover"
+                        />
+                      )}
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{tutorial.Title || tutorial.title}</h3>
+                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                          {tutorial.Description || tutorial.description || ''}
+                        </p>
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>{tutorial.EstimatedDuration || tutorial.estimatedDuration ? `${tutorial.EstimatedDuration || tutorial.estimatedDuration} min` : 'N/A'}</span>
+                          <span className="text-blue-600 font-semibold">Ver tutorial →</span>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+                </div>
+              </div>
+            )}
+
+            {/* Mensagem quando não há tutoriais na aba selecionada */}
+            {activeTutorialGroup && activeTutorialGroup.tutorials.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">Nenhum tutorial encontrado nesta subcategoria.</p>
+              </div>
+            )}
           </div>
         )}
 
         {/* Mostrar grid de categorias apenas se não houver filtro */}
         {!categoriaParam && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <>
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Categorias</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {tutorialCategories.map((category) => {
             const Icon = category.icon;
             const colors = getColorClasses(category.color);
             
-            // Encontrar o primeiro tutorial desta categoria
-            const categoryTutorials = allTutorials.filter(t => {
-              const catName = t.Category?.Name || t.CategoryName || '';
-              const catSlug = t.Category?.Slug || '';
-              return catName === category.title || 
-                     catSlug === category.id ||
-                     catName?.toLowerCase() === category.title?.toLowerCase();
-            });
-            const firstTutorial = categoryTutorials.length > 0 ? categoryTutorials[0] : null;
-            const tutorialSlug = firstTutorial?.Slug || firstTutorial?.slug || null;
-            
             const handleCategoryClick = (e) => {
               e.preventDefault();
-              if (tutorialSlug) {
-                openModal(tutorialSlug);
+              // Navegar para a página da categoria usando o link definido
+              if (category.link) {
+                navigate(category.link);
               }
             };
             
@@ -469,8 +570,7 @@ const TutorialsUnified = () => {
               <button
                 key={category.id}
                 onClick={handleCategoryClick}
-                disabled={!tutorialSlug}
-                className={`group text-left w-full ${!tutorialSlug ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                className="group text-left w-full cursor-pointer"
               >
                 <div className={`bg-gradient-to-br ${colors.bg} rounded-2xl overflow-hidden border-2 ${colors.border} hover:shadow-2xl transition-all duration-300 hover:-translate-y-2`}>
                   {/* Image */}
@@ -513,12 +613,10 @@ const TutorialsUnified = () => {
             );
           })}
           </div>
+          </>
         )}
 
       </div>
-
-      {/* Componentes adicionais da HomePage */}
-      <Chatbot />
     </div>
   );
 };

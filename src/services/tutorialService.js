@@ -5,7 +5,8 @@ import { endpoints } from '../infrastructure/api/endpoints.js';
 export const tutorialService = {
   // Listar tutoriais
   async list(filters = {}) {
-    const response = await apiClient.get(endpoints.tutorials.list, { params: filters });
+    const endpointValue = endpoints.tutorials.list;
+    const response = await apiClient.get(endpointValue, { params: filters });
     return response.data;
   },
 

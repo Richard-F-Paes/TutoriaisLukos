@@ -58,6 +58,8 @@ import TutorialEditPage from '../presentation/pages/admin/TutorialEditPage';
 import GlobalSearch from '../presentation/components/GlobalSearch/GlobalSearch';
 import Navbarcategoria from '../presentation/components/Navbarcategoria/Navbarcategoria';
 import TutorialModal from '../presentation/components/TutorialModal/TutorialModal';
+import TrainingModal from '../presentation/components/TrainingModal/TrainingModal';
+import EditorModal from '../presentation/components/EditorModal/EditorModal';
 
 function AppContent() {
   const location = useLocation();
@@ -206,6 +208,8 @@ function AppContent() {
       </main>
       <Footer />
       <TutorialModal />
+      <TrainingModal />
+      <EditorModal />
     </div>
   );
 }

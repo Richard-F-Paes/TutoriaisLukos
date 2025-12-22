@@ -3,6 +3,7 @@
 
 import axios from 'axios';
 import { appConfig } from '../config/app.config.js';
+import { endpoints } from './endpoints.js';
 
 // Criar instância do Axios com configuração base
 const apiClient = axios.create({
@@ -45,7 +46,7 @@ apiClient.interceptors.response.use(
         }
 
         // Tentar renovar o access token
-        const response = await axios.post(`${appConfig.apiUrl}/api/v1/auth/refresh`, {
+        const response = await axios.post(`${appConfig.apiUrl}${endpoints.auth.refresh}`, {
           refreshToken,
         }, {
           headers: {

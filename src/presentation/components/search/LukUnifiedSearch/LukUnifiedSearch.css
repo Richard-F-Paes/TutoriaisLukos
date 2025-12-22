@@ -1,0 +1,44 @@
+/* Scrollbar personalizado para os resultados da busca */
+.luk-search-results::-webkit-scrollbar {
+  width: 8px;
+}
+
+.luk-search-results::-webkit-scrollbar-track {
+  background: #f9fafb;
+  border-radius: 10px;
+  margin: 8px 0;
+}
+
+.luk-search-results::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+  border: 2px solid #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.luk-search-results::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+  border-color: #f3f4f6;
+}
+
+.luk-search-results::-webkit-scrollbar-thumb:active {
+  background: #6b7280;
+}
+
+/* Para navegadores Firefox */
+.luk-search-results {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
+}
+
+/* Smooth scroll behavior */
+.luk-search-results {
+  scroll-behavior: smooth;
+}
+
+/* Estilo adicional para melhorar a experiência de scroll */
+.luk-search-results {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+

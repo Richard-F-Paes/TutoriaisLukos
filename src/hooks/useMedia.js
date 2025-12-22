@@ -13,7 +13,7 @@ export const useMedia = (filters = {}) => {
 export const useUploadMedia = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (file) => mediaService.upload(file),
+    mutationFn: ({ file, userId = null }) => mediaService.upload(file, userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['media'] });
     },

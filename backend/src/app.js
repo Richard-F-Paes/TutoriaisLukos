@@ -16,18 +16,97 @@ import categoriesRoutes from './routes/categories.routes.js';
 import usersRoutes from './routes/users.routes.js';
 import mediaRoutes from './routes/media.routes.js';
 import auditRoutes from './routes/audit.routes.js';
+import headerMenusRoutes from './routes/headerMenus.routes.js';
+import searchRoutes from './routes/search.routes.js';
+import adminRoutes from './routes/admin.routes.js';
+import trainingsRoutes from './routes/trainings.routes.js';
+import appointmentsRoutes from './routes/appointments.routes.js';
+import trainingConfigsRoutes from './routes/training-configs.routes.js';
+import availabilityRoutes from './routes/availability.routes.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// #region agent log
+const __agentLog = () => {};
+// #endregion
+
 // Middlewares de segurança
 app.use(helmet());
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS' || req.path.startsWith('/api/')) {
+  }
+  next();
+});
+const __agentAllowedOrigins = (() => {
+  const raw = (process.env.CORS_ORIGIN || '').trim();
+  const origins = raw
+    ? raw.split(',').map((s) => s.trim()).filter(Boolean)
+    : [];
+
+  // Em dev, sempre permitir portas comuns do Vite/React e IPs da rede local
+  const isProduction = process.env.NODE_ENV === 'production';
+  if (!isProduction) {
+    // Permitir localhost em várias portas
+    ['3000', '5173', '5174', '8080'].forEach(port => {
+      const localhost = `http://localhost:${port}`;
+      if (!origins.includes(localhost)) origins.push(localhost);
+    });
+    
+    // Em desenvolvimento, permitir qualquer IP da rede local (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+    // Isso permite acesso de outros dispositivos na mesma rede
+    // Em produção, isso deve ser desabilitado e usar apenas CORS_ORIGIN
+  }
+
+  // Fallback final (caso nada tenha sido adicionado)
+  if (origins.length === 0) {
+    origins.push('http://localhost:3000', 'http://localhost:5173');
+  }
+
+  return origins;
+})();
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Requests sem Origin (ex.: curl/healthcheck) devem passar
+    if (!origin) return callback(null, true);
+
+    // Verificar se está na lista de origens permitidas
+    let allowed = __agentAllowedOrigins.includes(origin);
+    
+    // Em desenvolvimento, permitir IPs da rede local (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (!isProduction && !allowed) {
+      // Verificar se é um IP da rede local
+      const localNetworkPatterns = [
+        /^http:\/\/192\.168\.\d+\.\d+:\d+$/,  // 192.168.x.x:port
+        /^http:\/\/10\.\d+\.\d+\.\d+:\d+$/,   // 10.x.x.x:port
+        /^http:\/\/172\.(1[6-9]|2[0-9]|3[01])\.\d+\.\d+:\d+$/, // 172.16-31.x.x:port
+        /^http:\/\/127\.0\.0\.1:\d+$/,        // 127.0.0.1:port
+      ];
+      
+      allowed = localNetworkPatterns.some(pattern => pattern.test(origin));
+    }
+    
+    // #region agent log
+    __agentLog({location:'backend/src/app.js:CORS_DECISION',message:'CORS origin decision',data:{origin,allowed,allowedOrigins:__agentAllowedOrigins,isProduction},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H4'});
+    // #endregion
+
+    return callback(null, allowed ? origin : false);
+  },
   credentials: true,
+  optionsSuccessStatus: 204,
 }));
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS' || req.path.startsWith('/api/')) {
+    // #region agent log
+    __agentLog({location:'backend/src/app.js:REQ_POST_CORS',message:'CORS headers after middleware',data:{method:req.method,path:req.path,origin:req.headers.origin||null,acao:String(res.getHeader('access-control-allow-origin')||''),acc:String(res.getHeader('access-control-allow-credentials')||''),acah:String(res.getHeader('access-control-allow-headers')||''),acam:String(res.getHeader('access-control-allow-methods')||'')},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H1'});
+    // #endregion
+  }
+  next();
+});
 
 // Middlewares de parsing
 app.use(express.json({ limit: '10mb' }));
@@ -36,7 +115,17 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Servir arquivos estáticos de uploads
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-app.use('/uploads', express.static(join(__dirname, '../uploads')));
+const uploadsDir = join(__dirname, '../uploads');
+const trainingsDir = join(uploadsDir, 'trainings');
+
+// Garantir que os diretórios de upload existam
+import fs from 'fs';
+if (!fs.existsSync(trainingsDir)) {
+  fs.mkdirSync(trainingsDir, { recursive: true });
+  console.log('📁 Diretório de treinamentos criado:', trainingsDir);
+}
+
+app.use('/uploads', express.static(uploadsDir));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -51,6 +140,13 @@ app.use(`${API_VERSION}/categories`, categoriesRoutes);
 app.use(`${API_VERSION}/users`, usersRoutes);
 app.use(`${API_VERSION}/media`, mediaRoutes);
 app.use(`${API_VERSION}/audit`, auditRoutes);
+app.use(`${API_VERSION}/header-menus`, headerMenusRoutes);
+app.use(`${API_VERSION}/search`, searchRoutes);
+app.use(`${API_VERSION}/admin`, adminRoutes);
+app.use(`${API_VERSION}/trainings`, trainingsRoutes);
+app.use(`${API_VERSION}/appointments`, appointmentsRoutes);
+app.use(`${API_VERSION}/training-configs`, trainingConfigsRoutes);
+app.use(`${API_VERSION}/availability`, availabilityRoutes);
 
 // Middleware de erro 404
 app.use(notFoundHandler);

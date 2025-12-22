@@ -93,13 +93,35 @@
   scrollbar-width: thin;
 }
 
+/* Scrollbar styling - cinza e sutil (horizontal) */
 .nbh-nav ul::-webkit-scrollbar {
-  height: 4px;
+  height: 8px;
+}
+
+.nbh-nav ul::-webkit-scrollbar-track {
+  background: #f9fafb;
+  border-radius: 10px;
 }
 
 .nbh-nav ul::-webkit-scrollbar-thumb {
-  background: rgba(55, 88, 249, 0.3);
-  border-radius: 4px;
+  background: #d1d5db;
+  border-radius: 10px;
+  border: 2px solid #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.nbh-nav ul::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+  border-color: #f3f4f6;
+}
+
+.nbh-nav ul::-webkit-scrollbar-thumb:active {
+  background: #6b7280;
+}
+
+.nbh-nav ul {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
 }
 
 .nbh-nav a {

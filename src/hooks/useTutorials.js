@@ -10,6 +10,7 @@ export const useTutorials = (filters = {}) => {
       if (filters.categorySlug) {
         return tutorialService.getByCategory(filters.categorySlug);
       }
+      // categoryId é suportado diretamente pelo service.list
       return tutorialService.list(filters);
     },
     staleTime: 5 * 60 * 1000, // 5 minutos
@@ -48,7 +49,10 @@ export const useUpdateTutorial = () => {
     mutationFn: ({ id, data }) => tutorialService.update(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['tutorials'] });
-      queryClient.invalidateQueries({ queryKey: ['tutorial', variables.slug] });
+      // Invalidar tanto por ID quanto por slug (caso tenha mudado)
+      queryClient.invalidateQueries({ queryKey: ['tutorial', variables.id] });
+      // Invalidar todas as queries de tutorial para garantir atualização
+      queryClient.invalidateQueries({ queryKey: ['tutorial'] });
     },
   });
 };

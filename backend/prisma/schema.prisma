@@ -1,0 +1,299 @@
+// Prisma Schema para Sistema de Tutoriais Lukos
+// Baseado no plano.md
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String    @db.NVarChar(100) @unique
+  passwordHash String    @map("PasswordHash") @db.NVarChar(255)
+  name         String    @db.NVarChar(200)
+  role         String    @db.NVarChar(50) // 'admin' ou 'suporte'
+  isActive     Boolean   @default(true) @map("IsActive")
+  createdAt    DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt    DateTime  @updatedAt @map("UpdatedAt") @db.DateTime2
+  lastLoginAt  DateTime? @map("LastLoginAt") @db.DateTime2
+
+  // Relações
+  tutorialsCreated Tutorial[] @relation("TutorialCreatedBy")
+  tutorialsUpdated Tutorial[] @relation("TutorialUpdatedBy")
+  trainingsCreated Training[] @relation("TrainingCreatedBy")
+  trainingsUpdated Training[] @relation("TrainingUpdatedBy")
+  mediaUploaded    Media[]
+  auditLogs        AuditLog[]
+
+  @@map("Users")
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  name        String     @db.NVarChar(100)
+  slug        String     @db.NVarChar(100) @unique
+  description String?    @db.NVarChar(500)
+  icon        String?    @db.NVarChar(50)
+  color       String?    @db.NVarChar(20)
+  imageUrl    String?    @map("ImageUrl") @db.NVarChar(500)
+  sortOrder   Int        @default(0) @map("SortOrder")
+  isActive    Boolean    @default(true) @map("IsActive")
+  parentId    Int?       @map("ParentId")
+  createdAt   DateTime   @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt   DateTime   @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  // Relações
+  tutorials Tutorial[]
+  trainings Training[]
+  parent    Category?    @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children  Category[]   @relation("CategoryHierarchy")
+
+  @@map("Categories")
+}
+
+model Tutorial {
+  id                Int       @id @default(autoincrement())
+  title             String    @db.NVarChar(300)
+  slug              String    @db.NVarChar(300) @unique
+  description       String?   @db.NVarChar(1000)
+  content           String    @db.NVarChar(Max) // HTML do TipTap
+  categoryId        Int?      @map("CategoryId")
+  thumbnailUrl      String?   @map("ThumbnailUrl") @db.NVarChar(500)
+  videoUrl          String?   @map("VideoUrl") @db.NVarChar(500)
+  difficulty        String?   @db.NVarChar(20) // 'iniciante', 'intermediario', 'avancado'
+  estimatedDuration Int?      @map("EstimatedDuration") // minutos
+  viewCount         Int       @default(0) @map("ViewCount")
+  isPublished       Boolean   @default(false) @map("IsPublished")
+  isFeatured        Boolean   @default(false) @map("IsFeatured")
+  tags              String?   @db.NVarChar(500) // JSON array
+  metaTitle         String?   @map("MetaTitle") @db.NVarChar(200)
+  metaDescription   String?   @map("MetaDescription") @db.NVarChar(300)
+  shareHash         String?   @map("ShareHash") @db.NVarChar(100) @unique
+  createdBy         Int       @map("CreatedBy")
+  updatedBy         Int       @map("UpdatedBy")
+  createdAt         DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt         DateTime  @updatedAt @map("UpdatedAt") @db.DateTime2
+  publishedAt       DateTime? @map("PublishedAt") @db.DateTime2
+
+  // Relações
+  category     Category?      @relation(fields: [categoryId], references: [id])
+  creator      User           @relation("TutorialCreatedBy", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater      User           @relation("TutorialUpdatedBy", fields: [updatedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tutorialSteps TutorialStep[]
+  views        TutorialView[]
+
+  @@map("Tutorials")
+}
+
+model TutorialStep {
+  id         Int      @id @default(autoincrement())
+  tutorialId Int      @map("TutorialId")
+  title      String   @db.NVarChar(300)
+  content    String?  @db.NVarChar(Max) // HTML
+  videoUrl   String?  @map("VideoUrl") @db.NVarChar(500)
+  imageUrl   String?  @map("ImageUrl") @db.NVarChar(500)
+  sortOrder  Int      @map("SortOrder")
+  duration   Int?     // minutos
+  createdAt  DateTime @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt  DateTime @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  // Relações
+  tutorial Tutorial @relation(fields: [tutorialId], references: [id], onDelete: Cascade)
+
+  @@map("TutorialSteps")
+}
+
+model Media {
+  id           Int       @id @default(autoincrement())
+  fileName     String    @map("FileName") @db.NVarChar(255)
+  originalName String    @map("OriginalName") @db.NVarChar(255)
+  mimeType     String    @map("MimeType") @db.NVarChar(100)
+  size         BigInt
+  url          String    @db.NVarChar(500)
+  thumbnailUrl String?   @map("ThumbnailUrl") @db.NVarChar(500)
+  uploadedBy   Int       @map("UploadedBy")
+  createdAt    DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+
+  // Relações
+  uploader User @relation(fields: [uploadedBy], references: [id])
+
+  @@map("Media")
+}
+
+model AuditLog {
+  id         Int       @id @default(autoincrement())
+  userId     Int?      @map("UserId")
+  action     String    @db.NVarChar(100)
+  entityType String    @map("EntityType") @db.NVarChar(50)
+  entityId   Int?      @map("EntityId")
+  oldValues  String?   @map("OldValues") @db.NVarChar(Max) // JSON
+  newValues  String?   @map("NewValues") @db.NVarChar(Max) // JSON
+  ipAddress  String?   @map("IpAddress") @db.NVarChar(50)
+  userAgent  String?   @map("UserAgent") @db.NVarChar(500)
+  createdAt  DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+
+  // Relações
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("AuditLog")
+}
+
+model HeaderMenu {
+  id        Int      @id @default(autoincrement())
+  label     String   @db.NVarChar(100)
+  order     Int      @default(0) @map("Order")
+  createdAt DateTime @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt DateTime @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  items HeaderMenuItem[]
+
+  @@map("HeaderMenus")
+}
+
+model HeaderMenuItem {
+  id          Int      @id @default(autoincrement())
+  headerMenuId Int     @map("HeaderMenuId")
+  parentId    Int?     @map("ParentId")
+  label       String   @db.NVarChar(120)
+  tutorialSlug String? @map("TutorialSlug") @db.NVarChar(300)
+  isSubmenu   Boolean  @default(false) @map("IsSubmenu")
+  order       Int      @default(0) @map("Order")
+  createdAt   DateTime @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt   DateTime @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  menu HeaderMenu @relation(fields: [headerMenuId], references: [id], onDelete: Cascade)
+  parent   HeaderMenuItem?  @relation("HeaderMenuItemHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children HeaderMenuItem[] @relation("HeaderMenuItemHierarchy")
+
+  @@map("HeaderMenuItems")
+}
+
+model TutorialView {
+  id         Int      @id @default(autoincrement())
+  tutorialId Int      @map("TutorialId")
+  ipAddress  String?  @map("IpAddress") @db.NVarChar(50)
+  userAgent  String?  @map("UserAgent") @db.NVarChar(500)
+  createdAt  DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+
+  // Relações
+  tutorial Tutorial @relation(fields: [tutorialId], references: [id], onDelete: Cascade)
+
+  @@index([tutorialId])
+  @@index([createdAt])
+  @@map("TutorialViews")
+}
+
+model Training {
+  id                Int       @id @default(autoincrement())
+  title             String    @db.NVarChar(300)
+  slug              String    @db.NVarChar(300) @unique
+  description       String?   @db.NVarChar(1000)
+  categoryId        Int?      @map("CategoryId")
+  trainingType      String?   @map("TrainingType") @db.NVarChar(100) // Tipo de treinamento (ex: "Conciliação Bancária", "Sistema ERP")
+  thumbnailUrl      String?   @map("ThumbnailUrl") @db.NVarChar(500)
+  difficulty        String?   @db.NVarChar(20) // 'iniciante', 'intermediario', 'avancado'
+  estimatedDuration Int?      @map("EstimatedDuration") // minutos
+  isPublished       Boolean   @default(false) @map("IsPublished")
+  isFeatured        Boolean   @default(false) @map("IsFeatured")
+  tags              String?   @db.NVarChar(500) // JSON array
+  metaTitle         String?   @map("MetaTitle") @db.NVarChar(200)
+  metaDescription   String?   @map("MetaDescription") @db.NVarChar(300)
+  shareHash         String?   @map("ShareHash") @db.NVarChar(100) @unique
+  createdBy         Int       @map("CreatedBy")
+  updatedBy         Int       @map("UpdatedBy")
+  createdAt         DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt         DateTime  @updatedAt @map("UpdatedAt") @db.DateTime2
+  publishedAt       DateTime? @map("PublishedAt") @db.DateTime2
+
+  // Relações
+  category     Category?      @relation(fields: [categoryId], references: [id])
+  creator      User           @relation("TrainingCreatedBy", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater      User           @relation("TrainingUpdatedBy", fields: [updatedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  videos       TrainingVideo[]
+  appointments TrainingAppointment[]
+
+  @@map("Trainings")
+}
+
+model TrainingVideo {
+  id          Int      @id @default(autoincrement())
+  trainingId  Int      @map("TrainingId")
+  fileName    String   @map("FileName") @db.NVarChar(255)
+  originalName String  @map("OriginalName") @db.NVarChar(255)
+  filePath    String   @map("FilePath") @db.NVarChar(500) // Caminho relativo: /uploads/trainings/filename.mp4
+  fileSize    BigInt   @map("FileSize")
+  duration    Int?     // Duração em segundos (opcional)
+  sortOrder   Int      @default(0) @map("SortOrder")
+  createdAt   DateTime @default(now()) @map("CreatedAt") @db.DateTime2
+
+  // Relações
+  training Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+
+  @@index([trainingId])
+  @@index([sortOrder])
+  @@map("TrainingVideos")
+}
+
+model TrainingAppointment {
+  id            Int       @id @default(autoincrement())
+  trainingId    Int?      @map("TrainingId")
+  name          String    @db.NVarChar(200)
+  email         String    @db.NVarChar(255)
+  phone         String    @db.NVarChar(50)
+  company       String?   @db.NVarChar(200)
+  trainingType  String?   @map("TrainingType") @db.NVarChar(100)
+  modality      String?   @map("Modality") @db.NVarChar(100)
+  scheduledDate DateTime? @map("ScheduledDate") @db.Date
+  scheduledTime String?   @map("ScheduledTime") @db.NVarChar(20) // HH:mm format
+  status        String    @default("pending") @db.NVarChar(20) // 'pending', 'confirmed', 'cancelled', 'completed'
+  message       String?                   @db.NVarChar(Max)
+  notes         String?                   @db.NVarChar(Max) // Notas administrativas
+  createdAt     DateTime                  @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt     DateTime                  @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  // Relações
+  training Training? @relation(fields: [trainingId], references: [id], onDelete: SetNull)
+
+  @@index([trainingId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@index([createdAt])
+  @@map("TrainingAppointments")
+}
+
+model TrainingConfiguration {
+  id        Int       @id @default(autoincrement())
+  type      String    @db.NVarChar(50) // 'training_type', 'difficulty_level', 'modality', etc.
+  value     String    @db.NVarChar(100) // Valor da opção (ex: "Conciliação Bancária", "iniciante")
+  label     String    @db.NVarChar(200) // Label para exibição
+  sortOrder Int       @default(0) @map("SortOrder")
+  isActive  Boolean   @default(true) @map("IsActive")
+  metadata  String?   @db.NVarChar(Max) // JSON para dados adicionais (cor, ícone, descrição)
+  createdAt DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt DateTime  @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  @@index([type])
+  @@index([isActive])
+  @@index([sortOrder])
+  @@map("TrainingConfigurations")
+}
+
+model TrainingAvailability {
+  id           Int       @id @default(autoincrement())
+  dayOfWeek    Int?      @map("DayOfWeek") // 0-6 (Sunday-Saturday), null = data específica
+  specificDate DateTime? @map("SpecificDate") @db.Date // null = dia da semana
+  startTime    String    @map("StartTime") @db.NVarChar(5) // HH:mm
+  endTime      String    @map("EndTime") @db.NVarChar(5) // HH:mm
+  slotInterval Int       @default(30) @map("SlotInterval") // minutos entre slots
+  isActive     Boolean   @default(true) @map("IsActive")
+  createdAt    DateTime  @default(now()) @map("CreatedAt") @db.DateTime2
+  updatedAt    DateTime  @updatedAt @map("UpdatedAt") @db.DateTime2
+
+  @@index([dayOfWeek])
+  @@index([specificDate])
+  @@index([isActive])
+  @@map("TrainingAvailabilities")
+}

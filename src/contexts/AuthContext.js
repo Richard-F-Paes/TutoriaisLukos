@@ -16,6 +16,10 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // #region agent log
+  const __agentLog = () => {};
+  // #endregion
+
   // Verificar se há token válido ao carregar a aplicação
   useEffect(() => {
     const initAuth = async () => {
@@ -55,6 +59,9 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
+      // #region agent log
+      __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2',location:'src/contexts/AuthContext.js:login:entry',message:'AuthContext.login called',data:{hasUsername:!!username,usernameLength:(username||'').length,hasPassword:!!password,passwordLength:password?.length||0,existingUser:!!user},timestamp:Date.now()});
+      // #endregion
       
       const response = await authService.login(username, password);
       const { user: userData, accessToken, refreshToken } = response;
@@ -63,10 +70,16 @@ export const AuthProvider = ({ children }) => {
       sessionStorage.setItem('accessToken', accessToken);
       sessionStorage.setItem('refreshToken', refreshToken);
       setUser(userData);
+      // #region agent log
+      __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H3',location:'src/contexts/AuthContext.js:login:success',message:'AuthContext.login success - user set + tokens stored',data:{hasUser:!!userData,userKeys:userData?Object.keys(userData):[],hasAccessToken:!!accessToken,hasRefreshToken:!!refreshToken,sessionHasAccessToken:!!sessionStorage.getItem('accessToken'),sessionHasRefreshToken:!!sessionStorage.getItem('refreshToken')},timestamp:Date.now()});
+      // #endregion
       
       return { success: true, user: userData };
     } catch (error) {
       setError(error.message);
+      // #region agent log
+      __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2',location:'src/contexts/AuthContext.js:login:error',message:'AuthContext.login failed',data:{errorMessage:String(error?.message||''),errorName:String(error?.name||''),existingUser:!!user},timestamp:Date.now()});
+      // #endregion
       return { success: false, error: error.message };
     } finally {
       setLoading(false);

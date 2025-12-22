@@ -1,37 +1,26 @@
 // AdminDashboard - Dashboard com estatísticas administrativas
 import React from 'react';
 import { useAdminStats } from '../../../hooks/useAdminStats.js';
-import { useQuery } from '@tanstack/react-query';
-import { userService } from '../../../services/userService.js';
 import { 
   BookOpen, 
-  Users, 
   FolderOpen, 
   Eye, 
   TrendingUp,
   FileText,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  GraduationCap,
+  Calendar,
+  AlertCircle
 } from 'lucide-react';
+import { formatDate } from '../../../shared/utils/index.js';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
   const { stats, isLoading: statsLoading } = useAdminStats();
   
-  // Buscar usuários para estatísticas
-  const { data: usersData, isLoading: usersLoading } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => userService.list(),
-    enabled: true,
-  });
-
-  const users = usersData?.data || [];
-  const adminUsers = users.filter(u => u.Role === 'admin').length;
-  const suporteUsers = users.filter(u => u.Role === 'suporte').length;
-  const activeUsers = users.filter(u => u.IsActive).length;
-
-  const isLoading = statsLoading || usersLoading;
+  const isLoading = statsLoading;
 
   if (isLoading) {
     return (
@@ -53,25 +42,25 @@ const AdminDashboard = () => {
       subtitle: `${stats?.publishedTutorials || 0} publicados`
     },
     {
-      title: 'Total de Usuários',
-      value: users.length,
-      icon: Users,
-      color: 'green',
-      subtitle: `${adminUsers} admin, ${suporteUsers} suporte`
+      title: 'Total de Treinamentos',
+      value: stats?.totalTrainings || 0,
+      icon: GraduationCap,
+      color: 'purple',
+      subtitle: `${stats?.publishedTrainings || 0} publicados`
     },
     {
-      title: 'Categorias',
-      value: stats?.totalCategories || 0,
-      icon: FolderOpen,
-      color: 'purple',
-      subtitle: 'Categorias ativas'
+      title: 'Total de Agendamentos',
+      value: stats?.totalAppointments || 0,
+      icon: Calendar,
+      color: 'teal',
+      subtitle: `${stats?.pendingAppointments || 0} pendentes`
     },
     {
       title: 'Visualizações',
-      value: stats?.totalViews || 0,
+      value: stats?.totalViewsLast30Days || 0,
       icon: Eye,
       color: 'orange',
-      subtitle: 'Total de visualizações'
+      subtitle: 'Últimos 30 dias'
     }
   ];
 
@@ -119,11 +108,60 @@ const AdminDashboard = () => {
               <p className="status-label">Não Publicados</p>
             </div>
           </div>
-          <div className="status-card status-users">
-            <Users size={20} />
+        </div>
+      </div>
+
+      {/* Status dos Treinamentos */}
+      <div className="dashboard-section">
+        <h3 className="dashboard-section-title">Status dos Treinamentos</h3>
+        <div className="dashboard-status-grid">
+          <div className="status-card status-published">
+            <CheckCircle size={20} />
             <div>
-              <p className="status-value">{activeUsers}</p>
-              <p className="status-label">Usuários Ativos</p>
+              <p className="status-value">{stats?.publishedTrainings || 0}</p>
+              <p className="status-label">Publicados</p>
+            </div>
+          </div>
+          <div className="status-card status-unpublished">
+            <XCircle size={20} />
+            <div>
+              <p className="status-value">{stats?.unpublishedTrainings || 0}</p>
+              <p className="status-label">Não Publicados</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Status dos Agendamentos */}
+      <div className="dashboard-section">
+        <h3 className="dashboard-section-title">Status dos Agendamentos</h3>
+        <div className="dashboard-status-grid">
+          <div className="status-card" style={{ backgroundColor: '#d1fae5', borderColor: '#10b981' }}>
+            <CheckCircle size={20} style={{ color: '#059669' }} />
+            <div>
+              <p className="status-value">{stats?.completedAppointments || 0}</p>
+              <p className="status-label">Concluídos</p>
+            </div>
+          </div>
+          <div className="status-card" style={{ backgroundColor: '#dbeafe', borderColor: '#3b82f6' }}>
+            <CheckCircle size={20} style={{ color: '#1e40af' }} />
+            <div>
+              <p className="status-value">{stats?.confirmedAppointments || 0}</p>
+              <p className="status-label">Confirmados</p>
+            </div>
+          </div>
+          <div className="status-card" style={{ backgroundColor: '#fef3c7', borderColor: '#fbbf24' }}>
+            <AlertCircle size={20} style={{ color: '#f59e0b' }} />
+            <div>
+              <p className="status-value">{stats?.pendingAppointments || 0}</p>
+              <p className="status-label">Pendentes</p>
+            </div>
+          </div>
+          <div className="status-card" style={{ backgroundColor: '#fee2e2', borderColor: '#ef4444' }}>
+            <XCircle size={20} style={{ color: '#991b1b' }} />
+            <div>
+              <p className="status-value">{stats?.cancelledAppointments || 0}</p>
+              <p className="status-label">Cancelados</p>
             </div>
           </div>
         </div>
@@ -137,17 +175,30 @@ const AdminDashboard = () => {
             Tutoriais Mais Visualizados
           </h3>
           <div className="dashboard-list">
-            {stats.mostViewed.map((tutorial, index) => (
-              <div key={tutorial.Id || index} className="dashboard-list-item">
-                <div className="list-item-number">{index + 1}</div>
-                <div className="list-item-content">
-                  <h4>{tutorial.Title}</h4>
-                  <p className="list-item-meta">
-                    {tutorial.ViewCount || 0} visualizações • {tutorial.Category?.Name || 'Sem categoria'}
-                  </p>
+            {stats.mostViewed.map((tutorial, index) => {
+              const title = tutorial.title || tutorial.Title || 'Sem título';
+              const viewCount = tutorial.viewCount || tutorial.ViewCount || 0;
+              const categoryName = tutorial.category?.name || tutorial.Category?.Name || 'Sem categoria';
+              const subcategoryName = tutorial.category?.parent?.name || tutorial.Category?.Parent?.Name;
+              const updatedAt = tutorial.updatedAt || tutorial.UpdatedAt;
+              const updatedDate = updatedAt ? formatDate(updatedAt) : 'Data não disponível';
+
+              return (
+                <div key={tutorial.id || tutorial.Id || index} className="dashboard-list-item">
+                  <div className="list-item-number">{index + 1}</div>
+                  <div className="list-item-content">
+                    <h4>{title}</h4>
+                    <p className="list-item-meta">
+                      {viewCount.toLocaleString('pt-BR')} visualizações
+                      {subcategoryName && ` • ${subcategoryName}`}
+                      {categoryName && !subcategoryName && ` • ${categoryName}`}
+                      {subcategoryName && categoryName && ` (${categoryName})`}
+                      {` • Atualizado em ${updatedDate}`}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -160,24 +211,49 @@ const AdminDashboard = () => {
             Tutoriais Recentes
           </h3>
           <div className="dashboard-list">
-            {stats.recentTutorials.map((tutorial, index) => (
-              <div key={tutorial.Id || index} className="dashboard-list-item">
-                <div className="list-item-icon">
-                  <FileText size={20} />
+            {stats.recentTutorials.map((tutorial, index) => {
+              const title = tutorial.title || tutorial.Title || 'Sem título';
+              const updatedAt = tutorial.updatedAt || tutorial.UpdatedAt;
+              const createdAt = tutorial.createdAt || tutorial.CreatedAt;
+              const isPublished = tutorial.isPublished !== undefined ? tutorial.isPublished : tutorial.IsPublished;
+              const categoryName = tutorial.category?.name || tutorial.Category?.Name || 'Sem categoria';
+              const subcategoryName = tutorial.category?.parent?.name || tutorial.Category?.Parent?.Name;
+              
+              const updatedDate = updatedAt ? formatDate(updatedAt) : 'Data não disponível';
+              const createdDate = createdAt ? formatDate(createdAt) : 'Data não disponível';
+
+              // Montar string de categoria/subcategoria
+              let categoryInfo = '';
+              if (subcategoryName && categoryName) {
+                categoryInfo = ` • ${subcategoryName} (${categoryName})`;
+              } else if (subcategoryName) {
+                categoryInfo = ` • ${subcategoryName}`;
+              } else if (categoryName && categoryName !== 'Sem categoria') {
+                categoryInfo = ` • ${categoryName}`;
+              }
+
+              return (
+                <div key={tutorial.id || tutorial.Id || index} className="dashboard-list-item">
+                  <div className="list-item-icon">
+                    <FileText size={20} />
+                  </div>
+                  <div className="list-item-content">
+                    <h4>{title}</h4>
+                    <p className="list-item-meta">
+                      Atualizado em {updatedDate}
+                      {createdDate !== updatedDate && ` • Criado em ${createdDate}`}
+                      {categoryInfo}
+                      {` • `}
+                      {isPublished ? (
+                        <span className="status-badge published">Publicado</span>
+                      ) : (
+                        <span className="status-badge unpublished">Rascunho</span>
+                      )}
+                    </p>
+                  </div>
                 </div>
-                <div className="list-item-content">
-                  <h4>{tutorial.Title}</h4>
-                  <p className="list-item-meta">
-                    Criado em {new Date(tutorial.CreatedAt).toLocaleDateString('pt-BR')} • 
-                    {tutorial.IsPublished ? (
-                      <span className="status-badge published">Publicado</span>
-                    ) : (
-                      <span className="status-badge unpublished">Rascunho</span>
-                    )}
-                  </p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

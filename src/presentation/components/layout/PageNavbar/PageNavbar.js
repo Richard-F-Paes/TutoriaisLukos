@@ -175,9 +175,19 @@ function PageNavbar({ transparent = false }) {
   const menuButtonRefs = useRef({}); // Refs para os botões de dropdown
   const location = useLocation();
 
+  // #region agent log
+  const __agentLog = () => { };
+  // #endregion
+
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event.target.closest('.dropdown-container')) {
+      const target = event.target;
+      const inDropdownContainer = !!target?.closest?.('.dropdown-container');
+      const inPortalDropdown = !!target?.closest?.('.glass-dropdown');
+      // #region agent log
+      __agentLog({ sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H1', location: 'src/presentation/components/layout/PageNavbar/PageNavbar.js:handleClickOutside', message: 'PageNavbar outside click check', data: { type: event.type, targetTag: target?.tagName || null, inDropdownContainer, inPortalDropdown, willClose: !inDropdownContainer }, timestamp: Date.now() });
+      // #endregion
+      if (!inDropdownContainer) {
         setOpenDropdowns({});
         setOpenClienteDropdown(false);
         setOpenLanguageMenu(false);
@@ -201,6 +211,9 @@ function PageNavbar({ transparent = false }) {
   }, []);
 
   const toggleDropdown = (key) => {
+    // #region agent log
+    __agentLog({ sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H1', location: 'src/presentation/components/layout/PageNavbar/PageNavbar.js:toggleDropdown', message: 'PageNavbar toggleDropdown', data: { key, prevOpen: !!openDropdowns[key] }, timestamp: Date.now() });
+    // #endregion
     setOpenDropdowns(prev => ({
       ...prev,
       [key]: !prev[key]
@@ -629,6 +642,31 @@ function PageNavbar({ transparent = false }) {
 
         .sub-menu.glass-dropdown::-webkit-scrollbar-thumb:hover {
           background: rgba(139, 92, 246, 0.4);
+        }
+
+        .products-grid-container::-webkit-scrollbar {
+          height: 8px;
+        }
+
+        .products-grid-container::-webkit-scrollbar-track {
+          background: #f9fafb;
+          border-radius: 10px;
+        }
+
+        .products-grid-container::-webkit-scrollbar-thumb {
+          background: #d1d5db;
+          border-radius: 10px;
+          border: 2px solid #f9fafb;
+          transition: all 0.2s ease;
+        }
+
+        .products-grid-container::-webkit-scrollbar-thumb:hover {
+          background: #9ca3af;
+          border-color: #f3f4f6;
+        }
+
+        .products-grid-container::-webkit-scrollbar-thumb:active {
+          background: #6b7280;
         }
 
         .sub-menu.glass-dropdown .mega-menu-content {

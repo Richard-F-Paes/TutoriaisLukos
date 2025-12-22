@@ -237,18 +237,21 @@ input:checked + .slider:before {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: #3b82f6;
+  background: linear-gradient(135deg, #6c2396 0%, #5a008f 100%);
   color: white;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 500;
-  transition: background 0.2s;
+  transition: all 0.2s;
   border: none;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(108, 35, 150, 0.2);
 }
 
 .btn-primary:hover {
-  background: #2563eb;
+  background: linear-gradient(135deg, #5a008f 0%, #4a0073 100%);
+  box-shadow: 0 4px 6px rgba(108, 35, 150, 0.3);
+  transform: translateY(-1px);
 }
 
 .manager-filters {
@@ -339,8 +342,40 @@ input:checked + .slider:before {
 
 .status-badge.draft,
 .status-badge.inactive {
-  background: #fef3c7;
-  color: #92400e;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* When used as a button (UserManager status toggle) */
+button.status-badge {
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button.status-badge:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+button.status-badge:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px -8px rgba(0, 0, 0, 0.35);
+}
+
+button.status-badge.active:not(:disabled):hover {
+  background: #a7f3d0;
+  color: #064e3b;
+}
+
+button.status-badge.inactive:not(:disabled):hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+button.status-badge:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
 }
 
 .action-buttons {
@@ -368,9 +403,14 @@ input:checked + .slider:before {
   color: #374151;
 }
 
-.btn-icon.btn-danger:hover {
+.btn-icon.btn-danger {
   background: #fee2e2;
   color: #dc2626;
+}
+
+.btn-icon.btn-danger:hover {
+  background: #fecaca;
+  color: #b91c1c;
 }
 
 .empty-state,

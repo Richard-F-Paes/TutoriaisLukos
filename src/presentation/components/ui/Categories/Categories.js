@@ -1,59 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useCategoriesHierarchical } from '../../../hooks/useCategories.js';
+import ExpandableCategoryCard from '../ExpandableCategoryCard/ExpandableCategoryCard.jsx';
 import './Categories.css';
 
 const Categories = () => {
-    // Dados das categorias
-    const categories = [
-        {
-            id: 'sistema',
-            title: 'Sistema De Retaguarda',
-            count: '45 tutoriais',
-            icon: '',
-            description: 'Configurações gerais e administração'
-        },
-        {
-            id: 'Pista',
-            title: 'PDV Caixa',
-            count: '32 tutoriais',
-            icon: '',
-            description: 'Ponto de venda e operações'
-        },
-         {
-            id: 'Loja',
-            title: 'PDV Loja',
-            count: '32 tutoriais',
-            icon: '',
-            description: 'Ponto de venda e operações'
-        },
-        {
-            id: 'Smart',
-            title: 'Lukos Pay',
-            count: '28 tutoriais',
-            icon: '',
-            description: 'Gestão de vendas e clientes'
-        },
-        {
-            id: 'Pre',
-            title: 'Pré Venda',
-            count: '19 tutoriais',
-            icon: '',
-            description: 'Relatórios e análises'
-        },
-        {
-            id: 'Dashboard',
-            title: 'Dashboard',
-            count: '15 tutoriais',
-            icon: '',
-            description: 'Documentos fiscais e impostos'
-        }
-         
-    ];
+    const { data: categoriesData, isLoading } = useCategoriesHierarchical();
+    const [expandedCategories, setExpandedCategories] = useState(new Set());
+    const [selectedCategory, setSelectedCategory] = useState(null);
 
-    // Função para navegar para categoria
-    const handleCategoryClick = (categoryId) => {
-        console.log(`Navegando para categoria: ${categoryId}`);
-        // Implementar navegação para categoria específica
+    const categories = categoriesData || [];
+
+    // Função para contar tutoriais (mock - deve ser implementada com dados reais)
+    const getTutorialCount = (category) => {
+        // Esta função deve buscar a contagem real de tutoriais
+        // Por enquanto retorna um valor mockado baseado no nome
+        return category.children ? category.children.length * 5 : 10;
     };
+
+    // Função para toggle de expansão
+    const toggleCategory = (categoryId) => {
+        setExpandedCategories(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(categoryId)) {
+                newSet.delete(categoryId);
+            } else {
+                newSet.add(categoryId);
+            }
+            return newSet;
+        });
+    };
+
+    // Função para selecionar categoria
+    const handleCategorySelect = (category) => {
+        setSelectedCategory(category);
+        const slug = category.slug || category.Slug || category.id;
+        window.location.href = `/tutoriais?categoria=${slug}`;
+    };
+
+    if (isLoading) {
+        return (
+            <section id="categorias" className="categories-section">
+                <div className="container">
+                    <div className="section-header">
+                        <h2 className="section-title">Módulos do Sistema</h2>
+                        <p className="section-description">
+                            Carregando categorias...
+                        </p>
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section id="categorias" className="categories-section">
@@ -66,25 +63,27 @@ const Categories = () => {
                     </p>
                 </div>
                 
-                {/* Grid de categorias */}
-                <div className="categories-grid">
-                    {categories.map((category) => (
-                        <div 
-                            key={category.id}
-                            className={`category-card ${category.id} animate-in`}
-                            onClick={() => handleCategoryClick(category.id)}
-                        >
-                            <div className="category-icon">
-                                {category.icon}
-                            </div>
-                            <div className="category-content">
-                                <h3 className="category-title">{category.title}</h3>
-                                <p className="category-count">{category.count}</p>
-                                <p className="category-description">{category.description}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                {/* Lista de categorias expansíveis */}
+                {categories.length > 0 ? (
+                    <div className="categories-expandable-list">
+                        {categories.map((category) => (
+                            <ExpandableCategoryCard
+                                key={category.id}
+                                category={category}
+                                isExpanded={expandedCategories.has(category.id)}
+                                onToggle={toggleCategory}
+                                onSelect={handleCategorySelect}
+                                isSelected={selectedCategory?.id === category.id}
+                                getTutorialCount={getTutorialCount}
+                                expandedCategories={expandedCategories}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="categories-grid">
+                        <p>Nenhuma categoria disponível.</p>
+                    </div>
+                )}
             </div>
         </section>
     );

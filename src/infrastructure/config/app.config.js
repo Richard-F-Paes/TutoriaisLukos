@@ -6,7 +6,25 @@ export const appConfig = {
   description: import.meta.env.VITE_APP_DESCRIPTION || 'Plataforma de tutoriais do sistema Lukos',
   
   // URLs
-  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:3001',
+  apiUrl: (() => {
+    const envValue = import.meta.env.VITE_API_URL;
+    const defaultValue = 'http://localhost:3001';
+    let finalValue = envValue || defaultValue;
+    
+    // Normalizar: remover /api do final se presente, pois os endpoints já incluem /api/v1
+    if (finalValue.endsWith('/api')) {
+      finalValue = finalValue.slice(0, -4);
+    } else if (finalValue.endsWith('/api/')) {
+      finalValue = finalValue.slice(0, -5);
+    }
+    
+    // Remover barra final para evitar // na concatenação com endpoints que começam com /
+    if (finalValue.endsWith('/')) {
+      finalValue = finalValue.slice(0, -1);
+    }
+    
+    return finalValue;
+  })(),
   
   // Configurações de desenvolvimento
   devMode: import.meta.env.DEV,

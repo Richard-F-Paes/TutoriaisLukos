@@ -1,0 +1,33 @@
+/* TutorialEditorPanel Styles */
+.tutorial-edit-page {
+  padding: 1.5rem;
+}
+
+.edit-form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .edit-form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .edit-form-grid > .form-group:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .tutorial-edit-page {
+    padding: 1rem;
+  }
+  
+  .edit-form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+

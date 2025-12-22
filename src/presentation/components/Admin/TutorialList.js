@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./TutorialList.css";
+import { formatDate } from "../../../shared/utils/index.js";
 
 export default function TutorialList({ tutorials, isLoading, onTutorialDeleted, onRefresh }) {
   const [deletingId, setDeletingId] = useState(null);
@@ -155,9 +156,9 @@ export default function TutorialList({ tutorials, isLoading, onTutorialDeleted, 
 
                 <div className="tutorial-footer">
                   <div className="tutorial-dates">
-                    <small>Criado: {new Date(tutorial.createdAt).toLocaleDateString()}</small>
+                    <small>Criado: {formatDate(tutorial.createdAt)}</small>
                     {tutorial.updatedAt !== tutorial.createdAt && (
-                      <small>Atualizado: {new Date(tutorial.updatedAt).toLocaleDateString()}</small>
+                      <small>Atualizado: {formatDate(tutorial.updatedAt)}</small>
                     )}
                   </div>
                 </div>

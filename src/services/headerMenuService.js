@@ -6,9 +6,18 @@ export const headerMenuService = {
   // Listar menus do header
   async list() {
     try {
-      const response = await apiClient.get(endpoints.headerMenus?.list || '/api/v1/header-menus');
+      // #region agent log
+      const __agentLog = () => {};
+      const endpointValue = endpoints.headerMenus?.list || '/api/v1/header-menus';
+      __agentLog({location:'src/services/headerMenuService.js:list',message:'headerMenuService.list called',data:{endpointValue,hasEndpoints:!!endpoints.headerMenus},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H1'});
+      // #endregion
+      const response = await apiClient.get(endpointValue);
       return response.data;
     } catch (error) {
+      // #region agent log
+      const __agentLog = () => {};
+      __agentLog({location:'src/services/headerMenuService.js:list:error',message:'headerMenuService.list error',data:{errorMessage:String(error.message||''),errorStatus:error.response?.status||null,errorURL:String(error.config?.url||'')},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H1'});
+      // #endregion
       // Se o endpoint não existir, retornar menus padrão
       console.warn('Endpoint de menus do header não encontrado, usando menus padrão');
       return { data: [] };

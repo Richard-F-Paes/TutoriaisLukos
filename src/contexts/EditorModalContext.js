@@ -11,21 +11,52 @@ export function EditorModalProvider({ children }) {
   const [initialTab, setInitialTab] = useState('tutorials');
   const [initialTutorialId, setInitialTutorialId] = useState(null);
   const previousBodyOverflowRef = useRef(null);
+  const previousScrollYRef = useRef(null);
+  const previousBodyPositionRef = useRef(null);
+  const previousBodyTopRef = useRef(null);
 
   const openEditorModal = useCallback((tab = 'tutorials', tutorialId = null) => {
     setInitialTab(tab);
     setInitialTutorialId(tutorialId);
     setIsOpen(true);
+    
+    // Salvar estado anterior apenas se ainda não foi salvo (evita sobrescrever se outro modal já está aberto)
     if (previousBodyOverflowRef.current === null) {
       previousBodyOverflowRef.current = document.body.style.overflow ?? '';
+      previousScrollYRef.current = window.scrollY;
+      previousBodyPositionRef.current = document.body.style.position ?? '';
+      previousBodyTopRef.current = document.body.style.top ?? '';
+      
+      // Aplicar estilos para desabilitar scroll e manter posição visual
+      const scrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
     }
-    document.body.style.overflow = 'hidden';
   }, []);
 
   const closeEditorModal = useCallback(() => {
     setIsOpen(false);
-    document.body.style.overflow = previousBodyOverflowRef.current ?? '';
-    previousBodyOverflowRef.current = null;
+    
+    // Restaurar estilos do body
+    if (previousBodyOverflowRef.current !== null) {
+      document.body.style.overflow = previousBodyOverflowRef.current;
+      document.body.style.position = previousBodyPositionRef.current;
+      document.body.style.top = previousBodyTopRef.current;
+      document.body.style.width = '';
+      
+      // Restaurar posição do scroll
+      if (previousScrollYRef.current !== null) {
+        window.scrollTo(0, previousScrollYRef.current);
+      }
+      
+      // Limpar refs
+      previousBodyOverflowRef.current = null;
+      previousScrollYRef.current = null;
+      previousBodyPositionRef.current = null;
+      previousBodyTopRef.current = null;
+    }
   }, []);
 
   const value = useMemo(

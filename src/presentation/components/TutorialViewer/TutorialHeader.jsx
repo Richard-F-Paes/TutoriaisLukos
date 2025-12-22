@@ -1,6 +1,6 @@
 // TutorialHeader - Cabeçalho do tutorial
 import React from 'react';
-import { Folder, Gauge, Clock, Eye } from 'lucide-react';
+import { Folder, Gauge, Clock } from 'lucide-react';
 import './TutorialHeader.css';
 
 const TutorialHeader = ({ tutorial }) => {
@@ -15,8 +15,6 @@ const TutorialHeader = ({ tutorial }) => {
                        tutorial.categorySlug || tutorial.CategorySlug;
   const difficulty = tutorial.difficulty || tutorial.Difficulty;
   const estimatedDuration = tutorial.estimatedDuration || tutorial.EstimatedDuration;
-  const viewCount = tutorial.viewCount !== undefined ? tutorial.viewCount : 
-                    tutorial.ViewCount !== undefined ? tutorial.ViewCount : undefined;
 
   const breadcrumbs = [
     { label: 'Início', path: '/' },
@@ -50,12 +48,6 @@ const TutorialHeader = ({ tutorial }) => {
           <span className="tutorial-duration">
             <Clock size={16} />
             {estimatedDuration} min
-          </span>
-        )}
-        {viewCount !== undefined && (
-          <span className="tutorial-views">
-            <Eye size={16} />
-            {viewCount} visualizações
           </span>
         )}
       </div>

@@ -563,7 +563,7 @@ const AvailabilityCalendar = () => {
                 <>
                   <div style={{ 
                     display: 'grid', 
-                    gridTemplateColumns: formData.repeatUntil && !editingId ? '1fr 1fr' : '1fr',
+                    gridTemplateColumns: formData.repeatUntil && !editingIds ? '1fr 1fr' : '1fr',
                     gap: '1rem',
                     marginBottom: '1.5rem' 
                   }}>

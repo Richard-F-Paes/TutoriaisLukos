@@ -6,6 +6,13 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { authConfig, getRolePermissions } from '../config/auth.js';
+import { createAuditLog, getRequestInfo } from '../utils/auditHelper.js';
+import {
+  addAccessTokenToBlacklist,
+  addRefreshTokenToBlacklist,
+  isRefreshTokenBlacklisted,
+  calculateTokenTTL,
+} from '../utils/tokenBlacklist.js';
 
 const router = express.Router();
 
@@ -195,7 +202,17 @@ router.post('/refresh', async (req, res) => {
       return res.status(400).json({ error: 'refreshToken é obrigatório' });
     }
 
+    // Verificar se refresh token está na blacklist
+    const isBlacklisted = await isRefreshTokenBlacklisted(refreshToken);
+    if (isBlacklisted) {
+      return res.status(401).json({ error: 'Refresh token revogado' });
+    }
+
     const decoded = jwt.verify(refreshToken, authConfig.refreshToken.secret);
+
+    // Adicionar refresh token antigo à blacklist
+    const refreshTokenTTL = calculateTokenTTL(authConfig.refreshToken.expiresIn);
+    await addRefreshTokenToBlacklist(refreshToken, refreshTokenTTL);
 
     const permissions = getRolePermissions(decoded.role);
     const accessToken = jwt.sign(
@@ -221,9 +238,42 @@ router.post('/refresh', async (req, res) => {
   }
 });
 
-// Logout (stateless)
-router.post('/logout', async (req, res) => {
-  res.json({ success: true });
+// Logout (com blacklist de tokens)
+router.post('/logout', authenticate, async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const accessToken = authHeader.substring(7);
+      
+      // Adicionar access token à blacklist
+      const accessTokenTTL = calculateTokenTTL(authConfig.jwt.expiresIn);
+      await addAccessTokenToBlacklist(accessToken, accessTokenTTL);
+    }
+
+    // Se houver refresh token no body, também adicionar à blacklist
+    const { refreshToken } = req.body;
+    if (refreshToken) {
+      const refreshTokenTTL = calculateTokenTTL(authConfig.refreshToken.expiresIn);
+      await addRefreshTokenToBlacklist(refreshToken, refreshTokenTTL);
+    }
+
+    // Criar log de auditoria para logout
+    const { ipAddress, userAgent } = getRequestInfo(req);
+    await createAuditLog({
+      userId: req.user.id,
+      action: 'LOGOUT',
+      entityType: 'User',
+      entityId: req.user.id,
+      ipAddress,
+      userAgent,
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Erro no logout:', error);
+    // Mesmo com erro, retornar sucesso para não quebrar o fluxo do frontend
+    res.json({ success: true });
+  }
 });
 
 export default router;

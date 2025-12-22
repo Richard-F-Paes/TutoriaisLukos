@@ -133,21 +133,29 @@
   border-radius: 8px;
   overflow: hidden;
   background: #f9fafb;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .step-media-preview-image {
   width: 100%;
   height: auto;
-  max-height: 300px;
+  max-height: 400px;
+  min-height: 150px;
   object-fit: contain;
   display: block;
+  background: transparent;
 }
 
 .step-media-preview-video {
   width: 100%;
   height: auto;
-  max-height: 300px;
+  max-height: 400px;
+  min-height: 200px;
   display: block;
+  background: #000;
 }
 
 .step-media-preview-error {

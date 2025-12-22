@@ -4,6 +4,7 @@ import slugify from 'slugify';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { requirePermission } from '../middleware/permissions.middleware.js';
 import { createAuditLog, getRequestInfo } from '../utils/auditHelper.js';
+import { invalidateCachePrefix } from '../utils/cache.js';
 
 const router = express.Router();
 
@@ -161,6 +162,9 @@ router.post('/', authenticate, requirePermission('manage_categories'), async (re
       userAgent,
     });
 
+    // Invalidar cache de categorias
+    await invalidateCachePrefix('categories').catch(err => console.error('Erro ao invalidar cache:', err));
+
     res.status(201).json(category);
   } catch (error) {
     console.error('Erro ao criar categoria:', error);
@@ -255,6 +259,9 @@ router.put('/:id', authenticate, requirePermission('manage_categories'), async (
       userAgent,
     });
 
+    // Invalidar cache de categorias
+    await invalidateCachePrefix('categories').catch(err => console.error('Erro ao invalidar cache:', err));
+
     res.json(category);
   } catch (error) {
     console.error('Erro ao atualizar categoria:', error);
@@ -311,6 +318,9 @@ router.delete('/:id', authenticate, requirePermission('manage_categories'), asyn
       ipAddress,
       userAgent,
     });
+
+    // Invalidar cache de categorias
+    await invalidateCachePrefix('categories').catch(err => console.error('Erro ao invalidar cache:', err));
 
     res.json({ message: 'Categoria deletada com sucesso' });
   } catch (error) {

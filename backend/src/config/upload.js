@@ -45,6 +45,24 @@ const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE, 10) || 50 * 1024 * 102
 // Diretório de uploads
 const UPLOAD_PATH = process.env.UPLOAD_PATH || path.join(__dirname, '../../uploads');
 
+// Garantir que os diretórios de upload existam
+import fs from 'fs';
+const imagesDir = path.join(UPLOAD_PATH, 'images');
+const videosDir = path.join(UPLOAD_PATH, 'videos');
+
+if (!fs.existsSync(UPLOAD_PATH)) {
+  fs.mkdirSync(UPLOAD_PATH, { recursive: true });
+  console.log('📁 Diretório de uploads criado:', UPLOAD_PATH);
+}
+if (!fs.existsSync(imagesDir)) {
+  fs.mkdirSync(imagesDir, { recursive: true });
+  console.log('📁 Diretório de imagens criado:', imagesDir);
+}
+if (!fs.existsSync(videosDir)) {
+  fs.mkdirSync(videosDir, { recursive: true });
+  console.log('📁 Diretório de vídeos criado:', videosDir);
+}
+
 // Configuração de storage padrão (para mídia geral)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -52,6 +70,12 @@ const storage = multer.diskStorage({
     const isImage = ALLOWED_IMAGE_TYPES.includes(file.mimetype);
     const subFolder = isImage ? 'images' : 'videos';
     const fullPath = path.join(UPLOAD_PATH, subFolder);
+    
+    // Garantir que o diretório existe
+    if (!fs.existsSync(fullPath)) {
+      fs.mkdirSync(fullPath, { recursive: true });
+    }
+    
     cb(null, fullPath);
   },
   filename: (req, file, cb) => {

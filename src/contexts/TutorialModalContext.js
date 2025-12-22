@@ -10,14 +10,32 @@ export function TutorialModalProvider({ children }) {
   const [stepId, setStepId] = useState(null);
   // Rastrear se o modal foi aberto através de um hash de tutorial compartilhado
   const openedViaHashRef = useRef(false);
+  const previousBodyOverflowRef = useRef(null);
+  const previousScrollYRef = useRef(null);
+  const previousBodyPositionRef = useRef(null);
+  const previousBodyTopRef = useRef(null);
 
   const openModal = useCallback((slug, options = {}) => {
     setTutorialSlug(slug);
     setViewMode(options.viewMode || 'full');
     setStepId(options.stepId || null);
     setIsOpen(true);
-    // Prevenir scroll do body quando modal está aberto
-    document.body.style.overflow = 'hidden';
+    
+    // Salvar estado anterior apenas se ainda não foi salvo (evita sobrescrever se outro modal já está aberto)
+    if (previousBodyOverflowRef.current === null) {
+      previousBodyOverflowRef.current = document.body.style.overflow ?? '';
+      previousScrollYRef.current = window.scrollY;
+      previousBodyPositionRef.current = document.body.style.position ?? '';
+      previousBodyTopRef.current = document.body.style.top ?? '';
+      
+      // Aplicar estilos para desabilitar scroll e manter posição visual
+      const scrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    }
+    
     // Se o modal foi aberto manualmente (não via hash), resetar a flag
     // Isso garante que apenas aberturas via hash redirecionem para /tutoriais
     if (!window.location.hash || !window.location.hash.startsWith('#tutorial-')) {
@@ -30,8 +48,25 @@ export function TutorialModalProvider({ children }) {
     setTutorialSlug(null);
     setViewMode('full');
     setStepId(null);
-    // Restaurar scroll do body
-    document.body.style.overflow = 'unset';
+    
+    // Restaurar estilos do body
+    if (previousBodyOverflowRef.current !== null) {
+      document.body.style.overflow = previousBodyOverflowRef.current;
+      document.body.style.position = previousBodyPositionRef.current;
+      document.body.style.top = previousBodyTopRef.current;
+      document.body.style.width = '';
+      
+      // Restaurar posição do scroll
+      if (previousScrollYRef.current !== null) {
+        window.scrollTo(0, previousScrollYRef.current);
+      }
+      
+      // Limpar refs
+      previousBodyOverflowRef.current = null;
+      previousScrollYRef.current = null;
+      previousBodyPositionRef.current = null;
+      previousBodyTopRef.current = null;
+    }
     
     // Se o modal foi aberto via hash de tutorial compartilhado, sinalizar para navegar
     // A navegação será feita pelo componente TutorialModal que está dentro do Router

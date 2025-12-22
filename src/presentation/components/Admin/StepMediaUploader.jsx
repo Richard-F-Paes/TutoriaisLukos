@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Upload, X, Image as ImageIcon, Video, Loader2, AlertCircle } from 'lucide-react';
 import { useUploadMedia } from '../../../hooks/useMedia.js';
 import { useAuth } from '../../../contexts/AuthContext.js';
+import { appConfig } from '../../../infrastructure/config/app.config.js';
 import toast from 'react-hot-toast';
 import './StepMediaUploader.css';
 
@@ -55,12 +56,15 @@ const StepMediaUploader = ({ videoUrl = '', imageUrl = '', onVideoChange, onImag
   const activeMedia = videoUrl || imageUrl;
   const currentMediaType = videoUrl ? 'video' : (imageUrl ? 'image' : null);
 
-  // Atualizar mediaType quando há mídia
+  // Atualizar mediaType quando há mídia (incluindo quando os dados são carregados do backend)
   React.useEffect(() => {
     if (currentMediaType) {
       setMediaType(currentMediaType);
+    } else if (!activeMedia && mediaType) {
+      // Limpar mediaType se não houver mídia
+      setMediaType(null);
     }
-  }, [currentMediaType]);
+  }, [currentMediaType, activeMedia, mediaType]);
 
   // Focar no input quando o modal abrir
   useEffect(() => {
@@ -262,11 +266,47 @@ const StepMediaUploader = ({ videoUrl = '', imageUrl = '', onVideoChange, onImag
 
   const isExternalUrl = (url) => {
     if (!url) return false;
-    return !url.startsWith('/uploads') && !url.startsWith('http://localhost');
+    // Consideramos "interna" qualquer URL que aponte para /uploads (relativa ou absoluta).
+    // Isso evita marcar como externa quando o backend está em IP/hostname (ex.: http://192.168.x.x:3001/uploads/...).
+    if (url.startsWith('/uploads')) return false;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      try {
+        const parsed = new URL(url);
+        return !parsed.pathname.startsWith('/uploads');
+      } catch {
+        return true;
+      }
+    }
+    return true;
+  };
+
+  // Construir URL absoluta para preview
+  const getAbsoluteUrl = (url) => {
+    if (!url) return null;
+    
+    // Se já for uma URL absoluta (http/https), retornar como está
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // Se for URL relativa começando com /uploads, construir URL completa usando a base da API
+    if (url.startsWith('/uploads')) {
+      const baseUrl = appConfig.apiUrl;
+      return `${baseUrl}${url}`;
+    }
+    
+    // Se for URL relativa sem / no início, adicionar /uploads
+    if (!url.startsWith('/')) {
+      return `${appConfig.apiUrl}/uploads/${url}`;
+    }
+    
+    // Caso contrário, usar a base da API
+    return `${appConfig.apiUrl}${url}`;
   };
 
   const previewUrl = videoUrl || imageUrl;
   const displayType = currentMediaType || mediaType;
+  const absolutePreviewUrl = previewUrl ? getAbsoluteUrl(previewUrl) : null;
 
   return (
     <div 
@@ -309,27 +349,63 @@ const StepMediaUploader = ({ videoUrl = '', imageUrl = '', onVideoChange, onImag
 
       {previewUrl ? (
         <div className="step-media-uploader-preview">
-          {currentMediaType === 'image' ? (
-            <img 
-              src={previewUrl} 
-              alt="Preview" 
-              className="step-media-preview-image"
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling?.classList.remove('hidden');
-              }}
-            />
-          ) : (
-            <video 
-              src={previewUrl} 
-              controls 
-              className="step-media-preview-video"
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling?.classList.remove('hidden');
-              }}
-            />
-          )}
+          {(() => {
+            // Determinar o tipo de mídia para exibição
+            let mediaTypeToDisplay = displayType;
+            
+            // Se não temos o tipo definido, tentar detectar pela URL
+            if (!mediaTypeToDisplay && previewUrl) {
+              const urlLower = previewUrl.toLowerCase();
+              const videoExtensions = ['.mp4', '.mpeg', '.mpg', '.mov', '.avi', '.wmv', '.webm', '.ogg', '.ogv', '.mkv', '.flv', '.3gp', '.3g2', '.m4v'];
+              const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg', '.tiff', '.tif', '.ico', '.heic', '.heif', '.avif'];
+              
+              if (videoExtensions.some(ext => urlLower.includes(ext))) {
+                mediaTypeToDisplay = 'video';
+              } else if (imageExtensions.some(ext => urlLower.includes(ext))) {
+                mediaTypeToDisplay = 'image';
+              }
+              // Se ainda não detectou e temos videoUrl, é vídeo
+              else if (videoUrl && !imageUrl) {
+                mediaTypeToDisplay = 'video';
+              }
+              // Se temos imageUrl, é imagem
+              else if (imageUrl && !videoUrl) {
+                mediaTypeToDisplay = 'image';
+              }
+            }
+
+            return mediaTypeToDisplay === 'video' ? (
+              <video 
+                key={absolutePreviewUrl}
+                src={absolutePreviewUrl} 
+                controls 
+                className="step-media-preview-video"
+                onError={(e) => {
+                  console.error('Erro ao carregar vídeo:', absolutePreviewUrl, e);
+                  e.target.style.display = 'none';
+                  const errorDiv = e.target.nextSibling;
+                  if (errorDiv) {
+                    errorDiv.classList.remove('hidden');
+                  }
+                }}
+              />
+            ) : (
+              <img 
+                key={absolutePreviewUrl}
+                src={absolutePreviewUrl} 
+                alt="Preview da imagem" 
+                className="step-media-preview-image"
+                onError={(e) => {
+                  console.error('Erro ao carregar imagem:', absolutePreviewUrl, e);
+                  e.target.style.display = 'none';
+                  const errorDiv = e.target.nextSibling;
+                  if (errorDiv) {
+                    errorDiv.classList.remove('hidden');
+                  }
+                }}
+              />
+            );
+          })()}
           <div className="step-media-preview-error hidden">
             <AlertCircle size={24} />
             <span>Erro ao carregar preview</span>

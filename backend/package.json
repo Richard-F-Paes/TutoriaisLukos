@@ -13,7 +13,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "prisma:push": "prisma db push"
+    "prisma:push": "prisma db push",
+    "clear:rate-limit": "node src/scripts/clear-rate-limit.js"
   },
   "dependencies": {
     "@prisma/adapter-mssql": "^7.1.0",
@@ -23,6 +24,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "helmet": "^7.1.0",
+    "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
     "mssql": "^12.2.0",
     "multer": "^1.4.5-lts.1",

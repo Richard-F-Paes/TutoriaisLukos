@@ -15,6 +15,45 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Helper para serializar BigInt em objetos de vídeo
+const serializeVideo = (video) => {
+  if (!video) return null;
+  if (Array.isArray(video)) {
+    return video.map(serializeVideo);
+  }
+  
+  const serialized = { ...video };
+  
+  // Converter BigInt em fileSize para string
+  if (typeof serialized.fileSize === 'bigint') {
+    serialized.fileSize = serialized.fileSize.toString();
+  }
+  
+  return serialized;
+};
+
+// Helper para serializar BigInt em objetos de treinamento
+const serializeTraining = (training) => {
+  if (!training) return null;
+  if (Array.isArray(training)) {
+    return training.map(serializeTraining);
+  }
+  
+  const serialized = { ...training };
+  
+  // Converter BigInt em fileSize dos vídeos para string
+  if (serialized.videos && Array.isArray(serialized.videos)) {
+    serialized.videos = serializeVideo(serialized.videos);
+  }
+  
+  // Converter BigInt diretamente se houver (caso específico)
+  if (typeof serialized.fileSize === 'bigint') {
+    serialized.fileSize = serialized.fileSize.toString();
+  }
+  
+  return serialized;
+};
+
 // Garantir que o diretório de treinamentos existe
 const trainingsDir = join(__dirname, '../../uploads/trainings');
 if (!fs.existsSync(trainingsDir)) {
@@ -38,6 +77,66 @@ async function getAllCategoryIds(prisma, categoryId) {
   return categoryIds;
 }
 
+// Helper function to generate a unique slug
+async function generateUniqueSlug(prisma, baseTitle, excludeId = null) {
+  let baseSlug = slugify(baseTitle, { lower: true, strict: true });
+  let slug = baseSlug;
+  let counter = 1;
+  
+  while (true) {
+    const existing = await prisma.training.findFirst({
+      where: {
+        slug: slug,
+        ...(excludeId && { id: { not: excludeId } })
+      },
+      select: { id: true }
+    });
+    
+    if (!existing) {
+      return slug;
+    }
+    
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+    
+    // Safety check to prevent infinite loop
+    if (counter > 1000) {
+      slug = `${baseSlug}-${Date.now()}`;
+      break;
+    }
+  }
+  
+  return slug;
+}
+
+// Helper function to generate a unique shareHash
+async function generateUniqueShareHash(prisma, excludeId = null) {
+  let shareHash;
+  let attempts = 0;
+  const maxAttempts = 10;
+  
+  while (attempts < maxAttempts) {
+    shareHash = randomUUID().replace(/-/g, '').substring(0, 32);
+    
+    const existing = await prisma.training.findFirst({
+      where: {
+        shareHash,
+        ...(excludeId && { id: { not: excludeId } })
+      },
+      select: { id: true }
+    });
+    
+    if (!existing) {
+      return shareHash;
+    }
+    
+    attempts++;
+  }
+  
+  // Fallback: use timestamp if all attempts fail
+  return `${randomUUID().replace(/-/g, '').substring(0, 24)}${Date.now().toString(36)}`.substring(0, 32);
+}
+
 // =========================
 // Vídeos de Treinamento (CRUD)
 // =========================
@@ -53,7 +152,7 @@ router.get('/:trainingId/videos', async (req, res) => {
       orderBy: { sortOrder: 'asc' },
     });
     
-    res.json({ data: videos });
+    res.json({ data: serializeVideo(videos) });
   } catch (error) {
     console.error('Erro ao listar vídeos:', error);
     res.status(500).json({ error: 'Erro ao listar vídeos' });
@@ -107,7 +206,7 @@ router.post('/:trainingId/videos', authenticate, requirePermission('edit_trainin
       },
     });
 
-    res.status(201).json({ data: video });
+    res.status(201).json({ data: serializeVideo(video) });
   } catch (error) {
     console.error('Erro ao fazer upload de vídeo:', error);
     // Deletar arquivo em caso de erro
@@ -180,7 +279,7 @@ router.put('/:trainingId/videos/reorder', authenticate, requirePermission('edit_
       orderBy: { sortOrder: 'asc' },
     });
 
-    res.json({ data: updated });
+    res.json({ data: serializeVideo(updated) });
   } catch (error) {
     console.error('Erro ao reordenar vídeos:', error);
     res.status(500).json({ error: 'Erro ao reordenar vídeos' });
@@ -232,7 +331,7 @@ router.get('/', async (req, res) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    res.json({ data: trainings });
+    res.json({ data: serializeTraining(trainings) });
   } catch (error) {
     console.error('Erro ao listar treinamentos:', error);
     res.status(500).json({ error: 'Erro ao listar treinamentos' });
@@ -271,7 +370,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Treinamento não encontrado' });
     }
 
-    res.json({ data: training });
+    res.json({ data: serializeTraining(training) });
   } catch (error) {
     console.error('Erro ao obter treinamento:', error);
     res.status(500).json({ error: 'Erro ao obter treinamento' });
@@ -304,8 +403,9 @@ router.post('/', authenticate, requirePermission('create_training'), async (req,
       return res.status(401).json({ error: 'Usuário não autenticado' });
     }
 
-    const slug = slugify(title, { lower: true, strict: true });
-    const shareHash = randomUUID().replace(/-/g, '').substring(0, 32);
+    // Gerar slug único e shareHash único
+    const slug = await generateUniqueSlug(prisma, title);
+    const shareHash = await generateUniqueShareHash(prisma);
 
     const training = await prisma.training.create({
       data: {
@@ -342,7 +442,7 @@ router.post('/', authenticate, requirePermission('create_training'), async (req,
       userAgent,
     });
 
-    res.status(201).json({ data: training });
+    res.status(201).json({ data: serializeTraining(training) });
   } catch (error) {
     console.error('Erro ao criar treinamento:', error);
     if (error.code === 'P2002') {
@@ -412,12 +512,14 @@ router.put('/:id', authenticate, requirePermission('edit_training'), async (req,
     }
 
     if (!existingTraining.shareHash) {
-      updateData.shareHash = randomUUID().replace(/-/g, '').substring(0, 32);
+      const trainingId = parseInt(req.params.id);
+      updateData.shareHash = await generateUniqueShareHash(prisma, trainingId);
     }
 
     if (title) {
       updateData.title = title.trim();
-      updateData.slug = slugify(title, { lower: true, strict: true });
+      // Gerar slug único, excluindo o ID atual do treinamento
+      updateData.slug = await generateUniqueSlug(prisma, title, parseInt(req.params.id));
     }
 
     if (isPublished !== undefined) {
@@ -450,7 +552,7 @@ router.put('/:id', authenticate, requirePermission('edit_training'), async (req,
       userAgent,
     });
 
-    res.json({ data: training });
+    res.json({ data: serializeTraining(training) });
   } catch (error) {
     console.error('Erro ao atualizar treinamento:', error);
     if (error.code === 'P2025') {

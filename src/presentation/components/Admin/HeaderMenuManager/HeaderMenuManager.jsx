@@ -580,7 +580,7 @@ const HeaderMenuManager = () => {
             </div>
 
             <div style={{ color: '#1f2937', fontSize: '1rem', lineHeight: 1.6 }}>
-              <p style={{ margin: '0 0 1.25rem 0', fontWeight: 500 }}>
+              <p style={{ margin: '0 0 1.25rem 0', fontWeight: 500, color: '#111827' }}>
                 Tem certeza que deseja excluir o menu{' '}
                 <strong style={{ color: '#111827', fontWeight: 600 }}>
                   "{menuToDelete.label}"

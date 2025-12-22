@@ -13,6 +13,22 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Helper para serializar BigInt em objetos de mídia
+const serializeMedia = (media) => {
+  if (!media) return null;
+  if (Array.isArray(media)) {
+    return media.map(serializeMedia);
+  }
+  // Converter BigInt para string
+  if (typeof media.size === 'bigint') {
+    return {
+      ...media,
+      size: media.size.toString(),
+    };
+  }
+  return media;
+};
+
 // Listar mídias
 router.get('/', async (req, res) => {
   try {
@@ -32,7 +48,7 @@ router.get('/', async (req, res) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    res.json(media);
+    res.json(serializeMedia(media));
   } catch (error) {
     console.error('Erro ao listar mídias:', error);
     res.status(500).json({ error: 'Erro ao listar mídias' });
@@ -56,7 +72,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Mídia não encontrada' });
     }
 
-    res.json(media);
+    res.json(serializeMedia(media));
   } catch (error) {
     console.error('Erro ao obter mídia:', error);
     res.status(500).json({ error: 'Erro ao obter mídia' });
@@ -79,13 +95,18 @@ router.post('/', authenticate, requirePermission('upload_media'), upload.single(
       return res.status(400).json({ error: 'Usuário não identificado' });
     }
 
+    // Determinar subdiretório baseado no tipo de arquivo
+    const isImage = req.file.mimetype.startsWith('image/');
+    const subFolder = isImage ? 'images' : 'videos';
+    const fileUrl = `/uploads/${subFolder}/${req.file.filename}`;
+
     const media = await prisma.media.create({
       data: {
         fileName: req.file.filename,
         originalName: req.file.originalname,
         mimeType: req.file.mimetype,
         size: BigInt(req.file.size),
-        url: `/uploads/${req.file.filename}`,
+        url: fileUrl,
         uploadedBy: userId,
       },
       include: {
@@ -107,7 +128,7 @@ router.post('/', authenticate, requirePermission('upload_media'), upload.single(
       userAgent,
     });
 
-    res.status(201).json(media);
+    res.status(201).json(serializeMedia(media));
   } catch (error) {
     console.error('Erro ao fazer upload:', error);
     res.status(500).json({ error: 'Erro ao fazer upload' });
@@ -130,13 +151,18 @@ router.post('/upload', authenticate, requirePermission('upload_media'), upload.s
       return res.status(400).json({ error: 'Usuário não identificado' });
     }
 
+    // Determinar subdiretório baseado no tipo de arquivo
+    const isImage = req.file.mimetype.startsWith('image/');
+    const subFolder = isImage ? 'images' : 'videos';
+    const fileUrl = `/uploads/${subFolder}/${req.file.filename}`;
+
     const media = await prisma.media.create({
       data: {
         fileName: req.file.filename,
         originalName: req.file.originalname,
         mimeType: req.file.mimetype,
         size: BigInt(req.file.size),
-        url: `/uploads/${req.file.filename}`,
+        url: fileUrl,
         uploadedBy: userId,
       },
       include: {
@@ -158,7 +184,7 @@ router.post('/upload', authenticate, requirePermission('upload_media'), upload.s
       userAgent,
     });
 
-    res.status(201).json(media);
+    res.status(201).json(serializeMedia(media));
   } catch (error) {
     console.error('Erro ao fazer upload:', error);
     res.status(500).json({ error: 'Erro ao fazer upload' });
@@ -177,10 +203,22 @@ router.delete('/:id', authenticate, requirePermission('delete_media'), async (re
       return res.status(404).json({ error: 'Mídia não encontrada' });
     }
 
-    // Deletar arquivo físico
-    const filePath = join(__dirname, '../../uploads', media.fileName);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Deletar arquivo físico - verificar nos subdiretórios images e videos
+    const imagesPath = join(__dirname, '../../uploads/images', media.fileName);
+    const videosPath = join(__dirname, '../../uploads/videos', media.fileName);
+    
+    if (fs.existsSync(imagesPath)) {
+      fs.unlinkSync(imagesPath);
+    } else if (fs.existsSync(videosPath)) {
+      fs.unlinkSync(videosPath);
+    } else {
+      // Tentar no diretório raiz para compatibilidade com dados antigos
+      const rootPath = join(__dirname, '../../uploads', media.fileName);
+      if (fs.existsSync(rootPath)) {
+        fs.unlinkSync(rootPath);
+      } else {
+        console.warn(`Arquivo físico não encontrado para deletar: ${media.fileName}`);
+      }
     }
 
     // Deletar do banco

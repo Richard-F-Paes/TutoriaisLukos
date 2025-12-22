@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import { Menu, X, ChevronDown, BookOpen, Brain, Info, Briefcase, Phone, Package, BarChart3, ShoppingCart, Wallet, Truck, Store, Link as LinkIcon, Globe, Home, FileText, LayoutDashboard, ShoppingBag, Warehouse, CreditCard, Fuel } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { Menu, X, ChevronDown, BookOpen, Brain, Info, Briefcase, Phone, Package, BarChart3, ShoppingCart, Wallet, Truck, Store, Link as LinkIcon, Globe, Home, FileText, LayoutDashboard, ShoppingBag, Warehouse, CreditCard, Fuel, Users, ArrowRight } from 'lucide-react';
+import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 
 // Componente reutilizável para ProductCard com estilo Apple Cards
@@ -11,10 +11,10 @@ const ProductCard = ({ subItem, index, isMobile = false }) => {
   const cardRole = isMobile ? 'button' : 'menuitem';
 
   // Tamanhos responsivos para mobile e desktop - ajustados para melhor visualização
-  const cardHeight = isMobile ? 'h-[20rem]' : 'h-[24rem]';
-  const cardWidth = isMobile ? 'w-[14rem]' : 'w-[18rem]';
-  const mdHeight = isMobile ? 'md:h-[24rem]' : 'md:h-[28rem]';
-  const mdWidth = isMobile ? 'md:w-[16rem]' : 'md:w-[20rem]';
+  const cardHeight = isMobile ? 'h-56' : 'h-[16rem]';
+  const cardWidth = isMobile ? 'w-44' : 'w-56';
+  const mdHeight = isMobile ? 'md:h-64' : 'md:h-[18.5rem]';
+  const mdWidth = isMobile ? 'md:w-52' : 'md:w-60';
 
   return (
     <motion.button
@@ -22,66 +22,65 @@ const ProductCard = ({ subItem, index, isMobile = false }) => {
       tabIndex={0}
       role={cardRole}
       aria-label={`Produto ${subItem.label}`}
-      className={`relative z-10 flex ${cardHeight} ${cardWidth} ${mdHeight} ${mdWidth} flex-col items-start justify-start overflow-hidden rounded-3xl bg-gray-100 dark:bg-neutral-900 cursor-pointer`}
-      initial={{
-        opacity: 0,
-        y: 20,
-      }}
+      className={`relative z-10 flex ${cardHeight} ${cardWidth} ${mdHeight} ${mdWidth} flex-col items-start justify-end overflow-hidden rounded-[2rem] cursor-pointer group border border-white/10`}
+      initial={{ opacity: 0, y: 20 }}
       animate={{
         opacity: 1,
         y: 0,
-        transition: {
-          duration: 0.5,
-          delay: 0.1 * index,
-          ease: "easeOut",
-        },
+        transition: { duration: 0.5, delay: 0.1 * index, ease: "easeOut" }
       }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{
+        scale: 1.02,
+        boxShadow: "0 0 40px rgba(139, 92, 246, 0.3)"
+      }}
       whileTap={{ scale: 0.98 }}
       onClick={() => window.location.href = subItem.href}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          window.location.href = subItem.href;
-        }
-      }}
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
-      <div className="relative z-40 p-6 m-4 w-full m-12">
-        <motion.p
-          className="text-left font-sans text-xs font-medium text-white md:text-sm mb-2"
-        >
+      {/* Inner Glass Border for Luxury Feel */}
+      <div className="absolute inset-2 border border-white/20 rounded-[1.5rem] z-30 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      {/* Overlay de gradiente luxuoso */}
+      <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/95 via-black/40 to-transparent transition-opacity duration-300 group-hover:from-black/100" />
+
+      {/* Conteúdo do Card */}
+      <div className="relative z-40 p-6 w-full text-left">
+        {/* Animated Icon Container */}
+        <div className="mb-4 transform transition-transform duration-500 group-hover:-translate-y-1">
+          {subItem.iconImage ? (
+            <img
+              alt={`Icone ${subItem.label}`}
+              src={subItem.iconImage}
+              className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+            />
+          ) : (
+            <SubIcon className="w-10 h-10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+          )}
+        </div>
+
+        {/* Label de Categoria (Tag) */}
+        <span className="text-[10px] font-black tracking-[0.2em] text-purple-400 uppercase mb-2 block opacity-80">
+          Lukos Tecnologia
+        </span>
+
+        <h4 className="text-white font-black text-2xl mb-2 tracking-tight">
           {subItem.label}
-        </motion.p>
-        <motion.p
-          className="mt-2 max-w-xs text-left font-sans text-lg font-semibold [text-wrap:balance] text-white md:text-2xl mb-4"
-        >
+        </h4>
+
+        <p className="text-white/60 text-xs leading-relaxed max-w-[200px] font-medium mb-4 transition-colors group-hover:text-white/80">
           {subItem.description || subItem.label}
-        </motion.p>
-        {subItem.iconImage ? (
-          <img
-            alt={`Icone ${subItem.label}`}
-            loading="lazy"
-            width="32"
-            height="32"
-            decoding="async"
-            className="mt-2"
-            style={{ color: 'transparent', filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))' }}
-            src={subItem.iconImage}
-          />
-        ) : (
-          <div className="mt-2">
-            <SubIcon className="w-8 h-8 text-white drop-shadow-2xl" />
-          </div>
-        )}
+        </p>
+
+        {/* Explore Button - Hidden by default, slides in on hover */}
+        <div className="flex items-center gap-2 overflow-hidden h-0 group-hover:h-8 transition-all duration-500 ease-out">
+          <span className="text-white text-sm font-bold tracking-wide uppercase">Conhecer</span>
+          <ArrowRight className="w-4 h-4 text-white transform group-hover:translate-x-1 transition-transform" />
+        </div>
       </div>
+
       <img
         src={subItem.image || 'BANNER-HOME-1.png'}
-        alt={`Produto de destaque ${subItem.label}`}
-        className="absolute inset-0 z-10 object-cover w-full h-full transition duration-300"
-        loading="lazy"
-        decoding="async"
-        style={{ color: 'transparent' }}
+        alt={subItem.label}
+        className="absolute inset-0 z-10 object-cover w-full h-full transition duration-1000 group-hover:scale-110 filter brightness-90 group-hover:brightness-100"
       />
     </motion.button>
   );
@@ -114,6 +113,7 @@ const PortalDropdownContent = ({ buttonRef, children, className, isOpen, onMouse
       setPosition({
         top: rect.bottom + window.scrollY + 12, // 12px gap abaixo do botão
         left: left,
+        maxHeight: window.innerHeight - (rect.bottom + 24) // Espaço disponível abaixo
       });
     };
 
@@ -153,6 +153,8 @@ const PortalDropdownContent = ({ buttonRef, children, className, isOpen, onMouse
         top: `${position.top}px`,
         left: `${position.left}px`,
         zIndex: 9999,
+        maxHeight: position.maxHeight ? `${position.maxHeight}px` : 'auto',
+        overflowY: position.maxHeight ? 'auto' : 'visible'
       }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -233,8 +235,15 @@ function PageNavbar({ transparent = false }) {
       label: 'Início',
       hasDropdown: false,
       key: 'inicio',
-      href: '/',
+      href: '/#inicio',
       icon: Home
+    },
+    {
+      label: 'Sobre Nós',
+      hasDropdown: false,
+      key: 'sobre',
+      href: '/#sobre',
+      icon: Users
     },
     {
       label: 'Tutoriais',
@@ -247,7 +256,7 @@ function PageNavbar({ transparent = false }) {
       label: 'IA',
       hasDropdown: false,
       key: 'ia',
-      href: '/ia',
+      href: '/#ia',
       icon: Brain
     },
     {
@@ -491,106 +500,24 @@ function PageNavbar({ transparent = false }) {
           transform: translateY(-10px) scale(0.95);
         }
 
-        /* Glassmorphism effect com gradiente Lukos */
+        /* Glassmorphism efeito premium e limpo */
         .glass-dropdown {
-          background: linear-gradient(135deg, 
-            rgba(59, 130, 246, 0.15) 0%, 
-            rgba(0, 212, 255, 0.12) 30%, 
-            rgba(139, 92, 246, 0.15) 70%, 
-            rgba(59, 130, 246, 0.12) 100%);
-          backdrop-filter: blur(30px) saturate(200%);
-          -webkit-backdrop-filter: blur(30px) saturate(200%);
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px) saturate(160%);
+          -webkit-backdrop-filter: blur(20px) saturate(160%);
           box-shadow: 
-            0 20px 60px rgba(0, 212, 255, 0.15),
-            0 8px 24px rgba(139, 92, 246, 0.12),
-            0 2px 8px rgba(59, 130, 246, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.4);
-          border: 1px solid rgba(0, 212, 255, 0.3);
+            0 20px 50px rgba(0, 0, 0, 0.1),
+            0 5px 15px rgba(139, 92, 246, 0.05);
+          border: 1px solid rgba(139, 92, 246, 0.1);
           position: relative;
-          overflow: hidden;
         }
 
-        /* Efeito de brilho animado no fundo */
-        .glass-dropdown::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: linear-gradient(
-            45deg,
-            transparent 30%,
-            rgba(0, 212, 255, 0.1) 50%,
-            transparent 70%
-          );
-          animation: shimmer 8s infinite;
-          pointer-events: none;
-          z-index: 0;
-        }
-
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-100%) translateY(-100%) rotate(45deg);
-          }
-          100% {
-            transform: translateX(100%) translateY(100%) rotate(45deg);
-          }
-        }
-
-        /* Borda animada com gradiente */
-        .glass-dropdown::after {
-          content: '';
-          position: absolute;
-          inset: -1px;
-          border-radius: 1rem;
-          padding: 1px;
-          background: linear-gradient(135deg, 
-            rgba(0, 212, 255, 0.4) 0%,
-            rgba(59, 130, 246, 0.3) 25%,
-            rgba(139, 92, 246, 0.4) 50%,
-            rgba(59, 130, 246, 0.3) 75%,
-            rgba(0, 212, 255, 0.4) 100%);
-          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-          -webkit-mask-composite: xor;
-          mask-composite: exclude;
-          opacity: 0.6;
-          animation: borderGlow 3s ease-in-out infinite;
-          pointer-events: none;
-          z-index: 0;
-        }
-
-        @keyframes borderGlow {
-          0%, 100% {
-            opacity: 0.4;
-            background: linear-gradient(135deg, 
-              rgba(0, 212, 255, 0.3) 0%,
-              rgba(59, 130, 246, 0.2) 25%,
-              rgba(139, 92, 246, 0.3) 50%,
-              rgba(59, 130, 246, 0.2) 75%,
-              rgba(0, 212, 255, 0.3) 100%);
-          }
-          50% {
-            opacity: 0.8;
-            background: linear-gradient(135deg, 
-              rgba(0, 212, 255, 0.5) 0%,
-              rgba(59, 130, 246, 0.4) 25%,
-              rgba(139, 92, 246, 0.5) 50%,
-              rgba(59, 130, 246, 0.4) 75%,
-              rgba(0, 212, 255, 0.5) 100%);
-          }
-        }
-
-        /* Garantir que o conteúdo fique acima do efeito de brilho */
+        /* Removidos efeitos de brilho excessivo (shimmer/borderGlow) para reduzir o ruído */
+        
+        /* Garantir que o conteúdo fique acima do fundo */
         .glass-dropdown > * {
           position: relative;
           z-index: 1;
-        }
-        
-        /* Efeito de hover no dropdown para intensificar brilho */
-        .glass-dropdown:hover::after {
-          opacity: 1;
-          animation-duration: 2s;
         }
 
         /* Menu item hover effects */
@@ -683,44 +610,55 @@ function PageNavbar({ transparent = false }) {
         .sub-menu.glass-dropdown {
           box-sizing: border-box;
           max-width: calc(100vw - 2rem);
-        }
-
-        .sub-menu.glass-dropdown .products-grid-container {
-          max-width: 100%;
-          padding: 0;
-          margin: 24px;
-        }
-
-        /* CSS Flex Container para produtos - Layout horizontal sem quebra */
-        .products-grid-container {
-          display: flex;
-          flex-direction: row;
-          flex-wrap: nowrap;
-          gap: 0.75rem;
-          width: 100%;
-          box-sizing: border-box;
-          overflow-x: auto;
-          overflow-y: visible;
           scrollbar-width: thin;
-          scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+          scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
         }
 
-        .products-grid-container::-webkit-scrollbar {
-          height: 6px;
+        .sub-menu.glass-dropdown::-webkit-scrollbar {
+          width: 6px;
         }
 
-        .products-grid-container::-webkit-scrollbar-track {
+        .sub-menu.glass-dropdown::-webkit-scrollbar-track {
           background: transparent;
         }
 
-        .products-grid-container::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.3);
-          border-radius: 3px;
+        .sub-menu.glass-dropdown::-webkit-scrollbar-thumb {
+          background: rgba(139, 92, 246, 0.2);
+          border-radius: 10px;
         }
 
-        .products-grid-container::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.5);
+        .sub-menu.glass-dropdown::-webkit-scrollbar-thumb:hover {
+          background: rgba(139, 92, 246, 0.4);
         }
+
+        .sub-menu.glass-dropdown .mega-menu-content {
+          max-width: 100%;
+          padding: 2rem;
+          box-sizing: border-box;
+        }
+
+        /* CSS Grid Container para produtos - Layout em Grade Mega-Menu */
+        .products-grid-container {
+          display: grid;
+          grid-template-columns: repeat(1, minmax(0, 1fr));
+          gap: 1.5rem;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        @media (min-width: 768px) {
+          .products-grid-container {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .products-grid-container {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            width: auto;
+          }
+        }
+
 
         @media (min-width: 641px) and (max-width: 768px) {
           .products-grid-container {
@@ -746,36 +684,17 @@ function PageNavbar({ transparent = false }) {
           }
         }
 
-        /* Estilos para cards estilo Apple Cards */
+        /* Tamanhos de botões dentro do grid - Ajustados para Mega-Menu */
         .products-grid-container button {
-          flex-shrink: 0;
-          flex-grow: 0;
+          width: 100%;
+          height: 16rem;
           min-width: 14rem;
-          width: 14rem;
-          height: 20rem;
-        }
-
-        @media (min-width: 768px) {
-          .products-grid-container button {
-            min-width: 16rem;
-            width: 16rem;
-            height: 24rem;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .products-grid-container button {
-            min-width: 18rem;
-            width: 18rem;
-            height: 28rem;
-          }
         }
 
         @media (min-width: 1280px) {
           .products-grid-container button {
-            min-width: 20rem;
-            width: 20rem;
-            height: 28rem;
+            height: 18.5rem;
+            min-width: 16rem;
           }
         }
         /* Smooth scroll behavior */
@@ -896,77 +815,88 @@ function PageNavbar({ transparent = false }) {
           }
         }
       `}</style>
-      <nav className={`absolute left-0 right-0 z-50 w-full flex items-center justify-center space-x-1 h-[60px] ${transparent ? 'top-12' : 'top-0'}`} style={{
-        background: transparent ? 'transparent' : 'linear-gradient(135deg, #1a0f2e 0%, #0d0f14 30%, #0f1419 50%, #141a1a 70%, #1a2e1f 100%)',
-        backdropFilter: transparent ? 'none' : 'blur(10px)',
-        boxShadow: transparent ? 'none' : '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
-      }}>
-        <div className="container mx-auto max-w-full px-4" style={{ backgroundColor: 'transparent' }}>
-          <div className={`row flex items-center justify-between gap-4 ${transparent ? 'py-2' : 'py-4'}`} style={{ backgroundColor: 'transparent' }}>
-            {/* Logo - col-lg-2 col-1 */}
-            <div className="flex-shrink-0">
-              <a className="brand inline-block" href="/">
-                <img
-                  width="140"
-                  height="100"
-                  className=" h-[80px] w-[100px]"
-                  src="logo.png"
-                  alt="LUKOS"
-                />
-              </a>
-            </div>
+      <nav className={`fixed left-0 right-0 z-50 w-full flex items-center justify-center transition-all duration-500 ${transparent ? 'top-6 px-6' : 'top-0 px-0'}`}>
+        <div className={`container mx-auto transition-all duration-500 relative flex items-center justify-between px-8 h-[70px] ${transparent
+          ? 'bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl'
+          : 'bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-lg'
+          }`}>
+          {/* Logo - col-lg-2 col-1 */}
+          <div className="flex-shrink-0">
+            <a className="brand inline-block hover:scale-105 transition-transform" href="/">
+              <img
+                width="120"
+                height="auto"
+                className="h-[50px] w-auto brightness-110"
+                src="logo.png"
+                alt="LUKOS"
+              />
+            </a>
+          </div>
 
-            {/* Menu Desktop - col-lg-6 */}
-            <div className="hidden lg:flex px-0 justify-center flex-1 min-w-0" style={{ overflow: 'visible' }}>
-              <nav className="nav-primary w-full" role="navigation" aria-label="Menu principal" style={{ overflow: 'visible' }}>
-                <ul className="nav flex items-center justify-center space-x-1 h-[60px]" role="menubar" style={{ maxWidth: '100%', flexWrap: 'nowrap' }}>
-                  {menuItems.map((item) => {
-                    if (item.hasDropdown) {
-                      const Icon = item.icon;
-                      const isOpen = openDropdowns[item.key];
-                      return (
-                        <li key={item.key} className="menu-item relative dropdown-container h-full flex items-center" role="none" style={{ overflow: 'visible' }}>
-                          <button
-                            ref={(el) => { if (el) menuButtonRefs.current[item.key] = el; }}
-                            onClick={() => toggleDropdown(item.key)}
-                            onMouseEnter={() => handleDropdownMouseEnter(item.key)}
-                            onMouseLeave={() => handleDropdownMouseLeave(item.key)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                toggleDropdown(item.key);
-                              }
-                            }}
-                            aria-expanded={isOpen}
-                            aria-haspopup="true"
-                            aria-label={`${item.label} menu`}
-                            className="menu-item-link flex items-center gap-1 px-3 py-2 text-lg font-medium text-white hover:text-[#00D4FF] transition-all duration-200 rounded-lg hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2 focus:ring-offset-transparent whitespace-nowrap"
-                          >
-                            <Icon className="h-4 w-4" aria-hidden="true" />
-                            {item.label}
-                            <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
-                          </button>
+          {/* Menu Desktop - col-lg-6 */}
+          <div className="hidden lg:flex px-0 justify-center flex-1 min-w-0" style={{ overflow: 'visible' }}>
+            <nav className="nav-primary w-full" role="navigation" aria-label="Menu principal" style={{ overflow: 'visible' }}>
+              <ul className="nav flex items-center bg-[#] rounded-full justify-center space-x-1 h-[60px]" role="menubar" style={{ maxWidth: '100%', flexWrap: 'nowrap' }}>
+                {menuItems.map((item) => {
+                  if (item.hasDropdown) {
+                    const Icon = item.icon;
+                    const isOpen = openDropdowns[item.key];
+                    return (
+                      <li key={item.key} className="menu-item relative dropdown-container h-full flex items-center" role="none" style={{ overflow: 'visible' }}>
+                        <button
+                          ref={(el) => { if (el) menuButtonRefs.current[item.key] = el; }}
+                          onClick={() => toggleDropdown(item.key)}
+                          onMouseEnter={() => handleDropdownMouseEnter(item.key)}
+                          onMouseLeave={() => handleDropdownMouseLeave(item.key)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              toggleDropdown(item.key);
+                            }
+                          }}
+                          aria-expanded={isOpen}
+                          aria-haspopup="true"
+                          aria-label={`${item.label} menu`}
+                          className={`menu-item-link flex items-center gap-1 px-4 py-2 text-base font-bold transition-all duration-300 rounded-xl whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:ring-offset-2 text-[#8B5CF6] ${transparent ? 'bg-white/20 hover:bg-white/40' : 'bg-gray-100/50 hover:bg-gray-200/50'
+                            }`}
+                        >
+                          <Icon className="h-4 w-4" aria-hidden="true" />
+                          {item.label}
+                          <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                        </button>
 
-                          {item.hasDropdown && (
-                            <>
-                              {item.isCardDropdown ? (
-                                <PortalDropdownContent
-                                  buttonRef={{ current: menuButtonRefs.current[item.key] }}
-                                  isOpen={isOpen}
-                                  centered={true}
-                                  onMouseEnter={() => handleDropdownMouseEnter(item.key)}
-                                  onMouseLeave={() => handleDropdownMouseLeave(item.key)}
-                                  className="sub-menu glass-dropdown rounded-2xl p-3 dropdown-menu-enter-active"
+                        {item.hasDropdown && (
+                          <>
+                            {item.isCardDropdown ? (
+                              <PortalDropdownContent
+                                buttonRef={{ current: menuButtonRefs.current[item.key] }}
+                                isOpen={isOpen}
+                                centered={true}
+                                onMouseEnter={() => handleDropdownMouseEnter(item.key)}
+                                onMouseLeave={() => handleDropdownMouseLeave(item.key)}
+                                className="sub-menu glass-dropdown rounded-2xl p-3 dropdown-menu-enter-active"
+                              >
+                                <div
+                                  role="menu"
+                                  aria-label={`Menu ${item.label}`}
+                                  style={{
+                                    maxWidth: 'calc(100vw - 2rem)',
+                                    width: 'fit-content',
+                                    boxSizing: 'border-box',
+                                  }}
                                 >
-                                  <div
-                                    role="menu"
-                                    aria-label={`Menu ${item.label}`}
-                                    style={{
-                                      maxWidth: 'calc(100vw - 2rem)',
-                                      width: 'fit-content',
-                                      boxSizing: 'border-box',
-                                    }}
-                                  >
+                                  <div className="mega-menu-content">
+                                    {/* Header do Mega-Menu */}
+                                    <div className="mb-8 border-b border-purple-500/10 pb-6">
+                                      <h3 className="text-purple-600 font-black text-xs uppercase tracking-[0.3em] mb-2">
+                                        Nossas Soluções
+                                      </h3>
+                                      <p className="text-gray-900 font-extrabold text-3xl tracking-tighter">
+                                        Ecossistema Lukos.
+                                        <span className="block text-[#8B5CF6]">Tecnologia que impulsiona o seu negócio.</span>
+                                      </p>
+                                    </div>
+
                                     <div className="products-grid-container">
                                       {item.submenu.map((subItem, index) => (
                                         <ProductCard
@@ -978,146 +908,143 @@ function PageNavbar({ transparent = false }) {
                                       ))}
                                     </div>
                                   </div>
-                                </PortalDropdownContent>
-                              ) : (
-                                <PortalDropdownContent
-                                  buttonRef={{ current: menuButtonRefs.current[item.key] }}
-                                  isOpen={isOpen}
-                                  centered={false}
-                                  onMouseEnter={() => handleDropdownMouseEnter(item.key)}
-                                  onMouseLeave={() => handleDropdownMouseLeave(item.key)}
-                                  className="sub-menu glass-dropdown w-64 rounded-xl py-2 dropdown-menu-enter-active"
-                                >
-                                  <ul role="menu">
-                                    {item.submenu.map((subItem, index) => (
-                                      <li key={index} className="menu-item" role="none">
-                                        {subItem.hasSubmenu ? (
-                                          <div className="relative">
-                                            <button
-                                              onClick={() => toggleDropdown(`${item.key}-${index}`)}
-                                              onKeyDown={(e) => {
-                                                if (e.key === 'Enter' || e.key === ' ') {
-                                                  e.preventDefault();
-                                                  toggleDropdown(`${item.key}-${index}`);
-                                                }
-                                              }}
-                                              aria-expanded={openDropdowns[`${item.key}-${index}`]}
-                                              aria-haspopup="true"
-                                              className="submenu-item block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                                              role="menuitem"
-                                            >
-                                              {subItem.label}
-                                              <ChevronDown className={`ml-1 h-3 w-3 inline transition-transform duration-300 ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} aria-hidden="true" />
-                                            </button>
-                                            {openDropdowns[`${item.key}-${index}`] && (
-                                              <ul
-                                                className="sub-menu glass-dropdown absolute left-full top-0 ml-2 w-56 rounded-xl z-50 py-2 dropdown-menu-enter-active"
-                                                style={{
-                                                  animation: 'fadeInSlideDownLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                  transformOrigin: 'top left',
-                                                  transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                                                }}
-                                                role="menu"
-                                              >
-                                                {subItem.submenu.map((subSubItem, subIndex) => (
-                                                  <li key={subIndex} role="none">
-                                                    <a
-                                                      href={subSubItem.href}
-                                                      className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                                                      role="menuitem"
-                                                    >
-                                                      {subSubItem.label}
-                                                    </a>
-                                                  </li>
-                                                ))}
-                                              </ul>
-                                            )}
-                                          </div>
-                                        ) : (
-                                          <a
-                                            href={subItem.href}
-                                            target={subItem.external ? "_blank" : undefined}
-                                            rel={subItem.external ? "noopener noreferrer" : undefined}
-                                            className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                </div>
+                              </PortalDropdownContent>
+                            ) : (
+                              <PortalDropdownContent
+                                buttonRef={{ current: menuButtonRefs.current[item.key] }}
+                                isOpen={isOpen}
+                                centered={false}
+                                onMouseEnter={() => handleDropdownMouseEnter(item.key)}
+                                onMouseLeave={() => handleDropdownMouseLeave(item.key)}
+                                className="sub-menu glass-dropdown w-64 rounded-xl py-2 dropdown-menu-enter-active"
+                              >
+                                <ul role="menu">
+                                  {item.submenu.map((subItem, index) => (
+                                    <li key={index} className="menu-item" role="none">
+                                      {subItem.hasSubmenu ? (
+                                        <div className="relative">
+                                          <button
+                                            onClick={() => toggleDropdown(`${item.key}-${index}`)}
+                                            onKeyDown={(e) => {
+                                              if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                toggleDropdown(`${item.key}-${index}`);
+                                              }
+                                            }}
+                                            aria-expanded={openDropdowns[`${item.key}-${index}`]}
+                                            aria-haspopup="true"
+                                            className="submenu-item block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
                                             role="menuitem"
                                           >
                                             {subItem.label}
-                                          </a>
-                                        )}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </PortalDropdownContent>
-                              )}
-                            </>
-                          )}
-                        </li>
-                      );
-                    } else {
-                      const Icon = item.icon;
-                      const active = location.pathname === item.href;
-                      return (
-                        <li key={item.key} className="menu-item relative" role="none">
-                          <a
-                            href={item.href}
-                            className={`menu-item-link flex items-center gap-1 px-3 py-2 text-lg font-medium transition-all duration-200 rounded-lg whitespace-nowrap ${active
-                              ? 'text-[#00D4FF]'
-                              : 'text-white hover:text-[#00D4FF] hover:bg-white/10'
-                              } focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2 focus:ring-offset-transparent`}
-                            role="menuitem"
-                            aria-current={active ? 'page' : undefined}
-                          >
-                            <Icon className="h-4 w-4" aria-hidden="true" />
-                            {item.label}
-                          </a>
-                        </li>
-                      );
-                    }
-                  })}
-                </ul>
-              </nav>
-            </div>
-
-            {/* Botões Direita - col-lg-4 */}
-            <div className="hidden lg:flex items-center space-x-4 ml-4 flex-shrink-0">
-              {/* Botão Contato */}
-              <div className="btn-group dropdown dropdown-container">
-                <a href="/contato" aria-label="Ir para página de contato">
-                  <button
-                    className="btn btn-xs btn-blue px-5 py-2.5 bg-gradient-to-br from-green-500 via-green-500 to-purple-100/40 text-white text-base font-medium rounded-lg hover:from-green-600 hover:via-green-600 hover:to-purple-200/50 transition-all duration-200 flex items-center gap-2 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                    type="button"
-                    aria-label="Contato"
-                  >
-                    <Phone className="h-4 w-4" aria-hidden="true" />
-                    Contato
-                  </button>
-                </a>
-              </div>
-
-
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="col-2 md:hidden text-right flex-shrink-0">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setIsMenuOpen(!isMenuOpen);
+                                            <ChevronDown className={`ml-1 h-3 w-3 inline transition-transform duration-300 ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} aria-hidden="true" />
+                                          </button>
+                                          {openDropdowns[`${item.key}-${index}`] && (
+                                            <ul
+                                              className="sub-menu glass-dropdown absolute left-full top-0 ml-2 w-56 rounded-xl z-50 py-2 dropdown-menu-enter-active"
+                                              style={{
+                                                animation: 'fadeInSlideDownLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                transformOrigin: 'top left',
+                                                transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                              }}
+                                              role="menu"
+                                            >
+                                              {subItem.submenu.map((subSubItem, subIndex) => (
+                                                <li key={subIndex} role="none">
+                                                  <a
+                                                    href={subSubItem.href}
+                                                    className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                                    role="menuitem"
+                                                  >
+                                                    {subSubItem.label}
+                                                  </a>
+                                                </li>
+                                              ))}
+                                            </ul>
+                                          )}
+                                        </div>
+                                      ) : (
+                                        <a
+                                          href={subItem.href}
+                                          target={subItem.external ? "_blank" : undefined}
+                                          rel={subItem.external ? "noopener noreferrer" : undefined}
+                                          className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                          role="menuitem"
+                                        >
+                                          {subItem.label}
+                                        </a>
+                                      )}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </PortalDropdownContent>
+                            )}
+                          </>
+                        )}
+                      </li>
+                    );
+                  } else {
+                    const Icon = item.icon;
+                    const active = location.pathname === item.href;
+                    return (
+                      <li key={item.key} className="menu-item relative" role="none">
+                        <a
+                          href={item.href}
+                          className={`menu-item-link flex items-center gap-1 px-4 py-2 text-base font-bold transition-all duration-300 rounded-xl whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:ring-offset-2 text-[#8B5CF6] ${active
+                            ? 'bg-[#8B5CF6]/10'
+                            : transparent ? 'bg-white/20 hover:bg-white/40' : 'bg-gray-100/50 hover:bg-gray-200/50'
+                            }`}
+                          role="menuitem"
+                          aria-current={active ? 'page' : undefined}
+                        >
+                          <Icon className="h-4 w-4" aria-hidden="true" />
+                          {item.label}
+                        </a>
+                      </li>
+                    );
                   }
-                }}
-                aria-expanded={isMenuOpen}
-                aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
-                aria-controls="mobile-menu"
-                className="navbar-toggler hamburger flex flex-col justify-center items-center w-10 h-10 space-y-1.5 rounded-lg hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2 transition-all duration-200"
-                type="button"
+                })}
+              </ul>
+            </nav>
+          </div>
+
+          {/* Botões Direita - col-lg-4 */}
+          <div className="hidden lg:flex items-center space-x-4 ml-4 flex-shrink-0">
+            {/* Botão Contato */}
+            <div className="flex items-center gap-3">
+              <Link
+                to="/contato"
+                className="bg-[#8B5CF6] hover:bg-[#7c3aed] text-white px-6 py-2.5 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-purple-500/20 text-sm flex items-center gap-2"
               >
-                <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} aria-hidden="true"></span>
-                <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} aria-hidden="true"></span>
-                <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} aria-hidden="true"></span>
-              </button>
+                <Phone className="h-4 w-4" />
+                Contato
+              </Link>
             </div>
+
+
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="col-2 md:hidden text-right flex-shrink-0">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setIsMenuOpen(!isMenuOpen);
+                }
+              }}
+              aria-expanded={isMenuOpen}
+              aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+              aria-controls="mobile-menu"
+              className="navbar-toggler hamburger flex flex-col justify-center items-center w-10 h-10 space-y-1.5 rounded-lg hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2 transition-all duration-200"
+              type="button"
+            >
+              <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} aria-hidden="true"></span>
+              <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} aria-hidden="true"></span>
+              <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} aria-hidden="true"></span>
+            </button>
           </div>
 
           {/* Mobile Menu */}
@@ -1127,24 +1054,37 @@ function PageNavbar({ transparent = false }) {
                 <ul className="nav nav-mobile space-y-4" role="menubar">
                   {menuItems.map((item) => (
                     <li key={item.key} className="menu-item" role="none">
-                      <button
-                        onClick={() => toggleDropdown(item.key)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            toggleDropdown(item.key);
-                          }
-                        }}
-                        aria-expanded={openDropdowns[item.key]}
-                        aria-haspopup={item.hasDropdown}
-                        className="w-full text-left flex items-center justify-between px-5 py-3.5 text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2"
-                        role="menuitem"
-                      >
-                        {item.label}
-                        {item.hasDropdown && (
+                      {item.hasDropdown ? (
+                        <button
+                          onClick={() => toggleDropdown(item.key)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              toggleDropdown(item.key);
+                            }
+                          }}
+                          aria-expanded={openDropdowns[item.key]}
+                          aria-haspopup={true}
+                          className="w-full text-left flex items-center justify-between px-5 py-3.5 text-gray-700 hover:text-[#8B5CF6] transition-all duration-200 rounded-lg hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:ring-offset-2"
+                          role="menuitem"
+                        >
+                          <span className="flex items-center gap-2">
+                            {item.icon && <item.icon className="h-4 w-4" />}
+                            {item.label}
+                          </span>
                           <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${openDropdowns[item.key] ? 'rotate-180' : ''}`} aria-hidden="true" />
-                        )}
-                      </button>
+                        </button>
+                      ) : (
+                        <a
+                          href={item.href}
+                          onClick={() => setIsMenuOpen(false)}
+                          className="w-full text-left flex items-center gap-2 px-5 py-3.5 text-gray-700 hover:text-[#8B5CF6] transition-all duration-200 rounded-lg hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:ring-offset-2"
+                          role="menuitem"
+                        >
+                          {item.icon && <item.icon className="h-4 w-4" />}
+                          {item.label}
+                        </a>
+                      )}
                       {openDropdowns[item.key] && item.hasDropdown && (
                         <>
                           {item.isCardDropdown ? (

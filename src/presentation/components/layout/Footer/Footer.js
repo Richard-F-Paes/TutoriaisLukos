@@ -4,77 +4,90 @@ import { FaPhone, FaEnvelope, FaClock, FaYoutube, FaInstagram, FaFacebook } from
 
 const Footer = () => {
   return (
-    <footer className="relative bg-gradient-to-r from-purple-700 to-purple-900 text-white pt-6 pb-2 overflow-hidden">
-      {/* Textura suave sobre o gradiente */}
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-linen.png')] opacity-10 pointer-events-none"></div>
+    <footer className="relative bg-[#8B5CF6] text-white pt-12 pb-6 overflow-hidden border-t border-white/20">
+      {/* Brilho decorativo fundo */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 blur-[120px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-400/20 blur-[120px] rounded-full pointer-events-none"></div>
 
       {/* Conteúdo principal */}
-      <div className="relative max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6 text-sm justify-items-center">
+      <div className="relative max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-sm">
         {/* Marca / Logo */}
-        <div className="flex flex-col items-center justify-center text-white">
-          <a
-            href="https://lukos.com.br"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center mb-2 text-white no-underline hover:no-underline hover:text-white visited:text-white active:text-white focus:text-white focus:outline-none hover:drop-shadow-[0_2px_4px_rgba(255,255,255,0.3)] transition-all duration-300"
+        <div className="flex flex-col items-start text-white">
+          <Link
+            to="/"
+            className="flex items-center mb-6 text-white no-underline hover:text-white transition-all duration-300"
           >
-            <img src="/icons/Logo4kIcon.png" alt="Logo" className="w-14 h-14 mr-2 drop-shadow-md" />
-            <span className="text-lg font-bold leading-tight tracking-wide text-white">
+            <img src="logobranco.svg" alt="Logo" className="w-16 h-16 mr-3 drop-shadow-lg" />
+            <span className="text-2xl font-black leading-none tracking-tighter text-white uppercase">
               Lukos <br /> Tecnologia
             </span>
-          </a>
-          <p className="text-gray-300 text-xs text-center leading-relaxed max-w-[180px]">
-            Soluções completas para PDV, retaguarda e conveniência.
+          </Link>
+          <p className="text-white/80 text-sm leading-relaxed max-w-xs">
+            Tecnologia de ponta para automatizar e escalar a rentabilidade do seu posto de combustível e loja de conveniência.
           </p>
         </div>
 
         {/* Navegação */}
-        <div className="text-white text-center">
-          <h3 className="font-semibold mb-2 text-white text-gray-100 text-sm">Navegação</h3>
-          <ul className="space-y-1 text-gray text-xs text-white">
-            <li><Link to="/" className="hover:text-white transition text-white">Início</Link></li>
-            <li><Link to="/categorias" className="hover:text-white transition-colors text-white">Categorias</Link></li>
-            <li><Link to="/sobre" className="hover:text-white transition-colors text-white">Sobre</Link></li>
+        <div className="text-white">
+          <h3 className="font-black uppercase tracking-widest mb-8 text-white text-base">Navegação</h3>
+          <ul className="space-y-4">
+            <li><Link to="/" className="text-white/70 hover:text-white transition-colors font-medium">Início</Link></li>
+            <li><Link to="/tutoriais" className="text-white/70 hover:text-white transition-colors font-medium">Tutoriais</Link></li>
+            <li><Link to="/sobre" className="text-white/70 hover:text-white transition-colors font-medium">Sobre a Lukos</Link></li>
+            <li><Link to="/servicos" className="text-white/70 hover:text-white transition-colors font-medium">Nossas Soluções</Link></li>
           </ul>
         </div>
 
         {/* Tutoriais */}
-        <div className="text-center">
-          <h3 className="font-semibold mb-2 text-gray-100 text-sm">Tutoriais</h3>
-          <ul className="space-y-1 text-gray-300 text-xs text-white">
-            <li><Link to="/tutoriais" className="hover:text-white transition-colors text-white">Tutoriais</Link></li>
-            <li><Link to="/retaguarda" className="hover:text-white transition-colors text-white">Retaguarda</Link></li>
-            <li><Link to="/pdv" className="hover:text-white transition-colors text-white">PDV</Link></li>
+        <div className="text-white">
+          <h3 className="font-black uppercase tracking-widest mb-8 text-white text-base">Sistemas</h3>
+          <ul className="space-y-4">
+            <li><Link to="/erp" className="text-white/70 hover:text-white transition-colors font-medium">ERP Completo</Link></li>
+            <li><Link to="/pdv" className="text-white/70 hover:text-white transition-colors font-medium">PDV Fiscal</Link></li>
+            <li><Link to="/ia" className="text-white/70 hover:text-white transition-colors font-medium">Inteligência IA</Link></li>
+            <li><Link to="/fidelidade" className="text-white/70 hover:text-white transition-colors font-medium">Fidelidade</Link></li>
           </ul>
         </div>
 
         {/* Contato */}
-        <div className="flex flex-col items-center">
-          <h3 className="font-semibold mb-2 text-gray-100 text-sm">Contato</h3>
-          <ul className="space-y-1 text-xs text-gray-300 flex justify-center flex-col">
-            <li className="flex items-center"><FaPhone className="mr-2 text-purple-300 flex justify-center"  /> (11) 4858-8429</li>
-            <li className="flex items-center"><FaEnvelope className="mr-2 text-purple-300" /> suporte@lukos.com.br</li>
-            <li className="flex items-center"><FaClock className="mr-2 mt-1 text-white" /> Seg. a sex. <br /> 08h30 às 17h30</li>
+        <div className="flex flex-col items-start">
+          <h3 className="font-black uppercase tracking-widest mb-8 text-white text-base">Contato</h3>
+          <ul className="space-y-6">
+            <li className="flex items-center text-white/90">
+              <FaPhone className="mr-3 text-white text-lg" />
+              <span className="font-bold">(11) 4858-8429</span>
+            </li>
+            <li className="flex items-center text-white/90">
+              <FaEnvelope className="mr-3 text-white text-lg" />
+              <span className="font-bold">suporte@lukos.com.br</span>
+            </li>
+            <li className="flex items-start text-white/90">
+              <FaClock className="mr-3 mt-1 text-white text-lg" />
+              <span>Seg. a sex.<br /><span className="font-bold">08h30 às 17h30</span></span>
+            </li>
           </ul>
 
           {/* Redes Sociais */}
-          <div className="flex space-x-3 mt-3 ">
-            <a href="https://www.youtube.com/@lukos-solucoesemtecnologia8036" target="_blank" rel="noopener noreferrer" className="hover:text-purple-200 transition-transform hover:scale-110">
-              <FaYoutube size={18} />
+          <div className="flex space-x-4 mt-8">
+            <a href="https://www.youtube.com/@lukos-solucoesemtecnologia8036" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all text-white">
+              <FaYoutube size={20} />
             </a>
-            <a href="https://www.instagram.com/lukostecnologia/" target="_blank" rel="noopener noreferrer" className="hover:text-purple-200 transition-transform hover:scale-110">
-              <FaInstagram size={18} />
+            <a href="https://www.instagram.com/lukostecnologia/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all text-white">
+              <FaInstagram size={20} />
             </a>
-            <a href="https://www.facebook.com/lukos.solucoes/?locale=pt_BR" target="_blank" rel="noopener noreferrer" className="hover:text-purple-200 transition-transform hover:scale-110">
-              <FaFacebook size={18} />
+            <a href="https://www.facebook.com/lukos.solucoes/?locale=pt_BR" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all text-white">
+              <FaFacebook size={20} />
             </a>
           </div>
         </div>
       </div>
 
       {/* Linha inferior */}
-      <div className="border-t border-purple-950 mt-6 py-2 text-center text-gray-400 text-xs relative z-10">
-        © 2025 Lukos Tecnologia LTDA | CNPJ 14.594.338/0001-23
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="border-t border-white/20 mt-12 py-8 flex flex-col md:flex-row items-center justify-between text-white/60 text-xs gap-4">
+          <p>© 2025 Lukos Tecnologia LTDA. Todos os direitos reservados.</p>
+          <p>CNPJ 14.594.338/0001-23</p>
+        </div>
       </div>
     </footer>
   );

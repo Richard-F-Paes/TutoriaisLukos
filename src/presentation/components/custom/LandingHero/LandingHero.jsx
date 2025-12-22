@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 export default function LandingHero() {
     const [menuOpen, setMenuOpen] = useState(false);
+
+    const scrollToExpertise = () => {
+        const element = document.getElementById('expertise-section');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
 
     return (
         <>
@@ -13,7 +21,7 @@ export default function LandingHero() {
                 }
             `}</style>
 
-            <section className="flex flex-col items-center text-sm bg-[#0a0a0f] bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center bg-no-repeat pb-40 relative">
+            <section className="flex flex-col items-center text-sm bg-[#0a0a0f] bg-[url('https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png')] bg-cover bg-center bg-no-repeat pb-40 relative min-h-screen">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0a0a0f]"></div>
                 <nav className="z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 lg:px-24 xl:px-32 backdrop-blur-md bg-black/5 text-white text-sm border-b border-white/5">
                     <a href="https://prebuiltui.com">
@@ -58,33 +66,36 @@ export default function LandingHero() {
                 </div>
 
                 <main className="flex flex-col items-center max-md:px-2 w-full">
-                    <div className="mt-32 flex items-center justify-center w-full">
-                        <img src="logo.png" alt="logo" className='w-16 h-14' />
-                    </div>
 
-                    <h1 className="text-center text-5xl leading-[68px] md:text-6xl md:leading-[80px] font-semibold max-w-4xl text-white relative z-10">
-                        Lukos Tutoriais
+                    <h1 className="text-center text-4xl leading-tight md:text-5xl lg:text-7xl font-black max-w-6xl text-white relative z-10 uppercase tracking-[0.05em] drop-shadow-2xl">
+                        Lukos tecnologia para <br className="hidden md:block" />
+                        <span className="text-[#8B5CF6] font-black block mt-2 text-6xl md:text-8xl lg:text-9xl tracking-[0.1em] drop-shadow-[0_0_20px_rgba(139,92,246,0.4)]">postos de combustível</span>
                     </h1>
-                    <p className="text-center text-base text-gray-400 max-w-lg mt-2 relative z-10">
-                        Plataforma com tutoriais erp e pdv com videos aulas
-                    </p>
-                    <div className="flex items-center gap-4 mt-8">
-                        <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95 rounded-lg px-7 h-11" href="/tutoriais">
-                            Tutoriais
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4.166 10h11.667m0 0L9.999 4.165m5.834 5.833-5.834 5.834" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
 
+                    <p className="text-center text-lg md:text-2xl text-gray-700 max-w-3xl mt-8 relative z-10 font-medium leading-relaxed px-4">
+                        Com mais de 10 anos de experiência, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência.
+                    </p>
+                    <div className="flex items-center gap-4 mt-12">
+                        <button className="flex items-center justify-center bg-[#85a97d] hover:bg-[#76986e] text-white font-semibold rounded-xl px-12 h-14 min-w-[200px] text-lg transition-all active:scale-95 shadow-lg shadow-black/5" href="/contato">
+                            Contato
                         </button>
-                        <Link to="/Blog">
-                            <button className="border border-white/20 active:scale-95 hover:bg-white/5 transition text-white/80 rounded-lg px-8 h-11 relative z-10">
-                                Sobre nós
-                            </button>
-                        </Link>
                     </div>
 
 
                 </main>
+
+                {/* Scroll Down Button */}
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10">
+                    <button
+                        onClick={scrollToExpertise}
+                        className="flex flex-col items-center gap-2 text-white/50 hover:text-white transition-colors animate-bounce"
+                    >
+                        <span className="text-[10px] uppercase tracking-[0.2em] font-medium">Descobrir Mais</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 13l5 5 5-5M7 6l5 5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </button>
+                </div>
             </section>
         </>
     );

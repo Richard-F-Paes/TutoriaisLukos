@@ -8,6 +8,7 @@ import PageNavbar from '../presentation/components/layout/PageNavbar/PageNavbar'
 import '../App.css';
 import '../styles/design-system.css';
 import '../styles/pages.css';
+import ScrollToHashElement from '../presentation/components/layout/ScrollToHashElement';
 
 // Importar helper de rotas
 import { isTutorialRoute, shouldShowCategoryNavbar, shouldShowPageNavbar } from '../shared/utils/routeUtils';
@@ -82,6 +83,7 @@ function AppContent() {
 
   return (
     <div className="App">
+      <ScrollToHashElement />
       {/* Renderizar Navbarcategoria apenas em rotas de tutoriais */}
       {showCategoryNavbar && <Navbarcategoria />}
 

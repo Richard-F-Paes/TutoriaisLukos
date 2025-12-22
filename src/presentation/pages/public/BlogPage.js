@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, User, ArrowRight, BookOpen, Tag, FileText, Cloud, CreditCard, Gift, Smartphone, Wallet, Receipt, ShoppingCart, BarChart3, Database, Package, DollarSign, TrendingUp, ChevronLeft, ChevronRight, HelpCircle, ChevronDown, ChevronUp, CheckCircle, ArrowUp, Percent, MessageCircle, Play, X, Rocket, Users, Edit, Zap, Brain, Cpu, Eye } from 'lucide-react';
+import {
+  Calendar, Clock, User, ArrowRight, ArrowDown, BookOpen, Tag, FileText, Cloud,
+  CreditCard, Gift, Smartphone, Wallet, Receipt, ShoppingCart, BarChart3, Database,
+  Package, DollarSign, TrendingUp, ChevronLeft, ChevronRight, HelpCircle, ChevronDown,
+  ChevronUp, CheckCircle, ArrowUp, Percent, MessageCircle, Play, X, Rocket, Users,
+  Edit, Zap, Brain, Cpu, Eye, ShieldCheck, Users2, CheckCircle2, LineChart, Target,
+  Sparkles, PieChart, Lock, Activity, Instagram, Facebook, Youtube, Mail, Phone,
+  MapPin, MessageSquare
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import VideoShowcase from '../../components/custom/VideoShowcase/VideoShowcase';
 import BentoGrid from '../../components/custom/BentoGrid/BentoGrid';
-import ExpertiseSection from '@/presentation/components/custom/ExpertiseSection/ExpertiseSection';
-
 // Componente Feature2 adaptado
 const Feature2 = ({
   title = "Conheça mais sobre a LUKOS",
   description = "Hundreds of finely crafted components built with React, Tailwind and Shadcn UI. Developers can copy and paste these blocks directly into their project.",
-  imageSrc = "https://lukos.com.br/wp-content/uploads/2025/01/IMG_0885-1.png",
+  imageSrc = "https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png",
   imageAlt = "placeholder hero",
   buttonPrimary = {
     label: "Get Started",
@@ -31,8 +38,30 @@ function BlogPage() {
   // Estado para FAQ
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
+  // Ref para o container de scroll
+  const containerRef = useRef(null);
+
   // Estado para controlar modal de vídeo
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+
+  // Estado para botão Scroll to Top
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (container.scrollTop > 500) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Configurações do vídeo
   const videoImageUrl = 'back.png';
@@ -124,7 +153,7 @@ function BlogPage() {
       date: 'Sobre nós',
       readTime: 'Sobre nós',
       category: 'Sobre nós',
-      image: 'https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png',
+      image: '',
       link: '/Nova-pagina',
     },
     {
@@ -149,11 +178,60 @@ function BlogPage() {
       image: 'https://images.unsplash.com/photo-1602665742701-389671bc40c0?q=80&w=800&h=400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       link: '/servicos',
     },
+  ];
 
+  // Stats for Hero
+  const stats = [
+    {
+      value: "10+",
+      label: "Anos de Experiência",
+      description: "Liderando a inovação em tecnologia para postos.",
+      icon: ShieldCheck
+    },
+    {
+      value: "1500+",
+      label: "Postos Atendidos",
+      description: "Presença consolidada nacional.",
+      icon: Users2
+    },
+    {
+      value: "24/7",
+      label: "Suporte Especializado",
+      description: "Atendimento de alta performance.",
+      icon: CheckCircle2
+    }
+  ];
+
+  // Seções para DotNavigation
+  const pageSections = [
+    { id: 'inicio', label: 'Início' },
+    { id: 'sobre', label: 'Sobre' },
+    { id: 'funcionalidades', label: 'Funcionalidades' },
+    { id: 'ia', label: 'IA Lukos' },
+    { id: 'sistemas', label: 'Nossos Sistemas' },
+    { id: 'recursos', label: 'Recursos' },
+    { id: 'automacao', label: 'Automação' },
+    { id: 'o-que-e-lukos', label: 'Benefícios' }
   ];
 
   return (
-    <div className="bg-[#0a0a0f] min-h-screen text-white" style={{ marginTop: 0, paddingTop: 0 }}>
+    <div
+      ref={containerRef}
+      className="bg-[#0a0a0f] h-screen overflow-y-auto text-white scroll-smooth scrollbar-hide"
+      style={{
+        marginTop: 0,
+        paddingTop: 0,
+        scrollSnapType: 'y mandatory',
+        scrollPaddingTop: '80px',
+        scrollbarWidth: 'none', /* Firefox */
+        msOverflowStyle: 'none' /* IE and Edge */
+      }}
+    >
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
       <style>{`
         @keyframes fade-in {
           from {
@@ -268,107 +346,504 @@ function BlogPage() {
       `}</style>
 
       {/* Hero Section - Estilo TOTVS Melhorado */}
-      <section className="relative min-h-[750px] md:min-h-[900px] flex items-center" style={{ marginTop: 0, paddingTop: 0 }}>
-        {/* Background com imagem do profissional */}
+      <section id="inicio" className="relative min-h-screen flex items-center overflow-hidden bg-[#0a0a0f]" style={{ marginTop: 0, paddingTop: 0, scrollSnapAlign: 'start' }}>
+        {/* Banner Image - W-Full Background */}
         <div
-          className="hero-background absolute inset-0 bg-cover bg-center md:bg-contain lg:bg-cover"
+          className="absolute inset-0 w-full h-full bg-cover bg-center"
           style={{
-            backgroundImage: 'url("/banner.png")',
-            backgroundPosition: 'center 40%',
-            backgroundRepeat: 'no-repeat'
+            backgroundImage: 'url("imagemdefundo.png")',
+            backgroundPosition: 'center 20%',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover'
           }}
-        >
+        ></div>
+
+        {/* Subtle gradient to maintain text readability without a dark background */}
+
+
+        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 w-full max-w-7xl pt-[80px]">
+          <div className="flex flex-col items-start gap-12">
+            {/* Left Side: Content */}
+            <div className="max-w-2xl text-left">
+              <motion.span
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="block text-purple-400/80 font-bold tracking-[0.3em] uppercase mb-4 text-[10px] md:text-sm"
+              >
+
+              </motion.span>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-6xl md:text-7xl lg:text-8xl font-black text-white uppercase leading-[0.85] mb-8 tracking-[0.05em] drop-shadow-2xl"
+              >
+                <br />
+                <span className="text-[#8B5CF6] drop-shadow-[0_0_15px_rgba(139,92,246,0.3)]">
+                  LUKOS
+                </span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-[#a78bfa] text-lg md:text-2xl lg:text-2xl font-black uppercase leading-tight mb-12 tracking-[0.1em] drop-shadow-2xl max-w-sm md:max-w-none"
+              >
+                Potencialize a gestão do seu posto de combustível com a
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-12 w-full sm:w-auto"
+              >
+                <Link
+                  to="/contato"
+                  className="inline-flex items-center justify-center bg-[#85a97d] hover:bg-[#76986e] text-white font-semibold rounded-xl px-10 h-14 text-lg transition-all active:scale-95 shadow-lg shadow-black/10 w-full sm:w-auto text-center"
+                >
+                  Falar com Especialista
+                </Link>
+
+                {/* Botão Scroll Down Explícito */}
+                <a
+                  href="#sobre"
+                  className="inline-flex items-center justify-center text-white/60 hover:text-white font-medium transition-all group"
+                >
+                  Saiba mais
+                  <ArrowDown className="ml-2 w-4 h-4 animate-bounce group-hover:text-[#8B5CF6]" />
+                </a>
+              </motion.div>
+
+              {/* Stats List - Horizontal layout for desktop */}
+
+
+            </div>
+          </div>
         </div>
 
-        {/* Filtro preto */}
-        <div className="absolute inset-0 bg-black/50" style={{ borderWidth: '1px', borderColor: 'rgba(0, 0, 0, 1)', borderImage: 'none' }}></div>
 
-        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 w-full max-w-7xl pt-[60px]">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gridTemplateRows: 'repeat(1, 1fr)', verticalAlign: 'middle' }}>
-            {/* Coluna Esquerda - Texto */}
-            <div className="text-white">
-              <h1 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl text-white uppercase font-bold mb-6 leading-tight">
-                <div className="w-full max-w-3xl">
-                  <p className="m-0 mt-0 mb-0 text-3xl border-0 w-full max-w-3xl text-start box-border translate-x-0 translate-y-0 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100" style={{ fontFamily: 'TOTVS !important' }}>
-                    Lukos tecnologia para postos de combustível
-                  </p></div>
-              </h1>
+        {/* Scroll Down Indicator - Centered at bottom with green background */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="absolute bottom-0 left-0 right-0 z-20 bg-[#82aa7a] py-8"
+        >
+          <a
+            href="#sobre"
+            className="flex flex-col items-center gap-3 group cursor-pointer"
+          >
+            <span className="text-white text-xs font-bold tracking-[0.15em] uppercase group-hover:text-white/80 transition-colors">
+              Conheça mais sobre a Lukos
+            </span>
+            <div className="w-10 h-10 rounded-full border-2 border-white/60 flex items-center justify-center group-hover:border-white group-hover:bg-white/10 transition-all animate-bounce">
+              <ChevronDown className="w-5 h-5 text-white group-hover:text-white transition-colors" />
+            </div>
+          </a>
+        </motion.div>
+      </section>
 
-              <div className="text-lg md:text-xl lg:text-2xl text-white mb-8 leading-relaxed" style={{ maxWidth: '560px' }}>
-                <p className="w-full max-w-3xl text-start">
-                  Com mais de 10 anos de experiência, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência.
-                </p>
-              </div>
+
+
+
+      <section id="sobre" className="relative min-h-screen py-24 bg-[#82aa7a] overflow-hidden rounded-b-[20px]" style={{ scrollSnapAlign: 'start' }}>
+        {/* Scroll Indicator - Top Center */}
+
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+
+            {/* Left */}
+            <div className="flex-1 max-w-2xl">
+
+
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="text-5xl md:text-7xl font-black text-white uppercase leading-none mb-8 tracking-tighter"
+              >
+                Sobre a  <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200">
+                  LUKOS
+                </span>
+              </motion.h2>
+
+
+              {/* Stats */}
+              {/* Stats */}
+
 
             </div>
 
+            {/* Right Visual */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              className="flex-1 relative"
+            >
+              <div className="absolute -top-10 -right-10 w-64 h-64 bg-white/10 rounded-full blur-3xl -z-10 animate-pulse" />
 
 
+            </motion.div>
+          </div>
+
+
+
+        </div>
+        <a href="#funcionalidades" className="absolute top-[250px] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden md:block pt-[120px]">
+          <div className="w-16 h-16 rounded-full bg-[#82aa7a] border-4 border-white flex items-center justify-center animate-bounce shadow-xl hover:scale-110 transition-transform cursor-pointer">
+            <ChevronDown className="text-white w-8 h-8" />
+          </div>
+        </a>
+      </section>
+
+
+
+
+
+
+
+      <section id="funcionalidades" className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ scrollSnapAlign: 'start' }}>
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.pexels.com/photos/6803551/pexels-photo-6803551.jpeg"
+            alt="Inteligência Artificial Background"
+            className="w-full h-full object-cover brightness-[0.3]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0f] via-transparent to-[#0a0a0f] opacity-80"></div>
+        </div>
+
+        <div className="container mx-auto px-4 md:px-12 relative z-10">
+          <div className="flex flex-col items-center justify-center">
+
+            {/* Card de Texto com Glassmorphism */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="w-full max-w-[850px] backdrop-blur-xl bg-white/5 p-8 md:p-12 rounded-[2.5rem] border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] text-center"
+            >
+              <h2 className="text-4xl md:text-6xl font-black text-white uppercase leading-tight mb-6 tracking-tighter">
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4]">
+                  SOBRE A LUKOS
+                </span>
+              </h2>
+
+              <div className="w-20 h-1.5 bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4] mx-auto mb-8 rounded-full"></div>
+
+              <p className="text-white/80 text-lg md:text-xl leading-relaxed font-medium">
+                Com mais de <span className="text-white font-bold">10 anos de experiência</span>, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência com soluções completas e personalizadas.
+                <br /><br />
+                Nosso <span className="text-[#8B5CF6] font-bold">ERP eficiente</span> é a escolha de centenas de empresas, otimizando milhões de transações mensais com segurança e precisão absoluta.
+              </p>
+
+              <motion.div
+                className="mt-10"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <a
+                  href="#sistemas"
+                  className="inline-flex items-center gap-2 bg-[#8B5CF6] hover:bg-[#7c4dff] text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-purple-500/20"
+                >
+                  Ver Nossas Soluções
+                  <ArrowRight className="w-5 h-5" />
+                </a>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+
+
+
+
+
+
+
+
+
+
+
+      <section id="ia" className="relative min-h-screen flex items-center bg-[#0a0a0f] overflow-hidden" style={{ scrollSnapAlign: 'start' }}>
+        {/* Background Decorative Glows */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          <div className="absolute top-[20%] left-[10%] w-[50%] h-[50%] bg-purple-600/10 blur-[150px] rounded-full"></div>
+          <div className="absolute bottom-[20%] right-[10%] w-[50%] h-[50%] bg-purple-800/10 blur-[150px] rounded-full"></div>
+        </div>
+
+        <div className="container mx-auto px-4 md:px-12 relative z-10 py-10 md:py-20">
+          {/* Título Restaurado */}
+          <div className="text-center mb-12 lg:mb-20">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex items-center justify-center gap-3 mb-4"
+            >
+              <div className="w-8 h-[2px] bg-[#8B5CF6]"></div>
+              <span className="text-[#8B5CF6] font-black tracking-[0.3em] uppercase text-xs">
+                NOSSOS DIFERENCIAIS
+              </span>
+              <div className="w-8 h-[2px] bg-[#8B5CF6]"></div>
+            </motion.div>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-6xl lg:text-7xl font-black text-white uppercase leading-tight tracking-tighter mb-6"
+            >
+              SEU POSTO <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4]">
+                AUTOMATIZADO POR IA
+              </span>
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              viewport={{ once: true }}
+              className="text-[#a78bfa] text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed"
+            >
+              Seu posto mais eficiente com IA: automação, redução de custos e decisões mais rápidas.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+
+            {/* Coluna Esquerda: Logo Orbital */}
+            <div className="relative flex items-center justify-center order-2 lg:order-1">
+              <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[450px] lg:h-[450px] flex items-center justify-center">
+                {/* Glow Central */}
+                <div className="absolute inset-0 bg-purple-600/30 blur-[60px] md:blur-[100px] animate-pulse"></div>
+
+                {/* Anéis Orbitais */}
+                <div className="absolute inset-0 border-2 border-transparent rounded-full shadow-[0_0_50px_rgba(139,92,246,0.2)]" style={{
+                  background: 'conic-gradient(from 0deg, transparent, rgba(139, 92, 246, 0.4), transparent)',
+                  animation: 'spin 10s linear infinite',
+                  mask: 'radial-gradient(circle, transparent 48%, black 50%, black 52%, transparent 54%)',
+                  WebkitMask: 'radial-gradient(circle, transparent 48%, black 50%, black 52%, transparent 54%)'
+                }}></div>
+                <div className="absolute inset-8 border border-transparent rounded-full shadow-[0_0_30px_rgba(196,76,244,0.2)]" style={{
+                  background: 'conic-gradient(from 180deg, transparent, rgba(196, 76, 244, 0.4), transparent)',
+                  animation: 'spin 7s linear infinite reverse',
+                  mask: 'radial-gradient(circle, transparent 48%, black 50%, black 52%, transparent 54%)',
+                  WebkitMask: 'radial-gradient(circle, transparent 48%, black 50%, black 52%, transparent 54%)'
+                }}></div>
+
+                {/* Partículas */}
+                <div className="absolute inset-0">
+                  {[...Array(8)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(139,92,246,0.8)]"
+                      style={{
+                        left: `${50 + 40 * Math.cos((i * 45) * Math.PI / 180)}%`,
+                        top: `${50 + 40 * Math.sin((i * 45) * Math.PI / 180)}%`,
+                        animation: `pulse 2s ease-in-out infinite`,
+                        animationDelay: `${i * 0.2}s`
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Logo Central */}
+                <motion.div
+                  animate={{
+                    y: [0, -10, 0],
+                    rotateY: [0, 5, 0]
+                  }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="relative z-10 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64"
+                >
+                  <img
+                    src="logo.png"
+                    alt="LUKOS IA Logo"
+                    className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(139,92,246,0.5)]"
+                  />
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Coluna Direita: Timeline de Features */}
+            <div className="relative pl-8 md:pl-20 order-1 lg:order-2">
+              {/* Linha Vertical */}
+              <div className="absolute left-0 lg:left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-[#8B5CF6] to-transparent opacity-40"></div>
+
+              <div className="space-y-16">
+                {[
+                  {
+                    title: "FIDELIDADE",
+                    subtitle: "Programa de fidelidade",
+                    description: "Com identificação pela placa do veículo e ofertas personalizadas.",
+                    icon: Users
+                  },
+                  {
+                    title: "INTELIGÊNCIA",
+                    subtitle: "Gestão completa do seu posto",
+                    description: "Troca de preço de combustível, resumo de caixa, comparativo de vendas, resultados operacionais, nível dos tanques, top 10 produtos, top 10 vendedores e muito mais!",
+                    icon: LineChart,
+                    link: "saiba mais"
+                  }
+                ].map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: 30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    viewport={{ once: true }}
+                    className="relative group"
+                  >
+                    {/* Indicador na Linha */}
+                    <div className="absolute -left-[9px] top-4 w-4 h-4 rounded-full bg-[#0a0a0f] border-2 border-[#8B5CF6] shadow-[0_0_10px_rgba(139,92,246,0.5)] z-20 group-hover:scale-125 transition-transform duration-300"></div>
+
+                    {/* Conteúdo */}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center group-hover:bg-purple-500/20 transition-all duration-300">
+                          <item.icon className="w-6 h-6 text-[#8B5CF6]" />
+                        </div>
+                        <div>
+                          <span className="text-[#8B5CF6] font-black text-xs tracking-widest uppercase">{item.title}</span>
+                          <h3 className="text-white text-2xl md:text-3xl font-bold">{item.subtitle}</h3>
+                        </div>
+                      </div>
+                      <p className="text-white/60 text-lg leading-relaxed max-w-lg mt-2 pl-2 border-l border-white/5 group-hover:border-purple-500/30 transition-all">
+                        {item.description}
+                        {item.link && (
+                          <Link to="/ia" className="text-[#8B5CF6] hover:text-[#c44cf4] ml-2 font-bold underline decoration-2 underline-offset-4 transition-colors lowercase">
+                            {item.link}
+                          </Link>
+                        )}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
 
           </div>
         </div>
       </section>
-      <ExpertiseSection />
-      {/* Seção: Trusted by Brands */}
-      <section className="py-16 md:py-24 relative" style={{ backgroundColor: '#0a0a0f' }}>
-        {/* Overlay */}
-        <div
-          className="framer-fa7s15"
-          data-framer-name="Overlay"
-          style={{
-            background: 'linear-gradient(to top, rgba(10, 10, 15, 0.95) 0%, transparent 100%)',
-            borderBottomLeftRadius: '100px',
-            borderBottomRightRadius: '100px',
-            flex: '0 0 auto',
-            height: '100px',
-            left: '0px',
-            overflow: 'hidden',
-            position: 'absolute',
-            right: '0px',
-            top: '0px',
-            willChange: 'var(--framer-will-change-override, transform)',
-            zIndex: 1,
-            boxSizing: 'border-box',
-            WebkitFontSmoothing: 'inherit'
-          }}
-        ></div>
 
-        {/* Efeitos de borda superior - se estendem por toda a largura da seção */}
-        <div className="absolute top-0 left-0 right-0 w-full">
-          {/* Camada base da borda */}
-          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gray-700/30 to-transparent"></div>
 
-          {/* Camada de gradiente roxo */}
-          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/60 to-transparent"></div>
 
-          {/* Efeito de brilho central animado */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-[2px] bg-gradient-to-r from-purple-500/0 via-purple-400 via-purple-300 to-purple-500/0 blur-md animate-pulse"></div>
 
-          {/* Efeito de shimmer animado */}
-          <div
-            className="absolute top-0 h-[1px] w-1/3 bg-gradient-to-r from-transparent via-purple-400 to-transparent blur-sm"
-            style={{
-              animation: 'shimmer 3s ease-in-out infinite',
-              left: '0%'
-            }}
-          ></div>
 
-          {/* Pontos de brilho nas extremidades */}
-          <div className="absolute top-0 left-0 w-2 h-2 bg-purple-400 rounded-full blur-sm opacity-60 animate-pulse"></div>
-          <div className="absolute top-0 right-0 w-2 h-2 bg-purple-400 rounded-full blur-sm opacity-60 animate-pulse" style={{ animationDelay: '1s' }}></div>
 
-          {/* Linha de profundidade */}
-          <div className="absolute top-[-1px] left-0 right-0 h-[3px] bg-gradient-to-r from-purple-900/20 via-purple-700/10 to-purple-900/20 blur-sm"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      {/* Seção: Soluções para potencializar seu negócio */}
+      <section id="solucoes-lista" className="py-24 bg-[#0a0a0f] relative overflow-hidden" style={{ scrollSnapAlign: 'start' }}>
+        {/* Modern Mesh Gradient Background */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[10%] left-[-10%] w-[50%] h-[50%] bg-[#8B5CF6]/15 blur-[120px] rounded-full animate-pulse"></div>
+          <div className="absolute bottom-[10%] right-[-10%] w-[50%] h-[50%] bg-[#c44cf4]/10 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_rgba(139,92,246,0.05)_0%,_transparent_70%)]"></div>
         </div>
 
+        <div className="container mx-auto px-4 md:px-12 relative z-10">
+          <div className="text-center mb-16">
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-[#a78bfa] font-black tracking-[0.4em] uppercase text-xs md:text-sm mb-4 block"
+            >
+              NOSSOs DIFERENCIAIS
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter"
+            >
+              SOLUÇÕES PARA <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4]">POTENCIALIZAR</span> SEU NEGÓCIO
+            </motion.h2>
+            <div className="w-24 h-1.5 bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4] mx-auto mt-6 rounded-full"></div>
+          </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+            {[
+              { title: "Faturamento Express", description: "Visualize recebimentos reais, taxas e descontos, otimizando o tempo da sua equipe.", icon: TrendingUp },
+              { title: "Banco de Dados na Nuvem", description: "Suas informações com segurança e acesso remoto.", icon: Cloud },
+              { title: "Conciliação de cartões", description: "Visualize recebimentos reais, taxas e descontos, otimizando o tempo da sua equipe.", icon: CreditCard },
+              { title: "Programa Fidelidade", description: "Crie vínculo com seus clientes, oferecendo descontos exclusivos utilizando o Whatsapp", icon: MessageCircle },
+              { title: "PDV Móvel", description: "Receba pagamentos com segurança e agilidade, sem o cliente sair do carro!", icon: Smartphone },
+              { title: "Carteiras Digitais & Cripto", description: "Recebimento por Carteiras Digitais e Criptomoedas. Inovação em pagamentos.", icon: Wallet },
+              { title: "Fatura Web", description: "Controle total de faturas e acesso, com liberação e bloqueio de placas para abastecimento.", icon: FileText },
+            ].map((solucao, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="group p-10 rounded-[2.5rem] bg-white/[0.03] hover:bg-white/[0.08] transition-all duration-700 text-center flex flex-col items-center border border-white/5 hover:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.3)] backdrop-blur-md"
+              >
+                {/* Icon with Permanent Subtle Glow */}
+                <div className="relative mb-8">
+                  <div className="absolute inset-0 bg-[#8B5CF6]/30 blur-2xl rounded-full opacity-40 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  <solucao.icon className="w-12 h-12 text-[#a78bfa] group-hover:text-white transition-colors duration-500 relative z-10" />
+                </div>
+
+                <h3 className="text-white text-lg font-black uppercase tracking-[0.2em] mb-4 group-hover:text-[#a78bfa] transition-colors">
+                  {solucao.title}
+                </h3>
+
+                {/* Separator Dot with Glow */}
+                <div className="w-2 h-2 bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4] rounded-full mb-6 shadow-[0_0_15px_rgba(139,92,246,0.6)]"></div>
+
+                <p className="text-white/70 text-sm md:text-base leading-relaxed font-medium max-w-[280px]">
+                  {solucao.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-20 text-center">
+            <motion.a
+              href="#sistemas"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center gap-2 bg-[#8B5CF6] hover:bg-[#7c4dff] text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition-all shadow-xl shadow-purple-500/20"
+            >
+              CONHECER TODOS OS SISTEMAS
+              <ArrowDown className="w-5 h-5 animate-bounce" />
+            </motion.a>
+          </div>
+        </div>
       </section>
 
-      {/* Bento Grid Section */}
-      <BentoGrid />
+      <section id="sistemas" className="min-h-screen flex items-center bg-[#0a0a0f]" style={{ scrollSnapAlign: 'start' }}>
+        <BentoGrid />
+      </section>
 
       {/* Seção: Recursos e Benefícios - Estilo Moderno */}
-      <section className="py-16 md:py-24 relative" style={{ backgroundColor: '#0a0a0f' }}>
+      <section id="recursos" className="py-16 md:py-24 min-h-screen relative flex items-center" style={{ backgroundColor: '#0a0a0f', scrollSnapAlign: 'start' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Coluna Esquerda - Texto */}
@@ -447,59 +922,10 @@ function BlogPage() {
         </div>
       </section>
 
-      <section className="relative -mt-[90px] flex items-center justify-center">
-        <img
-          src="https://images.pexels.com/photos/6803551/pexels-photo-6803551.jpeg"
-          alt="Inteligência Artificial"
-          className="w-full h-[800px] object-cover shadow-lg brightness-90 relative "
-        />
 
-        {/* Scroll SVG */}
-        <div className="scroll scroll-gray-new">
-          <a href="#">
-            <svg
-              version="1.1"
-              id="Layer_1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlnsXlink="http://www.w3.org/1999/xlink"
-              x="0px"
-              y="0px"
-              viewBox="0 0 505.7 70.1"
-              style={{ enableBackground: 'new 0 0 505.7 70.1' }}
-              xmlSpace="preserve"
-            >
-              <title>curve-hollow-grey-out</title>
-              <path
-                className="d-block"
-                d="M351,32.6c-55.9,30.1-71.4,32.7-98.2,32.7s-42.3-2.6-98.2-32.7S28,0,28,0H0v70.1h28h449.6h28.1V0h-28.1C477.6,0,407,2.5,351,32.6z"
-              />
-            </svg>
-          </a>
-        </div>
-        <div className="absolute inset-0 bg-black/70 flex items-center justify-center gap-8 px-8 md:px-16 w-full h-full">
-          {/* Imagem LUKIA à esquerda */}
-          <div className="flex-shrink-0 hidden md:block">
-            <img src="https://lukos.com.br/wp-content/uploads/2025/01/IMG_0885-1.png" alt="LUKIA" className="w-full max-w-[500px] h-auto object-contain opacity-100 relative" />
-          </div>
-
-          {/* Texto à direita */}
-          <div className="flex-1 flex flex-col items-center  justify-center gap-4 w-[500px] h-[500px]">
-            <h2 className="text-white text-4xl md:text-6xl font-bold text-left drop-shadow-lg">Conheça mais sobre a LUKOS</h2>
-            <p className="text-white/90 text-lg md:text-xl text-left leading-relaxed drop-shadow-md">
-              Com mais de 10 anos de experiência, a LUKOS tecnologia transforma a gestão de postos de combustíveis e lojas de conveniência com soluções completas e personalizadas. Nosso ERP eficiente é a escolha de centenas de empresas, otimizando milhões de transações mensais com segurança e precisão.
-
-
-            </p>
-          </div>
-        </div>
-
-
-
-
-      </section>
 
       {/* Seção: Seu Posto Automatizado por IA */}
-      <section className="py-16 md:py-24 relative overflow-hidden" style={{ backgroundColor: '#100e26' }}>
+      <section id="automacao" style={{ backgroundColor: '#100e26', scrollSnapAlign: 'start' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header Centralizado */}
           <div className="text-center mb-12 md:mb-16">
@@ -751,7 +1177,7 @@ function BlogPage() {
       </section>
 
       {/* Seção: O que é LUKOS (Fundo Roxo) */}
-      <section className="py-24 relative overflow-hidden" style={{ backgroundColor: '#0a0a0f' }}>
+      <section id="o-que-e-lukos" className="py-24 min-h-screen relative overflow-hidden flex items-center" style={{ backgroundColor: '#0a0a0f', scrollSnapAlign: 'start' }}>
         <div className="absolute inset-0 bg-gradient-to-br from-[#c44cf4]/10 to-transparent"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -795,22 +1221,95 @@ function BlogPage() {
 
 
 
-      {/* End Features */}
+      {/* Seção: FAQ (Dúvidas Frequentes) */}
+      <section id="faq" className="py-24 bg-[#0a0a0f] relative overflow-hidden" style={{ scrollSnapAlign: 'start' }}>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black text-white uppercase mb-4">Dúvidas Frequentes</h2>
+            <p className="text-[#a78bfa] text-lg max-w-2xl mx-auto">Tudo o que você precisa saber sobre a Lukos e como podemos transformar seu posto.</p>
+          </div>
 
-
-      {/* Main Content Continua */}
-      <div className="">
-        <div className="max-w-7xl mx-auto flex items-center justify-center flex-col">
-
-
-          {/* Seção de Blog Posts */}
-
-
-          {/* Call to Action */}
-
+          <div className="max-w-3xl mx-auto space-y-4">
+            {[
+              {
+                q: "A Lukos atende postos de bandeira branca?",
+                a: "Sim! Atendemos tanto postos de bandeira (Petrobras, Ipiranga, Shell, etc) quanto postos de bandeira branca com a mesma excelência e ferramentas personalizadas."
+              },
+              {
+                q: "O sistema funciona sem internet?",
+                a: "Sim, nosso PDV possui contingência offline garantindo que suas vendas não parem mesmo se a internet oscilar. Os dados são sincronizados automaticamente assim que a conexão retorna."
+              },
+              {
+                q: "Quanto tempo leva a implantação?",
+                a: "A implantação padrão leva em média de 3 a 7 dias úteis, dependendo da complexidade e do número de bicos/PDVs. Nossa equipe cuida de todo o processo para você."
+              },
+              {
+                q: "Existe integração com medidores de tanque?",
+                a: "Sim! Temos integração nativa com os principais medidores de tanque do mercado, permitindo controle real do estoque e detecção de perdas diretamente no sistema."
+              }
+            ].map((item, index) => (
+              <div key={index} className="border border-white/10 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md">
+                <button
+                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                  className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+                >
+                  <span className="text-white font-bold text-lg">{item.q}</span>
+                  <ChevronDown className={`text-[#8B5CF6] transition-transform duration-300 ${openFaqIndex === index ? 'rotate-180' : ''}`} />
+                </button>
+                <AnimatePresence>
+                  {openFaqIndex === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-5 text-white/70 leading-relaxed">
+                        {item.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      {/* Seção: CTA Final */}
+      <section id="ctafinal" className="py-24 bg-[#0a0a0f] relative overflow-hidden" style={{ scrollSnapAlign: 'start' }}>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4] rounded-[40px] p-12 md:p-20 text-center relative overflow-hidden group">
+            {/* Efeito de brilho fundo */}
+            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+            <h2 className="text-4xl md:text-6xl font-black text-white uppercase mb-8 leading-tight">Pronto para o próximo <br /> nível de gestão?</h2>
+            <p className="text-white/90 text-xl mb-12 max-w-2xl mx-auto font-medium">Junte-se a centenas de postos que já automatizaram seus processos com a Lukos.</p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <Link to="/contato" className="bg-white text-[#8B5CF6] font-black py-5 px-10 rounded-2xl text-xl hover:scale-105 transition-transform shadow-2xl">
+                FALAR COM ESPECIALISTA
+              </Link>
+              <button className="bg-transparent border-2 border-white/30 hover:border-white text-white font-black py-5 px-10 rounded-2xl text-xl transition-all">
+                VER DEMONSTRAÇÃO
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Botão Scroll to Top */}
+      <motion.button
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: showScrollTop ? 1 : 0, scale: showScrollTop ? 1 : 0.5 }}
+        onClick={() => containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+        className={`fixed bottom-8 right-8 z-50 p-4 rounded-full bg-[#8B5CF6] text-white shadow-2xl hover:bg-[#7c4dff] transition-all ${showScrollTop ? 'pointer-events-auto' : 'pointer-events-none'
+          }`}
+      >
+        <ArrowUp className="w-6 h-6" />
+      </motion.button>
+    </div >
   );
 }
 

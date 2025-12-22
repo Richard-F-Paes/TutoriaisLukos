@@ -146,7 +146,7 @@ Acreditamos que tecnologia de qualidade transforma negócios. Por isso, seguimos
     return (
       <div>
         <PageNavbar />
-        <div className="min-h-screen bg-white flex items-center justify-center pt-32">
+        <div className="min-h-screen bg-white flex items-center justify-center pt-[-32px]">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Post não encontrado</h1>
             <p className="text-gray-600 mb-8">O post que você está procurando não existe.</p>
@@ -167,7 +167,7 @@ Acreditamos que tecnologia de qualidade transforma negócios. Por isso, seguimos
     <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
       <PageNavbar />
-      
+
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20 -mt-[90px] pt-32">
         <div className="">
@@ -204,7 +204,7 @@ Acreditamos que tecnologia de qualidade transforma negócios. Por isso, seguimos
                 src={post.image}
                 alt={post.title || 'Imagem do post'}
                 className="rounded-lg shadow-xl w-full h-[400px] object-cover"
-              />  
+              />
             </div>
             <div>
               <Link
@@ -250,7 +250,7 @@ Acreditamos que tecnologia de qualidade transforma negócios. Por isso, seguimos
                 src={post.image2 || post.image}
                 alt={post.title || 'Imagem do post'}
                 className="rounded-lg shadow-xl w-full h-[400px] object-cover"
-              />  
+              />
             </div>
           </div>
         </div>
@@ -262,7 +262,7 @@ Acreditamos que tecnologia de qualidade transforma negócios. Por isso, seguimos
           <Card>
             <CardContent className="p-8">
               <article className="prose prose-lg max-w-none">
-                <div 
+                <div
                   className="text-gray-600 leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />

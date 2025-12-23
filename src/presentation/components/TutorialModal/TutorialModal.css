@@ -185,10 +185,30 @@
 }
 
 .tutorial-modal-search {
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   flex-shrink: 0;
+}
+
+/* Reduzir tamanho da barra de pesquisa dentro do modal */
+.tutorial-modal-search input {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+  padding-left: 3rem !important;
+  font-size: 0.95rem !important;
+  border-width: 2px !important;
+}
+
+/* Reduzir tamanho do ícone de busca */
+.tutorial-modal-search > div > div[class*="absolute"][class*="left-0"] svg {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+/* Ajustar posicionamento do ícone */
+.tutorial-modal-search > div > div[class*="absolute"][class*="left-0"] {
+  padding-left: 0.75rem !important;
 }
 
 .tutorial-modal-content {

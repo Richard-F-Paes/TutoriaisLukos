@@ -64,24 +64,74 @@ const TrainingActions = ({ training }) => {
     }, 2500);
   };
 
-  const handleShare = () => {
+  const copyToClipboard = async (text) => {
+    // Método 1: Clipboard API (requer contexto seguro - HTTPS)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (err) {
+        console.warn('Erro ao usar Clipboard API:', err);
+        // Continua para o fallback
+      }
+    }
+
+    // Método 2: Fallback usando document.execCommand (para navegadores antigos ou HTTP)
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      if (successful) {
+        return true;
+      } else {
+        throw new Error('execCommand falhou');
+      }
+    } catch (err) {
+      console.error('Erro ao copiar para área de transferência:', err);
+      return false;
+    }
+  };
+
+  const handleShare = async () => {
     if (!shareHash) {
       showTopNotification('Este treinamento ainda não possui um link de compartilhamento. Por favor, salve o treinamento novamente.');
       return;
     }
 
     const url = window.location.origin + `#training-${shareHash}`;
+    
+    // Tenta usar a API de compartilhamento nativa primeiro
     if (navigator.share) {
-      navigator.share({
-        title: title,
-        text: description,
-        url: url,
-      }).catch(() => {
-        // Se o usuário cancelar, não fazer nada
-      });
-    } else {
-      navigator.clipboard.writeText(url);
+      try {
+        await navigator.share({
+          title: title,
+          text: description,
+          url: url,
+        });
+        return; // Se compartilhou com sucesso, não precisa copiar
+      } catch (err) {
+        // Se o usuário cancelar ou ocorrer erro, tenta copiar para clipboard
+        if (err.name !== 'AbortError') {
+          console.warn('Erro ao compartilhar:', err);
+        }
+      }
+    }
+
+    // Se não usou a API de compartilhamento, copia para clipboard
+    const copied = await copyToClipboard(url);
+    if (copied) {
       showTopNotification('Link copiado para a área de transferência!');
+    } else {
+      showTopNotification('Não foi possível copiar o link. Por favor, copie manualmente: ' + url);
     }
   };
 

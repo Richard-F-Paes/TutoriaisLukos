@@ -8,8 +8,46 @@ export const appConfig = {
   // URLs
   apiUrl: (() => {
     const envValue = import.meta.env.VITE_API_URL;
-    const defaultValue = 'http://localhost:3001';
+    const envPort = import.meta.env.VITE_API_PORT;
+    const fallbackPort = (envPort || '3001').toString();
+
+    const getDerivedFromBrowserLocation = () => {
+      if (typeof window === 'undefined' || !window.location) return null;
+      const { protocol, hostname } = window.location;
+      return `${protocol}//${hostname}:${fallbackPort}`;
+    };
+
+    // Fallback padrão:
+    // - No browser: usa o host atual (permite acesso via IP/hostname sem "localhost")
+    // - Fora do browser (build/test): mantém localhost
+    const defaultValue = getDerivedFromBrowserLocation() || `http://localhost:${fallbackPort}`;
+
     let finalValue = envValue || defaultValue;
+
+    // Se o env veio com localhost/127.0.0.1 mas o usuário acessou via IP/hostname,
+    // reescrevemos o host para evitar POST indo para o localhost do CLIENTE.
+    if (typeof window !== 'undefined' && window.location && envValue) {
+      const currentHostname = window.location.hostname;
+      const isNonLocalClient =
+        currentHostname !== 'localhost' && currentHostname !== '127.0.0.1';
+
+      if (isNonLocalClient) {
+        try {
+          const parsed = new URL(finalValue);
+          const isLocalApiHost =
+            parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1';
+
+          if (isLocalApiHost) {
+            parsed.hostname = currentHostname;
+            parsed.protocol = window.location.protocol;
+            if (!parsed.port) parsed.port = fallbackPort;
+            finalValue = parsed.origin;
+          }
+        } catch {
+          // Ignorar: URL inválida (ex.: valores relativos). Nesse caso, mantém como está.
+        }
+      }
+    }
     
     // Normalizar: remover /api do final se presente, pois os endpoints já incluem /api/v1
     if (finalValue.endsWith('/api')) {

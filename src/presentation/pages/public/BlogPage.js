@@ -588,7 +588,7 @@ function BlogPage() {
                   WebkitMask: 'radial-gradient(circle, transparent 58%, black 60%, black 62%, transparent 64%)'
                 }}></div>
 
-                Array.
+
 
                 {/* Logo Central */}
                 <motion.div
@@ -1263,34 +1263,6 @@ function BlogPage() {
 
 
 
-      const itemsList = [
-      {
-        id: 1,
-      title: "Título do Item 1",
-      description: "Descrição detalhada do item 1.",
-      image: "https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png",
-      isActive: true,
-                },
-      {
-        id: 2,
-      title: "Título do Item 2",
-      description: "Descrição detalhada do item 2.",
-      image: "https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png",
-      isActive: false,
-                },
-      {
-        id: 3,
-      title: "Título do Item 3",
-      description: "Descrição detalhada do item 3.",
-      image: "https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png",
-      isActive: true,
-                },
-      ];
-
-
-
-      map.id
-
 
       {/* Seção: O que é LUKOS (Fundo Roxo) */}
       <section id="o-que-e-lukos" className="py-24 min-h-screen relative overflow-hidden flex items-center" style={{ backgroundColor: '#0a0a0f', scrollSnapAlign: 'start' }}>
@@ -1499,7 +1471,7 @@ function BlogPage() {
           </div>
         </div>
       </section>
-      Array
+
 
 
       {/* Seção: CTA Final */}

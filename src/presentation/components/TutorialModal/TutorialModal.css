@@ -95,6 +95,8 @@
   align-items: center;
   gap: 0.5rem;
   flex: 1;
+  min-width: 0;
+  justify-content: space-between;
 }
 
 .tutorial-modal-actions .tutorial-actions {
@@ -103,6 +105,55 @@
   gap: 0.5rem;
   margin: 0;
   padding: 0;
+}
+
+.tutorial-modal-header-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.tutorial-modal-header-search-bar {
+  flex: 1;
+  min-width: 0;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+.tutorial-modal-header-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.tutorial-modal-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #374151;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.tutorial-modal-nav-btn:hover:not(:disabled) {
+  background: #e5e7eb;
+  color: #1f2937;
+  transform: scale(1.05);
+}
+
+.tutorial-modal-nav-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .tutorial-modal-actions .btn-edit,
@@ -184,30 +235,23 @@
   stroke-width: 2.5;
 }
 
-.tutorial-modal-search {
-  padding: 0.75rem 1.5rem;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  flex-shrink: 0;
-}
-
-/* Reduzir tamanho da barra de pesquisa dentro do modal */
-.tutorial-modal-search input {
+/* Barra de pesquisa dentro do header (compacta) */
+.tutorial-modal-header-search input {
   padding-top: 0.75rem !important;
   padding-bottom: 0.75rem !important;
-  padding-left: 3rem !important;
+  padding-left: 5.25rem !important;
   font-size: 0.95rem !important;
   border-width: 2px !important;
 }
 
 /* Reduzir tamanho do ícone de busca */
-.tutorial-modal-search > div > div[class*="absolute"][class*="left-0"] svg {
+.tutorial-modal-header-search > div > div[class*="absolute"][class*="left-0"] svg {
   width: 1.25rem !important;
   height: 1.25rem !important;
 }
 
 /* Ajustar posicionamento do ícone */
-.tutorial-modal-search > div > div[class*="absolute"][class*="left-0"] {
+.tutorial-modal-header-search > div > div[class*="absolute"][class*="left-0"] {
   padding-left: 0.75rem !important;
 }
 
@@ -314,6 +358,17 @@
   .tutorial-modal-content {
     padding: 1rem;
   }
+
+  .tutorial-modal-nav-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .tutorial-modal-header-search input {
+    font-size: 0.9rem !important;
+    padding-left: 4.25rem !important;
+  }
   
   .tutorial-viewer-content-wrapper {
     gap: 1rem;
@@ -344,6 +399,11 @@
   
   .tutorial-modal-content {
     padding: 0.75rem;
+  }
+
+  /* Em telas muito pequenas, esconder as setas para priorizar a busca */
+  .tutorial-modal-nav-btn {
+    display: none;
   }
   
   .tutorial-title {

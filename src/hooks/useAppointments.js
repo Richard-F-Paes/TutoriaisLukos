@@ -1,6 +1,7 @@
 // Hook useAppointments - Gerencia agendamentos com React Query
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { appointmentService } from '../services/appointmentService.js';
+import { getRefreshConfig } from '../infrastructure/config/refresh.config.js';
 
 export const useAppointments = (filters = {}) => {
   return useQuery({
@@ -8,6 +9,7 @@ export const useAppointments = (filters = {}) => {
     queryFn: () => appointmentService.list(filters),
     staleTime: 0, // Sempre considerar os dados como stale para permitir refetch imediato
     cacheTime: 5 * 60 * 1000, // Manter no cache por 5 minutos
+    ...getRefreshConfig('critical'), // Auto-refresh a cada 10s (crítico)
   });
 };
 

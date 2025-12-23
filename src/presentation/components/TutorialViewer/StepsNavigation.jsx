@@ -70,15 +70,31 @@ const StepsNavigation = ({ steps }) => {
   const scrollToStep = (stepId) => {
     const element = document.querySelector(`[data-step-id="${stepId}"]`);
     if (element) {
+      // Encontrar o container de scroll do modal
+      const scrollContainer = document.querySelector('.tutorial-modal-content');
       const headerHeight = document.querySelector('.tutorial-modal-header')?.offsetHeight || 0;
       const offset = headerHeight + 20;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
+      
+      if (scrollContainer) {
+        // Calcular posição relativa ao container de scroll
+        const containerRect = scrollContainer.getBoundingClientRect();
+        const elementRect = element.getBoundingClientRect();
+        const scrollTop = scrollContainer.scrollTop;
+        const relativeTop = elementRect.top - containerRect.top + scrollTop;
+        
+        scrollContainer.scrollTo({
+          top: relativeTop - offset,
+          behavior: 'smooth',
+        });
+      } else {
+        // Fallback para window scroll (caso não esteja no modal)
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
 
       // Atualizar passo ativo imediatamente
       setActiveStep(stepId);

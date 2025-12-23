@@ -398,8 +398,22 @@ router.post('/', authenticate, requirePermission('create_tutorial'), async (req,
       return res.status(401).json({ error: 'Usuário não autenticado' });
     }
 
-    const slug = slugify(title, { lower: true, strict: true });
-    const shareHash = randomUUID().replace(/-/g, '').substring(0, 32); // Hash único de 32 caracteres
+    // Gerar slug único
+    let baseSlug = slugify(title, { lower: true, strict: true });
+    let slug = baseSlug;
+    let counter = 1;
+    
+    // Verificar se o slug já existe e gerar um único
+    while (await prisma.tutorial.findUnique({ where: { slug } })) {
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
+    // Gerar shareHash único
+    let shareHash = randomUUID().replace(/-/g, '').substring(0, 32);
+    while (await prisma.tutorial.findUnique({ where: { shareHash } })) {
+      shareHash = randomUUID().replace(/-/g, '').substring(0, 32);
+    }
 
     const tutorial = await prisma.tutorial.create({
       data: {
@@ -525,12 +539,30 @@ router.put('/:id', authenticate, requirePermission('edit_tutorial'), async (req,
 
     // Se não tem shareHash, gerar um novo
     if (!existingTutorial?.shareHash) {
-      updateData.shareHash = randomUUID().replace(/-/g, '').substring(0, 32);
+      let shareHash = randomUUID().replace(/-/g, '').substring(0, 32);
+      // Garantir que o shareHash seja único
+      while (await prisma.tutorial.findUnique({ where: { shareHash } })) {
+        shareHash = randomUUID().replace(/-/g, '').substring(0, 32);
+      }
+      updateData.shareHash = shareHash;
     }
 
     if (title) {
       updateData.title = title;
-      updateData.slug = slugify(title, { lower: true, strict: true });
+      // Gerar slug único, verificando se já existe (exceto o próprio tutorial)
+      let baseSlug = slugify(title, { lower: true, strict: true });
+      let slug = baseSlug;
+      let counter = 1;
+      
+      // Verificar se o slug já existe em outro tutorial
+      let existingSlugTutorial = await prisma.tutorial.findUnique({ where: { slug } });
+      while (existingSlugTutorial && existingSlugTutorial.id !== tutorialId) {
+        slug = `${baseSlug}-${counter}`;
+        counter++;
+        existingSlugTutorial = await prisma.tutorial.findUnique({ where: { slug } });
+      }
+      
+      updateData.slug = slug;
     }
 
     // Atualizar publishedAt baseado em isPublished

@@ -3,7 +3,6 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { 
   FileText, 
   Fuel, 
-  ArrowRight, 
   Play, 
   BookOpen, 
   Settings, 
@@ -433,7 +432,7 @@ const TutorialsUnified = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
         <div className="text-center mt-12 mb-20">
           <div className="flex justify-center space-x-4 mb-6">
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-2xl shadow-lg transform rotate-[12deg] hover:rotate-[18deg] transition-transform duration-300">
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-2xl shadow-lg transform rotate-[12deg] hover:rotate-0 transition-transform duration-300">
               <Fuel className="h-8 w-8 text-white" />
             </div>
             <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 rounded-2xl shadow-lg transform -rotate-12 hover:rotate-6 transition-transform duration-300">
@@ -596,17 +595,6 @@ const TutorialsUnified = () => {
                     <p className="text-gray-600 mb-4">
                       {category.description}
                     </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2 text-sm text-gray-500">
-                        <Play className="w-4 h-4" />
-                        <span>{category.duration}</span>
-                      </div>
-                      
-                      <div className={`flex items-center space-x-2 ${colors.text} font-semibold group-hover:translate-x-2 transition-transform`}>
-                        <span>Acessar</span>
-                        <ArrowRight className="w-5 h-5" />
-                      </div>
-                    </div>
                   </div>
                 </div>
               </button>

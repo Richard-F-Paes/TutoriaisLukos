@@ -7,6 +7,7 @@ from typing import Any
 from bs4 import BeautifulSoup, Tag
 
 from src.utils.html_cleaner import clean_html
+from src.utils.category_path import limit_category_depth
 from src.utils.urls import slugify, url_id
 
 
@@ -45,7 +46,8 @@ def process_raw_page(page: dict[str, Any]) -> dict[str, Any]:
         "url_original": page.get("url"),
         "title": page.get("title"),
         "description": page.get("description"),
-        "category_path": page.get("category_path") or [],
+        # Enforce max depth (categoria/subcategoria only).
+        "category_path": limit_category_depth(page.get("category_path"), max_depth=2),
         "content_html": cleaned,
     }
 

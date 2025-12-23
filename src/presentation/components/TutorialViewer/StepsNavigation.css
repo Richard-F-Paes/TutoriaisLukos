@@ -2,12 +2,10 @@
 .steps-navigation {
   background: #ffffff;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1.25rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 2rem;
-  max-height: calc(100vh - 4rem);
-  overflow-y: auto;
+  /* Removido position: sticky - o container pai (.tutorial-viewer-sidebar) já é sticky */
+  /* Removido max-height e overflow-y para permitir expansão natural */
 }
 
 .steps-navigation-header {

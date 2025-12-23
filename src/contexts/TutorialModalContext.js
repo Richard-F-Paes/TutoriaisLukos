@@ -8,12 +8,37 @@ export function TutorialModalProvider({ children }) {
   const [tutorialSlug, setTutorialSlug] = useState(null);
   const [viewMode, setViewMode] = useState('full'); // 'full' | 'step'
   const [stepId, setStepId] = useState(null);
+  const [modalHistoryIndex, setModalHistoryIndex] = useState(-1);
   // Rastrear se o modal foi aberto através de um hash de tutorial compartilhado
   const openedViaHashRef = useRef(false);
   const previousBodyOverflowRef = useRef(null);
   const previousScrollYRef = useRef(null);
   const previousBodyPositionRef = useRef(null);
   const previousBodyTopRef = useRef(null);
+  const modalHistoryRef = useRef([]); // [{ tutorialSlug, viewMode, stepId }]
+  const isOpenRef = useRef(false);
+  const modalHistoryIndexRef = useRef(-1);
+
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+  }, [isOpen]);
+
+  useEffect(() => {
+    modalHistoryIndexRef.current = modalHistoryIndex;
+  }, [modalHistoryIndex]);
+
+  const pushModalHistoryState = useCallback((entry, nextIdx) => {
+    const url = window.location.pathname + window.location.search + window.location.hash;
+    try {
+      window.history.pushState(
+        { __tutorialModal: true, ...entry, modalIdx: nextIdx },
+        '',
+        url
+      );
+    } catch {
+      // Se pushState falhar por qualquer motivo, seguimos sem histórico.
+    }
+  }, []);
 
   const openModal = useCallback((slug, options = {}) => {
     setTutorialSlug(slug);
@@ -40,6 +65,36 @@ export function TutorialModalProvider({ children }) {
     // Isso garante que apenas aberturas via hash redirecionem para /tutoriais
     if (!window.location.hash || !window.location.hash.startsWith('#tutorial-')) {
       openedViaHashRef.current = false;
+    }
+
+    // Histórico interno do modal (para setas de anterior/próximo tutorial)
+    // Evitar empilhar novamente quando a mudança veio de popstate
+    if (!options.__fromHistory) {
+      const entry = {
+        tutorialSlug: slug,
+        viewMode: options.viewMode || 'full',
+        stepId: options.stepId ?? null,
+      };
+
+      const currentIdx = modalHistoryIndexRef.current;
+      const currentEntry = modalHistoryRef.current[currentIdx] || null;
+      const isSameAsCurrent =
+        currentEntry &&
+        currentEntry.tutorialSlug === entry.tutorialSlug &&
+        currentEntry.viewMode === entry.viewMode &&
+        (currentEntry.stepId ?? null) === (entry.stepId ?? null);
+
+      if (!isSameAsCurrent) {
+        // Se voltamos no histórico e abrimos outro tutorial, truncar "forward"
+        if (currentIdx < modalHistoryRef.current.length - 1) {
+          modalHistoryRef.current = modalHistoryRef.current.slice(0, currentIdx + 1);
+        }
+
+        modalHistoryRef.current.push(entry);
+        const nextIdx = modalHistoryRef.current.length - 1;
+        setModalHistoryIndex(nextIdx);
+        pushModalHistoryState(entry, nextIdx);
+      }
     }
   }, []);
 
@@ -82,6 +137,10 @@ export function TutorialModalProvider({ children }) {
         window.history.replaceState(null, '', window.location.pathname + window.location.search);
       }
     }
+
+    // Resetar histórico interno do modal
+    modalHistoryRef.current = [];
+    setModalHistoryIndex(-1);
   }, []);
 
   // Detectar hash na URL e abrir modal automaticamente
@@ -138,10 +197,59 @@ export function TutorialModalProvider({ children }) {
     };
   }, [openModal]);
 
+  // Listener de popstate para navegar entre tutoriais dentro do modal
+  useEffect(() => {
+    const handlePopState = (event) => {
+      if (!isOpenRef.current) return;
+      const state = event?.state;
+      if (!state || state.__tutorialModal !== true) return;
+
+      const entry = {
+        tutorialSlug: state.tutorialSlug,
+        viewMode: state.viewMode || 'full',
+        stepId: state.stepId ?? null,
+      };
+
+      // Atualizar índice do histórico (se existir no state)
+      if (typeof state.modalIdx === 'number') {
+        setModalHistoryIndex(state.modalIdx);
+      } else {
+        // fallback: tentar localizar entrada
+        const idx = modalHistoryRef.current.findIndex((e) => {
+          return (
+            e.tutorialSlug === entry.tutorialSlug &&
+            e.viewMode === entry.viewMode &&
+            (e.stepId ?? null) === (entry.stepId ?? null)
+          );
+        });
+        if (idx >= 0) setModalHistoryIndex(idx);
+      }
+
+      // Abrir/navegar sem empilhar novamente
+      openModal(entry.tutorialSlug, { viewMode: entry.viewMode, stepId: entry.stepId, __fromHistory: true });
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [openModal]);
+
   const switchToFullView = useCallback(() => {
     setViewMode('full');
     setStepId(null);
   }, []);
+
+  const canGoBackInModal = modalHistoryIndex > 0;
+  const canGoForwardInModal = modalHistoryIndex >= 0 && modalHistoryIndex < modalHistoryRef.current.length - 1;
+
+  const goBackInModal = useCallback(() => {
+    if (!canGoBackInModal) return;
+    window.history.back();
+  }, [canGoBackInModal]);
+
+  const goForwardInModal = useCallback(() => {
+    if (!canGoForwardInModal) return;
+    window.history.forward();
+  }, [canGoForwardInModal]);
 
   const value = {
     isOpen,
@@ -151,6 +259,10 @@ export function TutorialModalProvider({ children }) {
     openModal,
     closeModal,
     switchToFullView,
+    canGoBackInModal,
+    canGoForwardInModal,
+    goBackInModal,
+    goForwardInModal,
   };
 
   return (

@@ -1,6 +1,7 @@
 // Hook useCategories - Gerencia categorias com React Query
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { categoryService } from '../services/categoryService.js';
+import { getRefreshConfig } from '../infrastructure/config/refresh.config.js';
 
 // Helper function to structure categories hierarchically
 function structureCategories(categories) {
@@ -43,6 +44,7 @@ export const useCategories = (includeChildren = false) => {
       }
       return data;
     },
+    ...getRefreshConfig('static'), // Auto-refresh a cada 5min (estático)
   });
 };
 
@@ -52,6 +54,7 @@ export const useCategoriesHierarchical = () => {
     queryFn: () => categoryService.list(true),
     staleTime: 10 * 60 * 1000,
     select: (data) => structureCategories(data),
+    ...getRefreshConfig('static'), // Auto-refresh a cada 5min (estático)
   });
 };
 

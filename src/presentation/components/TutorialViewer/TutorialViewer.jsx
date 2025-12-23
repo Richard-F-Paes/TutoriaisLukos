@@ -14,7 +14,13 @@ import StepsNavigation from './StepsNavigation.jsx';
 import './TutorialViewer.css';
 
 // Componente para renderizar um passo individual no modo step-only
-const TutorialStepOnly = ({ step, totalSteps, onSwitchToFullView }) => {
+const TutorialStepOnly = ({
+  step,
+  totalSteps,
+  stepIndex,
+  onNavigateStep,
+  onSwitchToFullView
+}) => {
   const stepId = step.id || step.Id;
   const sortOrder = step.sortOrder || step.SortOrder || 1;
   const title = step.title || step.Title || '';
@@ -37,6 +43,8 @@ const TutorialStepOnly = ({ step, totalSteps, onSwitchToFullView }) => {
   // Estado para mouse drag
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  // Estado para swipe (navegação quando zoom = 1)
+  const [swipeStart, setSwipeStart] = useState(null);
   // Refs para calcular limites de pan
   const imageRef = useRef(null);
   const wrapperRef = useRef(null);
@@ -68,6 +76,10 @@ const TutorialStepOnly = ({ step, totalSteps, onSwitchToFullView }) => {
   // Construir URLs absolutas
   const absoluteImageUrl = imageUrl ? getAbsoluteUrl(imageUrl) : null;
   const absoluteVideoUrl = videoUrl ? getAbsoluteUrl(videoUrl) : null;
+  const currentIndex = typeof stepIndex === 'number' ? stepIndex : Math.max(0, (sortOrder || 1) - 1);
+  const hasNavigation = typeof onNavigateStep === 'function' && totalSteps > 0;
+  const canPrev = hasNavigation && currentIndex > 0;
+  const canNext = hasNavigation && currentIndex < totalSteps - 1;
   
   // Função para calcular limites de pan baseados no tamanho real
   const calculatePanLimits = useCallback(() => {
@@ -132,25 +144,38 @@ const TutorialStepOnly = ({ step, totalSteps, onSwitchToFullView }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, [isImageZoomed, zoom, calculatePanLimits]);
 
-  // Fechar modal com ESC
+  // Fechar modal com ESC e navegar com setas
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape' && isImageZoomed) {
+      if (!isImageZoomed) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
         setIsImageZoomed(false);
+      }
+      if (e.key === 'ArrowLeft' && canPrev) {
+        e.preventDefault();
+        e.stopPropagation();
+        onNavigateStep(currentIndex - 1);
+      }
+      if (e.key === 'ArrowRight' && canNext) {
+        e.preventDefault();
+        e.stopPropagation();
+        onNavigateStep(currentIndex + 1);
       }
     };
     
     if (isImageZoomed) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener('keydown', handleEscape, true); // Use capture phase
       // Prevenir scroll do body quando o modal está aberto
       document.body.style.overflow = 'hidden';
     }
     
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleEscape, true);
       document.body.style.overflow = 'unset';
     };
-  }, [isImageZoomed]);
+  }, [isImageZoomed, canPrev, canNext, currentIndex, onNavigateStep]);
 
   // Handler para zoom com scroll do mouse
   const handleWheel = (e) => {
@@ -178,24 +203,31 @@ const TutorialStepOnly = ({ step, totalSteps, onSwitchToFullView }) => {
     }
   };
 
-  // Handler para touch start (início do pinch)
+  // Handler para touch start (pinch e swipe)
   const handleTouchStart = (e) => {
-    if (!isImageZoomed || e.touches.length !== 2) return;
-    
-    const touch1 = e.touches[0];
-    const touch2 = e.touches[1];
-    
-    const distance = Math.hypot(
-      touch2.clientX - touch1.clientX,
-      touch2.clientY - touch1.clientY
-    );
-    
-    setTouchState({
-      initialDistance: distance,
-      initialZoom: zoom,
-      centerX: (touch1.clientX + touch2.clientX) / 2,
-      centerY: (touch1.clientY + touch2.clientY) / 2,
-    });
+    if (!isImageZoomed) return;
+
+    if (e.touches.length === 2) {
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+
+      const distance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+
+      setTouchState({
+        initialDistance: distance,
+        initialZoom: zoom,
+        centerX: (touch1.clientX + touch2.clientX) / 2,
+        centerY: (touch1.clientY + touch2.clientY) / 2,
+      });
+      setSwipeStart(null);
+    } else if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setSwipeStart({ x: touch.clientX, y: touch.clientY, time: Date.now() });
+      setLastTouchPosition({ x: touch.clientX, y: touch.clientY });
+    }
   };
 
   // Handler para touch move (pinch zoom e pan)
@@ -241,19 +273,39 @@ const TutorialStepOnly = ({ step, totalSteps, onSwitchToFullView }) => {
   };
 
   // Handler para touch end
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e) => {
     setTouchState(null);
     setLastTouchPosition({ x: 0, y: 0 });
+
+    if (swipeStart && zoom === 1 && hasNavigation) {
+      const touch = e.changedTouches?.[0];
+      if (touch) {
+        const dx = touch.clientX - swipeStart.x;
+        const dy = touch.clientY - swipeStart.y;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+          if (dx > 0 && canPrev) {
+            onNavigateStep(currentIndex - 1);
+          } else if (dx < 0 && canNext) {
+            onNavigateStep(currentIndex + 1);
+          }
+        }
+      }
+    }
+
+    setSwipeStart(null);
   };
 
   // Handler para mouse drag (pan quando zoom > 1)
   const handleMouseDown = (e) => {
     if (zoom > 1 && e.button === 0) { // Apenas botão esquerdo
       e.preventDefault();
+      e.stopPropagation();
       setIsDragging(true);
       setDragStart({
-        x: e.clientX - panPosition.x,
-        y: e.clientY - panPosition.y,
+        x: e.clientX,
+        y: e.clientY,
+        panX: panPosition.x,
+        panY: panPosition.y,
       });
     }
   };
@@ -261,13 +313,15 @@ const TutorialStepOnly = ({ step, totalSteps, onSwitchToFullView }) => {
   const handleMouseMove = (e) => {
     if (isDragging && zoom > 1) {
       e.preventDefault();
-      const newX = e.clientX - dragStart.x;
-      const newY = e.clientY - dragStart.y;
+      e.stopPropagation();
+      
+      const deltaX = e.clientX - dragStart.x;
+      const deltaY = e.clientY - dragStart.y;
       
       const limits = calculatePanLimits();
       setPanPosition({
-        x: Math.max(-limits.maxX, Math.min(limits.maxX, newX)),
-        y: Math.max(-limits.maxY, Math.min(limits.maxY, newY)),
+        x: Math.max(-limits.maxX, Math.min(limits.maxX, dragStart.panX + deltaX)),
+        y: Math.max(-limits.maxY, Math.min(limits.maxY, dragStart.panY + deltaY)),
       });
     }
   };
@@ -275,6 +329,37 @@ const TutorialStepOnly = ({ step, totalSteps, onSwitchToFullView }) => {
   const handleMouseUp = () => {
     setIsDragging(false);
   };
+
+  // Adicionar listeners globais quando estiver arrastando
+  useEffect(() => {
+    if (!isDragging || zoom <= 1 || !dragStart) return;
+
+    const handleGlobalMouseMove = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const deltaX = e.clientX - dragStart.x;
+      const deltaY = e.clientY - dragStart.y;
+      
+      const limits = calculatePanLimits();
+      setPanPosition({
+        x: Math.max(-limits.maxX, Math.min(limits.maxX, dragStart.panX + deltaX)),
+        y: Math.max(-limits.maxY, Math.min(limits.maxY, dragStart.panY + deltaY)),
+      });
+    };
+
+    const handleGlobalMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    document.addEventListener('mousemove', handleGlobalMouseMove, { passive: false });
+    document.addEventListener('mouseup', handleGlobalMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [isDragging, zoom, dragStart, calculatePanLimits]);
 
   return (
     <>
@@ -342,6 +427,19 @@ const TutorialStepOnly = ({ step, totalSteps, onSwitchToFullView }) => {
           className="tutorial-image-zoom-modal"
           onClick={() => setIsImageZoomed(false)}
         >
+          <button
+            className={`tutorial-image-zoom-arrow left ${!canPrev ? 'disabled' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (canPrev) {
+                onNavigateStep(currentIndex - 1);
+              }
+            }}
+            aria-label="Voltar passo"
+            disabled={!canPrev}
+          >
+            ‹
+          </button>
           <div 
             className="tutorial-image-zoom-content"
             onClick={(e) => e.stopPropagation()}
@@ -390,9 +488,26 @@ const TutorialStepOnly = ({ step, totalSteps, onSwitchToFullView }) => {
               </button>
             </div>
             {title && (
-              <div className="tutorial-image-zoom-title">{title}</div>
+              <div className="tutorial-image-zoom-footer">
+                <span className="tutorial-image-zoom-caption-label">Legenda</span>
+                <span className="tutorial-image-zoom-caption-label">Passo {sortOrder}</span>
+                <div className="tutorial-image-zoom-caption">{title}</div>
+              </div>
             )}
           </div>
+          <button
+            className={`tutorial-image-zoom-arrow right ${!canNext ? 'disabled' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (canNext) {
+                onNavigateStep(currentIndex + 1);
+              }
+            }}
+            aria-label="Avançar passo"
+            disabled={!canNext}
+          >
+            ›
+          </button>
         </div>
       )}
     </>
@@ -402,6 +517,7 @@ const TutorialStepOnly = ({ step, totalSteps, onSwitchToFullView }) => {
 const TutorialViewer = ({ slug, viewMode = 'full', focusStepId = null }) => {
   const { switchToFullView } = useTutorialModal();
   const { data, isLoading, error } = useTutorial(slug);
+  const [focusedStepIndex, setFocusedStepIndex] = useState(null);
 
   // Normalizar os passos do tutorial - pode vir como tutorialSteps, Steps, ou steps
   const tutorialSteps = data?.data 
@@ -409,9 +525,31 @@ const TutorialViewer = ({ slug, viewMode = 'full', focusStepId = null }) => {
     : [];
 
   // Modo "somente passo": encontrar o passo específico
-  const focusedStep = viewMode === 'step' && focusStepId
-    ? tutorialSteps.find(step => (step.id || step.Id) === focusStepId)
+  useEffect(() => {
+    if (viewMode === 'step') {
+      if (focusStepId) {
+        const idx = tutorialSteps.findIndex(step => (step.id || step.Id) === focusStepId);
+        setFocusedStepIndex(idx >= 0 ? idx : 0);
+      } else {
+        setFocusedStepIndex(0);
+      }
+    } else {
+      setFocusedStepIndex(null);
+    }
+  }, [viewMode, focusStepId, tutorialSteps]);
+
+  const focusedStep = viewMode === 'step' && focusedStepIndex !== null
+    ? tutorialSteps[focusedStepIndex]
     : null;
+
+  const handleNavigateStepOnly = (nextIndex) => {
+    setFocusedStepIndex((prev) => {
+      const base = typeof nextIndex === 'number' ? nextIndex : prev;
+      if (base === null || tutorialSteps.length === 0) return prev;
+      const clamped = Math.max(0, Math.min(tutorialSteps.length - 1, base));
+      return clamped;
+    });
+  };
 
   // Scroll para o passo quando abrir no modo step
   useEffect(() => {
@@ -474,6 +612,8 @@ const TutorialViewer = ({ slug, viewMode = 'full', focusStepId = null }) => {
       <TutorialStepOnly 
         step={focusedStep} 
         totalSteps={tutorialSteps.length}
+        stepIndex={focusedStepIndex ?? 0}
+        onNavigateStep={handleNavigateStepOnly}
         onSwitchToFullView={switchToFullView}
       />
     );

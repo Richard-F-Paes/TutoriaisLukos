@@ -1,12 +1,14 @@
 // Hook para gerenciar menus do header
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { headerMenuService } from '../services/headerMenuService';
+import { getRefreshConfig } from '../infrastructure/config/refresh.config.js';
 
 export const useHeaderMenus = () => {
   return useQuery({
     queryKey: ['headerMenus'],
     queryFn: () => headerMenuService.list(),
     staleTime: 5 * 60 * 1000, // 5 minutos
+    ...getRefreshConfig('static'), // Auto-refresh a cada 5min (estático)
   });
 };
 

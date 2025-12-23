@@ -1,17 +1,23 @@
 // CategoryManager - Gerenciamento de categorias
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useCategoriesHierarchical, useCreateCategory, useUpdateCategory, useDeleteCategory } from '../../../hooks/useCategories.js';
-import { Plus, Edit, Trash2, X, ChevronRight, ChevronDown, GripVertical } from 'lucide-react';
+import { useUploadMedia } from '../../../hooks/useMedia.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { Plus, Edit, Trash2, X, ChevronRight, ChevronDown, GripVertical, Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import toast from 'react-hot-toast';
+import { appConfig } from '../../../infrastructure/config/app.config.js';
 
 const CategoryManager = () => {
   const { data: categoriesData, isLoading } = useCategoriesHierarchical();
   const createMutation = useCreateCategory();
   const updateMutation = useUpdateCategory();
   const deleteMutation = useDeleteCategory();
+  const uploadMutation = useUploadMedia();
+  const { user } = useAuth();
+  const fileInputRef = useRef(null);
 
   const [editingCategory, setEditingCategory] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -79,12 +85,13 @@ const CategoryManager = () => {
 
   const handleEdit = (category) => {
     setEditingCategory(category);
+    const isSubcategory = category.parentId || category.parent;
     setFormData({
       name: category.name || '',
       description: category.description || '',
       icon: category.icon || '',
       color: category.color || '',
-      imageUrl: category.imageUrl || '',
+      imageUrl: isSubcategory ? '' : (category.imageUrl || ''), // Subcategorias não têm imagem
       sortOrder: category.sortOrder || 0,
       parentId: category.parentId || null,
     });
@@ -104,7 +111,7 @@ const CategoryManager = () => {
       description: '',
       icon: '',
       color: '',
-      imageUrl: '',
+      imageUrl: '', // Subcategorias não têm imagem
       sortOrder: 0,
       parentId: parentCategory.id, // ID da categoria pai
     });
@@ -136,14 +143,19 @@ const CategoryManager = () => {
     }
     
     try {
+      // Garantir que subcategorias não tenham imageUrl
+      const dataToSave = formData.parentId 
+        ? { ...formData, imageUrl: '' } 
+        : formData;
+      
       if (editingCategory) {
         await updateMutation.mutateAsync({
           id: editingCategory.id,
-          data: formData,
+          data: dataToSave,
         });
         toast.success('Categoria atualizada com sucesso!');
       } else {
-        await createMutation.mutateAsync(formData);
+        await createMutation.mutateAsync(dataToSave);
         toast.success('Categoria criada com sucesso!');
       }
       setShowForm(false);
@@ -174,6 +186,94 @@ const CategoryManager = () => {
 
   const handleCancelDelete = () => {
     setCategoryToDelete(null);
+  };
+
+  // Handler para upload de imagem
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validar tipo de arquivo (mesmos tipos do StepMediaUploader)
+    const ALLOWED_IMAGE_TYPES = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'image/bmp',
+      'image/svg+xml',
+      'image/tiff',
+      'image/x-icon',
+      'image/vnd.microsoft.icon',
+      'image/heic',
+      'image/heif',
+      'image/avif'
+    ];
+
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      toast.error('Tipo de arquivo inválido. Formatos aceitos: JPEG, PNG, GIF, WebP, BMP, SVG, TIFF, ICO, HEIC, HEIF, AVIF.');
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
+
+    // Validar tamanho (máximo 50MB - igual aos tutoriais e treinamentos)
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error(`Arquivo muito grande. Tamanho máximo: ${MAX_FILE_SIZE / (1024 * 1024)}MB`);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
+
+    try {
+      toast.loading('Fazendo upload da imagem...');
+      const userId = user?.id || user?.Id || null;
+      const response = await uploadMutation.mutateAsync({ file, userId });
+      
+      const mediaData = response?.data || response;
+      const mediaUrl = mediaData?.url || mediaData?.Url;
+      
+      if (!mediaUrl) {
+        throw new Error('URL não retornada pelo servidor');
+      }
+
+      // Construir URL completa se necessário (mesma lógica do StepMediaUploader)
+      let fullUrl = mediaUrl;
+      if (!mediaUrl.startsWith('http://') && !mediaUrl.startsWith('https://')) {
+        // Se for URL relativa começando com /uploads, construir URL completa usando a base da API
+        if (mediaUrl.startsWith('/uploads')) {
+          fullUrl = `${appConfig.apiUrl}${mediaUrl}`;
+        } else if (!mediaUrl.startsWith('/')) {
+          // Se for URL relativa sem / no início, adicionar /uploads
+          fullUrl = `${appConfig.apiUrl}/uploads/${mediaUrl}`;
+        } else {
+          // Caso contrário, usar a base da API
+          fullUrl = `${appConfig.apiUrl}${mediaUrl}`;
+        }
+      }
+
+      setFormData({ ...formData, imageUrl: fullUrl });
+      toast.dismiss();
+      toast.success('Imagem enviada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao fazer upload:', error);
+      toast.dismiss();
+      toast.error('Erro ao fazer upload da imagem');
+    } finally {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData({ ...formData, imageUrl: '' });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   // Handler para quando o drag termina - reordenar categorias do mesmo nível
@@ -635,6 +735,141 @@ const CategoryManager = () => {
                   }}
                 />
               </div>
+              
+              {/* Campo de Upload de Imagem - Apenas para categorias principais (não subcategorias) */}
+              {!formData.parentId && (
+              <div className="form-group" style={{ marginBottom: '2rem' }}>
+                <label style={{ 
+                  display: 'block', 
+                  marginBottom: '0.5rem', 
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  color: '#374151',
+                  letterSpacing: '0.025em',
+                }}>
+                  Imagem da Categoria
+                </label>
+                
+                {/* Preview da imagem */}
+                {formData.imageUrl && (
+                  <div style={{
+                    marginBottom: '1rem',
+                    position: 'relative',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    border: '1px solid #e5e7eb',
+                  }}>
+                    <img 
+                      src={formData.imageUrl} 
+                      alt="Preview" 
+                      style={{
+                        width: '100%',
+                        height: '200px',
+                        objectFit: 'cover',
+                        display: 'block',
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      style={{
+                        position: 'absolute',
+                        top: '0.5rem',
+                        right: '0.5rem',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '32px',
+                        height: '32px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'rgba(0, 0, 0, 0.9)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'rgba(0, 0, 0, 0.7)';
+                      }}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                )}
+
+                {/* Input de upload */}
+                <div style={{
+                  border: '2px dashed #d1d5db',
+                  borderRadius: '8px',
+                  padding: '1.5rem',
+                  textAlign: 'center',
+                  backgroundColor: formData.imageUrl ? '#f9fafb' : '#ffffff',
+                  transition: 'all 0.2s',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  if (!uploadMutation.isPending) {
+                    e.currentTarget.style.borderColor = '#3b82f6';
+                    e.currentTarget.style.backgroundColor = '#f0f9ff';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!uploadMutation.isPending) {
+                    e.currentTarget.style.borderColor = '#d1d5db';
+                    e.currentTarget.style.backgroundColor = formData.imageUrl ? '#f9fafb' : '#ffffff';
+                  }
+                }}
+                onClick={() => {
+                  if (!uploadMutation.isPending && fileInputRef.current) {
+                    fileInputRef.current.click();
+                  }
+                }}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/bmp,image/svg+xml,image/tiff,image/x-icon,image/vnd.microsoft.icon,image/heic,image/heif,image/avif"
+                    onChange={handleImageUpload}
+                    style={{ display: 'none' }}
+                    disabled={uploadMutation.isPending}
+                  />
+                  {uploadMutation.isPending ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                      <Loader2 size={24} className="animate-spin" style={{ color: '#3b82f6' }} />
+                      <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>Enviando imagem...</span>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                      {formData.imageUrl ? (
+                        <>
+                          <ImageIcon size={24} style={{ color: '#3b82f6' }} />
+                          <span style={{ color: '#374151', fontSize: '0.875rem', fontWeight: 500 }}>
+                            Clique para alterar a imagem
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload size={24} style={{ color: '#6b7280' }} />
+                          <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+                            Clique para fazer upload ou arraste uma imagem aqui
+                          </span>
+                          <span style={{ color: '#9ca3af', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+                            Formatos: JPEG, PNG, GIF, WebP, BMP, SVG, TIFF, ICO, HEIC, HEIF, AVIF - máx. 50MB
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+              )}
+
               <div className="form-actions" style={{
                 display: 'flex',
                 gap: '0.75rem',

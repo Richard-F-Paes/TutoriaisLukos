@@ -18,6 +18,9 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       retry: 1,
       staleTime: 5 * 60 * 1000, // 5 minutos
+      // Configuração padrão para auto-refresh
+      // refetchInterval será configurado individualmente em cada hook
+      refetchIntervalInBackground: false, // Pausar polling quando aba inativa
     },
   },
 });

@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '../infrastructure/api/client.js';
 import { endpoints } from '../infrastructure/api/endpoints.js';
+import { getRefreshConfig } from '../infrastructure/config/refresh.config.js';
 
 export const useAdminStats = () => {
   // Buscar estatísticas agregadas da API (sempre do banco de dados)
@@ -16,6 +17,7 @@ export const useAdminStats = () => {
     cacheTime: 2 * 60 * 1000, // Manter no cache por 2 minutos
     refetchOnWindowFocus: true, // Refetch quando a janela ganha foco
     refetchOnMount: true, // Sempre refetch ao montar
+    ...getRefreshConfig('critical'), // Auto-refresh a cada 10s (crítico)
   });
 
   const stats = statsQuery.data || {};

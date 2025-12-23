@@ -27,7 +27,7 @@ const TutorialSidebar = ({ tutorial }) => {
         <div className="tutorial-related">
           <h3 className="tutorial-related-title">Tutoriais Relacionados</h3>
           <ul className="related-list">
-            {publishedRelated.slice(0, 5).map(related => {
+            {publishedRelated.slice(0, 3).map(related => {
               const relatedSlug = related.slug || related.Slug;
               const relatedTitle = related.title || related.Title;
               return (

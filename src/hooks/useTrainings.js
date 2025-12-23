@@ -1,12 +1,14 @@
 // Hook useTrainings - Gerencia treinamentos com React Query
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { trainingService } from '../services/trainingService.js';
+import { getRefreshConfig } from '../infrastructure/config/refresh.config.js';
 
 export const useTrainings = (filters = {}) => {
   return useQuery({
     queryKey: ['trainings', filters],
     queryFn: () => trainingService.list(filters),
     staleTime: 5 * 60 * 1000, // 5 minutos
+    ...getRefreshConfig('moderate'), // Auto-refresh a cada 30s (moderado)
   });
 };
 

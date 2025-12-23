@@ -9,7 +9,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from src.utils.urls import google_sites_path_segments, join_url, normalize_url, same_site, url_id
+from src.utils.category_path import limit_category_depth
+from src.utils.urls import join_url, normalize_url, same_site, url_id
 
 
 log = logging.getLogger(__name__)
@@ -23,13 +24,21 @@ class DiscoveredPage:
     order: int
     parent_id: str | None
     category_path: list[str]
+    is_leaf: bool
+    discovered_from_menu: bool
 
 
-def discover_pages(driver: Any, *, base_url: str, wait_timeout_seconds: int) -> tuple[list[DiscoveredPage], list[dict[str, Any]]]:
+def discover_pages(
+    driver: Any,
+    *,
+    base_url: str,
+    wait_timeout_seconds: int,
+    normalize_menu_labels: bool = True,
+) -> tuple[list[DiscoveredPage], list[dict[str, Any]]]:
     """
     Returns:
       - pages: flattened list with parent references (best-effort)
-      - categories: derived category nodes from URL segments (best-effort)
+      - categories: derived category nodes from menu label paths (best-effort)
 
     Note: Google Sites DOM is not stable. We combine:
       - nav/menu anchors (when present)
@@ -53,7 +62,7 @@ def discover_pages(driver: Any, *, base_url: str, wait_timeout_seconds: int) -> 
     # 1) Best attempt: parse hierarchical <nav> list (if any)
     nav = soup.find("nav")
     if nav:
-        pages.extend(_parse_nav_hierarchy(nav, base_url=base_url))
+        pages.extend(_parse_nav_hierarchy(nav, base_url=base_url, normalize_menu_labels=normalize_menu_labels))
 
     # 2) Fallback: collect internal links anywhere
     if not pages:
@@ -72,65 +81,59 @@ def discover_pages(driver: Any, *, base_url: str, wait_timeout_seconds: int) -> 
     return pages, categories
 
 
-def _parse_nav_hierarchy(nav: Any, *, base_url: str) -> list[DiscoveredPage]:
+def _normalize_label(text: str) -> str:
+    # Avoid false mismatches caused by weird whitespace/encoding artifacts.
+    return " ".join((text or "").strip().split())
+
+
+def _parse_nav_hierarchy(nav: Any, *, base_url: str, normalize_menu_labels: bool) -> list[DiscoveredPage]:
     pages: list[DiscoveredPage] = []
     order = 0
 
-    def walk(node: Any, parent: DiscoveredPage | None) -> None:
+    def walk_list(list_node: Any, *, path_labels: list[str], parent_id: str | None) -> None:
         nonlocal order
 
-        # Prefer anchors directly under this node or within its li
-        for a in node.find_all("a", href=True, recursive=False):
-            href = join_url(base_url, a["href"])
-            if not same_site(href, base_url):
-                continue
-            title = (a.get_text(" ", strip=True) or None)
-            segs = google_sites_path_segments(href, base_url)
-            category_path = segs[:-1] if len(segs) >= 2 else segs[:-1]
-            page = DiscoveredPage(
-                id=url_id(href),
-                url=normalize_url(href),
-                title=title,
-                order=order,
-                parent_id=parent.id if parent else None,
-                category_path=category_path,
-            )
-            pages.append(page)
-            order += 1
-
-        # Recursively walk nested lists
-        for child in node.find_all(["ul", "ol"], recursive=False):
-            walk(child, parent)
-
-        for li in node.find_all("li", recursive=False):
-            # Some menus nest anchors inside li
+        for li in list_node.find_all("li", recursive=False):
             a = li.find("a", href=True)
+            label = None
+            if a:
+                label = a.get_text(" ", strip=True) or None
+            else:
+                # Fallback: use visible text from li (best-effort)
+                label = li.get_text(" ", strip=True) or None
+
+            if label and normalize_menu_labels:
+                label = _normalize_label(label)
+
+            nested = li.find(["ul", "ol"])
+            has_children = nested is not None
+
+            # The current node label becomes a category level for its children.
+            next_path = path_labels + ([label] if label else [])
+
             if a:
                 href = join_url(base_url, a["href"])
                 if same_site(href, base_url):
-                    title = (a.get_text(" ", strip=True) or None)
-                    segs = google_sites_path_segments(href, base_url)
-                    category_path = segs[:-1] if len(segs) >= 2 else segs[:-1]
-                    page = DiscoveredPage(
-                        id=url_id(href),
-                        url=normalize_url(href),
-                        title=title,
-                        order=order,
-                        parent_id=parent.id if parent else None,
-                        category_path=category_path,
+                    pages.append(
+                        DiscoveredPage(
+                            id=url_id(href),
+                            url=normalize_url(href),
+                            title=label,
+                            order=order,
+                            parent_id=parent_id,
+                            category_path=path_labels,
+                            is_leaf=not has_children,
+                            discovered_from_menu=True,
+                        )
                     )
-                    pages.append(page)
                     order += 1
-                    # A li may contain a nested list representing children
-                    nested = li.find(["ul", "ol"])
-                    if nested:
-                        walk(nested, page)
-            else:
-                nested = li.find(["ul", "ol"])
-                if nested:
-                    walk(nested, parent)
 
-    walk(nav, None)
+            if nested:
+                walk_list(nested, path_labels=next_path, parent_id=(url_id(join_url(base_url, a["href"])) if a else parent_id))
+
+    # Prefer the first list inside nav; fallback to nav itself if none found.
+    root_list = nav.find(["ul", "ol"]) or nav
+    walk_list(root_list, path_labels=[], parent_id=None)
     return pages
 
 
@@ -153,8 +156,6 @@ def _collect_internal_links(soup: BeautifulSoup, *, base_url: str) -> list[Disco
             continue
 
         title = (a.get_text(" ", strip=True) or None)
-        segs = google_sites_path_segments(href, base_url)
-        category_path = segs[:-1] if len(segs) >= 2 else segs[:-1]
         pages.append(
             DiscoveredPage(
                 id=url_id(href),
@@ -162,7 +163,9 @@ def _collect_internal_links(soup: BeautifulSoup, *, base_url: str) -> list[Disco
                 title=title,
                 order=order,
                 parent_id=None,
-                category_path=category_path,
+                category_path=[],
+                is_leaf=True,
+                discovered_from_menu=False,
             )
         )
         seen.add(href)
@@ -172,8 +175,7 @@ def _collect_internal_links(soup: BeautifulSoup, *, base_url: str) -> list[Disco
 
 def _derive_categories_from_pages(pages: list[DiscoveredPage], *, base_url: str) -> list[dict[str, Any]]:
     """
-    Creates a simple category tree using URL segments. This is best-effort and
-    designed to be overwritten/refined later if needed.
+    Creates a simple category tree using category_path label segments. This is best-effort.
     """
     # key: (parent_key, name) -> node
     nodes: dict[tuple[str | None, str], dict[str, Any]] = {}
@@ -183,13 +185,13 @@ def _derive_categories_from_pages(pages: list[DiscoveredPage], *, base_url: str)
         if key in nodes:
             return nodes[key]["id"]
         cid = url_id(f"{parent_key or 'root'}::{name}")
-        nodes[key] = {"id": cid, "name": name, "parent_id": parent_key, "source": "url_segments"}
+        nodes[key] = {"id": cid, "name": name, "parent_id": parent_key, "source": "menu"}
         return cid
 
     for p in pages:
         parent: str | None = None
         # if category_path empty, keep it unassigned (root)
-        for seg in p.category_path:
+        for seg in limit_category_depth(p.category_path, max_depth=2):
             parent = ensure(parent, seg)
 
     # Return stable by insertion is not guaranteed; sort by name then parent

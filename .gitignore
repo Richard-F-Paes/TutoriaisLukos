@@ -174,3 +174,59 @@ coverage/
 # Scripts temporários (manter env.example)
 # ===================================
 # Não ignorar: env.example, backend/env.example
+
+# ===================================
+# WebScrape - Python
+# ===================================
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+WebScrape/__pycache__/
+WebScrape/**/__pycache__/
+WebScrape/**/*.pyc
+
+# Python virtual environments
+WebScrape/venv/
+WebScrape/env/
+WebScrape/.venv/
+WebScrape/.env/
+WebScrape/ENV/
+
+# WebScrape - Environment variables
+WebScrape/.env
+WebScrape/.env.local
+WebScrape/.env.*.local
+
+# WebScrape - Dados extraídos (não versionar)
+WebScrape/data/
+!WebScrape/data/.gitkeep
+!WebScrape/data/processed_data/.gitkeep
+!WebScrape/data/raw_content/.gitkeep
+!WebScrape/data/reports/.gitkeep
+
+# WebScrape - Mídias baixadas (não versionar)
+WebScrape/media/
+!WebScrape/media/.gitkeep
+!WebScrape/media/images/.gitkeep
+!WebScrape/media/documents/.gitkeep
+
+# WebScrape - Testes e cache
+WebScrape/.pytest_cache/
+WebScrape/.mypy_cache/
+WebScrape/.ruff_cache/
+WebScrape/.coverage
+WebScrape/htmlcov/
+WebScrape/*.egg-info/
+WebScrape/dist/
+WebScrape/build/
+
+# WebScrape - Logs
+WebScrape/*.log
+WebScrape/logs/
+
+# WebScrape - Arquivos temporários de teste
+WebScrape/test_*.py.bak
+WebScrape/*.tmp

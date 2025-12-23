@@ -18,40 +18,40 @@ class DbTableMapping:
 
 @dataclass(frozen=True)
 class DbColumnMapping:
-    # Categories
-    category_id: str = "CategoryId"
-    category_name: str = "Name"
-    category_parent_id: str = "ParentCategoryId"
+    # Categories - Schema real: id, name, ParentId, SortOrder, slug (obrigatório)
+    category_id: str = "id"
+    category_name: str = "name"
+    category_parent_id: str = "ParentId"
     category_sort: str = "SortOrder"
+    category_slug: str = "slug"
 
-    # Tutorials
-    tutorial_id: str = "TutorialId"
+    # Tutorials - Schema real: id, title, content, CategoryId, slug (obrigatório), CreatedBy, UpdatedBy
+    tutorial_id: str = "id"
     tutorial_category_id: str = "CategoryId"
-    tutorial_title: str = "Title"
-    tutorial_description: str = "Description"
-    tutorial_url_original: str = "UrlOriginal"
-    tutorial_content: str = "ContentHtml"
-    tutorial_sort: str = "SortOrder"
+    tutorial_title: str = "title"
+    tutorial_description: str = "description"
+    tutorial_content: str = "content"
+    tutorial_slug: str = "slug"
+    tutorial_created_by: str = "CreatedBy"
+    tutorial_updated_by: str = "UpdatedBy"
 
-    # Steps
-    step_id: str = "TutorialStepId"
+    # Steps - Schema real: id, TutorialId, title, content, SortOrder
+    step_id: str = "id"
     step_tutorial_id: str = "TutorialId"
-    step_number: str = "StepNumber"
-    step_title: str = "Title"
-    step_content: str = "ContentHtml"
+    step_title: str = "title"
+    step_content: str = "content"
     step_sort: str = "SortOrder"
 
-    # Media
-    media_id: str = "MediaId"
-    media_tutorial_id: str = "TutorialId"
-    media_step_id: str = "TutorialStepId"
-    media_type: str = "MediaType"
-    media_url: str = "Url"
-    media_file_path: str = "FilePath"
+    # Media - Schema real: id, FileName, OriginalName, MimeType, size, url, ThumbnailUrl, UploadedBy
+    # Nota: Media não tem relação direta com Tutorials/Steps no schema atual
+    media_id: str = "id"
     media_file_name: str = "FileName"
-    media_file_size: str = "FileSize"
+    media_original_name: str = "OriginalName"
     media_mime_type: str = "MimeType"
+    media_size: str = "size"
+    media_url: str = "url"
     media_thumbnail_url: str = "ThumbnailUrl"
+    media_uploaded_by: str = "UploadedBy"
 
 
 @dataclass(frozen=True)
@@ -72,12 +72,23 @@ class Settings:
     data_dir: Path
     media_dir: Path
 
+    # Mapping / Canonicalization
+    # NOTE: These are used to keep the scraper behavior aligned with the plan:
+    # - hierarchy comes from the Google Sites menu
+    # - tutorial title comes from menu first, then H1/H2, then slug
+    category_source: str
+    title_source: str
+    ignore_non_leaf_pages: bool
+    normalize_menu_labels: bool
+    report_mismatches: bool
+
     sqlserver_driver: str
     sqlserver_server: str
     sqlserver_database: str
     sqlserver_trusted_connection: bool
     sqlserver_username: str | None
     sqlserver_password: str | None
+    sqlserver_port: int | None
 
     tables: DbTableMapping
     columns: DbColumnMapping
@@ -102,7 +113,7 @@ def _env_bool(name: str, default: bool) -> bool:
     return val.strip().lower() in {"1", "true", "yes", "y", "on"}
 
 
-def _env_int(name: str, default: int) -> int:
+def _env_int(name: str, default: int | None) -> int | None:
     val = os.getenv(name)
     if val is None or not val.strip():
         return default
@@ -129,6 +140,12 @@ def load_settings(dotenv_path: str | os.PathLike[str] | None = None) -> Settings
     data_dir = Path(os.getenv("DATA_DIR", "data")).resolve()
     media_dir = Path(os.getenv("MEDIA_DIR", "media")).resolve()
 
+    category_source = os.getenv("CATEGORY_SOURCE", "menu").strip().lower()
+    title_source = os.getenv("TITLE_SOURCE", "menu_first").strip().lower()
+    ignore_non_leaf_pages = _env_bool("IGNORE_NON_LEAF_PAGES", True)
+    normalize_menu_labels = _env_bool("NORMALIZE_MENU_LABELS", True)
+    report_mismatches = _env_bool("REPORT_MISMATCHES", True)
+
     tables = DbTableMapping(
         schema=os.getenv("DB_SCHEMA", "dbo").strip(),
         categories=os.getenv("TBL_CATEGORIES", "Categories").strip(),
@@ -138,33 +155,32 @@ def load_settings(dotenv_path: str | os.PathLike[str] | None = None) -> Settings
     )
 
     columns = DbColumnMapping(
-        category_id=os.getenv("COL_CATEGORY_ID", "CategoryId").strip(),
-        category_name=os.getenv("COL_CATEGORY_NAME", "Name").strip(),
-        category_parent_id=os.getenv("COL_CATEGORY_PARENT_ID", "ParentCategoryId").strip(),
+        category_id=os.getenv("COL_CATEGORY_ID", "id").strip(),
+        category_name=os.getenv("COL_CATEGORY_NAME", "name").strip(),
+        category_parent_id=os.getenv("COL_CATEGORY_PARENT_ID", "ParentId").strip(),
         category_sort=os.getenv("COL_CATEGORY_SORT", "SortOrder").strip(),
-        tutorial_id=os.getenv("COL_TUTORIAL_ID", "TutorialId").strip(),
+        category_slug=os.getenv("COL_CATEGORY_SLUG", "slug").strip(),
+        tutorial_id=os.getenv("COL_TUTORIAL_ID", "id").strip(),
         tutorial_category_id=os.getenv("COL_TUTORIAL_CATEGORY_ID", "CategoryId").strip(),
-        tutorial_title=os.getenv("COL_TUTORIAL_TITLE", "Title").strip(),
-        tutorial_description=os.getenv("COL_TUTORIAL_DESCRIPTION", "Description").strip(),
-        tutorial_url_original=os.getenv("COL_TUTORIAL_URL_ORIGINAL", "UrlOriginal").strip(),
-        tutorial_content=os.getenv("COL_TUTORIAL_CONTENT", "ContentHtml").strip(),
-        tutorial_sort=os.getenv("COL_TUTORIAL_SORT", "SortOrder").strip(),
-        step_id=os.getenv("COL_STEP_ID", "TutorialStepId").strip(),
+        tutorial_title=os.getenv("COL_TUTORIAL_TITLE", "title").strip(),
+        tutorial_description=os.getenv("COL_TUTORIAL_DESCRIPTION", "description").strip(),
+        tutorial_content=os.getenv("COL_TUTORIAL_CONTENT", "content").strip(),
+        tutorial_slug=os.getenv("COL_TUTORIAL_SLUG", "slug").strip(),
+        tutorial_created_by=os.getenv("COL_TUTORIAL_CREATED_BY", "CreatedBy").strip(),
+        tutorial_updated_by=os.getenv("COL_TUTORIAL_UPDATED_BY", "UpdatedBy").strip(),
+        step_id=os.getenv("COL_STEP_ID", "id").strip(),
         step_tutorial_id=os.getenv("COL_STEP_TUTORIAL_ID", "TutorialId").strip(),
-        step_number=os.getenv("COL_STEP_NUMBER", "StepNumber").strip(),
-        step_title=os.getenv("COL_STEP_TITLE", "Title").strip(),
-        step_content=os.getenv("COL_STEP_CONTENT", "ContentHtml").strip(),
+        step_title=os.getenv("COL_STEP_TITLE", "title").strip(),
+        step_content=os.getenv("COL_STEP_CONTENT", "content").strip(),
         step_sort=os.getenv("COL_STEP_SORT", "SortOrder").strip(),
-        media_id=os.getenv("COL_MEDIA_ID", "MediaId").strip(),
-        media_tutorial_id=os.getenv("COL_MEDIA_TUTORIAL_ID", "TutorialId").strip(),
-        media_step_id=os.getenv("COL_MEDIA_STEP_ID", "TutorialStepId").strip(),
-        media_type=os.getenv("COL_MEDIA_TYPE", "MediaType").strip(),
-        media_url=os.getenv("COL_MEDIA_URL", "Url").strip(),
-        media_file_path=os.getenv("COL_MEDIA_FILE_PATH", "FilePath").strip(),
+        media_id=os.getenv("COL_MEDIA_ID", "id").strip(),
         media_file_name=os.getenv("COL_MEDIA_FILE_NAME", "FileName").strip(),
-        media_file_size=os.getenv("COL_MEDIA_FILE_SIZE", "FileSize").strip(),
+        media_original_name=os.getenv("COL_MEDIA_ORIGINAL_NAME", "OriginalName").strip(),
         media_mime_type=os.getenv("COL_MEDIA_MIME_TYPE", "MimeType").strip(),
+        media_size=os.getenv("COL_MEDIA_SIZE", "size").strip(),
+        media_url=os.getenv("COL_MEDIA_URL", "url").strip(),
         media_thumbnail_url=os.getenv("COL_MEDIA_THUMBNAIL_URL", "ThumbnailUrl").strip(),
+        media_uploaded_by=os.getenv("COL_MEDIA_UPLOADED_BY", "UploadedBy").strip(),
     )
 
     return Settings(
@@ -183,14 +199,23 @@ def load_settings(dotenv_path: str | os.PathLike[str] | None = None) -> Settings
         respect_robots=_env_bool("RESPECT_ROBOTS", True),
         data_dir=data_dir,
         media_dir=media_dir,
-        sqlserver_driver=os.getenv("SQLSERVER_DRIVER", "ODBC Driver 18 for SQL Server").strip(),
+        category_source=category_source,
+        title_source=title_source,
+        ignore_non_leaf_pages=ignore_non_leaf_pages,
+        normalize_menu_labels=normalize_menu_labels,
+        report_mismatches=report_mismatches,
+        sqlserver_driver=os.getenv("SQLSERVER_DRIVER", "ODBC Driver 17 for SQL Server").strip(),
         sqlserver_server=os.getenv("SQLSERVER_SERVER", "localhost").strip(),
         sqlserver_database=os.getenv("SQLSERVER_DATABASE", "TutoriaisLukos").strip(),
         sqlserver_trusted_connection=_env_bool("SQLSERVER_TRUSTED_CONNECTION", True),
         sqlserver_username=(os.getenv("SQLSERVER_USERNAME") or "").strip() or None,
         sqlserver_password=(os.getenv("SQLSERVER_PASSWORD") or "").strip() or None,
+        sqlserver_port=_env_int("SQLSERVER_PORT", None) if os.getenv("SQLSERVER_PORT") else None,
         tables=tables,
         columns=columns,
     )
+    
+    
+    return settings
 
 

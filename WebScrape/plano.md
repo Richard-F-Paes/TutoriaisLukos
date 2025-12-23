@@ -9,6 +9,47 @@ Extrair todo o conteúdo do site Google Sites (https://sites.google.com/view/luk
 
 ---
 
+## Regras canônicas de mapeamento (fonte de verdade)
+
+### Hierarquia (Categories)
+- **Fonte canônica**: **MENU do Google Sites**.
+- O menu define a árvore **Categoria → SubCategoria → … → Tutorial**.
+- Itens de menu que são apenas “agrupadores” (sem URL própria) **ainda são Categories** (nós pai/filho), pois organizam a navegação.
+
+### Tutoriais (Tutorials)
+- **Somente páginas folha (leaf)** viram tutoriais.
+  - Exemplos de nós **não-folha** (com filhos no menu): `PDV`, `Pista` → **não** inserem registro em `dbo.Tutorials` mesmo que a URL exista e tenha conteúdo.
+  - Exemplo de folha: `Medição de Tanque` (tutorial).
+- **Título do tutorial (canônico)**: **texto do menu** (menu-first).
+  - Fallbacks: H1/H2 da página → slug “humanizado”.
+- **Slug/URL** é referência técnica (`UrlOriginal`), **não** é nome.
+
+### Exemplo (real)
+URL: `https://sites.google.com/view/lukos-tutoriais/PDV/pista/medicaocaixa`
+- `PDV` → Categoria
+- `Pista` → SubCategoria
+- `medicaocaixa` → slug técnico
+- Título canônico (menu): `Medição de Tanque` (ou equivalente exibido no menu)
+
+---
+
+## Heurísticas de extração/normalização
+- **Normalização de rótulos do menu**:
+  - Remover múltiplos espaços, normalizar whitespace e comparar versões “normalizadas” para evitar falsos positivos (Google Sites pode apresentar variações de encoding/acentos em snapshots).
+- **Canonização de título**:
+  - Guardar (para auditoria) o título extraído do conteúdo (H1/H2) e o título do menu; usar o do menu como `Tutorials.Title`.
+
+---
+
+## Relatórios de qualidade (pós-extração)
+Gerar artefatos em `data/` para validar que o mapeamento está correto:
+- **Páginas fora do menu**:
+  - URLs internas encontradas via links internos/busca que **não** existem no menu (candidatas a revisão no site ou ajuste no discoverer).
+- **Divergências slug/menu/H1**:
+  - Casos onde slug não bate com título do menu e/ou H1 (ex.: `medicaocaixa` vs `Medição de Tanque`).
+- **Duplicatas**:
+  - Mesmo `UrlOriginal` repetido, ou títulos iguais no mesmo ramo de categoria (indicativo de conflito).
+
 ## 1. Análise da Estrutura do Site Original
 
 ### 1.1 Estrutura completa (menu do site)

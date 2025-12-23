@@ -535,12 +535,31 @@ function PageNavbar({ transparent = false }) {
 
         /* Menu item hover effects */
         .menu-item-link {
-          transition: all 0.2s var(--dropdown-transition);
+          transition: all 0.3s var(--dropdown-transition);
           position: relative;
         }
 
+        .menu-item-link::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          width: 0;
+          height: 2px;
+          background: linear-gradient(90deg, #8B5CF6, #c44cf4);
+          transition: all 0.3s ease;
+          transform: translateX(-50%);
+          opacity: 0;
+        }
+
+        .menu-item-link:hover::after {
+          width: 80%;
+          opacity: 1;
+        }
+
         .menu-item-link:hover {
-          transform: translateY(-1px);
+          color: #8B5CF6;
+          background: rgba(139, 92, 246, 0.05);
         }
 
         .menu-item-link:focus-visible {
@@ -880,7 +899,7 @@ function PageNavbar({ transparent = false }) {
                     const Icon = item.icon;
                     const isOpen = openDropdowns[item.key];
                     return (
-                      <li key={item.key} className="menu-item relative dropdown-container h-full flex items-center" role="none" style={{ overflow: 'visible' }}>
+                      <li key={item.key} className="dropdown-container h-full flex items-center" role="none" style={{ overflow: 'visible' }}>
                         <button
                           ref={(el) => { if (el) menuButtonRefs.current[item.key] = el; }}
                           onClick={() => toggleDropdown(item.key)}
@@ -1026,7 +1045,7 @@ function PageNavbar({ transparent = false }) {
                     const Icon = item.icon;
                     const active = location.pathname === item.href;
                     return (
-                      <li key={item.key} className="menu-item relative" role="none">
+                      <li key={item.key} className="" role="none">
                         <a
                           href={item.href}
                           className={`menu-item-link flex items-center gap-1 px-4 py-2 text-base font-bold transition-all duration-300 rounded-xl whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:ring-offset-2 text-[#8B5CF6] ${active

@@ -61,106 +61,123 @@ function BlogPostsPage() {
   ];
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      {/* Hero Section - Estilo TOTVS Melhorado */}
-      <section className="relative min-h-[750px] md:min-h-[900px] flex items-center" style={{ marginTop: 0, paddingTop: 0 }}>
-        {/* Navbar dentro do hero com fundo transparente */}
+    <div className="bg-[#0a0a0f] min-h-screen text-white relative">
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{ background: 'radial-gradient(ellipse at center, #1a1b26 0%, #0a0a0f 100%)' }}
+      />
+      {/* Grid Pattern Overlay */}
+      <div className="fixed inset-0 z-0 opacity-10 pointer-events-none"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.05) 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
+        }}>
+      </div>
+
+      {/* Hero Section */}
+      <section className="relative pt-[120px] pb-16 z-10">
         <PageNavbar transparent={true} />
-        
-        {/* Background com imagem do profissional */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center border-b-4 border-gray-300"
-          style={{
-            backgroundImage: 'url("https://i.pinimg.com/736x/4a/29/f5/4a29f5894432b10ed543ccae39c93e17.jpg")',
-            backgroundPosition: 'center',
-            backgroundSize: 'cover'
-          }}
-        ></div>
-        
-        {/* Overlay preto */}
-        <div className="absolute inset-0 bg-black/50"></div>
-        
-        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 w-full max-w-7xl pt-[60px]"> 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            {/* Coluna Esquerda - Texto */}
-            <div className="text-white">
-              <h1 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl text-white uppercase font-bold mb-6 leading-tight">
-                <div className="w-full max-w-3xl">
-                  <p className="m-0 mt-0 mb-0 text-3xl border-0 w-full max-w-3xl text-start box-border translate-x-0 translate-y-0 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100" style={{fontFamily: 'TOTVS !important'}}>
-                    Nosso Blog
-                  </p>
-                </div>
-              </h1>
-              
-              <div className="text-lg md:text-xl lg:text-2xl text-white mb-8 leading-relaxed" style={{maxWidth: '560px'}}>
-                <p className="w-full max-w-3xl text-start">
-                  Fique por dentro das últimas tendências e insights do mundo da tecnologia.
-                </p>
-              </div>
-            </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center max-w-4xl mx-auto">
+            <span className="text-[#8B5CF6] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-4 block">
+              ÚLTIMAS NOTÍCIAS
+            </span>
+            <h1 className="text-4xl md:text-6xl font-black text-white uppercase mb-6 leading-tight">
+              Blog <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c44cf4] to-[#8B5CF6]">LUKOS</span>
+            </h1>
+            <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+              Fique por dentro das últimas tendências, insights e novidades sobre tecnologia e gestão para o seu negócio.
+            </p>
           </div>
         </div>
       </section>
-      
-      {/* Main Content */}
-      <main className="flex flex-1 justify-center py-10 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col w-full max-w-7xl">
 
-          <div className="w-full h-full pt-8 pb-12 px-4 sm:px-6 lg:px-8 bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-            {/* Conteúdo Principal - Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Todos os Posts */}
-              {blogPosts.map((post) => (
-                <div key={post.id} className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-                  <div 
-                    className="w-full h-48 bg-cover bg-center bg-no-repeat"
-                    style={{ backgroundImage: `url(${post.image})` }}
+      {/* Main Content */}
+      <main className="relative z-10 pb-24 px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto max-w-7xl">
+
+          {/* Conteúdo Principal - Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {blogPosts.map((post, index) => (
+              <div
+                key={post.id}
+                className="group relative bg-[#16161c] border border-white/5 hover:border-[#8B5CF6]/50 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(139,92,246,0.15)] flex flex-col h-full"
+              >
+                {/* Image Container */}
+                <div className="relative h-56 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#16161c] to-transparent opacity-60 z-10" />
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:brightness-110"
                   />
-                  <div className="p-4">
-                    <Link to={post.link} className="block">
-                      <div className="text-gray-900">
-                        <span className="text-[#c44cf4] font-semibold uppercase">{post.category}</span>
-                        {' '}
-                        <span className="font-bold">{post.title}</span>
-                        {' '}
-                        <span className="text-gray-600 font-normal">{post.excerpt}</span>
-                      </div>
-                    </Link>
+                  <div className="absolute top-4 left-4 z-20">
+                    <span className="px-3 py-1 rounded-full bg-[#8B5CF6]/20 backdrop-blur-md border border-[#8B5CF6]/30 text-[#a78bfa] text-xs font-bold uppercase tracking-wide">
+                      {post.category}
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
 
-            {/* Paginação */}
-            <div className="flex items-center justify-center gap-2 mt-6">
-              <button 
-                className="flex items-center justify-center rounded-lg size-10 bg-white text-gray-600 hover:bg-gray-100 transition-colors"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                <div className="p-6 flex-1 flex flex-col">
+                  {/* Meta */}
+                  <div className="flex items-center gap-3 text-gray-500 text-xs font-medium mb-3 uppercase tracking-wider">
+                    <span>{post.date}</span>
+                    <div className="w-1 h-1 rounded-full bg-gray-600" />
+                    <span>{post.author}</span>
+                  </div>
+
+                  <Link to={post.link} className="block group-hover:no-underline">
+                    <h3 className="text-xl font-bold text-white mb-3 leading-tight group-hover:text-[#a78bfa] transition-colors">
+                      {post.title}
+                    </h3>
+                  </Link>
+
+                  <p className="text-gray-400 text-sm leading-relaxed mb-6 flex-1 line-clamp-3">
+                    {post.excerpt}
+                  </p>
+
+                  <Link
+                    to={post.link}
+                    className="inline-flex items-center gap-2 text-white/70 hover:text-white font-bold text-sm uppercase tracking-wide mt-auto group/link"
+                  >
+                    Ler artigo
+                    <ChevronRight className="w-4 h-4 transform group-hover/link:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Paginação */}
+          <div className="flex items-center justify-center gap-3">
+            <button
+              className="flex items-center justify-center rounded-xl w-12 h-12 bg-[#16161c] border border-white/5 text-gray-400 hover:text-white hover:border-[#8B5CF6]/50 hover:bg-[#8B5CF6]/10 transition-all font-bold"
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            {[1, 2, 3].map((page) => (
+              <button
+                key={page}
+                className={`flex items-center justify-center rounded-xl w-12 h-12 font-bold transition-all ${currentPage === page
+                    ? 'bg-[#8B5CF6] text-white shadow-[0_0_20px_rgba(139,92,246,0.5)]'
+                    : 'bg-[#16161c] border border-white/5 text-gray-400 hover:text-white hover:border-[#8B5CF6]/50 hover:bg-[#8B5CF6]/10'
+                  }`}
+                onClick={() => setCurrentPage(page)}
               >
-                <ChevronLeft className="w-5 h-5" />
+                {page}
               </button>
-              <button className="flex items-center justify-center rounded-lg size-10 bg-[#c44cf4] text-white text-sm font-bold">
-                {currentPage}
-              </button>
-              <button 
-                className="flex items-center justify-center rounded-lg size-10 bg-white text-gray-900 text-sm font-medium hover:bg-gray-100 transition-colors"
-                onClick={() => setCurrentPage(currentPage + 1)}
-              >
-                2
-              </button>
-              <button 
-                className="flex items-center justify-center rounded-lg size-10 bg-white text-gray-900 text-sm font-medium hover:bg-gray-100 transition-colors"
-                onClick={() => setCurrentPage(currentPage + 2)}
-              >
-                3
-              </button>
-              <button 
-                className="flex items-center justify-center rounded-lg size-10 bg-white text-gray-600 hover:bg-gray-100 transition-colors"
-                onClick={() => setCurrentPage(currentPage + 1)}
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
+            ))}
+
+            <button
+              className="flex items-center justify-center rounded-xl w-12 h-12 bg-[#16161c] border border-white/5 text-gray-400 hover:text-white hover:border-[#8B5CF6]/50 hover:bg-[#8B5CF6]/10 transition-all font-bold"
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </main>

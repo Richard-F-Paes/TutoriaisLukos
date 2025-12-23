@@ -52,7 +52,7 @@ const FixedSearchBar = () => {
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedIndex(prev => 
+        setSelectedIndex(prev =>
           prev < searchResults.length - 1 ? prev + 1 : prev
         );
         break;
@@ -97,8 +97,8 @@ const FixedSearchBar = () => {
   return (
     <div ref={searchRef} className="relative">
       {/* Barra de pesquisa minimalista */}
-      <div className={isExpanded 
-        ? 'fixed top-16 z-50 transition-all duration-300 left-1/2 transform -translate-x-1/2' 
+      <div className={isExpanded
+        ? 'fixed top-16 z-50 transition-all duration-300 left-1/2 transform -translate-x-1/2'
         : 'fixed top-16 z-50 transition-all duration-300 right-4'
       }>
         <div className="relative pt-12 pr-2">
@@ -162,59 +162,58 @@ const FixedSearchBar = () => {
                         const tutorialDescription = tutorial.Description || tutorial.description
                         const tutorialCategory = tutorial.Category?.Name || tutorial.CategoryName || tutorial.category
                         const tutorialSubcategory = tutorial.Subcategory || tutorial.subcategory
-                        const tutorialDuration = tutorial.EstimatedDuration 
-                          ? `${tutorial.EstimatedDuration} min` 
+                        const tutorialDuration = tutorial.EstimatedDuration
+                          ? `${tutorial.EstimatedDuration} min`
                           : tutorial.duration || 'N/A'
-                        
+
                         return (
                           <div
                             key={tutorial.Id || tutorial.id}
                             onClick={() => handleTutorialClick(tutorial)}
-                            className={`p-4 rounded-xl cursor-pointer transition-all duration-200 mx-2 my-1 group ${
-                              index === selectedIndex 
-                                ? 'bg-gradient-to-r from-blue-100 to-purple-100 ring-2 ring-blue-300' 
+                            className={`p-4 rounded-xl cursor-pointer transition-all duration-200 mx-2 my-1 group ${index === selectedIndex
+                                ? 'bg-gradient-to-r from-blue-100 to-purple-100 ring-2 ring-blue-300'
                                 : 'hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50'
-                            }`}
+                              }`}
                           >
                             <div className="flex items-start gap-4">
                               <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200 bg-purple-600">
                                 <Search className="w-6 h-6 text-white" />
                               </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-2">
-                                <h3 className={`font-semibold text-base transition-colors duration-200 line-clamp-2 ${
-                                  index === selectedIndex 
-                                    ? 'text-blue-700' 
-                                    : 'text-gray-900 group-hover:text-blue-600'
-                                }`}>
-                                  {tutorialTitle}
-                                </h3>
-                                <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
-                                  <Clock className="w-3 h-3" />
-                                  <span>{tutorialDuration}</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between gap-2">
+                                  <h3 className={`font-semibold text-base transition-colors duration-200 line-clamp-2 ${index === selectedIndex
+                                      ? 'text-blue-700'
+                                      : 'text-gray-900 group-hover:text-blue-600'
+                                    }`}>
+                                    {tutorialTitle}
+                                  </h3>
+                                  <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
+                                    <Clock className="w-3 h-3" />
+                                    <span>{tutorialDuration}</span>
+                                  </div>
+                                </div>
+                                <p className="text-sm text-gray-600 mt-2 line-clamp-2 leading-relaxed">
+                                  {tutorialDescription || 'Sem descrição'}
+                                </p>
+                                <div className="flex items-center gap-3 mt-3">
+                                  <span className="text-xs bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 px-3 py-1.5 rounded-full font-medium">
+                                    {tutorialCategory || 'Geral'}
+                                  </span>
+                                  {tutorialSubcategory && (
+                                    <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full">
+                                      {tutorialSubcategory}
+                                    </span>
+                                  )}
+                                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                                    <span className="font-medium">{tutorial.Difficulty || tutorial.difficulty || 'Geral'}</span>
+                                  </span>
                                 </div>
                               </div>
-                              <p className="text-sm text-gray-600 mt-2 line-clamp-2 leading-relaxed">
-                                {tutorialDescription || 'Sem descrição'}
-                              </p>
-                              <div className="flex items-center gap-3 mt-3">
-                                <span className="text-xs bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 px-3 py-1.5 rounded-full font-medium">
-                                  {tutorialCategory || 'Geral'}
-                                </span>
-                                {tutorialSubcategory && (
-                                  <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full">
-                                    {tutorialSubcategory}
-                                  </span>
-                                )}
-                              <span className="text-xs text-gray-500 flex items-center gap-1">
-                                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                                <span className="font-medium">{tutorial.Difficulty || tutorial.difficulty || 'Geral'}</span>
-                              </span>
                             </div>
                           </div>
-                        </div>
-                      )
-                    })
+                        )
+                      })
                     ) : (
                       <div className="p-8 text-center">
                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">

@@ -3,12 +3,12 @@ import { trainingConfigService } from '../services/trainingConfigService.js';
 
 // Query key factory
 const trainingConfigKeys = {
-  all: ['trainingConfigs'] as const,
-  lists: () => [...trainingConfigKeys.all, 'list'] as const,
-  list: (type) => [...trainingConfigKeys.lists(), { type }] as const,
-  details: () => [...trainingConfigKeys.all, 'detail'] as const,
-  detail: (id) => [...trainingConfigKeys.details(), id] as const,
-  byType: (type) => [...trainingConfigKeys.all, 'type', type] as const,
+  all: ['trainingConfigs'],
+  lists: () => [...trainingConfigKeys.all, 'list'],
+  list: (type) => [...trainingConfigKeys.lists(), { type }],
+  details: () => [...trainingConfigKeys.all, 'detail'],
+  detail: (id) => [...trainingConfigKeys.details(), id],
+  byType: (type) => [...trainingConfigKeys.all, 'type', type],
 };
 
 // Hook para buscar todas as configurações (opcionalmente filtradas por tipo)

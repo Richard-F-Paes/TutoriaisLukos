@@ -7,7 +7,7 @@ import {
   ChevronUp, CheckCircle, ArrowUp, Percent, MessageCircle, Play, X, Rocket, Users,
   Edit, Zap, Brain, Cpu, Eye, ShieldCheck, Users2, CheckCircle2, LineChart, Target,
   Sparkles, PieChart, Lock, Activity, Instagram, Facebook, Youtube, Mail, Phone,
-  MapPin, MessageSquare
+  MapPin, MessageSquare, LayoutDashboard
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import VideoShowcase from '../../components/custom/VideoShowcase/VideoShowcase';
@@ -211,7 +211,8 @@ function BlogPage() {
     { id: 'sistemas', label: 'Nossos Sistemas' },
     { id: 'recursos', label: 'Recursos' },
     { id: 'automacao', label: 'Automação' },
-    { id: 'o-que-e-lukos', label: 'Benefícios' }
+    { id: 'o-que-e-lukos', label: 'Benefícios' },
+    { id: 'blog-preview', label: 'Novidades' }
   ];
 
   return (
@@ -429,7 +430,7 @@ function BlogPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="absolute bottom-0 left-0 right-0 z-20 bg-[#82aa7a] py-8"
+          className="absolute bottom-0 left-0 right-0 z-20 bg-[#82aa7a] py-8 rounded-t-[20px]"
         >
           <a
             href="#sobre"
@@ -448,59 +449,6 @@ function BlogPage() {
 
 
 
-      <section id="sobre" className="relative min-h-screen py-24 bg-[#82aa7a] overflow-hidden rounded-b-[20px]" style={{ scrollSnapAlign: 'start' }}>
-        {/* Scroll Indicator - Top Center */}
-
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
-
-            {/* Left */}
-            <div className="flex-1 max-w-2xl">
-
-
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="text-5xl md:text-7xl font-black text-white uppercase leading-none mb-8 tracking-tighter"
-              >
-                Sobre a  <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200">
-                  LUKOS
-                </span>
-              </motion.h2>
-
-
-              {/* Stats */}
-              {/* Stats */}
-
-
-            </div>
-
-            {/* Right Visual */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              className="flex-1 relative"
-            >
-              <div className="absolute -top-10 -right-10 w-64 h-64 bg-white/10 rounded-full blur-3xl -z-10 animate-pulse" />
-
-
-            </motion.div>
-          </div>
-
-
-
-        </div>
-        <a href="#funcionalidades" className="absolute top-[250px] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden md:block pt-[120px]">
-          <div className="w-16 h-16 rounded-full bg-[#82aa7a] border-4 border-white flex items-center justify-center animate-bounce shadow-xl hover:scale-110 transition-transform cursor-pointer">
-            <ChevronDown className="text-white w-8 h-8" />
-          </div>
-        </a>
-      </section>
-
-
-
 
 
 
@@ -511,9 +459,9 @@ function BlogPage() {
           <img
             src="https://images.pexels.com/photos/6803551/pexels-photo-6803551.jpeg"
             alt="Inteligência Artificial Background"
-            className="w-full h-full object-cover brightness-[0.3]"
+            className=""
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0f] via-transparent to-[#0a0a0f] opacity-80"></div>
+
         </div>
 
         <div className="container mx-auto px-4 md:px-12 relative z-10">
@@ -525,7 +473,7 @@ function BlogPage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className="w-full max-w-[850px] backdrop-blur-xl bg-white/5 p-8 md:p-12 rounded-[2.5rem] border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] text-center"
+              className="w-full max-w-[850px] backdrop-blur-xl bg-black/50 p-8 md:p-12 rounded-[2.5rem] border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] text-center"
             >
               <h2 className="text-4xl md:text-6xl font-black text-white uppercase leading-tight mb-6 tracking-tighter">
                 <br />
@@ -571,7 +519,7 @@ function BlogPage() {
 
 
 
-      <section id="ia" className="relative min-h-screen flex items-center bg-[#0a0a0f] overflow-hidden" style={{ scrollSnapAlign: 'start' }}>
+      <section id="ia" className="relative min-h-screen flex items-center overflow-hidden" style={{ scrollSnapAlign: 'start', background: 'linear-gradient(135deg, #0a0a0f 0%, #13131f 50%, #0a0a0f 100%)' }}>
         {/* Background Decorative Glows */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
           <div className="absolute top-[20%] left-[10%] w-[50%] h-[50%] bg-purple-600/10 blur-[150px] rounded-full"></div>
@@ -623,38 +571,24 @@ function BlogPage() {
             {/* Coluna Esquerda: Logo Orbital */}
             <div className="relative flex items-center justify-center order-2 lg:order-1">
               <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[450px] lg:h-[450px] flex items-center justify-center">
-                {/* Glow Central */}
-                <div className="absolute inset-0 bg-purple-600/30 blur-[60px] md:blur-[100px] animate-pulse"></div>
+                {/* Glow Central - Equilibrado */}
 
-                {/* Anéis Orbitais */}
-                <div className="absolute inset-0 border-2 border-transparent rounded-full shadow-[0_0_50px_rgba(139,92,246,0.2)]" style={{
-                  background: 'conic-gradient(from 0deg, transparent, rgba(139, 92, 246, 0.4), transparent)',
-                  animation: 'spin 10s linear infinite',
-                  mask: 'radial-gradient(circle, transparent 48%, black 50%, black 52%, transparent 54%)',
-                  WebkitMask: 'radial-gradient(circle, transparent 48%, black 50%, black 52%, transparent 54%)'
+
+                {/* Anéis Orbitais - Mais Definidos */}
+                <div className="absolute inset-0 border border-white/10 rounded-full shadow-[0_0_40px_rgba(139,92,246,0.25)]" style={{
+                  background: 'conic-gradient(from 0deg, transparent, rgba(139, 92, 246, 0.5), transparent)',
+                  animation: 'spin 15s linear infinite',
+                  mask: 'radial-gradient(circle, transparent 58%, black 60%, black 62%, transparent 64%)',
+                  WebkitMask: 'radial-gradient(circle, transparent 58%, black 60%, black 62%, transparent 64%)'
                 }}></div>
-                <div className="absolute inset-8 border border-transparent rounded-full shadow-[0_0_30px_rgba(196,76,244,0.2)]" style={{
-                  background: 'conic-gradient(from 180deg, transparent, rgba(196, 76, 244, 0.4), transparent)',
-                  animation: 'spin 7s linear infinite reverse',
-                  mask: 'radial-gradient(circle, transparent 48%, black 50%, black 52%, transparent 54%)',
-                  WebkitMask: 'radial-gradient(circle, transparent 48%, black 50%, black 52%, transparent 54%)'
+                <div className="absolute inset-12 border border-white/10 rounded-full shadow-[0_0_25px_rgba(196,76,244,0.25)]" style={{
+                  background: 'conic-gradient(from 180deg, transparent, rgba(196, 76, 244, 0.5), transparent)',
+                  animation: 'spin 10s linear infinite reverse',
+                  mask: 'radial-gradient(circle, transparent 58%, black 60%, black 62%, transparent 64%)',
+                  WebkitMask: 'radial-gradient(circle, transparent 58%, black 60%, black 62%, transparent 64%)'
                 }}></div>
 
-                {/* Partículas */}
-                <div className="absolute inset-0">
-                  {[...Array(8)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(139,92,246,0.8)]"
-                      style={{
-                        left: `${50 + 40 * Math.cos((i * 45) * Math.PI / 180)}%`,
-                        top: `${50 + 40 * Math.sin((i * 45) * Math.PI / 180)}%`,
-                        animation: `pulse 2s ease-in-out infinite`,
-                        animationDelay: `${i * 0.2}s`
-                      }}
-                    />
-                  ))}
-                </div>
+                Array.
 
                 {/* Logo Central */}
                 <motion.div
@@ -672,7 +606,7 @@ function BlogPage() {
                   <img
                     src="logo.png"
                     alt="LUKOS IA Logo"
-                    className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(139,92,246,0.5)]"
+                    className="w-full h-full object-contain "
                   />
                 </motion.div>
               </div>
@@ -757,167 +691,302 @@ function BlogPage() {
 
 
 
-
       {/* Seção: Soluções para potencializar seu negócio */}
-      <section id="solucoes-lista" className="py-24 bg-[#0a0a0f] relative overflow-hidden" style={{ scrollSnapAlign: 'start' }}>
-        {/* Modern Mesh Gradient Background */}
+      <section id="solucoes-lista" className="py-20 relative overflow-hidden" style={{ scrollSnapAlign: 'start', background: 'linear-gradient(135deg, #0a0a12 0%, #12121a 50%, #0a0a12 100%)' }}>
+        {/* Efeitos de luz de fundo */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[10%] left-[-10%] w-[50%] h-[50%] bg-[#8B5CF6]/15 blur-[120px] rounded-full animate-pulse"></div>
-          <div className="absolute bottom-[10%] right-[-10%] w-[50%] h-[50%] bg-[#c44cf4]/10 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_rgba(139,92,246,0.05)_0%,_transparent_70%)]"></div>
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#8B5CF6]/8 blur-[150px] rounded-full"></div>
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#82aa7a]/6 blur-[120px] rounded-full"></div>
         </div>
-
         <div className="container mx-auto px-4 md:px-12 relative z-10">
           <div className="text-center mb-16">
             <motion.span
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-[#a78bfa] font-black tracking-[0.4em] uppercase text-xs md:text-sm mb-4 block"
+              className="text-[#a78bfa] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-4 block"
             >
-              NOSSOs DIFERENCIAIS
+              NOSSOS DIFERENCIAIS
             </motion.span>
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter"
+              className="text-3xl md:text-5xl font-bold text-white"
             >
-              SOLUÇÕES PARA <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4]">POTENCIALIZAR</span> SEU NEGÓCIO
+              Soluções para <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#c44cf4] to-[#8B5CF6]">potencializar</span> seu negócio
             </motion.h2>
-            <div className="w-24 h-1.5 bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4] mx-auto mt-6 rounded-full"></div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
-              { title: "Faturamento Express", description: "Visualize recebimentos reais, taxas e descontos, otimizando o tempo da sua equipe.", icon: TrendingUp },
-              { title: "Banco de Dados na Nuvem", description: "Suas informações com segurança e acesso remoto.", icon: Cloud },
-              { title: "Conciliação de cartões", description: "Visualize recebimentos reais, taxas e descontos, otimizando o tempo da sua equipe.", icon: CreditCard },
-              { title: "Programa Fidelidade", description: "Crie vínculo com seus clientes, oferecendo descontos exclusivos utilizando o Whatsapp", icon: MessageCircle },
-              { title: "PDV Móvel", description: "Receba pagamentos com segurança e agilidade, sem o cliente sair do carro!", icon: Smartphone },
-              { title: "Carteiras Digitais & Cripto", description: "Recebimento por Carteiras Digitais e Criptomoedas. Inovação em pagamentos.", icon: Wallet },
-              { title: "Fatura Web", description: "Controle total de faturas e acesso, com liberação e bloqueio de placas para abastecimento.", icon: FileText },
+              { title: "Faturamento Express", description: "Visualize recebimentos reais, taxas e descontos, otimizando o tempo da sua equipe.", icon: TrendingUp, highlighted: false },
+              { title: "Banco de Dados na Nuvem", description: "Suas informações com segurança e acesso remoto.", icon: Cloud, highlighted: false },
+              { title: "Conciliação de Cartões", description: "Visualize recebimentos reais, taxas e descontos, otimizando o tempo da sua equipe.", icon: CreditCard, highlighted: false },
+              { title: "Programa Fidelidade", description: "Crie vínculo com seus clientes, oferecendo descontos exclusivos utilizando o Whatsapp", icon: MessageCircle, highlighted: true },
+              { title: "PDV Móvel", description: "Receba pagamentos com segurança e agilidade, sem o cliente sair do carro!", icon: Smartphone, highlighted: false },
+              { title: "Carteiras Digitais & Cripto", description: "Recebimento por Carteiras Digitais e Criptomoedas. Inovação em pagamentos.", icon: Wallet, highlighted: false },
+              { title: "Fatura Web", description: "Controle total de faturas e acesso, com liberação e bloqueio de placas para abastecimento.", icon: FileText, highlighted: false },
             ].map((solucao, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
                 viewport={{ once: true }}
-                className="group p-10 rounded-[2.5rem] bg-white/[0.03] hover:bg-white/[0.08] transition-all duration-700 text-center flex flex-col items-center border border-white/5 hover:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.3)] backdrop-blur-md"
+                className={`group p-6 rounded-2xl transition-all duration-300 flex flex-col items-start text-left ${solucao.highlighted
+                  ? 'bg-gradient-to-br from-[#8B5CF6] to-[#7c4dff] hover:from-[#7c4dff] hover:to-[#6d3de8]'
+                  : 'bg-[#16161c] hover:bg-[#1e1e26] border border-[#2a2a35] hover:border-[#8B5CF6]/30'
+                  }`}
               >
-                {/* Icon with Permanent Subtle Glow */}
-                <div className="relative mb-8">
-                  <div className="absolute inset-0 bg-[#8B5CF6]/30 blur-2xl rounded-full opacity-40 group-hover:opacity-100 transition-opacity duration-700"></div>
-                  <solucao.icon className="w-12 h-12 text-[#a78bfa] group-hover:text-white transition-colors duration-500 relative z-10" />
+                {/* Icon */}
+                <div className={`mb-5 p-3 rounded-xl ${solucao.highlighted
+                  ? 'bg-white/20'
+                  : 'bg-[#8B5CF6]/10 border border-[#8B5CF6]/20'
+                  }`}>
+                  <solucao.icon className={`w-6 h-6 ${solucao.highlighted ? 'text-white' : 'text-[#a78bfa]'
+                    }`} />
                 </div>
 
-                <h3 className="text-white text-lg font-black uppercase tracking-[0.2em] mb-4 group-hover:text-[#a78bfa] transition-colors">
+                <h3 className={`text-lg font-bold mb-3 ${solucao.highlighted ? 'text-white' : 'text-white'
+                  }`}>
                   {solucao.title}
                 </h3>
 
-                {/* Separator Dot with Glow */}
-                <div className="w-2 h-2 bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4] rounded-full mb-6 shadow-[0_0_15px_rgba(139,92,246,0.6)]"></div>
-
-                <p className="text-white/70 text-sm md:text-base leading-relaxed font-medium max-w-[280px]">
+                <p className={`text-sm leading-relaxed ${solucao.highlighted ? 'text-white/90' : 'text-gray-400'
+                  }`}>
                   {solucao.description}
                 </p>
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-20 text-center">
-            <motion.a
-              href="#sistemas"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-2 bg-[#8B5CF6] hover:bg-[#7c4dff] text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition-all shadow-xl shadow-purple-500/20"
+      {/* Seção: Nossos Sistemas (Estilo Game Cards) */}
+      <section id="sistemas" className="py-24 relative overflow-hidden" style={{ scrollSnapAlign: 'start', background: 'radial-gradient(ellipse at center, #1a1b26 0%, #0a0a0f 100%)' }}>
+        {/* Background Grid Pattern just for texture */}
+        <div className="absolute inset-0 z-0 opacity-20"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)',
+            backgroundSize: '40px 40px'
+          }}>
+        </div>
+        <div className="container mx-auto px-4 md:px-12 relative z-10">
+          <div className="text-center mb-16">
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-[#a78bfa] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-4 block"
             >
-              CONHECER TODOS OS SISTEMAS
-              <ArrowDown className="w-5 h-5 animate-bounce" />
-            </motion.a>
+              TECNOLOGIA DE PONTA
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-3xl md:text-5xl font-bold text-white mb-6"
+            >
+              Ecossistema <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4]">LUKOS</span>
+            </motion.h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+              Soluções integradas para gestão completa do seu negócio.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {systems.map((system, index) => (
+              <motion.div
+                key={system.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="group relative h-[360px] rounded-2xl overflow-hidden cursor-pointer border border-white/5 hover:border-[#8B5CF6]/50 transition-all duration-500 bg-[#16161c] hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(139,92,246,0.2)]"
+              >
+                {/* Background Image */}
+                <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110">
+                  <img
+                    src={system.image}
+                    alt={system.name}
+                    className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-500"
+                    onError={(e) => {
+                      e.target.style.display = 'none'; // Hide if fails
+                    }}
+                  />
+                  {/* Fallback pattern if image fails or while loading */}
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(139,92,246,0.1)_0%,_transparent_70%)] opacity-50" />
+                </div>
+
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/80 to-transparent opacity-90 group-hover:opacity-80 transition-opacity duration-500" />
+
+                {/* Active/Hover Glow Effect (Blue/Purple line at bottom) */}
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left shadow-[0_0_20px_rgba(139,92,246,0.8)]" />
+
+                {/* Content */}
+                <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                  {/* Top Quote Icon or Tag */}
+                  <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transform translate-y-[-10px] group-hover:translate-y-0 transition-all duration-500">
+                    <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+                      <ArrowRight className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
+
+                  <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                    {/* Date/Tag Line */}
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-[#8B5CF6] text-[10px] font-black tracking-widest uppercase bg-[#8B5CF6]/10 px-2 py-1 rounded border border-[#8B5CF6]/20 shadow-[0_0_10px_rgba(139,92,246,0.1)]">
+                        SISTEMA
+                      </span>
+                      <span className="text-white/40 text-[10px] font-medium uppercase tracking-wider group-hover:text-white/60 transition-colors">
+                        {system.id}
+                      </span>
+                    </div>
+
+                    <h3 className="text-2xl font-black text-white mb-2 leading-tight group-hover:text-[#a78bfa] transition-colors uppercase tracking-tight">
+                      {system.name}
+                    </h3>
+
+                    <p className="text-gray-400 text-sm line-clamp-2 leading-relaxed group-hover:text-white/90 transition-colors duration-300 font-medium border-l-2 border-transparent group-hover:border-[#8B5CF6] pl-0 group-hover:pl-3">
+                      {system.description}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-16 text-center">
+            <Link
+              to="/sistemas"
+              className="inline-flex items-center gap-2 text-white/50 hover:text-[#8B5CF6] font-bold text-sm tracking-widest uppercase transition-colors group"
+            >
+              VER TODOS OS SISTEMAS
+              <span className="group-hover:translate-x-1 transition-transform">&gt;&gt;&gt;</span>
+            </Link>
           </div>
         </div>
       </section>
 
-      <section id="sistemas" className="min-h-screen flex items-center bg-[#0a0a0f]" style={{ scrollSnapAlign: 'start' }}>
-        <BentoGrid />
-      </section>
 
-      {/* Seção: Recursos e Benefícios - Estilo Moderno */}
-      <section id="recursos" className="py-16 md:py-24 min-h-screen relative flex items-center" style={{ backgroundColor: '#0a0a0f', scrollSnapAlign: 'start' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* Seção: Recursos e Benefícios - Estilo Premium Refinado */}
+      <section id="recursos" className="py-24 relative overflow-hidden" style={{ scrollSnapAlign: 'start', background: 'radial-gradient(ellipse at center, #1a1b26 0%, #0a0a0f 100%)' }}>
+        {/* Background Grid Pattern just for texture */}
+        <div className="absolute inset-0 z-0 opacity-20"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)',
+            backgroundSize: '40px 40px'
+          }}>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Coluna Esquerda - Texto */}
-            <div className="space-y-8">
+            <div className="space-y-10">
               {/* Títulos com navegação */}
-              <div className="space-y-4">
-                <h2 className="text-3xl md:text-4xl font-bold text-white relative pb-2">
-                  <span className="relative">
-                    Para Gestores
-                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#c44cf4] to-[#8b5cf6]"></span>
-                  </span>
+              <div className="space-y-2">
+                <motion.span
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  className="text-[#8B5CF6] font-bold tracking-widest uppercase text-sm"
+                >
+                  Por que escolher a Lukos?
+                </motion.span>
+                <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
+                  <span className="block">Tecnologia que</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c44cf4] to-[#8b5cf6]">Impulsiona</span> Resultados
                 </h2>
-                <h3 className="text-xl md:text-2xl font-medium text-gray-400">
-                  Para Operadores
-                </h3>
               </div>
 
-              {/* Lista de Recursos Numerados */}
-              <div className="space-y-8">
-                {/* Recurso 1 */}
-                <div className="space-y-2">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <h4 className="text-xl md:text-2xl font-semibold text-white mb-2">
-                        Plataforma Completa
-                      </h4>
-                      <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                        Sistema completo de gestão empresarial, análise em tempo real e estatísticas detalhadas. Interface intuitiva, integração com API e automação de processos para postos de combustível.
-                      </p>
+              {/* Lista de Recursos com Cards Premium */}
+              <div className="space-y-6">
+                {[
+                  {
+                    icon: LayoutDashboard,
+                    title: "Plataforma Completa",
+                    desc: "Sistema completo de gestão empresarial, análise em tempo real e estatísticas detalhadas. Interface intuitiva e integração total.",
+                    color: "from-blue-500 to-cyan-500"
+                  },
+                  {
+                    icon: Wallet,
+                    title: "Redução de Custos",
+                    desc: "Condições vantajosas, redução de custos operacionais e otimização de processos para aumentar sua rentabilidade.",
+                    color: "from-green-500 to-emerald-500"
+                  },
+                  {
+                    icon: Phone,
+                    title: "Suporte 24/7",
+                    desc: "Equipe especializada sempre disponível. Ajudamos a configurar, treinar e maximizar seus resultados a qualquer hora.",
+                    color: "from-purple-500 to-pink-500"
+                  }
+                ].map((item, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 hover:border-[#8B5CF6]/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)] hover:-translate-y-1"
+                  >
+                    <div className="flex items-start gap-6">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} p-0.5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                        <div className="w-full h-full bg-[#0a0a0f] rounded-[10px] flex items-center justify-center">
+                          <item.icon className="w-6 h-6 text-white" />
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-xl font-bold text-white mb-2 group-hover:text-[#a78bfa] transition-colors">{item.title}</h4>
+                        <p className="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">{item.desc}</p>
+                      </div>
                     </div>
-                  </div>
-                </div>
-
-                {/* Recurso 2 */}
-                <div className="space-y-2">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <h4 className="text-xl md:text-2xl font-semibold text-white mb-2">
-                        Redução de Custos
-                      </h4>
-                      <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                        Condições vantajosas para nossos parceiros, redução de custos operacionais acima da média do mercado, otimização de processos e aumento da rentabilidade do seu negócio.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Recurso 3 */}
-                <div className="space-y-2">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <h4 className="text-xl md:text-2xl font-semibold text-white mb-2">
-                        Suporte 24/7
-                      </h4>
-                      <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                        Suporte amigável sempre disponível, ajudamos a configurar o sistema, escolher as melhores funcionalidades e sugerir estratégias para maximizar seus resultados.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                  </motion.div>
+                ))}
               </div>
             </div>
 
-            {/* Coluna Direita - Imagem */}
-            <div className="relative">
-              <div className="relative rounded-lg overflow-hidden shadow-2xl">
+            {/* Coluna Direita - Imagem Glassmorphism */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="relative"
+            >
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-[#16161c]">
+                {/* Glass overlay effect */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-transparent pointer-events-none z-10" />
+
                 <img
                   src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1000&auto=format&fit=crop"
-                  alt="Profissional trabalhando"
-                  className="w-full h-[600px] object-cover"
+                  alt="Profissional trabalhando na Lukos"
+                  className="w-full h-[600px] object-cover opacity-80 hover:opacity-100 transition-opacity duration-700 hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f]/80 via-transparent to-transparent"></div>
+
+                {/* Gradient Bottom */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent z-10"></div>
+
+                {/* Floating Widget Mockup */}
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="absolute bottom-8 left-8 right-8 p-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl z-20"
+                >
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                      <BarChart3 className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-white font-bold">Resumo Diário</div>
+                      <div className="text-green-400 text-sm font-medium">+24% em vendas hoje</div>
+                    </div>
+                  </div>
+                  <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full w-[75%] bg-gradient-to-r from-green-500 to-emerald-400"></div>
+                  </div>
+                </motion.div>
               </div>
-            </div>
+
+              {/* Decorative Elements */}
+              <div className="absolute -top-10 -right-10 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl -z-10 animate-pulse" />
+              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -z-10 animate-pulse" style={{ animationDelay: '1s' }} />
+            </motion.div>
           </div>
         </div>
       </section>
@@ -925,16 +994,32 @@ function BlogPage() {
 
 
       {/* Seção: Seu Posto Automatizado por IA */}
-      <section id="automacao" style={{ backgroundColor: '#100e26', scrollSnapAlign: 'start' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="automacao" className="py-24 relative overflow-hidden" style={{ scrollSnapAlign: 'start', background: 'radial-gradient(ellipse at center, #1a1b26 0%, #0a0a0f 100%)' }}>
+        {/* Background Grid Pattern */}
+        <div className="absolute inset-0 z-0 opacity-10"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.05) 1px, transparent 1px)',
+            backgroundSize: '60px 60px'
+          }}>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Header Centralizado */}
-          <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
-              <span className="block">SEU POSTO</span>
-              <span className="block">AUTOMATIZADO POR <span className="text-[#c44cf4]">IA</span></span>
+          <div className="text-center mb-16 md:mb-24">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6"
+            >
+              <Brain className="w-4 h-4 text-purple-400" />
+              <span className="text-purple-300 text-xs font-bold tracking-widest uppercase">Inteligência Artificial Lukos</span>
+            </motion.div>
+            <h2 className="text-4xl md:text-5xl lg:text-7xl font-black text-white leading-tight mb-6 tracking-tight">
+              SEU POSTO <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] via-[#c44cf4] to-[#8B5CF6] animate-pulse">AUTOMATIZADO</span>
             </h2>
-            <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
-              Seu posto mais eficiente com IA: automação, redução de custos e decisões mais rápidas.
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+              O futuro da gestão é agora. Deixe nossa IA tomar as decisões complexas enquanto você foca no crescimento.
             </p>
           </div>
 
@@ -1176,9 +1261,39 @@ function BlogPage() {
         </div>
       </section>
 
+
+
+      const itemsList = [
+      {
+        id: 1,
+      title: "Título do Item 1",
+      description: "Descrição detalhada do item 1.",
+      image: "https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png",
+      isActive: true,
+                },
+      {
+        id: 2,
+      title: "Título do Item 2",
+      description: "Descrição detalhada do item 2.",
+      image: "https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png",
+      isActive: false,
+                },
+      {
+        id: 3,
+      title: "Título do Item 3",
+      description: "Descrição detalhada do item 3.",
+      image: "https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png",
+      isActive: true,
+                },
+      ];
+
+
+
+      map.id
+
+
       {/* Seção: O que é LUKOS (Fundo Roxo) */}
       <section id="o-que-e-lukos" className="py-24 min-h-screen relative overflow-hidden flex items-center" style={{ backgroundColor: '#0a0a0f', scrollSnapAlign: 'start' }}>
-        <div className="absolute inset-0 bg-gradient-to-br from-[#c44cf4]/10 to-transparent"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Coluna Esquerda */}
@@ -1216,13 +1331,121 @@ function BlogPage() {
         </div>
       </section>
 
+      {/* Seção: Blog / Updates - Premium Style */}
+      <section id="blog-preview" className="py-24 relative overflow-hidden" style={{ scrollSnapAlign: 'start', background: 'radial-gradient(ellipse at center, #1a1b26 0%, #0a0a0f 100%)' }}>
+        {/* Background Pattern */}
+        <div className="absolute inset-0 z-0 opacity-10"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.05) 1px, transparent 1px)',
+            backgroundSize: '40px 40px'
+          }}>
+        </div>
 
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-[#8B5CF6] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-4 block"
+            >
+              Fique por Dentro
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-3xl md:text-5xl font-black text-white uppercase mb-4"
+            >
+              Novidades <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c44cf4] to-[#8B5CF6]">LUKOS</span>
+            </motion.h2>
+          </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {blogPosts.slice(0, 3).map((post, index) => (
+              <motion.div
+                key={post.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="group relative rounded-2xl overflow-hidden bg-[#16161c] border border-white/5 hover:border-[#8B5CF6]/50 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(139,92,246,0.15)] flex flex-col h-full"
+              >
+                {/* Image Container */}
+                <div className="relative h-48 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#16161c] to-transparent opacity-60 z-10" />
+                  {post.image ? (
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:brightness-110"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                      <FileText className="w-12 h-12 text-white/20" />
+                    </div>
+                  )}
 
+                  {/* Badge */}
+                  <div className="absolute top-4 left-4 z-20">
+                    <span className="px-3 py-1 rounded-full bg-[#8B5CF6]/20 backdrop-blur-md border border-[#8B5CF6]/30 text-[#a78bfa] text-xs font-bold uppercase tracking-wide">
+                      {post.category}
+                    </span>
+                  </div>
+                </div>
 
+                {/* Content */}
+                <div className="p-6 flex-1 flex flex-col">
+                  <div className="flex items-center gap-3 text-gray-500 text-xs font-medium mb-3 uppercase tracking-wider">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>{post.date}</span>
+                    </div>
+                    <div className="w-1 h-1 rounded-full bg-gray-600" />
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      <span>{post.readTime}</span>
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-white mb-3 leading-tight group-hover:text-[#a78bfa] transition-colors">
+                    {post.title}
+                  </h3>
+
+                  <p className="text-gray-400 text-sm leading-relaxed mb-6 flex-1 line-clamp-3">
+                    {post.excerpt}
+                  </p>
+
+                  <Link
+                    to={post.link}
+                    className="inline-flex items-center gap-2 text-white/70 hover:text-white font-bold text-sm uppercase tracking-wide group/link"
+                  >
+                    Ler artigo
+                    <ArrowRight className="w-4 h-4 transform group-hover/link:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <Link
+              to="/blog"
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl border border-white/10 hover:border-[#8B5CF6]/50 bg-white/5 hover:bg-[#8B5CF6]/10 text-white font-bold transition-all"
+            >
+              VER TODOS OS POSTS
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Seção: FAQ (Dúvidas Frequentes) */}
-      <section id="faq" className="py-24 bg-[#0a0a0f] relative overflow-hidden" style={{ scrollSnapAlign: 'start' }}>
+      <section id="faq" className="py-24 relative overflow-hidden" style={{ scrollSnapAlign: 'start', background: 'radial-gradient(ellipse at center, #1a1b26 0%, #0a0a0f 100%)' }}>
+        {/* Background Grid Pattern */}
+        <div className="absolute inset-0 z-0 opacity-10"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.05) 1px, transparent 1px)',
+            backgroundSize: '40px 40px'
+          }}>
+        </div>
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black text-white uppercase mb-4">Dúvidas Frequentes</h2>
@@ -1276,6 +1499,8 @@ function BlogPage() {
           </div>
         </div>
       </section>
+      Array
+
 
       {/* Seção: CTA Final */}
       <section id="ctafinal" className="py-24 bg-[#0a0a0f] relative overflow-hidden" style={{ scrollSnapAlign: 'start' }}>
@@ -1298,6 +1523,7 @@ function BlogPage() {
           </div>
         </div>
       </section>
+
 
       {/* Botão Scroll to Top */}
       <motion.button

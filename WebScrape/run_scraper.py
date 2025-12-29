@@ -310,7 +310,13 @@ def _process_data(settings) -> None:
     url_to_hash_map: dict[str, str] = {}
     existing_hashes: set[str] = set()
     
-    for fp in files:
+    total_files = len(files)
+    log.info("Primeira passada: criando mapeamento de URLs para shareHash (%d arquivos)", total_files)
+    
+    for idx, fp in enumerate(files, start=1):
+        if idx % 50 == 0 or idx == total_files:
+            log.info("Primeira passada: (%d/%d) Processando: %s", idx, total_files, fp.name)
+        
         page = read_json(fp)
         
         if settings.ignore_non_leaf_pages and page.get("is_leaf") is False:
@@ -341,52 +347,67 @@ def _process_data(settings) -> None:
         if url_original:
             url_to_hash_map[url_original] = share_hash
     
+    log.info("Primeira passada concluida: %d URLs mapeadas", len(url_to_hash_map))
+    
     # Segunda passada: processar com conversão de links
-    for fp in files:
-        page = read_json(fp)
+    log.info("Segunda passada: processando tutoriais com conversao de links (%d arquivos)", total_files)
+    
+    for idx, fp in enumerate(files, start=1):
+        if idx % 50 == 0 or idx == total_files:
+            log.info("Segunda passada: (%d/%d) Processando: %s", idx, total_files, fp.name)
         
-        if settings.ignore_non_leaf_pages and page.get("is_leaf") is False:
-            continue
-        
-        # Processar com mapeamento de URLs para shareHashes
-        processed = process_raw_page(page, url_to_hash_map=url_to_hash_map)
-        tut = processed["tutorial"]
-        
-        # Adicionar shareHash ao tutorial se disponível no mapeamento
-        url_original = normalize_url(page.get("url") or "")
-        if url_original and url_original in url_to_hash_map:
-            tut["share_hash"] = url_to_hash_map[url_original]
-        
-        # Map category_path -> leaf category id
-        parent: str | None = None
-        for seg in limit_category_depth(tut.get("category_path"), max_depth=2):
-            parent = ensure_category(parent, str(seg))
-        tut["category_db_key"] = parent
-        
-        tutorials.append(tut)
-        steps.extend(processed["steps"])
-        media.extend(processed["media"])
-        
-        if settings.report_mismatches:
-            from src.utils.urls import google_sites_path_segments
-            url = page.get("url") or ""
-            slug = None
-            try:
-                segs = google_sites_path_segments(url, settings.base_url)
-                slug = segs[-1] if segs else None
-            except Exception:
+        try:
+            page = read_json(fp)
+            
+            if settings.ignore_non_leaf_pages and page.get("is_leaf") is False:
+                continue
+            
+            # Processar com mapeamento de URLs para shareHashes
+            processed = process_raw_page(page, url_to_hash_map=url_to_hash_map)
+            tut = processed["tutorial"]
+            
+            # Adicionar shareHash ao tutorial se disponível no mapeamento
+            url_original = normalize_url(page.get("url") or "")
+            if url_original and url_original in url_to_hash_map:
+                tut["share_hash"] = url_to_hash_map[url_original]
+            
+            # Map category_path -> leaf category id
+            parent: str | None = None
+            for seg in limit_category_depth(tut.get("category_path"), max_depth=2):
+                parent = ensure_category(parent, str(seg))
+            tut["category_db_key"] = parent
+            
+            tutorials.append(tut)
+            steps.extend(processed["steps"])
+            media.extend(processed["media"])
+            
+            if settings.report_mismatches:
+                from src.utils.urls import google_sites_path_segments
+                url = page.get("url") or ""
                 slug = None
-            mismatches.append({
-                "url": url,
-                "slug": slug,
-                "title_menu": page.get("title_menu"),
-                "title_extracted": page.get("title_extracted"),
-                "title_final": page.get("title"),
-                "category_path_menu": page.get("category_path_menu"),
-                "category_path_extracted": page.get("category_path_extracted"),
-                "category_path_final": page.get("category_path"),
-                "discovered_from_menu": page.get("discovered_from_menu"),
-            })
+                try:
+                    segs = google_sites_path_segments(url, settings.base_url)
+                    slug = segs[-1] if segs else None
+                except Exception:
+                    slug = None
+                mismatches.append({
+                    "url": url,
+                    "slug": slug,
+                    "title_menu": page.get("title_menu"),
+                    "title_extracted": page.get("title_extracted"),
+                    "title_final": page.get("title"),
+                    "category_path_menu": page.get("category_path_menu"),
+                    "category_path_extracted": page.get("category_path_extracted"),
+                    "category_path_final": page.get("category_path"),
+                    "discovered_from_menu": page.get("discovered_from_menu"),
+                })
+        except Exception as e:
+            log.error("Erro ao processar arquivo %s: %s", fp.name, e, exc_info=True)
+            # Continuar processando outros arquivos mesmo se um falhar
+            continue
+    
+    log.info("Segunda passada concluida: %d tutoriais, %d passos, %d midias processados", 
+             len(tutorials), len(steps), len(media))
     
     # Stable sorting
     categories.sort(key=lambda c: (c["parent_id"] or "", c["name"]))

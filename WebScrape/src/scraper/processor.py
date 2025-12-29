@@ -16,6 +16,103 @@ from src.utils.urls import slugify, url_id
 log = logging.getLogger(__name__)
 
 
+def _is_footer_element(elem: Tag, soup: BeautifulSoup | None = None) -> bool:
+    """
+    Verifica se um elemento é parte do rodapé da página.
+    
+    Args:
+        elem: Elemento Tag a ser verificado
+        soup: BeautifulSoup opcional para verificar posição no documento
+    
+    Returns:
+        True se o elemento é parte do rodapé, False caso contrário
+    """
+    if not isinstance(elem, Tag):
+        return False
+    
+    # Verificar se está dentro de um elemento <footer>
+    for parent in elem.parents:
+        if isinstance(parent, Tag) and parent.name == "footer":
+            return True
+    
+    # Verificar se o próprio elemento é um <footer>
+    if elem.name == "footer":
+        return True
+    
+    # Textos conhecidos de rodapé
+    footer_texts = [
+        "LUKOS SOLUÇÕES EM TECNOLOGIA",
+        "© 2018",
+        "©",
+        "Sites do Google",
+        "Denunciar abuso",
+        "Report abuse",
+        "Denunciar",
+        "abuso",
+        "TELEFONE",
+        "EMAIL",
+        "ATENDIMENTO",
+        "suporte@lukos.com.br",
+    ]
+    
+    # Obter texto do elemento (case-insensitive)
+    elem_text = elem.get_text(" ", strip=True).upper()
+    
+    # Verificar se contém textos de rodapé conhecidos
+    for footer_text in footer_texts:
+        if footer_text.upper() in elem_text:
+            # Verificar se o texto de rodapé é uma parte significativa do conteúdo
+            # Se o elemento contém principalmente texto de rodapé, é rodapé
+            if len(elem_text) < 200:  # Elementos pequenos com texto de rodapé são rodapé
+                return True
+            # Para elementos maiores, verificar se o texto de rodapé aparece no título ou início
+            if footer_text.upper() in elem_text[:100]:
+                return True
+    
+    # Verificar classes/id que indicam rodapé
+    classes = elem.get("class", [])
+    class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+    elem_id = elem.get("id", "")
+    
+    footer_keywords = ["footer", "copyright", "abuse", "denunciar"]
+    for keyword in footer_keywords:
+        if keyword.lower() in class_str.lower() or keyword.lower() in str(elem_id).lower():
+            return True
+    
+    # Verificar se está dentro de um elemento de rodapé
+    for parent in elem.parents:
+        if isinstance(parent, Tag):
+            parent_text = parent.get_text(" ", strip=True).upper()
+            for footer_text in footer_texts:
+                if footer_text.upper() in parent_text and len(parent_text) < 300:
+                    return True
+    
+    # Verificar posição no documento (últimos 20% do conteúdo)
+    if soup is not None:
+        try:
+            # Encontrar todos os elementos do mesmo tipo
+            all_elements = soup.find_all(elem.name)
+            if all_elements:
+                # Verificar se este elemento está nos últimos 20%
+                elem_index = -1
+                for idx, e in enumerate(all_elements):
+                    if e == elem:
+                        elem_index = idx
+                        break
+                
+                if elem_index >= 0:
+                    # Se está nos últimos 20% dos elementos, pode ser rodapé
+                    threshold = len(all_elements) * 0.8
+                    if elem_index >= threshold:
+                        # Verificar se tem pouco conteúdo ou é pequeno
+                        if len(elem_text) < 150:
+                            return True
+        except Exception:
+            pass
+    
+    return False
+
+
 def _remove_navigation_elements(soup: BeautifulSoup) -> BeautifulSoup:
     """
     Remove elementos de navegação conhecidos do Google Sites.
@@ -100,6 +197,31 @@ def _remove_navigation_elements(soup: BeautifulSoup) -> BeautifulSoup:
     for class_name in google_sites_nav_classes:
         for elem in soup_copy.find_all(class_=lambda x: x and class_name.lower() in str(x).lower()):
             elem.decompose()
+    
+    # Remover todos os elementos <footer> e seu conteúdo
+    for footer in soup_copy.find_all("footer"):
+        footer.decompose()
+        log.debug("Removido elemento <footer> e seu conteúdo")
+    
+    # Remover elementos de rodapé usando a função de detecção
+    # Coletar elementos para remover (para evitar modificar durante iteração)
+    footer_elements_to_remove = []
+    for elem in soup_copy.find_all(True):  # find_all(True) encontra todos os elementos
+        if isinstance(elem, Tag) and _is_footer_element(elem, soup_copy):
+            footer_elements_to_remove.append(elem)
+    
+    # Remover elementos de rodapé encontrados
+    for elem in footer_elements_to_remove:
+        elem.decompose()
+        log.debug("Removido elemento de rodapé: %s", elem.name)
+    
+    # Remover imagens com classe CENy8b (decorativas/rodapé do Google Sites)
+    for img in soup_copy.find_all("img", class_=True):
+        classes = img.get("class", [])
+        class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+        if "CENy8b" in class_str:
+            img.decompose()
+            log.debug("Removida imagem decorativa com classe CENy8b")
     
     return soup_copy
 
@@ -623,7 +745,25 @@ def _find_step_separators(soup: BeautifulSoup) -> list[Tag]:
             if (section_id.startswith("h.") and 
                 "yaqOZd" in class_str and 
                 "lQAHbd" in class_str):
-                separators.append(section)
+                # Excluir sections que estão dentro de elementos <footer>
+                is_in_footer = False
+                for parent in section.parents:
+                    if isinstance(parent, Tag) and parent.name == "footer":
+                        is_in_footer = True
+                        break
+                
+                # Excluir sections que são rodapé (contêm textos de rodapé conhecidos)
+                if not is_in_footer:
+                    section_text = section.get_text(" ", strip=True).upper()
+                    footer_texts = ["LUKOS SOLUÇÕES EM TECNOLOGIA", "© 2018", "TELEFONE", "EMAIL", "ATENDIMENTO", "SUPORTE@LUKOS.COM.BR"]
+                    is_footer_text = any(ft in section_text for ft in footer_texts)
+                    
+                    if not is_footer_text:
+                        separators.append(section)
+                    else:
+                        log.debug("Excluída section de rodapé dos separadores: %s", section_id)
+                else:
+                    log.debug("Excluída section dentro de <footer> dos separadores: %s", section_id)
     
     # Ordenar separadores por posição no documento
     # Usar uma função que encontra a posição do elemento na árvore
@@ -718,12 +858,31 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
                         if text and len(text) > 10:
                             step_title = text[:100].strip()
                     
-                    out_sep.append({
-                        "title": step_title or f"Passo {step_num}",
-                        "content_html": segment_html,
-                        "media": step_media
-                    })
-                    step_num += 1
+                    # Verificar se não é um passo de rodapé
+                    # Verificar pelo texto do segmento
+                    segment_text = segment_soup.get_text(" ", strip=True).upper()
+                    is_footer = False
+                    footer_texts = ["LUKOS SOLUÇÕES EM TECNOLOGIA", "© 2018", "SITES DO GOOGLE", "DENUNCIAR ABUSO", "REPORT ABUSE"]
+                    for footer_text in footer_texts:
+                        if footer_text in segment_text and len(segment_text) < 300:
+                            is_footer = True
+                            break
+                    
+                    # Se não detectou pelo texto, verificar pelo primeiro elemento
+                    if not is_footer:
+                        first_elem = segment_soup.find()
+                        if first_elem:
+                            is_footer = _is_footer_element(first_elem, soup_no_h1)
+                    
+                    if not is_footer:
+                        out_sep.append({
+                            "title": step_title or f"Passo {step_num}",
+                            "content_html": segment_html,
+                            "media": step_media
+                        })
+                        step_num += 1
+                    else:
+                        log.debug("Pulado passo de rodapé: %s", step_title)
             
             # Próximo segmento começa após o separador
             start_pos = sep_pos + len(str(sep))
@@ -745,11 +904,30 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
                     if text and len(text) > 10:
                         step_title = text[:100].strip()
                 
-                out_sep.append({
-                    "title": step_title or f"Passo {step_num}",
-                    "content_html": segment_html,
-                    "media": step_media
-                })
+                # Verificar se não é um passo de rodapé
+                # Verificar pelo texto do segmento
+                segment_text = segment_soup.get_text(" ", strip=True).upper()
+                is_footer = False
+                footer_texts = ["LUKOS SOLUÇÕES EM TECNOLOGIA", "© 2018", "SITES DO GOOGLE", "DENUNCIAR ABUSO", "REPORT ABUSE"]
+                for footer_text in footer_texts:
+                    if footer_text in segment_text and len(segment_text) < 300:
+                        is_footer = True
+                        break
+                
+                # Se não detectou pelo texto, verificar pelo primeiro elemento
+                if not is_footer:
+                    first_elem = segment_soup.find()
+                    if first_elem:
+                        is_footer = _is_footer_element(first_elem, soup_no_h1)
+                
+                if not is_footer:
+                    out_sep.append({
+                        "title": step_title or f"Passo {step_num}",
+                        "content_html": segment_html,
+                        "media": step_media
+                    })
+                else:
+                    log.debug("Pulado último passo de rodapé: %s", step_title)
         
         # Se encontrou pelo menos 1 passo, retornar
         if len(out_sep) >= 1:
@@ -771,9 +949,13 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
             if intro_content:
                 out.append({"title": None, "content_html": intro_content, "media": []})
             for idx, li in enumerate(lis, start=1):
-                # Extrair mídias do li
-                step_media = _extract_media_from_element(li)
-                out.append({"title": f"Passo {idx}", "content_html": str(li), "media": step_media})
+                # Verificar se não é um passo de rodapé
+                if not _is_footer_element(li, soup_no_h1):
+                    # Extrair mídias do li
+                    step_media = _extract_media_from_element(li)
+                    out.append({"title": f"Passo {idx}", "content_html": str(li), "media": step_media})
+                else:
+                    log.debug("Pulado passo de rodapé da lista: Passo %d", idx)
             return out
 
     # 2) Split by headings (h2/h3)
@@ -837,7 +1019,26 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
             }, "H1,H3,H4")
             # #endregion
             
-            out2.append({"title": title, "content_html": "".join(chunk), "media": step_media})
+            # Verificar se não é um passo de rodapé antes de adicionar
+            chunk_soup = BeautifulSoup("".join(chunk), "lxml")
+            chunk_text = chunk_soup.get_text(" ", strip=True).upper()
+            is_footer = False
+            footer_texts = ["LUKOS SOLUÇÕES EM TECNOLOGIA", "© 2018", "SITES DO GOOGLE", "DENUNCIAR ABUSO", "REPORT ABUSE"]
+            for footer_text in footer_texts:
+                if footer_text in chunk_text and len(chunk_text) < 300:
+                    is_footer = True
+                    break
+            
+            # Se não detectou pelo texto, verificar pelo primeiro elemento
+            if not is_footer:
+                first_elem = chunk_soup.find()
+                if first_elem:
+                    is_footer = _is_footer_element(first_elem, soup_no_h1)
+            
+            if not is_footer:
+                out2.append({"title": title, "content_html": "".join(chunk), "media": step_media})
+            else:
+                log.debug("Pulado passo de rodapé do heading: %s", title)
         
         # If we got at least 2 chunks (ou 1 se tiver intro), treat as steps.
         if len(out2) >= 2 or (len(out2) == 1 and intro_content):
@@ -884,12 +1085,16 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
                         if words:
                             title = " ".join(words)
                     
-                    step_media = _extract_media_from_element(elem)
-                    potential_steps.append({
-                        "title": title,
-                        "content_html": str(elem),
-                        "media": step_media
-                    })
+                    # Verificar se não é um passo de rodapé
+                    if not _is_footer_element(elem, soup_no_h1):
+                        step_media = _extract_media_from_element(elem)
+                        potential_steps.append({
+                            "title": title,
+                            "content_html": str(elem),
+                            "media": step_media
+                        })
+                    else:
+                        log.debug("Pulado passo potencial de rodapé: %s", title)
     
     # Se encontrou múltiplos passos potenciais, retornar
     if len(potential_steps) >= 2:
@@ -954,12 +1159,37 @@ def _extract_media_from_element(elem: Tag | BeautifulSoup) -> list[dict[str, Any
     
     for img in imgs:
         src = img.get("src") or ""
-        if src:
-            media.append({
-                "type": "image",
-                "url": src,
-                "alt": img.get("alt"),
-            })
+        if not src:
+            continue
+        
+        # Filtrar imagens com classe CENy8b (decorativas/rodapé do Google Sites)
+        classes = img.get("class", [])
+        class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+        if "CENy8b" in class_str:
+            log.debug("Filtrada imagem decorativa com classe CENy8b: %s", src)
+            continue
+        
+        # Verificar se a imagem está dentro de um elemento de rodapé
+        if _is_footer_element(img, None):
+            log.debug("Filtrada imagem de rodapé: %s", src)
+            continue
+        
+        # Verificar se algum parent é rodapé
+        is_in_footer = False
+        for parent in img.parents:
+            if isinstance(parent, Tag) and _is_footer_element(parent, None):
+                is_in_footer = True
+                break
+        
+        if is_in_footer:
+            log.debug("Filtrada imagem dentro de elemento de rodapé: %s", src)
+            continue
+        
+        media.append({
+            "type": "image",
+            "url": src,
+            "alt": img.get("alt"),
+        })
     
     # Extrair vídeos (iframes e tags video)
     iframes = elem.find_all("iframe", src=True)

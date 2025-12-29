@@ -287,6 +287,27 @@ def _insert_tutorials(
             db_cat = None
         
         title = t.get("title") or "Untitled"
+        
+        # Verificar se tutorial já existe no banco (por título + categoria) ANTES de processar slug/ShareHash
+        # Isso evita duplicatas quando o scraper é executado múltiplas vezes
+        if not dry_run:
+            # Verificar se já existe tutorial com mesmo título e categoria
+            check_existing_sql = f"""
+                SELECT {cols.tutorial_id}, {cols.tutorial_slug}, ShareHash 
+                FROM {tables.schema}.{tables.tutorials} 
+                WHERE {cols.tutorial_title} = ? AND ({cols.tutorial_category_id} = ? OR ({cols.tutorial_category_id} IS NULL AND ? IS NULL))
+                ORDER BY {cols.tutorial_id} DESC;
+            """
+            existing_tut = cur.execute(check_existing_sql, (title, db_cat, db_cat)).fetchone()
+            if existing_tut:
+                existing_id = int(existing_tut[0])
+                existing_slug = existing_tut[1]
+                existing_hash = existing_tut[2] if len(existing_tut) > 2 else None
+                log.info("Tutorial já existe no banco (título='%s', categoria=%s), usando ID=%d (slug=%s)", 
+                         title, db_cat, existing_id, existing_slug)
+                tut_map[t.get("url_original", "")] = existing_id
+                continue  # Pular inserção, usar existente
+        
         base_slug = slugify(title)
         slug = base_slug
         
@@ -513,10 +534,32 @@ def _insert_media(
     dry_run: bool,
 ) -> int:
     inserted = 0
+    skipped_no_tut = 0
+    skipped_no_url = 0
+    
     for m in media:
         tut_url = m.get("tutorial_url")
-        if not tut_url or tut_url not in tut_map:
+        if not tut_url:
+            skipped_no_url += 1
+            log.debug("Media skipped: no tutorial_url. Media: %s", m.get("url", "unknown"))
             continue
+        
+        # Tentar normalizar URL para matching
+        from src.utils.urls import normalize_url
+        tut_url_normalized = normalize_url(tut_url)
+        
+        # Tentar matching exato primeiro
+        if tut_url_normalized not in tut_map:
+            # Tentar matching sem normalização
+            if tut_url not in tut_map:
+                # Tentar encontrar por URL base (sem query params)
+                tut_url_base = tut_url.split("?")[0] if "?" in tut_url else tut_url
+                if tut_url_base not in tut_map:
+                    skipped_no_tut += 1
+                    log.debug("Media skipped: tutorial_url not in tut_map. URL: %s, Media: %s", tut_url, m.get("url", "unknown"))
+                    continue
+                else:
+                    tut_url = tut_url_base
 
         file_name = m.get("file_name") or "unknown"
         original_name = file_name
@@ -546,6 +589,11 @@ def _insert_media(
         else:
             cur.execute(sql, params)
         inserted += 1
+    
+    if skipped_no_tut > 0 or skipped_no_url > 0:
+        log.warning("Media insertion: %d inserted, %d skipped (no tutorial), %d skipped (no URL)", 
+                   inserted, skipped_no_tut, skipped_no_url)
+    
     return inserted
 
 

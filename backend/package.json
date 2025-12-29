@@ -15,7 +15,8 @@
     "prisma:studio": "prisma studio",
     "prisma:push": "prisma db push",
     "clear:rate-limit": "node src/scripts/clear-rate-limit.js",
-    "clear:database": "node src/scripts/clear-database.js"
+    "clear:database": "node src/scripts/clear-database.js",
+    "reset:all": "node src/scripts/reset-seed-scraper.js"
   },
   "dependencies": {
     "@prisma/adapter-mssql": "^7.1.0",

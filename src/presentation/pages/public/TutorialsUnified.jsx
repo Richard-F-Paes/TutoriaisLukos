@@ -580,12 +580,6 @@ const TutorialsUnified = () => {
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                    <div className="absolute bottom-4 left-4 flex items-center space-x-2">
-                      <div className={`${colors.icon} p-2 rounded-lg`}>
-                        <Icon className="w-5 h-5 text-white" />
-                      </div>
-                      <span className="text-white font-semibold">{category.tutorials} tutoriais</span>
-                    </div>
                   </div>
                   {/* Content */}
                   <div className="p-6">

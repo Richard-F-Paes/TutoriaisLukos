@@ -20,9 +20,27 @@ def _remove_navigation_elements(soup: BeautifulSoup) -> BeautifulSoup:
     """
     Remove elementos de navegação conhecidos do Google Sites.
     Remove elementos como menus, sidebars, "Search this site", etc.
+    Também remove a section inicial com "TUTORIAL PASSO A PASSO DENTRO DA RETAGUARDA" e botão "Voltar".
     """
     # Criar uma cópia para não modificar o original
     soup_copy = BeautifulSoup(str(soup), "lxml")
+    
+    # Remover section inicial com "TUTORIAL PASSO A PASSO" e botão "Voltar"
+    # Procurar por sections com id no formato h.{hash} que contenham esses textos
+    for section in soup_copy.find_all("section", id=True):
+        section_id = section.get("id", "")
+        section_text = section.get_text(" ", strip=True).upper()
+        
+        # Verificar se contém textos indicativos da section inicial
+        if (section_id.startswith("h.") and 
+            ("TUTORIAL PASSO A PASSO" in section_text or 
+             "VOLTAR" in section_text or
+             "TUTORIAL PASSO A PASSO DENTRO DA RETAGUARDA" in section_text)):
+            # Verificar se é realmente a section inicial (geralmente vem no início)
+            # Pode ter classe "yaqOZd qeLZfd" ou similar
+            section.decompose()
+            log.debug("Removida section inicial de tutorial: %s", section_id)
+            break  # Remover apenas a primeira encontrada
     
     # Textos conhecidos de navegação do Google Sites
     navigation_texts = [
@@ -116,6 +134,7 @@ class Step:
 def _convert_internal_links(html: str, url_to_hash_map: dict[str, str], base_url: str) -> str:
     """
     Converte links internos do Google Sites para links que abrem tutoriais no modal usando shareHash.
+    Também converte divs com botões (classe "JNdkSc-SmKAyb LkDMRd") que levam a outros tutoriais.
     
     Args:
         html: HTML contendo links a serem convertidos
@@ -131,6 +150,61 @@ def _convert_internal_links(html: str, url_to_hash_map: dict[str, str], base_url
         return html
     
     soup = BeautifulSoup(html, "lxml")
+    
+    # Converter divs com botões que levam a outros tutoriais
+    # Procurar por divs com classe "JNdkSc-SmKAyb LkDMRd" que contêm links
+    for div in soup.find_all("div", class_=True):
+        classes = div.get("class", [])
+        class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+        
+        # Verificar se contém as classes "JNdkSc-SmKAyb" e "LkDMRd"
+        if "JNdkSc-SmKAyb" in class_str and "LkDMRd" in class_str:
+            # Procurar por links dentro dessa div
+            for a_tag in div.find_all("a", href=True):
+                href = a_tag.get("href", "")
+                if not href:
+                    continue
+                
+                # Ignorar links que já são hash de tutorial
+                if href.startswith("#tutorial-"):
+                    continue
+                
+                # Normalizar URL e converter
+                try:
+                    if href.startswith("/"):
+                        from urllib.parse import urljoin
+                        full_url = urljoin(base_url, href)
+                    elif href.startswith("http://") or href.startswith("https://"):
+                        full_url = href
+                    else:
+                        from urllib.parse import urljoin
+                        full_url = urljoin(base_url, href)
+                    
+                    full_url = normalize_url(full_url)
+                    
+                    # Verificar se é um link interno do Google Sites
+                    if not same_site(full_url, base_url):
+                        continue
+                    
+                    # Verificar se temos um hash mapeado para esta URL
+                    share_hash = url_to_hash_map.get(full_url)
+                    if share_hash:
+                        a_tag["href"] = f"#tutorial-{share_hash}"
+                        a_tag["data-tutorial-hash"] = share_hash
+                    else:
+                        # Tentar extrair segmento da URL diretamente como fallback
+                        segments = google_sites_path_segments(full_url, base_url)
+                        if segments:
+                            last_segment = segments[-1]
+                            for url, mapped_hash in url_to_hash_map.items():
+                                url_segments = google_sites_path_segments(url, base_url)
+                                if url_segments and url_segments[-1] == last_segment:
+                                    a_tag["href"] = f"#tutorial-{mapped_hash}"
+                                    a_tag["data-tutorial-hash"] = mapped_hash
+                                    break
+                except Exception as e:
+                    log.debug("Erro ao converter link em div botão %s: %s", href, e)
+                    continue
     
     # Encontrar todos os links
     for a_tag in soup.find_all("a", href=True):
@@ -296,6 +370,7 @@ def process_raw_page(page: dict[str, Any], *, url_to_hash_map: dict[str, str] | 
         step_media = st.get("media") or []
         step_image_url = None
         step_video_url = None
+        step_content_html = st.get("content_html") or ""
         
         # #region agent log
         _debug_log(f"processor.py:67-step{i}", "Step media details", {
@@ -303,7 +378,9 @@ def process_raw_page(page: dict[str, Any], *, url_to_hash_map: dict[str, str] | 
         }, "H2,H5")
         # #endregion
         
-        # Processar mídias do passo
+        # Processar mídias do passo e remover vídeos do content_html
+        step_content_soup = BeautifulSoup(step_content_html, "lxml")
+        
         for media_info in step_media:
             media_url = media_info.get("url") or ""
             media_type = media_info.get("type") or "unknown"
@@ -332,28 +409,48 @@ def process_raw_page(page: dict[str, Any], *, url_to_hash_map: dict[str, str] | 
             else:
                 final_url = media_url
             
-            # Associar ao passo
-            media_id = url_id(f"{page.get('url')}::media::{media_type}::{media_url}::step{i}")
-            media_rows.append(
-                {
-                    "id": media_id,
-                    "tutorial_url": page.get("url"),
-                    "tutorial_step_number": i,
-                    "media_type": media_type,
-                    "url": final_url,
-                    "file_path": original_media.get("local_path") if original_media else None,
-                    "file_name": original_media.get("file_name") if original_media else None,
-                    "file_size": original_media.get("file_size") if original_media else None,
-                    "mime_type": original_media.get("mime_type") if original_media else None,
-                    "thumbnail_url": original_media.get("thumbnail_url") if original_media else None,
-                }
-            )
+            # Se for vídeo, remover do content_html e colocar no video_url
+            if media_type == "video":
+                # Remover iframes e tags video do content_html
+                for iframe in step_content_soup.find_all("iframe", src=True):
+                    iframe_src = iframe.get("src", "")
+                    # Verificar se é o mesmo vídeo (comparar URLs normalizadas)
+                    if iframe_src == media_url or (final_url and iframe_src in final_url) or (final_url and final_url in iframe_src):
+                        iframe.decompose()
+                
+                for video_tag in step_content_soup.find_all("video", src=True):
+                    video_src = video_tag.get("src", "")
+                    if video_src == media_url or (final_url and video_src in final_url) or (final_url and final_url in video_src):
+                        video_tag.decompose()
+                
+                # Armazenar primeiro vídeo encontrado no video_url
+                if not step_video_url:
+                    step_video_url = final_url
+            else:
+                # Para imagens, apenas registrar
+                if media_type == "image" and not step_image_url:
+                    step_image_url = final_url
             
-            # Armazenar primeira imagem e primeiro vídeo do passo
-            if media_type == "image" and not step_image_url:
-                step_image_url = final_url
-            elif media_type == "video" and not step_video_url:
-                step_video_url = final_url
+            # Associar mídia ao passo (apenas imagens, vídeos vão no video_url)
+            if media_type != "video":  # Vídeos não são adicionados como mídias separadas, vão no video_url
+                media_id = url_id(f"{page.get('url')}::media::{media_type}::{media_url}::step{i}")
+                media_rows.append(
+                    {
+                        "id": media_id,
+                        "tutorial_url": page.get("url"),
+                        "tutorial_step_number": i,
+                        "media_type": media_type,
+                        "url": final_url,
+                        "file_path": original_media.get("local_path") if original_media else None,
+                        "file_name": original_media.get("file_name") if original_media else None,
+                        "file_size": original_media.get("file_size") if original_media else None,
+                        "mime_type": original_media.get("mime_type") if original_media else None,
+                        "thumbnail_url": original_media.get("thumbnail_url") if original_media else None,
+                    }
+                )
+        
+        # Atualizar content_html sem vídeos
+        step_content_html_clean = str(step_content_soup)
         
         step_rows.append(
             {
@@ -361,31 +458,54 @@ def process_raw_page(page: dict[str, Any], *, url_to_hash_map: dict[str, str] | 
                 "tutorial_url": page.get("url"),
                 "step_number": i,
                 "title": st.get("title"),
-                "content_html": st.get("content_html"),
+                "content_html": step_content_html_clean,
                 "image_url": step_image_url,
                 "video_url": step_video_url,
             }
         )
     
     # Processar mídias que não foram associadas a nenhum passo (mídias gerais da página)
-    for m in page.get("media") or []:
+    # Também incluir mídias extraídas diretamente do HTML que não foram capturadas na fase inicial
+    all_page_media = list(page.get("media") or [])
+    
+    # Extrair mídias diretamente do HTML completo para garantir que não perdemos nenhuma
+    html_media = _extract_media_from_element(soup)
+    for html_m in html_media:
+        # Verificar se já está na lista de mídias da página
+        html_url = html_m.get("url", "")
+        already_in_list = any(
+            (pm.get("url") or "").endswith(html_url.split("/")[-1]) or
+            html_url.endswith((pm.get("url") or "").split("/")[-1])
+            for pm in all_page_media
+        )
+        if not already_in_list:
+            all_page_media.append(html_m)
+    
+    for m in all_page_media:
         url = m.get("url") or ""
+        if not url:
+            continue
+            
         # Verificar se já foi associada a algum passo
         already_associated = any(
             mr.get("url") == url or 
             mr.get("url") == m.get("local_path") or
-            (m.get("local_path") and mr.get("url") == m.get("local_path"))
+            (m.get("local_path") and mr.get("url") == m.get("local_path")) or
+            # Matching mais flexível por nome de arquivo
+            (url.split("/")[-1] == (mr.get("url") or "").split("/")[-1] and url.split("/")[-1])
             for mr in media_rows
         )
         
         if not already_associated:
+            # Determinar URL final (local_path se disponível, senão url original)
+            final_url = m.get("local_path") or m.get("url") or url
             media_rows.append(
                 {
-                    "id": url_id(f"{page.get('url')}::media::{m.get('type')}::{url}"),
+                    "id": url_id(f"{page.get('url')}::media::{m.get('type', 'unknown')}::{url}"),
                     "tutorial_url": page.get("url"),
                     "tutorial_step_number": None,
-                    "media_type": m.get("type"),
-                    "url": m.get("local_path") or m.get("url") or url,
+                    "media_type": m.get("type", "unknown"),
+                    "url": final_url,
                     "file_path": m.get("local_path"),
                     "file_name": m.get("file_name"),
                     "file_size": m.get("file_size"),
@@ -471,6 +591,59 @@ def _remove_h1_and_get_intro(soup: BeautifulSoup) -> tuple[BeautifulSoup, str | 
     return soup_copy, intro_content
 
 
+def _find_step_separators(soup: BeautifulSoup) -> list[Tag]:
+    """
+    Encontra elementos separadores de passos.
+    Prioridade:
+    1. Divs com classes "oKdM2c ZZyype Kzv0Me" (separador principal)
+    2. Sections com id no formato "h.{hash}" e classe "yaqOZd lQAHbd"
+    
+    Returns:
+        Lista de elementos Tag que são separadores, ordenados por posição no documento
+    """
+    separators: list[Tag] = []
+    
+    # 1. Procurar por divs com classes "oKdM2c ZZyype Kzv0Me"
+    # Nota: As classes podem estar em qualquer ordem, então verificamos se todas estão presentes
+    for div in soup.find_all("div", class_=True):
+        classes = div.get("class", [])
+        class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+        # Verificar se contém todas as classes necessárias
+        if all(cls in class_str for cls in ["oKdM2c", "ZZyype", "Kzv0Me"]):
+            separators.append(div)
+    
+    # 2. Se não encontrou separadores principais, procurar por sections com id h.{hash} e classe yaqOZd lQAHbd
+    if not separators:
+        for section in soup.find_all("section", id=True, class_=True):
+            section_id = section.get("id", "")
+            classes = section.get("class", [])
+            class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+            
+            # Verificar se id começa com "h." e tem as classes corretas
+            if (section_id.startswith("h.") and 
+                "yaqOZd" in class_str and 
+                "lQAHbd" in class_str):
+                separators.append(section)
+    
+    # Ordenar separadores por posição no documento
+    # Usar uma função que encontra a posição do elemento na árvore
+    def get_element_position(elem: Tag) -> int:
+        """Retorna uma posição aproximada do elemento no documento"""
+        pos = 0
+        for parent in elem.parents:
+            if parent.name:
+                pos += 1
+        # Contar elementos anteriores
+        for prev in elem.previous_siblings:
+            if isinstance(prev, Tag):
+                pos += 1
+        return pos
+    
+    separators.sort(key=get_element_position)
+    
+    return separators
+
+
 def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
     # #region agent log
     _debug_log("processor.py:217", "_split_into_steps ENTRY", {
@@ -494,6 +667,99 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
         "soup_no_h1_has_h3": bool(soup_no_h1.find("h3"))
     }, "H1")
     # #endregion
+    
+    # 0) Prioridade: Usar separadores específicos (divs ou sections)
+    separators = _find_step_separators(soup_no_h1)
+    if separators:
+        # #region agent log
+        _debug_log("processor.py:separators", "Found step separators", {
+            "separators_count": len(separators),
+            "separator_types": [s.name for s in separators[:3]]
+        }, "H1")
+        # #endregion
+        
+        out_sep: list[dict[str, Any]] = []
+        
+        # Estratégia simplificada: dividir o HTML baseado nas posições dos separadores
+        # Converter soup para string e encontrar posições dos separadores
+        html_str = str(soup_no_h1)
+        
+        # Encontrar posições dos separadores no HTML
+        separator_positions = []
+        for sep in separators:
+            sep_str = str(sep)
+            pos = html_str.find(sep_str)
+            if pos != -1:
+                separator_positions.append((pos, sep))
+        
+        # Ordenar por posição
+        separator_positions.sort(key=lambda x: x[0])
+        
+        # Dividir HTML em segmentos
+        step_num = 1
+        start_pos = 0
+        
+        for sep_pos, sep in separator_positions:
+            # Extrair segmento entre start_pos e sep_pos
+            if sep_pos > start_pos:
+                segment_html = html_str[start_pos:sep_pos].strip()
+                
+                if segment_html:
+                    segment_soup = BeautifulSoup(segment_html, "lxml")
+                    step_media = _extract_media_from_element(segment_soup)
+                    
+                    # Extrair título
+                    step_title = None
+                    first_heading = segment_soup.find(["h1", "h2", "h3", "h4", "h5", "h6"])
+                    if first_heading:
+                        step_title = first_heading.get_text(" ", strip=True)
+                    else:
+                        text = segment_soup.get_text(" ", strip=True)
+                        if text and len(text) > 10:
+                            step_title = text[:100].strip()
+                    
+                    out_sep.append({
+                        "title": step_title or f"Passo {step_num}",
+                        "content_html": segment_html,
+                        "media": step_media
+                    })
+                    step_num += 1
+            
+            # Próximo segmento começa após o separador
+            start_pos = sep_pos + len(str(sep))
+        
+        # Adicionar último segmento (após último separador)
+        if start_pos < len(html_str):
+            segment_html = html_str[start_pos:].strip()
+            
+            if segment_html:
+                segment_soup = BeautifulSoup(segment_html, "lxml")
+                step_media = _extract_media_from_element(segment_soup)
+                
+                step_title = None
+                first_heading = segment_soup.find(["h1", "h2", "h3", "h4", "h5", "h6"])
+                if first_heading:
+                    step_title = first_heading.get_text(" ", strip=True)
+                else:
+                    text = segment_soup.get_text(" ", strip=True)
+                    if text and len(text) > 10:
+                        step_title = text[:100].strip()
+                
+                out_sep.append({
+                    "title": step_title or f"Passo {step_num}",
+                    "content_html": segment_html,
+                    "media": step_media
+                })
+        
+        # Se encontrou pelo menos 1 passo, retornar
+        if len(out_sep) >= 1:
+            # #region agent log
+            _debug_log("processor.py:separators", "Returning steps from separators", {
+                "steps_count": len(out_sep),
+                "steps_summary": [{"title": s.get("title"), "content_len": len(s.get("content_html") or "")} for s in out_sep[:3]]
+            }, "H1")
+            # #endregion
+            return out_sep
     
     # 1) Prefer ordered list(s)
     ol = soup_no_h1.find("ol")
@@ -583,7 +849,59 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
             # #endregion
             return out2
 
-    # 3) Fallback: single-step with entire content (sem H1)
+    # 3) Tentar dividir por parágrafos longos ou divs com conteúdo significativo
+    # Procurar por divs ou sections que possam ser passos
+    content_elements = soup_no_h1.find_all(["div", "section", "article"], class_=True)
+    potential_steps = []
+    
+    for elem in content_elements:
+        # Verificar se o elemento tem conteúdo significativo
+        text = elem.get_text(" ", strip=True)
+        if len(text) > 50:  # Pelo menos 50 caracteres de texto
+            # Verificar se não é um elemento de navegação ou estrutura
+            classes = elem.get("class", [])
+            class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+            role = elem.get("role", "")
+            
+            # Ignorar elementos de navegação, estrutura ou containers vazios
+            if (role not in ["navigation", "banner", "complementary"] and
+                "nav" not in class_str.lower() and
+                "header" not in class_str.lower() and
+                "footer" not in class_str.lower()):
+                # Verificar se tem headings internos ou conteúdo estruturado
+                has_internal_heading = bool(elem.find(["h2", "h3", "h4", "h5", "h6"]))
+                has_structured_content = bool(elem.find(["p", "ul", "ol", "table", "img"]))
+                
+                if has_internal_heading or has_structured_content:
+                    # Extrair título do primeiro heading interno ou usar texto inicial
+                    title = None
+                    first_heading = elem.find(["h2", "h3", "h4", "h5", "h6"])
+                    if first_heading:
+                        title = first_heading.get_text(" ", strip=True)
+                    else:
+                        # Usar primeiras palavras do texto como título
+                        words = text.split()[:10]
+                        if words:
+                            title = " ".join(words)
+                    
+                    step_media = _extract_media_from_element(elem)
+                    potential_steps.append({
+                        "title": title,
+                        "content_html": str(elem),
+                        "media": step_media
+                    })
+    
+    # Se encontrou múltiplos passos potenciais, retornar
+    if len(potential_steps) >= 2:
+        # #region agent log
+        _debug_log("processor.py:fallback_structured", "Found structured steps", {
+            "steps_count": len(potential_steps),
+            "steps_summary": [{"title": s.get("title"), "content_len": len(s.get("content_html") or "")} for s in potential_steps[:3]]
+        }, "H1")
+        # #endregion
+        return potential_steps
+    
+    # 4) Fallback final: single-step with entire content (sem H1)
     # Remover H1 do fallback também
     fallback_soup = BeautifulSoup(str(soup_no_h1), "lxml")
     # Garantir que não há H1

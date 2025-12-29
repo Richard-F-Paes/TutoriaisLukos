@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from config import load_settings
@@ -148,7 +149,7 @@ def _discover_pages(settings) -> None:
             settings.data_dir / "categories.json",
             {"base_url": settings.base_url, "categories": categories},
         )
-        log.info("✓ Descobertas %d páginas, derivadas %d categorias", len(pages), len(categories))
+        log.info("[OK] Descobertas %d páginas, derivadas %d categorias", len(pages), len(categories))
     finally:
         driver.quit()
 
@@ -219,7 +220,7 @@ def _extract_pages(settings, *, limit: int, force: bool) -> None:
 
             write_json(out_path, raw)
         
-        log.info("✓ Extração concluída para %d páginas", len(pages))
+        log.info("[OK] Extracao concluida para %d paginas", len(pages))
     finally:
         driver.quit()
 
@@ -231,13 +232,17 @@ def _download_media(settings, *, limit: int) -> None:
         files = files[:limit]
         log.info("Limitando download a %d páginas", limit)
     
+    if not files:
+        log.info("Nenhum arquivo encontrado para download")
+        return
+    
     robots = RobotsPolicy(base_url=settings.base_url, user_agent=settings.user_agent)
     can_fetch = (robots.can_fetch if settings.respect_robots else None)
     
-    for i, fp in enumerate(files, start=1):
+    def process_page(fp: Path) -> tuple[Path, str]:
+        """Processa uma única página. Thread-safe."""
         page = read_json(fp)
         title = page.get("title") or page.get("url") or fp.name
-        log.info("(%d/%d) Baixando mídias: %s", i, len(files), title)
         updated = download_media_for_page(
             page,
             images_dir=settings.images_dir(),
@@ -247,10 +252,31 @@ def _download_media(settings, *, limit: int) -> None:
             retries=settings.request_retries,
             backoff_seconds=settings.request_backoff_seconds,
             can_fetch=can_fetch,
+            max_workers=settings.download_max_workers_media,
         )
         write_json(fp, updated)
+        return fp, title
     
-    log.info("✓ Download de mídias concluído para %d páginas", len(files))
+    # Paralelizar processamento de páginas
+    max_workers_pages = settings.download_max_workers_pages
+    log.info("Processando %d páginas com %d workers (até %d downloads simultâneos por página)",
+             len(files), max_workers_pages, settings.download_max_workers_media)
+    
+    completed = 0
+    with ThreadPoolExecutor(max_workers=max_workers_pages) as executor:
+        futures = {executor.submit(process_page, fp): fp for fp in files}
+        
+        for future in as_completed(futures):
+            try:
+                fp, title = future.result()
+                completed += 1
+                log.info("(%d/%d) [OK] Concluido: %s", completed, len(files), title)
+            except Exception as exc:
+                fp = futures[future]
+                completed += 1
+                log.error("(%d/%d) [ERRO] Erro ao processar %s: %s", completed, len(files), fp.name, exc, exc_info=True)
+    
+    log.info("[OK] Download de midias concluido para %d paginas", len(files))
 
 
 def _process_data(settings) -> None:
@@ -374,7 +400,7 @@ def _process_data(settings) -> None:
     if settings.report_mismatches:
         write_json(settings.data_dir / "reports" / "mismatches.json", {"items": mismatches})
     
-    log.info("✓ Processados: %d categorias, %d tutoriais, %d passos, %d mídias",
+    log.info("[OK] Processados: %d categorias, %d tutoriais, %d passos, %d midias",
              len(categories), len(tutorials), len(steps), len(media))
 
 
@@ -393,7 +419,7 @@ def _check_schema(settings) -> None:
         checks = build_schema_checks(settings.tables, settings.columns)
         missing = check_schema(conn, checks)
         if not missing:
-            log.info("✓ Schema OK (colunas necessárias encontradas)")
+            log.info("[OK] Schema OK (colunas necessarias encontradas)")
         else:
             for tbl, cols in missing.items():
                 log.error("Faltando em %s: %s", tbl, cols)
@@ -440,9 +466,9 @@ def _insert_to_db(settings, *, dry_run: bool) -> None:
             default_user_id=default_user_id,
         )
         if dry_run:
-            log.info("✓ Simulação concluída (dry-run)")
+            log.info("[OK] Simulacao concluida (dry-run)")
         else:
-            log.info("✓ Inseridos: %d categorias, %d tutoriais, %d passos, %d mídias",
+            log.info("[OK] Inseridos: %d categorias, %d tutoriais, %d passos, %d midias",
                      result.categories_inserted,
                      result.tutorials_inserted,
                      result.steps_inserted,

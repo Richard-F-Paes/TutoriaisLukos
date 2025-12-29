@@ -2,20 +2,36 @@
  * Script de Seed - Cria usuário administrador inicial
  * 
  * Usuário criado:
- * - Username: Lukos
- * - Senha: lks@123241
+ * - Username: lukos
  * - Email: lukos@lukos.com
  * - Role: admin
  * 
+ * A senha é lida da variável de ambiente SEED_ADMIN_PASSWORD.
+ * Se não definida, usa uma senha padrão apenas para desenvolvimento (com aviso).
+ * 
  * Uso: npm run seed
+ * 
+ * ⚠️ IMPORTANTE: Em produção, defina SEED_ADMIN_PASSWORD no arquivo .env
  */
 
 import { connectDatabase, getPrisma } from '../config/database.js';
 import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
+
+// Carregar variáveis de ambiente
+dotenv.config();
+
+// Obter senha da variável de ambiente ou usar fallback para desenvolvimento
+const seedPasswordRaw = process.env.SEED_ADMIN_PASSWORD;
+const seedPassword = seedPasswordRaw && seedPasswordRaw.trim() ? seedPasswordRaw.trim() : null;
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+// Senha padrão apenas para desenvolvimento (com aviso)
+const DEFAULT_DEV_PASSWORD = 'dev-password-change-me';
 
 const ADMIN_USER = {
   username: 'lukos',
-  password: 'lks@123241',
+  password: seedPassword || (isDevelopment ? DEFAULT_DEV_PASSWORD : null),
   name: 'Lukos',
   role: 'admin',
 };
@@ -23,6 +39,22 @@ const ADMIN_USER = {
 async function seedAdminUser() {
   try {
     console.log('🌱 Iniciando seed de usuário administrador...\n');
+
+    // Validar senha
+    if (!ADMIN_USER.password) {
+      console.error('❌ Erro: SEED_ADMIN_PASSWORD não está definida no arquivo .env');
+      console.error('\n📝 Para definir a senha:');
+      console.error('   1. Abra o arquivo backend/.env');
+      console.error('   2. Adicione: SEED_ADMIN_PASSWORD=sua_senha_segura');
+      console.error('   3. Execute o seed novamente\n');
+      process.exit(1);
+    }
+
+    // Aviso se estiver usando senha padrão de desenvolvimento
+    if (!seedPassword && isDevelopment) {
+      console.warn('⚠️  AVISO: Usando senha padrão de desenvolvimento!');
+      console.warn('   Para produção, defina SEED_ADMIN_PASSWORD no arquivo .env\n');
+    }
 
     // Conectar ao banco de dados
     console.log('📡 Conectando ao banco de dados...');
@@ -85,10 +117,16 @@ async function seedAdminUser() {
     console.log(`   Role: ${user.role}`);
     console.log(`   Status: ${user.isActive ? 'Ativo' : 'Inativo'}`);
     console.log(`   Criado em: ${user.createdAt}\n`);
-    console.log('🔑 Credenciais de acesso:');
+    console.log('🔑 Credenciais de acesso criadas:');
     console.log(`   Usuário: ${ADMIN_USER.username}`);
-    console.log(`   Senha: ${ADMIN_USER.password}\n`);
-    console.log('⚠️  IMPORTANTE: Guarde essas credenciais com segurança!\n');
+    console.log(`   Email: lukos@lukos.com`);
+    if (seedPassword) {
+      console.log(`   Senha: [definida via SEED_ADMIN_PASSWORD]`);
+    } else {
+      console.log(`   Senha: [senha padrão de desenvolvimento - altere em produção!]`);
+    }
+    console.log('\n⚠️  IMPORTANTE: Guarde essas credenciais com segurança!');
+    console.log('   A senha não será exibida novamente por questões de segurança.\n');
 
     // Desconectar do banco
     await prisma.$disconnect();

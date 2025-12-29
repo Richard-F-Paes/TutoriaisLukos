@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -179,13 +180,17 @@ def _cmd_download_media(settings, *, limit: int) -> None:
     if limit and limit > 0:
         files = files[:limit]
 
+    if not files:
+        log.info("No files found for download")
+        return
+
     robots = RobotsPolicy(base_url=settings.base_url, user_agent=settings.user_agent)
     can_fetch = (robots.can_fetch if settings.respect_robots else None)
 
-    for i, fp in enumerate(files, start=1):
+    def process_page(fp: Path) -> tuple[Path, str]:
+        """Process a single page. Thread-safe."""
         page = read_json(fp)
         title = page.get("title") or page.get("url") or fp.name
-        log.info("(%d/%d) Download media: %s", i, len(files), title)
         updated = download_media_for_page(
             page,
             images_dir=settings.images_dir(),
@@ -195,8 +200,31 @@ def _cmd_download_media(settings, *, limit: int) -> None:
             retries=settings.request_retries,
             backoff_seconds=settings.request_backoff_seconds,
             can_fetch=can_fetch,
+            max_workers=settings.download_max_workers_media,
         )
         write_json(fp, updated)
+        return fp, title
+
+    # Parallelize page processing
+    max_workers_pages = settings.download_max_workers_pages
+    log.info("Processing %d pages with %d workers (up to %d simultaneous downloads per page)",
+             len(files), max_workers_pages, settings.download_max_workers_media)
+
+    completed = 0
+    with ThreadPoolExecutor(max_workers=max_workers_pages) as executor:
+        futures = {executor.submit(process_page, fp): fp for fp in files}
+
+        for future in as_completed(futures):
+            try:
+                fp, title = future.result()
+                completed += 1
+                log.info("(%d/%d) [OK] Completed: %s", completed, len(files), title)
+            except Exception as exc:
+                fp = futures[future]
+                completed += 1
+                log.error("(%d/%d) [ERRO] Error processing %s: %s", completed, len(files), fp.name, exc, exc_info=True)
+
+    log.info("[OK] Media download completed for %d pages", len(files))
 
 
 def _cmd_process(settings) -> None:

@@ -71,6 +71,24 @@ def _apply_common_options(opts: object, cfg: BrowserConfig) -> None:
     getattr(opts, "add_argument")("--safebrowsing-disable-auto-update")
     getattr(opts, "add_argument")("--enable-automation")
     getattr(opts, "add_argument")("--password-store=basic")
+    
+    # Suprimir erros e warnings do Chrome/Edge que não afetam funcionalidade
+    getattr(opts, "add_argument")("--disable-logging")
+    getattr(opts, "add_argument")("--log-level=3")  # Apenas erros fatais
+    getattr(opts, "add_argument")("--silent")
+    getattr(opts, "add_argument")("--disable-component-extensions-with-background-pages")
+    
+    # Desabilitar funcionalidades que geram esses erros específicos
+    getattr(opts, "add_argument")("--disable-features=EdgeIdentity")
+    getattr(opts, "add_argument")("--disable-features=EdgeAccount")
+    getattr(opts, "add_argument")("--disable-features=TaskManager")
+    
+    # Desabilitar WebGL/GPU para evitar avisos (não necessário para scraping)
+    getattr(opts, "add_argument")("--disable-webgl")
+    getattr(opts, "add_argument")("--disable-3d-apis")
+    getattr(opts, "add_argument")("--disable-gpu-compositing")
+    # Usar SwiftShader como fallback seguro (sugerido pelo próprio Chrome)
+    getattr(opts, "add_argument")("--enable-unsafe-swiftshader")
 
     # Reduce automation noise a bit (not "stealth", just quality-of-life).
     try:

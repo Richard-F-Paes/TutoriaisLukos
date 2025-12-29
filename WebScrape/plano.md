@@ -545,7 +545,7 @@ Categories:
 3. Identificar todas as URLs de páginas
 4. Criar lista completa de URLs para processar
 5. Mapear hierarquia de categorias
-
+[text](about:blank#blocked)
 **Script:**
 ```python
 # Pseudocódigo

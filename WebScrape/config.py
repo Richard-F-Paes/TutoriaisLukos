@@ -68,6 +68,8 @@ class Settings:
     request_retries: int
     request_backoff_seconds: float
     respect_robots: bool
+    download_max_workers_pages: int
+    download_max_workers_media: int
 
     data_dir: Path
     media_dir: Path
@@ -197,6 +199,8 @@ def load_settings(dotenv_path: str | os.PathLike[str] | None = None) -> Settings
         request_retries=_env_int("REQUEST_RETRIES", 3),
         request_backoff_seconds=_env_float("REQUEST_BACKOFF_SECONDS", 1.0),
         respect_robots=_env_bool("RESPECT_ROBOTS", True),
+        download_max_workers_pages=_env_int("DOWNLOAD_MAX_WORKERS_PAGES", 4),
+        download_max_workers_media=_env_int("DOWNLOAD_MAX_WORKERS_MEDIA", 8),
         data_dir=data_dir,
         media_dir=media_dir,
         category_source=category_source,
@@ -214,8 +218,5 @@ def load_settings(dotenv_path: str | os.PathLike[str] | None = None) -> Settings
         tables=tables,
         columns=columns,
     )
-    
-    
-    return settings
 
 

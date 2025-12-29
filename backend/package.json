@@ -45,5 +45,8 @@
     "express"
   ],
   "author": "TutorialLukos",
-  "license": "MIT"
+  "license": "MIT",
+  "prisma": {
+    "seed": "node src/scripts/seed.js"
+  }
 }

@@ -105,10 +105,10 @@ export async function connectDatabase() {
     // Não precisamos especificar authentication explicitamente
 
     const poolConfig = {
-      server: "localhost",
-      database: "tutoriaislukos",
-      user: "sa",
-      password: "Katana@2121", // Senha passada diretamente (mssql trata caracteres especiais automaticamente)
+      server: serverPart.split('\\')[0], // Host principal
+      database: database,
+      user: user,
+      password: password,
       options: {
         encrypt: false,
         trustServerCertificate: trustServerCert,

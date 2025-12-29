@@ -47,6 +47,31 @@ def _apply_common_options(opts: object, cfg: BrowserConfig) -> None:
     getattr(opts, "add_argument")("--window-size=1920,1080")
     getattr(opts, "add_argument")(f"--user-agent={cfg.user_agent}")
 
+    # Performance optimizations: disable images to speed up page loads
+    prefs = {
+        "profile.managed_default_content_settings.images": 2,  # Disable images
+        "profile.default_content_setting_values.notifications": 2,  # Disable notifications
+    }
+    try:
+        getattr(opts, "add_experimental_option")("prefs", prefs)
+    except Exception:
+        pass
+
+    # Additional performance arguments (safe and widely supported)
+    getattr(opts, "add_argument")("--disable-extensions")
+    getattr(opts, "add_argument")("--no-sandbox")
+    getattr(opts, "add_argument")("--disable-dev-shm-usage")
+    getattr(opts, "add_argument")("--disable-background-networking")
+    getattr(opts, "add_argument")("--disable-sync")
+    getattr(opts, "add_argument")("--disable-features=TranslateUI")
+    getattr(opts, "add_argument")("--disable-ipc-flooding-protection")
+    getattr(opts, "add_argument")("--disable-hang-monitor")
+    getattr(opts, "add_argument")("--disable-prompt-on-repost")
+    getattr(opts, "add_argument")("--no-first-run")
+    getattr(opts, "add_argument")("--safebrowsing-disable-auto-update")
+    getattr(opts, "add_argument")("--enable-automation")
+    getattr(opts, "add_argument")("--password-store=basic")
+
     # Reduce automation noise a bit (not "stealth", just quality-of-life).
     try:
         getattr(opts, "add_experimental_option")("excludeSwitches", ["enable-automation", "enable-logging"])

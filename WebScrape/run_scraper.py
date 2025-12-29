@@ -277,14 +277,59 @@ def _process_data(settings) -> None:
         cat_key_to_id[key] = cid
         return cid
     
+    # Primeira passada: coletar todos os tutoriais e criar mapeamento url -> shareHash
+    import uuid
+    from src.utils.urls import normalize_url
+    
+    url_to_hash_map: dict[str, str] = {}
+    existing_hashes: set[str] = set()
+    
     for fp in files:
         page = read_json(fp)
         
         if settings.ignore_non_leaf_pages and page.get("is_leaf") is False:
             continue
         
-        processed = process_raw_page(page)
+        # Processar temporariamente para obter informações do tutorial
+        temp_processed = process_raw_page(page)
+        temp_tut = temp_processed["tutorial"]
+        
+        # Gerar shareHash único (32 caracteres, sem hífens, como no backend)
+        share_hash = None
+        max_attempts = 10
+        for attempt in range(max_attempts):
+            candidate_hash = uuid.uuid4().hex[:32]
+            if candidate_hash not in existing_hashes:
+                share_hash = candidate_hash
+                break
+        
+        if not share_hash:
+            # Fallback: usar UUID completo se não conseguir gerar um único
+            share_hash = uuid.uuid4().hex[:32]
+            log.warning("Não foi possível gerar shareHash único após %d tentativas, usando: %s", max_attempts, share_hash)
+        
+        existing_hashes.add(share_hash)
+        
+        # Mapear URL original para shareHash
+        url_original = normalize_url(page.get("url") or "")
+        if url_original:
+            url_to_hash_map[url_original] = share_hash
+    
+    # Segunda passada: processar com conversão de links
+    for fp in files:
+        page = read_json(fp)
+        
+        if settings.ignore_non_leaf_pages and page.get("is_leaf") is False:
+            continue
+        
+        # Processar com mapeamento de URLs para shareHashes
+        processed = process_raw_page(page, url_to_hash_map=url_to_hash_map)
         tut = processed["tutorial"]
+        
+        # Adicionar shareHash ao tutorial se disponível no mapeamento
+        url_original = normalize_url(page.get("url") or "")
+        if url_original and url_original in url_to_hash_map:
+            tut["share_hash"] = url_to_hash_map[url_original]
         
         # Map category_path -> leaf category id
         parent: str | None = None

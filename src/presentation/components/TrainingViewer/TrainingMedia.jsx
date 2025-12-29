@@ -110,3 +110,5 @@ const TrainingMedia = ({ training }) => {
 
 export default TrainingMedia;
 
+
+

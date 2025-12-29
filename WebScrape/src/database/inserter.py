@@ -308,25 +308,46 @@ def _insert_tutorials(
                         raise RuntimeError(f"Não foi possível gerar slug único para tutorial: {title}")
                 log.debug("Slug duplicado '%s', usando '%s'", base_slug, slug)
         
-        # Gerar ShareHash único (32 caracteres, sem hífens, como no backend)
-        # Verificar se já existe antes de inserir
-        share_hash = None
-        if not dry_run:
-            max_attempts = 10
-            for attempt in range(max_attempts):
-                candidate_hash = uuid.uuid4().hex[:32]
-                check_sql = f"SELECT {cols.tutorial_id} FROM {tables.schema}.{tables.tutorials} WHERE ShareHash = ?;"
-                existing = cur.execute(check_sql, (candidate_hash,)).fetchone()
-                if not existing:
-                    share_hash = candidate_hash
-                    break
-            if not share_hash:
-                # Fallback: usar UUID completo se não conseguir gerar um único em 10 tentativas
-                share_hash = uuid.uuid4().hex[:32]
-                log.warning("Não foi possível gerar ShareHash único após %d tentativas, usando: %s", max_attempts, share_hash)
+        # Usar shareHash do tutorial se fornecido, senão gerar um novo
+        share_hash = t.get("share_hash")
+        if not share_hash:
+            # Gerar ShareHash único (32 caracteres, sem hífens, como no backend)
+            # Verificar se já existe antes de inserir
+            if not dry_run:
+                max_attempts = 10
+                for attempt in range(max_attempts):
+                    candidate_hash = uuid.uuid4().hex[:32]
+                    check_sql = f"SELECT {cols.tutorial_id} FROM {tables.schema}.{tables.tutorials} WHERE ShareHash = ?;"
+                    existing = cur.execute(check_sql, (candidate_hash,)).fetchone()
+                    if not existing:
+                        share_hash = candidate_hash
+                        break
+                if not share_hash:
+                    # Fallback: usar UUID completo se não conseguir gerar um único em 10 tentativas
+                    share_hash = uuid.uuid4().hex[:32]
+                    log.warning("Não foi possível gerar ShareHash único após %d tentativas, usando: %s", max_attempts, share_hash)
+            else:
+                # Para dry-run, usar um hash fake
+                share_hash = "dry-run-hash-" + uuid.uuid4().hex[:24]
         else:
-            # Para dry-run, usar um hash fake
-            share_hash = "dry-run-hash-" + uuid.uuid4().hex[:24]
+            # Verificar se o shareHash fornecido já existe no banco
+            if not dry_run:
+                check_sql = f"SELECT {cols.tutorial_id} FROM {tables.schema}.{tables.tutorials} WHERE ShareHash = ?;"
+                existing = cur.execute(check_sql, (share_hash,)).fetchone()
+                if existing:
+                    # ShareHash já existe, gerar um novo
+                    log.warning("ShareHash fornecido já existe no banco (%s), gerando novo", share_hash)
+                    max_attempts = 10
+                    for attempt in range(max_attempts):
+                        candidate_hash = uuid.uuid4().hex[:32]
+                        check_sql = f"SELECT {cols.tutorial_id} FROM {tables.schema}.{tables.tutorials} WHERE ShareHash = ?;"
+                        existing = cur.execute(check_sql, (candidate_hash,)).fetchone()
+                        if not existing:
+                            share_hash = candidate_hash
+                            break
+                    if not share_hash or share_hash == t.get("share_hash"):
+                        share_hash = uuid.uuid4().hex[:32]
+                        log.warning("Não foi possível gerar ShareHash único após verificação, usando: %s", share_hash)
         
         # Incluir CreatedAt e UpdatedAt (NOT NULL no schema)
         # Incluir também campos com DEFAULT para evitar problemas de ordem
@@ -441,13 +462,31 @@ def _insert_steps(
             continue
         step_number = int(s.get("step_number") or 1)
         # Incluir CreatedAt e UpdatedAt (NOT NULL no schema)
+        # Incluir também VideoUrl e ImageUrl se disponíveis
         now = datetime.now()
+        image_url = s.get("image_url")
+        video_url = s.get("video_url")
+        
+        # Truncar título para 300 caracteres (limite do banco)
+        step_title = s.get("title") or f"Passo {step_number}"
+        if len(step_title) > 300:
+            step_title = step_title[:297] + "..."
+        
         sql = (
             f"INSERT INTO {tables.schema}.{tables.tutorial_steps} "
-            f"({cols.step_tutorial_id}, {cols.step_title}, {cols.step_content}, {cols.step_sort}, CreatedAt, UpdatedAt) "
-            f"VALUES (?, ?, ?, ?, ?, ?);"
+            f"({cols.step_tutorial_id}, {cols.step_title}, {cols.step_content}, {cols.step_sort}, VideoUrl, ImageUrl, CreatedAt, UpdatedAt) "
+            f"VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
         )
-        params = (db_tut, s.get("title") or f"Passo {step_number}", s.get("content_html") or "", step_number, now, now)
+        params = (
+            db_tut, 
+            step_title, 
+            s.get("content_html") or "", 
+            step_number,
+            video_url,
+            image_url,
+            now, 
+            now
+        )
         if dry_run:
             log.info("[dry-run] %s %s", sql, tuple(_safe_param(p) for p in params))
             step_map[(tut_url, step_number)] = f"{tut_url}#step{step_number}"

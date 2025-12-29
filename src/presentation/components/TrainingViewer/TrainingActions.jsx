@@ -156,3 +156,5 @@ const TrainingActions = ({ training }) => {
 
 export default TrainingActions;
 
+
+

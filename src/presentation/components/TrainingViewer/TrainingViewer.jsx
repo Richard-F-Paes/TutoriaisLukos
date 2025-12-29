@@ -50,3 +50,5 @@ const TrainingViewer = ({ slug }) => {
 
 export default TrainingViewer;
 
+
+

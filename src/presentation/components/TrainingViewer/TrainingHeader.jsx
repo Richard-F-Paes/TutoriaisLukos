@@ -57,3 +57,5 @@ const TrainingHeader = ({ training }) => {
 
 export default TrainingHeader;
 
+
+

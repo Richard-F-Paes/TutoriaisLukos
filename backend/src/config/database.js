@@ -59,16 +59,16 @@ export async function connectDatabase() {
     // Converter DATABASE_URL do Prisma para configuração do mssql
     // Formato Prisma: sqlserver://server\\instance:port;database=db;user=user;password=pass;trustServerCertificate=true
     const dbUrl = process.env.DATABASE_URL;
-    
+
     const urlMatch = dbUrl.match(/sqlserver:\/\/([^:]+):(\d+);database=([^;]+);user=([^;]+);password=([^;]+);/);
-    
+
     if (!urlMatch) {
       throw new Error('Invalid DATABASE_URL format for SQL Server');
     }
-    
+
     let [, serverPart, port, database, user, password] = urlMatch;
     const trustServerCert = dbUrl.includes('trustServerCertificate=true');
-    
+
     // Tentar decodificar senha (pode estar URL-encoded)
     // Se falhar, usar senha original
     // (NUNCA logar senha ou derivados)
@@ -78,7 +78,7 @@ export async function connectDatabase() {
     } catch (e) {
       // keep original
     }
-    
+
     // Lidar com instância nomeada (server\instance)
     // Na URL, \\ representa um único backslash, então serverPart contém um backslash literal
     let server, instanceName;
@@ -103,12 +103,12 @@ export async function connectDatabase() {
     // Criar pool de conexão mssql usando objeto de configuração
     // Quando user e password são fornecidos, mssql usa autenticação SQL Server automaticamente
     // Não precisamos especificar authentication explicitamente
-    
+
     const poolConfig = {
-      server,
-      database,
-      user,
-      password, // Senha passada diretamente (mssql trata caracteres especiais automaticamente)
+      server: "localhost",
+      database: "tutoriaislukos",
+      user: "sa",
+      password: "Katana@2121", // Senha passada diretamente (mssql trata caracteres especiais automaticamente)
       options: {
         encrypt: false,
         trustServerCertificate: trustServerCert,
@@ -117,7 +117,7 @@ export async function connectDatabase() {
         abortTransactionOnError: true,
       },
     };
-    
+
     // Para instâncias nomeadas, tentar formato combinado primeiro (como sqlcmd usa)
     // Se isso não funcionar, podemos tentar options.instanceName
     if (instanceName && !port) {
@@ -130,13 +130,13 @@ export async function connectDatabase() {
       // Sem instância nomeada mas com porta explícita - usar porta diretamente
       poolConfig.port = parseInt(port, 10);
     }
-    
+
     await ensureDatabaseExists(poolConfig);
-    
+
     // Criar adapter do Prisma para SQL Server
     // PrismaMssql aceita connection string diretamente (formato padrão do Prisma)
     // Isso é mais simples e evita problemas de parsing/transformação
-    
+
     // Usar connection string diretamente (formato que Prisma usa normalmente)
     // O PrismaMssql vai fazer o parsing interno e criar o pool corretamente
     const adapter = new PrismaMssql(adapterUrl);
@@ -146,23 +146,23 @@ export async function connectDatabase() {
       adapter: adapter,
       log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
     };
-    
+
     prisma = new PrismaClient(prismaConfig);
 
     // Testar conexão
     await prisma.$connect();
-    
+
     console.log('✅ Conectado ao SQL Server via Prisma:', process.env.DB_NAME || 'tutoriaislukos');
-    
+
     return prisma;
   } catch (error) {
     console.error('❌ Erro ao conectar ao banco de dados:', error);
     console.warn('⚠️ AVISO: Não foi possível conectar ao SQL Server. O servidor iniciará em modo offline/mock.', error.message);
-    
+
     // Retornar cliente mock para não quebrar a aplicação
     prisma = {
-      $connect: async () => {},
-      $disconnect: async () => {},
+      $connect: async () => { },
+      $disconnect: async () => { },
       $transaction: async (ops) => Promise.all(ops),
       user: {},
       category: {},
@@ -188,7 +188,7 @@ export async function connectDatabase() {
         createMany: async () => ({ count: 0 }),
       },
     };
-    
+
     return prisma;
   }
 }

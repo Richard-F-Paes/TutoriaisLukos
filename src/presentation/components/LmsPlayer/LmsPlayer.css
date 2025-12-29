@@ -1,0 +1,372 @@
+.lms-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #1c1d1f;
+    color: #fff;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+}
+
+/* Header */
+.lms-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    height: 60px;
+    background-color: #a485f9;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.lms-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.lms-logo {
+    height: 32px;
+    cursor: pointer;
+}
+
+.lms-divider {
+    width: 1px;
+    height: 24px;
+    background-color: #3e4143;
+}
+
+.lms-course-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 400px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.lms-header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.lms-header-action {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.lms-header-action:hover {
+    opacity: 0.8;
+}
+
+.lms-btn-share {
+    background-color: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.lms-btn-options {
+    background: none;
+    border: 1px solid #3e4143;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Layout */
+.lms-main-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.lms-content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background-color: #000;
+}
+
+.lms-video-container {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: #000;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.lms-video-player {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Tabs */
+.lms-tabs-container {
+    background-color: #1c1d1f;
+    padding: 0 1.5rem;
+}
+
+.lms-tabs-header {
+    display: flex;
+    border-bottom: 1px solid #3e4143;
+    position: sticky;
+    top: 0;
+    background-color: #1c1d1f;
+    z-index: 5;
+}
+
+.lms-tab {
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #aaaaaa;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.lms-tab:hover {
+    color: #fff;
+}
+
+.lms-tab.active {
+    color: #fff;
+}
+
+.lms-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #a485f9;
+}
+
+.lms-tab-content {
+    padding: 2rem 0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.lms-tab-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+/* Sidebar */
+.lms-sidebar {
+    width: 350px;
+    background-color: #fff;
+    color: #1c1d1f;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    border-left: 1px solid #d1d7dc;
+}
+
+.lms-sidebar.closed {
+    width: 0;
+    border-left: none;
+}
+
+.lms-sidebar-header {
+    padding: 1rem;
+    border-bottom: 1px solid #d1d7dc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f7f9fa;
+}
+
+.lms-sidebar-title {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.lms-sidebar-close {
+    cursor: pointer;
+    color: #1c1d1f;
+}
+
+.lms-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.lms-section-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #d1d7dc;
+    display: flex;
+    gap: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.lms-section-item:hover {
+    background-color: #f7f9fa;
+}
+
+.lms-section-item.active {
+    background-color: #d1d7dc;
+}
+
+.lms-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #1c1d1f;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 3px;
+}
+
+.lms-checkbox.checked {
+    background-color: #a485f9;
+    border-color: #a485f9;
+    color: #fff;
+}
+
+.lms-item-info {
+    flex: 1;
+}
+
+.lms-item-title {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+}
+
+.lms-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #6a6f73;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .lms-sidebar {
+        position: fixed;
+        right: 0;
+        top: 60px;
+        height: calc(100vh - 60px);
+        z-index: 1000;
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+        background-color: #fff;
+    }
+
+    .lms-course-title {
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .lms-header {
+        padding: 0 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .lms-header-left {
+        gap: 0.75rem;
+        min-width: 0;
+    }
+
+    .lms-logo {
+        height: 24px;
+    }
+
+    .lms-course-title {
+        font-size: 0.85rem;
+        max-width: 150px;
+    }
+
+    .lms-header-right {
+        gap: 0.75rem;
+    }
+
+    .lms-header-right .lms-header-action span,
+    .lms-header-right .lms-btn-share span {
+        display: none;
+    }
+
+    .lms-header-action {
+        gap: 0;
+    }
+
+    .lms-btn-share {
+        padding: 0.5rem;
+    }
+
+    .lms-sidebar {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .lms-tabs-header {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 0.5rem;
+    }
+
+    .lms-tab {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    .lms-tab-content {
+        padding: 1.5rem 1rem;
+    }
+
+    .lms-tab-title {
+        font-size: 1.25rem;
+    }
+
+    .lms-video-container button {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .lms-divider {
+        display: none;
+    }
+
+    .lms-course-title {
+        display: none;
+    }
+
+    .lms-header-right {
+        gap: 0.5rem;
+    }
+}

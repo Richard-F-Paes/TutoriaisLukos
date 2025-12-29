@@ -21,7 +21,7 @@ const PortalMenuContent = ({ buttonRef, children, className, isOpen, align = 'le
 
   useEffect(() => {
     if (!isOpen || !buttonRef.current) return;
-    
+
     const updatePosition = () => {
       const rect = buttonRef.current.getBoundingClientRect();
       if (align === 'right') {
@@ -30,12 +30,12 @@ const PortalMenuContent = ({ buttonRef, children, className, isOpen, align = 'le
         let left = rect.right + window.scrollX + 4; // 4px gap à direita
         const menuWidth = 200; // Largura do submenu
         const windowWidth = window.innerWidth;
-        
+
         // Se o submenu sair da tela à direita, posicionar à esquerda
         if (left + menuWidth > windowWidth - 16) {
           left = rect.left + window.scrollX - menuWidth - 4;
         }
-        
+
         setPosition({ top, left });
         setTransform(undefined);
       } else {
@@ -44,18 +44,18 @@ const PortalMenuContent = ({ buttonRef, children, className, isOpen, align = 'le
         // Para menu do usuário, alinhar à direita do botão
         const isUserMenu = className?.includes('category-user-dropdown-portal');
         let left = rect.left + window.scrollX;
-        
+
         if (isUserMenu) {
           // Alinhar à direita do botão - usar largura padrão do menu (200-250px)
           const dropdownWidth = dropdownRef.current?.offsetWidth || 220;
           left = rect.right + window.scrollX - dropdownWidth;
-          
+
           // Garantir que não saia da tela à esquerda
           if (left < window.scrollX) {
             left = rect.left + window.scrollX;
           }
         }
-        
+
         setPosition({
           top,
           left,
@@ -112,7 +112,7 @@ export default function Navbarcateria() {
   const { user, logout, isAuthenticated } = useAuth();
   const { openModal } = useTutorialModal();
   const { openEditorModal } = useEditorModal();
-  
+
   const [openMenus, setOpenMenus] = useState({});
   const [fixedMenus, setFixedMenus] = useState({});
   const [openSubmenus, setOpenSubmenus] = useState({});
@@ -124,14 +124,14 @@ export default function Navbarcateria() {
   const timeoutsRef = useRef({});
   const userDropdownRef = useRef(null);
   const userMenuButtonRef = useRef(null);
-  
+
   // #region agent log
-  const __agentLog = () => {};
+  const __agentLog = () => { };
   // #endregion
 
   useEffect(() => {
     // #region agent log
-    __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:showUserMenu:effect',message:'Navbarcategoria showUserMenu state changed',data:{showUserMenu,isAuthenticated,hasUser:!!user,userNameLen:(user?.name||'').length},timestamp:Date.now()});
+    __agentLog({ sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H5', location: 'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:showUserMenu:effect', message: 'Navbarcategoria showUserMenu state changed', data: { showUserMenu, isAuthenticated, hasUser: !!user, userNameLen: (user?.name || '').length }, timestamp: Date.now() });
     // #endregion
   }, [showUserMenu, isAuthenticated, user]);
 
@@ -139,7 +139,7 @@ export default function Navbarcateria() {
   useEffect(() => {
     if (!showUserMenu) return;
     // Usar 2 RAFs para garantir que o Portal montou no DOM
-    const raf1 = requestAnimationFrame(() => {});
+    const raf1 = requestAnimationFrame(() => { });
     const raf2 = requestAnimationFrame(() => {
       const portalRoot = document.querySelector('.category-user-dropdown-portal');
       const dropdownEl = portalRoot || userDropdownRef.current;
@@ -156,22 +156,22 @@ export default function Navbarcateria() {
 
       // #region agent log
       __agentLog({
-        sessionId:'debug-session',
-        runId:'post-fix',
-        hypothesisId:'H6',
-        location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:userDropdown:domProbe',
-        message:'Navbarcategoria user dropdown DOM probe',
-        data:{
-          portalRootExists:!!portalRoot,
-          dropdownExists:!!dropdownEl,
-          buttonExists:!!buttonEl,
-          rect:rect?{x:Math.round(rect.x),y:Math.round(rect.y),w:Math.round(rect.width),h:Math.round(rect.height)}:null,
-          buttonRect:btnRect?{x:Math.round(btnRect.x),y:Math.round(btnRect.y),w:Math.round(btnRect.width),h:Math.round(btnRect.height)}:null,
-          computed:cs?{display:cs.display,visibility:cs.visibility,opacity:cs.opacity,position:cs.position,zIndex:cs.zIndex}:null,
-          viewport:{w:window.innerWidth,h:window.innerHeight},
-          overlap:{probeX:centerX!=null?Math.round(centerX):null,probeY:centerY!=null?Math.round(centerY):null,topTag:topEl?.tagName||null,topClass:topEl?.className?String(topEl.className).slice(0,120):null,topElIsInside},
+        sessionId: 'debug-session',
+        runId: 'post-fix',
+        hypothesisId: 'H6',
+        location: 'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:userDropdown:domProbe',
+        message: 'Navbarcategoria user dropdown DOM probe',
+        data: {
+          portalRootExists: !!portalRoot,
+          dropdownExists: !!dropdownEl,
+          buttonExists: !!buttonEl,
+          rect: rect ? { x: Math.round(rect.x), y: Math.round(rect.y), w: Math.round(rect.width), h: Math.round(rect.height) } : null,
+          buttonRect: btnRect ? { x: Math.round(btnRect.x), y: Math.round(btnRect.y), w: Math.round(btnRect.width), h: Math.round(btnRect.height) } : null,
+          computed: cs ? { display: cs.display, visibility: cs.visibility, opacity: cs.opacity, position: cs.position, zIndex: cs.zIndex } : null,
+          viewport: { w: window.innerWidth, h: window.innerHeight },
+          overlap: { probeX: centerX != null ? Math.round(centerX) : null, probeY: centerY != null ? Math.round(centerY) : null, topTag: topEl?.tagName || null, topClass: topEl?.className ? String(topEl.className).slice(0, 120) : null, topElIsInside },
         },
-        timestamp:Date.now()
+        timestamp: Date.now()
       });
       // #endregion
     });
@@ -190,8 +190,7 @@ export default function Navbarcateria() {
 
   const menuButtonClasses = 'category-dropdown-button';
   const menuItemClasses = (active, path) =>
-    `category-dropdown-item ${active ? 'active' : ''} ${
-      location.pathname === path ? 'active' : ''
+    `category-dropdown-item ${active ? 'active' : ''} ${location.pathname === path ? 'active' : ''
     }`;
 
   // Criar refs para cada botão de menu
@@ -218,21 +217,21 @@ export default function Navbarcateria() {
   const handleMouseEnter = (menuLabel) => {
     // Limpar todos os timeouts e fechar outros menus instantaneamente
     clearAllTimeouts();
-    
-      // Fechar todos os outros menus instantaneamente
-      setOpenMenus(prev => {
-        const newState = {};
-        const menusToClose = [];
-        Object.keys(prev).forEach(key => {
-          if (key !== menuLabel) {
-            newState[key] = false;
-            menusToClose.push(key);
-          }
-        });
-        // Fechar submenus dos menus que estão fechando
-        if (menusToClose.length > 0) {
-          setOpenSubmenus(submenuPrev => {
-            const newSubmenus = { ...submenuPrev };
+
+    // Fechar todos os outros menus instantaneamente
+    setOpenMenus(prev => {
+      const newState = {};
+      const menusToClose = [];
+      Object.keys(prev).forEach(key => {
+        if (key !== menuLabel) {
+          newState[key] = false;
+          menusToClose.push(key);
+        }
+      });
+      // Fechar submenus dos menus que estão fechando
+      if (menusToClose.length > 0) {
+        setOpenSubmenus(submenuPrev => {
+          const newSubmenus = { ...submenuPrev };
           menusToClose.forEach(menuKey => {
             Object.keys(newSubmenus).forEach(submenuKey => {
               if (submenuKey.startsWith(`${menuKey}::`)) {
@@ -240,12 +239,12 @@ export default function Navbarcateria() {
               }
             });
           });
-            return newSubmenus;
-          });
-        }
-        return newState;
-      });
-    
+          return newSubmenus;
+        });
+      }
+      return newState;
+    });
+
     if (!fixedMenus[menuLabel]) {
       setOpenMenus(prev => ({ ...prev, [menuLabel]: true }));
     }
@@ -257,7 +256,7 @@ export default function Navbarcateria() {
       if (timeoutsRef.current[menuLabel]) {
         clearTimeout(timeoutsRef.current[menuLabel]);
       }
-      
+
       // Criar novo timeout de 150ms (melhor UX)
       timeoutsRef.current[menuLabel] = setTimeout(() => {
         setOpenMenus(prev => ({ ...prev, [menuLabel]: false }));
@@ -290,14 +289,14 @@ export default function Navbarcateria() {
   const handleClick = (menuLabel) => {
     // Limpar todos os timeouts e fechar outros menus instantaneamente
     clearAllTimeouts();
-    
+
     // Verificar se o menu estava aberto e fixo para toggle
     const wasOpenAndFixed = fixedMenus[menuLabel] && openMenus[menuLabel];
-    
+
     // Remover estado "fixo" de todos os menus anteriores
     // e marcar apenas o menu clicado como "fixo"
     setFixedMenus({ [menuLabel]: true });
-    
+
     // Fechar todos os outros menus e abrir o menu clicado
     setOpenMenus(prev => {
       const newState = {};
@@ -327,7 +326,7 @@ export default function Navbarcateria() {
       newState[menuLabel] = true;
       return newState;
     });
-    
+
     // Se estava aberto e fixo, apenas remover fixo e fechar submenus
     if (wasOpenAndFixed) {
       setFixedMenus({});
@@ -388,7 +387,7 @@ export default function Navbarcateria() {
       const insideUserMenu = !!target?.closest?.('.user-menu');
       const willCloseUserMenu = !!showUserMenu && !insideUserMenu;
       // #region agent log
-      __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:clickOutside:userMenu',message:'Navbarcategoria document click (user menu close check)',data:{targetTag:target?.tagName||null,showUserMenu,insideUserMenu,willCloseUserMenu},timestamp:Date.now()});
+      __agentLog({ sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H5', location: 'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:clickOutside:userMenu', message: 'Navbarcategoria document click (user menu close check)', data: { targetTag: target?.tagName || null, showUserMenu, insideUserMenu, willCloseUserMenu }, timestamp: Date.now() });
       // #endregion
       if (willCloseUserMenu) setShowUserMenu(false);
       if (menuOpen && !event.target.closest('.category-mobile-menu') && !event.target.closest('.category-mobile-menu-button')) {
@@ -406,7 +405,7 @@ export default function Navbarcateria() {
       const isInsideUserMenu = e.target.closest('.user-menu');
       const isInsidePortalMenu = e.target.closest('.category-dropdown-menu');
       // #region agent log
-      __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H1',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:handleDocumentClick',message:'Navbarcategoria doc click - outside detection',data:{targetTag:e.target?.tagName||null,isInsideMenu:!!isInsideMenu,isInsidePortalMenu:!!isInsidePortalMenu,isInsideUserMenu:!!isInsideUserMenu,willClose:(!isInsideMenu && !isInsideUserMenu && !isInsidePortalMenu)},timestamp:Date.now()});
+      __agentLog({ sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H1', location: 'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:handleDocumentClick', message: 'Navbarcategoria doc click - outside detection', data: { targetTag: e.target?.tagName || null, isInsideMenu: !!isInsideMenu, isInsidePortalMenu: !!isInsidePortalMenu, isInsideUserMenu: !!isInsideUserMenu, willClose: (!isInsideMenu && !isInsideUserMenu && !isInsidePortalMenu) }, timestamp: Date.now() });
       // #endregion
       if (!isInsideMenu && !isInsideUserMenu && !isInsidePortalMenu) {
         handleClickOutside();
@@ -421,7 +420,7 @@ export default function Navbarcateria() {
 
     document.addEventListener('click', handleDocumentClick);
     document.addEventListener('keydown', handleKeyDown);
-    
+
     // Cleanup: limpar timeouts quando componente for desmontado
     return () => {
       document.removeEventListener('click', handleDocumentClick);
@@ -447,9 +446,9 @@ export default function Navbarcateria() {
 
   const menus = headerMenusData?.data?.length > 0
     ? headerMenusData.data.map(menu => ({
-        label: menu.Label || menu.label,
-        items: (menu.Items || menu.items || []).map(mapTreeItem),
-      }))
+      label: menu.Label || menu.label,
+      items: (menu.Items || menu.items || []).map(mapTreeItem),
+    }))
     : defaultHeaderMenus;
 
   const pathKey = (menuLabel, pathArr) => `${menuLabel}::${pathArr.join('.')}`;
@@ -464,7 +463,7 @@ export default function Navbarcateria() {
   const toggleSubmenu = (menuLabel, pathArr) => {
     const key = pathKey(menuLabel, pathArr);
     const isCurrentlyFixed = fixedSubmenus[key];
-    
+
     if (isCurrentlyFixed) {
       // Se está fixo, desfixar e fechar
       setFixedSubmenus(prev => {
@@ -483,7 +482,7 @@ export default function Navbarcateria() {
       setOpenSubmenus(prev => ({ ...prev, [key]: true }));
     }
   };
-  
+
   // Função para abrir submenu temporariamente no hover (se não estiver fixo)
   const openSubmenuOnHover = (menuLabel, pathArr) => {
     const key = pathKey(menuLabel, pathArr);
@@ -491,7 +490,7 @@ export default function Navbarcateria() {
       setOpenSubmenus(prev => ({ ...prev, [key]: true }));
     }
   };
-  
+
   // Função para fechar submenu no mouse leave (se não estiver fixo)
   const closeSubmenuOnLeave = (menuLabel, pathArr) => {
     const key = pathKey(menuLabel, pathArr);
@@ -517,7 +516,7 @@ export default function Navbarcateria() {
     clearAllTimeouts();
     setOpenMenus(prev => ({ ...prev, [item.parentLabel]: false }));
     setFixedMenus(prev => ({ ...prev, [item.parentLabel]: false }));
-    
+
     // Se tiver tutorialSlug, abrir modal, senão não fazer nada (não deve navegar)
     if (item.tutorialSlug) {
       openModal(item.tutorialSlug);
@@ -525,7 +524,7 @@ export default function Navbarcateria() {
   };
 
   return (
-    <header className={`category-navbar ${isScrolled ? 'scrolled' : ''}`}>
+    <header className={`category-navbar bg-white menu-item-link flex items-center gap-1 px-4 py-2 text-base font-bold transition-all duration-300 rounded-xl whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:ring-offset-2 text-[#8B5CF6] bg-white/20 hover:bg-white/40 ${isScrolled ? 'scrolled' : ''}`}>
       <div className="category-navbar-inner">
         {/* Logo */}
         <Link to="/" className="category-navbar-logo">
@@ -541,7 +540,7 @@ export default function Navbarcateria() {
         </Link>
 
         {/* Menu Desktop */}
-        <nav className="category-navbar-menu" role="navigation" aria-label="Menu de categorias">
+        <nav className="category-navbar-menu  bg-white" role="navigation" aria-label="Menu de categorias">
           {/* Botão Início */}
           <Link
             to="/tutoriais"
@@ -566,9 +565,9 @@ export default function Navbarcateria() {
           {menus.map((menu) => {
             const isOpen = openMenus[menu.label] || false;
             const isFixed = fixedMenus[menu.label] || false;
-            
+
             return (
-              <div 
+              <div
                 key={menu.label}
                 className="category-dropdown"
                 onMouseEnter={() => handleMouseEnter(menu.label)}
@@ -594,17 +593,17 @@ export default function Navbarcateria() {
                   aria-controls={`menu-${menu.label}`}
                 >
                   {menu.label}
-                  <ChevronDownIcon 
-                    aria-hidden="true" 
+                  <ChevronDownIcon
+                    aria-hidden="true"
                     className={`category-dropdown-icon ${isOpen ? 'rotated' : ''}`}
-                    style={{ 
+                    style={{
                       transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                       transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                     }}
                   />
                 </button>
 
-                <PortalMenuContent 
+                <PortalMenuContent
                   buttonRef={{ current: menuRefs.current[menu.label] }}
                   className="category-dropdown-menu"
                   isOpen={isOpen}
@@ -621,15 +620,15 @@ export default function Navbarcateria() {
                           const submenuId = `submenu-${menu.label}-${pathArr.join('-')}`;
                           const submenuKey = `${menu.label}-${pathArr.join('-')}`;
                           const isFixed = isSubmenuFixed(menu.label, pathArr);
-                          
+
                           // Inicializar ref se não existir
                           if (!submenuRefs.current[submenuKey]) {
                             submenuRefs.current[submenuKey] = { current: null };
                           }
                           const submenuRef = submenuRefs.current[submenuKey];
-                          
+
                           return (
-                            <div 
+                            <div
                               key={`${item.label}-${pathArr.join('.')}`}
                               style={{ position: 'relative' }}
                               onMouseEnter={() => {
@@ -725,7 +724,7 @@ export default function Navbarcateria() {
                 ref={userMenuButtonRef}
                 onClick={() => {
                   // #region agent log
-                  __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:userMenuButton:onClick',message:'Navbarcategoria user menu button clicked',data:{prevShowUserMenu:showUserMenu,isAuthenticated,hasUser:!!user,target:'click'},timestamp:Date.now()});
+                  __agentLog({ sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H5', location: 'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:userMenuButton:onClick', message: 'Navbarcategoria user menu button clicked', data: { prevShowUserMenu: showUserMenu, isAuthenticated, hasUser: !!user, target: 'click' }, timestamp: Date.now() });
                   // #endregion
                   setShowUserMenu(prev => !prev);
                 }}
@@ -733,7 +732,7 @@ export default function Navbarcateria() {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     // #region agent log
-                    __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:userMenuButton:onKeyDown',message:'Navbarcategoria user menu button keydown toggle',data:{key:e.key,prevShowUserMenu:showUserMenu,isAuthenticated,hasUser:!!user},timestamp:Date.now()});
+                    __agentLog({ sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H5', location: 'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:userMenuButton:onKeyDown', message: 'Navbarcategoria user menu button keydown toggle', data: { key: e.key, prevShowUserMenu: showUserMenu, isAuthenticated, hasUser: !!user }, timestamp: Date.now() });
                     // #endregion
                     setShowUserMenu(prev => !prev);
                   }
@@ -746,9 +745,8 @@ export default function Navbarcateria() {
                 <i className="fas fa-user" aria-hidden="true"></i>
                 <span className="category-user-name">{user?.name}</span>
                 <i
-                  className={`fas fa-chevron-down category-chevron ${
-                    showUserMenu ? 'rotated' : ''
-                  }`}
+                  className={`fas fa-chevron-down category-chevron ${showUserMenu ? 'rotated' : ''
+                    }`}
                   aria-hidden="true"
                 ></i>
               </button>
@@ -796,7 +794,7 @@ export default function Navbarcateria() {
             <button
               onClick={() => {
                 // #region agent log
-                __agentLog({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2',location:'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:openLoginModal',message:'Open AdminPasswordModal',data:{wasOpen:showAdminModal,isAuthenticated,menuOpen,showUserMenu},timestamp:Date.now()});
+                __agentLog({ sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H2', location: 'src/presentation/components/Navbarcategoria/Navbarcategoria.jsx:openLoginModal', message: 'Open AdminPasswordModal', data: { wasOpen: showAdminModal, isAuthenticated, menuOpen, showUserMenu }, timestamp: Date.now() });
                 // #endregion
                 setShowAdminModal(true);
               }}
@@ -804,23 +802,23 @@ export default function Navbarcateria() {
               title="Acesso Administrativo"
               aria-label="Acesso Administrativo"
             >
-              <svg 
-                width="18" 
-                height="18" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="1.5" 
-                strokeLinecap="round" 
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
                 strokeLinejoin="round"
                 className="category-login-shield"
               >
                 {/* Escudo */}
-                <path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3z"/>
+                <path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3z" />
                 {/* Engrenagem minimalista dentro do escudo */}
-                <circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.5"/>
-                <circle cx="12" cy="10" r="1" fill="currentColor" opacity="0.4"/>
-                <path d="M12 8.5v3M9.5 10h5" stroke="currentColor" strokeWidth="0.8" opacity="0.5"/>
+                <circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+                <circle cx="12" cy="10" r="1" fill="currentColor" opacity="0.4" />
+                <path d="M12 8.5v3M9.5 10h5" stroke="currentColor" strokeWidth="0.8" opacity="0.5" />
               </svg>
             </button>
           )}
@@ -984,9 +982,9 @@ export default function Navbarcateria() {
       )}
 
       {/* Modal de Senha Administrativa */}
-      <AdminPasswordModal 
-        isOpen={showAdminModal} 
-        onClose={() => setShowAdminModal(false)} 
+      <AdminPasswordModal
+        isOpen={showAdminModal}
+        onClose={() => setShowAdminModal(false)}
       />
     </header>
   );

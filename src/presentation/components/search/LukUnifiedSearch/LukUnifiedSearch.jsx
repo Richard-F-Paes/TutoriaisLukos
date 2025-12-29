@@ -52,7 +52,7 @@ const LukUnifiedSearch = ({ className = '', placeholder = "Busque tutoriais, fun
       e.preventDefault();
       e.stopPropagation();
     }
-    
+
     if (!query.trim()) return;
 
     const userMessage = {

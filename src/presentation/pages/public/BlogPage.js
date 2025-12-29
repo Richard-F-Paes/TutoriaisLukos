@@ -362,7 +362,7 @@ function BlogPage() {
         {/* Subtle gradient to maintain text readability without a dark background */}
 
 
-        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 w-full max-w-7xl pt-[80px]">
+        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 w-full max-w-8xl pt-[40px]">
           <div className="flex flex-col items-start gap-12">
             {/* Left Side: Content */}
             <div className="max-w-2xl text-left">
@@ -430,13 +430,13 @@ function BlogPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="absolute bottom-0 left-0 right-0 z-20 bg-[#82aa7a] py-8 rounded-t-[20px]"
+          className="absolute bottom-0 left-0 right-0 z-20 bg-[#82aa7a] py-8 rounded-t-[20px] lg:py-[-40px]"
         >
           <a
             href="#sobre"
             className="flex flex-col items-center gap-3 group cursor-pointer"
           >
-            <span className="text-white text-xs font-bold tracking-[0.15em] uppercase group-hover:text-white/80 transition-colors">
+            <span className="text-white text-lg md:text-2xl lg:text-2xl font-black uppercase leading-tight mb-12 tracking-[0.1em] drop-shadow-2xl max-w-sm md:max-w-none">
               Conheça mais sobre a Lukos
             </span>
             <div className="w-10 h-10 rounded-full border-2 border-white/60 flex items-center justify-center group-hover:border-white group-hover:bg-white/10 transition-all animate-bounce">
@@ -689,8 +689,6 @@ function BlogPage() {
 
 
 
-
-
       {/* Seção: Soluções para potencializar seu negócio */}
       <section id="solucoes-lista" className="py-20 relative overflow-hidden" style={{ scrollSnapAlign: 'start', background: 'linear-gradient(135deg, #0a0a12 0%, #12121a 50%, #0a0a12 100%)' }}>
         {/* Efeitos de luz de fundo */}
@@ -867,441 +865,10 @@ function BlogPage() {
       </section>
 
 
-      {/* Seção: Recursos e Benefícios - Estilo Premium Refinado */}
-      <section id="recursos" className="py-24 relative overflow-hidden" style={{ scrollSnapAlign: 'start', background: 'radial-gradient(ellipse at center, #1a1b26 0%, #0a0a0f 100%)' }}>
-        {/* Background Grid Pattern just for texture */}
-        <div className="absolute inset-0 z-0 opacity-20"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)',
-            backgroundSize: '40px 40px'
-          }}>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Coluna Esquerda - Texto */}
-            <div className="space-y-10">
-              {/* Títulos com navegação */}
-              <div className="space-y-2">
-                <motion.span
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  className="text-[#8B5CF6] font-bold tracking-widest uppercase text-sm"
-                >
-                  Por que escolher a Lukos?
-                </motion.span>
-                <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
-                  <span className="block">Tecnologia que</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c44cf4] to-[#8b5cf6]">Impulsiona</span> Resultados
-                </h2>
-              </div>
-
-              {/* Lista de Recursos com Cards Premium */}
-              <div className="space-y-6">
-                {[
-                  {
-                    icon: LayoutDashboard,
-                    title: "Plataforma Completa",
-                    desc: "Sistema completo de gestão empresarial, análise em tempo real e estatísticas detalhadas. Interface intuitiva e integração total.",
-                    color: "from-blue-500 to-cyan-500"
-                  },
-                  {
-                    icon: Wallet,
-                    title: "Redução de Custos",
-                    desc: "Condições vantajosas, redução de custos operacionais e otimização de processos para aumentar sua rentabilidade.",
-                    color: "from-green-500 to-emerald-500"
-                  },
-                  {
-                    icon: Phone,
-                    title: "Suporte 24/7",
-                    desc: "Equipe especializada sempre disponível. Ajudamos a configurar, treinar e maximizar seus resultados a qualquer hora.",
-                    color: "from-purple-500 to-pink-500"
-                  }
-                ].map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 hover:border-[#8B5CF6]/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)] hover:-translate-y-1"
-                  >
-                    <div className="flex items-start gap-6">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} p-0.5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                        <div className="w-full h-full bg-[#0a0a0f] rounded-[10px] flex items-center justify-center">
-                          <item.icon className="w-6 h-6 text-white" />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-xl font-bold text-white mb-2 group-hover:text-[#a78bfa] transition-colors">{item.title}</h4>
-                        <p className="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">{item.desc}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Coluna Direita - Imagem Glassmorphism */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="relative"
-            >
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-[#16161c]">
-                {/* Glass overlay effect */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-transparent pointer-events-none z-10" />
-
-                <img
-                  src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1000&auto=format&fit=crop"
-                  alt="Profissional trabalhando na Lukos"
-                  className="w-full h-[600px] object-cover opacity-80 hover:opacity-100 transition-opacity duration-700 hover:scale-105"
-                />
-
-                {/* Gradient Bottom */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent z-10"></div>
-
-                {/* Floating Widget Mockup */}
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="absolute bottom-8 left-8 right-8 p-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl z-20"
-                >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
-                      <BarChart3 className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <div className="text-white font-bold">Resumo Diário</div>
-                      <div className="text-green-400 text-sm font-medium">+24% em vendas hoje</div>
-                    </div>
-                  </div>
-                  <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full w-[75%] bg-gradient-to-r from-green-500 to-emerald-400"></div>
-                  </div>
-                </motion.div>
-              </div>
-
-              {/* Decorative Elements */}
-              <div className="absolute -top-10 -right-10 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl -z-10 animate-pulse" />
-              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -z-10 animate-pulse" style={{ animationDelay: '1s' }} />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-
-
-      {/* Seção: Seu Posto Automatizado por IA */}
-      <section id="automacao" className="py-24 relative overflow-hidden" style={{ scrollSnapAlign: 'start', background: 'radial-gradient(ellipse at center, #1a1b26 0%, #0a0a0f 100%)' }}>
-        {/* Background Grid Pattern */}
-        <div className="absolute inset-0 z-0 opacity-10"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.05) 1px, transparent 1px)',
-            backgroundSize: '60px 60px'
-          }}>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Header Centralizado */}
-          <div className="text-center mb-16 md:mb-24">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6"
-            >
-              <Brain className="w-4 h-4 text-purple-400" />
-              <span className="text-purple-300 text-xs font-bold tracking-widest uppercase">Inteligência Artificial Lukos</span>
-            </motion.div>
-            <h2 className="text-4xl md:text-5xl lg:text-7xl font-black text-white leading-tight mb-6 tracking-tight">
-              SEU POSTO <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] via-[#c44cf4] to-[#8B5CF6] animate-pulse">AUTOMATIZADO</span>
-            </h2>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-              O futuro da gestão é agora. Deixe nossa IA tomar as decisões complexas enquanto você foca no crescimento.
-            </p>
-          </div>
-
-          {/* Container do Infográfico */}
-          <div className="relative w-full max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              {/* Coluna Central - Logo LUKOS */}
-              <div className="relative flex items-center justify-center order-1 lg:order-2">
-                <div className="relative w-72 h-72 md:w-96 md:h-96 flex items-center justify-center">
-                  {/* Efeito glow animado com múltiplas camadas - Mais roxo */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/50 via-purple-600/50 to-purple-500/50 blur-3xl animate-pulse"></div>
-                  <div className="absolute inset-0 bg-gradient-to-tl from-purple-600/40 via-purple-500/40 to-purple-700/40 blur-2xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-
-                  {/* Anel rotativo externo - Dados/Neural - Mais roxo */}
-                  <div className="absolute inset-0 border-2 border-transparent rounded-full" style={{
-                    background: 'conic-gradient(from 0deg, transparent, rgba(168, 85, 247, 0.5), transparent, rgba(192, 132, 252, 0.5), transparent, rgba(168, 85, 247, 0.5), transparent)',
-                    animation: 'spin 8s linear infinite',
-                    mask: 'radial-gradient(circle, transparent 40%, black 42%, black 58%, transparent 60%)',
-                    WebkitMask: 'radial-gradient(circle, transparent 40%, black 42%, black 58%, transparent 60%)'
-                  }}></div>
-
-                  {/* Anel interno rotativo - Sentido contrário - Mais roxo */}
-                  <div className="absolute inset-4 border border-transparent rounded-full" style={{
-                    background: 'conic-gradient(from 180deg, transparent, rgba(192, 132, 252, 0.6), transparent, rgba(168, 85, 247, 0.6), transparent, rgba(192, 132, 252, 0.6), transparent)',
-                    animation: 'spin 6s linear infinite reverse',
-                    mask: 'radial-gradient(circle, transparent 45%, black 47%, black 53%, transparent 55%)',
-                    WebkitMask: 'radial-gradient(circle, transparent 45%, black 47%, black 53%, transparent 55%)'
-                  }}></div>
-
-                  {/* Partículas flutuantes de dados - Mais roxo */}
-                  <div className="absolute inset-0">
-                    {[...Array(12)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="absolute w-1 h-1 rounded-full"
-                        style={{
-                          left: `${50 + 45 * Math.cos((i * 30) * Math.PI / 180)}%`,
-                          top: `${50 + 45 * Math.sin((i * 30) * Math.PI / 180)}%`,
-                          background: i % 3 === 0 ? 'rgba(132, 204, 22, 0.6)' : 'rgba(168, 85, 247, 0.9)',
-                          boxShadow: `0 0 10px ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}`,
-                          animation: `float-${i} 3s ease-in-out infinite`,
-                          animationDelay: `${i * 0.2}s`
-                        }}
-                      ></div>
-                    ))}
-                  </div>
-
-                  {/* Efeito de scan/holograma - Roxo */}
-                  <div className="absolute inset-0 opacity-30" style={{
-                    background: 'linear-gradient(0deg, transparent 0%, rgba(168, 85, 247, 0.5) 50%, transparent 100%)',
-                    animation: 'scan 4s linear infinite',
-                    clipPath: 'polygon(0 0, 100% 0, 100% 20%, 0 20%)'
-                  }}></div>
-
-                  {/* Logo Circular com efeito 3D e glitch sutil */}
-                  <div className="relative w-full h-full flex items-center justify-center">
-                    <div className="relative w-full h-full" style={{
-                      transform: 'perspective(1000px) rotateY(0deg)',
-                      animation: 'float-3d 6s ease-in-out infinite'
-                    }}>
-                      <img
-                        src="/logo.png"
-                        alt="LUKOS Logo"
-                        className="w-full h-full object-contain relative z-10"
-                        style={{
-                          filter: 'drop-shadow(0 0 30px rgba(168, 85, 247, 1)) drop-shadow(0 0 40px rgba(192, 132, 252, 0.9)) drop-shadow(0 0 60px rgba(168, 85, 247, 0.7)) drop-shadow(0 0 25px rgba(132, 204, 22, 0.6))',
-                          animation: 'glow-pulse 3s ease-in-out infinite, subtle-glitch 8s ease-in-out infinite'
-                        }}
-                      />
-
-                      {/* Efeito de profundidade - Sombra holográfica */}
-                      <div className="absolute inset-0 w-full h-full object-contain opacity-20 blur-xl" style={{
-                        backgroundImage: 'url(/logo.png)',
-                        backgroundSize: 'contain',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'center',
-                        transform: 'translateZ(-50px) scale(1.1)',
-                        filter: 'blur(20px)'
-                      }}></div>
-                    </div>
-                  </div>
-
-                  {/* Linhas de conexão neural ao redor */}
-                  <svg className="absolute inset-0 w-full h-full opacity-40" style={{ pointerEvents: 'none' }}>
-                    <defs>
-                      <linearGradient id="neuralGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#a855f7" stopOpacity="0.9" />
-                        <stop offset="50%" stopColor="#c084fc" stopOpacity="0.9" />
-                        <stop offset="100%" stopColor="#a855f7" stopOpacity="0.9" />
-                      </linearGradient>
-                    </defs>
-                    {[...Array(8)].map((_, i) => {
-                      const angle = (i * 45) * Math.PI / 180;
-                      const radius = 45;
-                      return (
-                        <line
-                          key={i}
-                          x1="50%"
-                          y1="50%"
-                          x2={`${50 + radius * Math.cos(angle)}%`}
-                          y2={`${50 + radius * Math.sin(angle)}%`}
-                          stroke="url(#neuralGradient1)"
-                          strokeWidth="1"
-                          strokeDasharray="4 4"
-                          style={{
-                            animation: `neural-pulse 2s ease-in-out infinite`,
-                            animationDelay: `${i * 0.25}s`
-                          }}
-                        />
-                      );
-                    })}
-                  </svg>
-
-                  {/* Partículas de energia pulsantes - Mais roxo */}
-                  <div className="absolute inset-0">
-                    {[...Array(6)].map((_, i) => {
-                      const angle = (i * 60) * Math.PI / 180;
-                      const radius = 50;
-                      return (
-                        <div
-                          key={`energy-${i}`}
-                          className="absolute w-2 h-2 rounded-full"
-                          style={{
-                            left: `${50 + radius * Math.cos(angle)}%`,
-                            top: `${50 + radius * Math.sin(angle)}%`,
-                            background: `radial-gradient(circle, ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}, transparent)`,
-                            boxShadow: `0 0 20px ${i % 3 === 0 ? 'rgba(132, 204, 22, 0.8)' : 'rgba(168, 85, 247, 1)'}`,
-                            animation: `energy-pulse 2s ease-in-out infinite`,
-                            animationDelay: `${i * 0.3}s`,
-                            transform: 'translate(-50%, -50%)'
-                          }}
-                        ></div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              {/* Coluna Direita - Timeline Vertical */}
-              <div className="relative order-3">
-                {/* Linha vertical roxa */}
-                <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-purple-500"></div>
-
-                <div className="space-y-12 pl-16">
-                  {/* Step 1 - Análise de Dados */}
-                  <div className="relative">
-                    {/* Ícone circular na linha */}
-                    <div className="absolute -left-10 top-0 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center border-4 border-gray-900 shadow-lg z-10">
-                      <BarChart3 className="text-white" size={20} />
-                    </div>
-
-                    {/* Conteúdo */}
-                    <div>
-                      <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                        Análise de Dados
-                      </h4>
-                      <p className="text-white/60 leading-relaxed text-base md:text-lg">
-                        Processamento e interpretação de grandes volumes de dados em tempo real.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Step 2 - Machine Learning */}
-                  <div className="relative">
-                    {/* Ícone circular na linha */}
-                    <div className="absolute -left-10 top-0 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center border-4 border-gray-900 shadow-lg z-10">
-                      <Brain className="text-white" size={20} />
-                    </div>
-
-                    {/* Conteúdo */}
-                    <div>
-                      <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                        Machine Learning
-                      </h4>
-                      <p className="text-white/60 leading-relaxed text-base md:text-lg">
-                        Algoritmos que aprendem e melhoram continuamente com os dados.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Step 3 - Processamento de Linguagem Natural */}
-                  <div className="relative">
-                    {/* Ícone circular na linha */}
-                    <div className="absolute -left-10 top-0 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center border-4 border-gray-900 shadow-lg z-10">
-                      <MessageCircle className="text-white" size={20} />
-                    </div>
-
-                    {/* Conteúdo */}
-                    <div>
-                      <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                        Processamento de Linguagem Natural
-                      </h4>
-                      <p className="text-white/60 leading-relaxed text-base md:text-lg">
-                        Compreensão e geração de linguagem humana de forma inteligente.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Estilos de animação CSS */}
-          <style>{`
-            @keyframes float-3d {
-              0%, 100% { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
-              25% { transform: perspective(1000px) rotateY(5deg) rotateX(2deg); }
-              50% { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
-              75% { transform: perspective(1000px) rotateY(-5deg) rotateX(-2deg); }
-            }
-            @keyframes glow-pulse {
-              0%, 100% { filter: drop-shadow(0 0 30px rgba(168, 85, 247, 1)) drop-shadow(0 0 40px rgba(192, 132, 252, 0.9)) drop-shadow(0 0 25px rgba(132, 204, 22, 0.6)); }
-              50% { filter: drop-shadow(0 0 50px rgba(168, 85, 247, 1)) drop-shadow(0 0 60px rgba(192, 132, 252, 1)) drop-shadow(0 0 80px rgba(168, 85, 247, 0.8)) drop-shadow(0 0 30px rgba(132, 204, 22, 0.5)); }
-            }
-            @keyframes subtle-glitch {
-              0%, 100% { transform: translate(0, 0); }
-              98% { transform: translate(0, 0); }
-              99% { transform: translate(-1px, 1px); }
-            }
-            @keyframes scan {
-              0% { transform: translateY(-100%); }
-              100% { transform: translateY(400%); }
-            }
-            @keyframes neural-pulse {
-              0%, 100% { opacity: 0.3; stroke-dashoffset: 0; }
-              50% { opacity: 0.8; stroke-dashoffset: -8; }
-            }
-            @keyframes energy-pulse {
-              0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-              50% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
-            }
-            ${[...Array(12)].map((_, i) => `
-              @keyframes float-${i} {
-                0%, 100% { transform: translate(0, 0) scale(1); }
-                50% { transform: translate(${Math.cos(i * 30 * Math.PI / 180) * 10}px, ${Math.sin(i * 30 * Math.PI / 180) * 10}px) scale(1.2); }
-              }
-            `).join('')}
-          `}</style>
-        </div>
-      </section>
 
 
 
 
-      {/* Seção: O que é LUKOS (Fundo Roxo) */}
-      <section id="o-que-e-lukos" className="py-24 min-h-screen relative overflow-hidden flex items-center" style={{ backgroundColor: '#0a0a0f', scrollSnapAlign: 'start' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Coluna Esquerda */}
-            <div>
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                O QUE É A LUKOS?
-              </h2>
-              <p className="text-lg md:text-xl text-white/90 leading-relaxed mb-8">
-                Bem-vindo à plataforma LUKOS que vai redefinir sua experiência de gestão! Com mais de 10 anos de experiência, transformamos a gestão de postos de combustíveis e lojas de conveniência com soluções completas e personalizadas. Junte-se a centenas de empresas que confiam na LUKOS!
-              </p>
-              <button className="px-8 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors">
-                SAIBA MAIS
-              </button>
-            </div>
-
-            {/* Coluna Direita - Benefícios */}
-            <div className="bg-gray-900/30 backdrop-blur-sm rounded-xl p-8">
-              <h3 className="text-2xl md:text-3xl font-bold text-white mb-6">BENEFÍCIOS</h3>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 text-white flex-shrink-0 mt-1" />
-                  <p className="text-white/90 text-lg">Nosso sistema é totalmente responsivo e funciona perfeitamente em qualquer dispositivo!</p>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 text-white flex-shrink-0 mt-1" />
-                  <p className="text-white/90 text-lg">Soluções completas de gestão empresarial para postos de combustível e lojas de conveniência.</p>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 text-white flex-shrink-0 mt-1" />
-                  <p className="text-white/90 text-lg">Suporte premium e suporte ao vivo. Todas as suas dúvidas resolvidas rapidamente pela nossa equipe!</p>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Seção: Blog / Updates - Premium Style */}
       <section id="blog-preview" className="py-24 relative overflow-hidden" style={{ scrollSnapAlign: 'start', background: 'radial-gradient(ellipse at center, #1a1b26 0%, #0a0a0f 100%)' }}>
@@ -1384,6 +951,7 @@ function BlogPage() {
                   <p className="text-gray-400 text-sm leading-relaxed mb-6 flex-1 line-clamp-3">
                     {post.excerpt}
                   </p>
+
 
                   <Link
                     to={post.link}
@@ -1472,29 +1040,6 @@ function BlogPage() {
         </div>
       </section>
 
-
-
-      {/* Seção: CTA Final */}
-      <section id="ctafinal" className="py-24 bg-[#0a0a0f] relative overflow-hidden" style={{ scrollSnapAlign: 'start' }}>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="bg-gradient-to-r from-[#8B5CF6] to-[#c44cf4] rounded-[40px] p-12 md:p-20 text-center relative overflow-hidden group">
-            {/* Efeito de brilho fundo */}
-            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-
-            <h2 className="text-4xl md:text-6xl font-black text-white uppercase mb-8 leading-tight">Pronto para o próximo <br /> nível de gestão?</h2>
-            <p className="text-white/90 text-xl mb-12 max-w-2xl mx-auto font-medium">Junte-se a centenas de postos que já automatizaram seus processos com a Lukos.</p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Link to="/contato" className="bg-white text-[#8B5CF6] font-black py-5 px-10 rounded-2xl text-xl hover:scale-105 transition-transform shadow-2xl">
-                FALAR COM ESPECIALISTA
-              </Link>
-              <button className="bg-transparent border-2 border-white/30 hover:border-white text-white font-black py-5 px-10 rounded-2xl text-xl transition-all">
-                VER DEMONSTRAÇÃO
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
 
 
       {/* Botão Scroll to Top */}

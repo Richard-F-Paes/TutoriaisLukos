@@ -1,17 +1,17 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { 
-  FileText, 
-  Fuel, 
-  Play, 
-  BookOpen, 
-  Settings, 
-  BarChart3, 
-  CreditCard, 
-  Users, 
+import {
+  FileText,
+  Fuel,
+  Play,
+  BookOpen,
+  Settings,
+  BarChart3,
+  CreditCard,
+  Users,
   Smartphone,
-  Clock, 
-  Star, 
+  Clock,
+  Star,
   PlayCircle,
   ShoppingCart,
   Search,
@@ -31,13 +31,13 @@ const TutorialsUnified = () => {
   const tabsRef = useRef(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
-  
+
   const { data: tutorialsData, isLoading: tutorialsLoading } = useTutorials();
   const { data: categoriesData, isLoading: categoriesLoading } = useCategoriesHierarchical();
-  
+
   const allTutorials = tutorialsData?.data || [];
   const categories = categoriesData || [];
-  
+
   // Filtrar apenas tutoriais publicados
   const publishedTutorials = useMemo(() => {
     return allTutorials.filter(t => {
@@ -45,50 +45,50 @@ const TutorialsUnified = () => {
       return isPublished === true;
     });
   }, [allTutorials]);
-  
+
   // Filtrar tutoriais por categoria se houver query param e agrupar por subcategorias
   const tutorials = useMemo(() => {
     if (!categoriaParam) return [];
-    
+
     // Criar um mapa de categorias para facilitar busca
     const categoryMap = new Map();
     const categoryIdMap = new Map(); // Mapa por ID
     const categorySlugMap = new Map(); // Mapa por slug
     const categoryNameMap = new Map(); // Mapa por nome
-    
+
     categories.forEach(cat => {
       const catId = cat.id || cat.Id;
       const catSlug = (cat.slug || cat.Slug || '').toLowerCase();
       const catName = (cat.name || cat.Name || '').toLowerCase();
-      
+
       categoryMap.set(catId, cat);
       if (catSlug) categorySlugMap.set(catSlug, cat);
       if (catName) categoryNameMap.set(catName, cat);
-      
+
       if (cat.children) {
         cat.children.forEach(child => {
           const childId = child.id || child.Id;
           const childSlug = (child.slug || child.Slug || '').toLowerCase();
           const childName = (child.name || child.Name || '').toLowerCase();
-          
+
           categoryMap.set(childId, child);
           if (childSlug) categorySlugMap.set(childSlug, child);
           if (childName) categoryNameMap.set(childName, child);
         });
       }
     });
-    
+
     // Encontrar a categoria principal pelo parâmetro
     const paramKey = String(categoriaParam || '').toLowerCase();
     const mainCategory = categorySlugMap.get(paramKey) || categoryNameMap.get(paramKey);
-    
+
     if (!mainCategory) {
       // Se não encontrou a categoria, retornar array vazio
       return [];
     }
-    
+
     const mainCategoryId = mainCategory.id || mainCategory.Id;
-    
+
     // Coletar todos os IDs de categorias válidas (categoria principal + suas subcategorias)
     const validCategoryIds = new Set([mainCategoryId]);
     if (mainCategory.children && mainCategory.children.length > 0) {
@@ -97,46 +97,46 @@ const TutorialsUnified = () => {
         if (childId) validCategoryIds.add(childId);
       });
     }
-    
+
     // Filtrar tutoriais que pertencem à categoria principal OU às suas subcategorias
     const filtered = publishedTutorials.filter(t => {
       const tutorialCategory = t.Category || t.category;
-      const tutorialCategoryId = tutorialCategory?.id || tutorialCategory?.Id || 
-                                 t.categoryId || t.CategoryId;
-      
+      const tutorialCategoryId = tutorialCategory?.id || tutorialCategory?.Id ||
+        t.categoryId || t.CategoryId;
+
       // Verificar se o tutorial pertence à categoria principal ou suas subcategorias
       return tutorialCategoryId && validCategoryIds.has(Number(tutorialCategoryId));
     });
-    
+
     // Agrupar por subcategorias (ou categoria principal se não houver subcategoria)
     const groupedBySubcategory = {};
-    
+
     filtered.forEach(tutorial => {
       const tutorialCategory = tutorial.Category || tutorial.category;
-      const tutorialCategoryId = tutorialCategory?.id || tutorialCategory?.Id || 
-                                 tutorial.categoryId || tutorial.CategoryId;
+      const tutorialCategoryId = tutorialCategory?.id || tutorialCategory?.Id ||
+        tutorial.categoryId || tutorial.CategoryId;
       const categoryData = tutorialCategoryId ? categoryMap.get(Number(tutorialCategoryId)) : null;
-      
+
       // Verificar se a categoria do tutorial tem parentId (é uma subcategoria)
-      const parentId = categoryData?.parentId || categoryData?.ParentId || 
-                       tutorialCategory?.parentId || tutorialCategory?.ParentId;
-      
+      const parentId = categoryData?.parentId || categoryData?.ParentId ||
+        tutorialCategory?.parentId || tutorialCategory?.ParentId;
+
       let groupKey, groupName, groupId;
-      
+
       if (parentId && parentId === mainCategoryId) {
         // É uma subcategoria da categoria principal
         groupId = tutorialCategoryId;
         groupKey = `subcat_${tutorialCategoryId}`;
-        groupName = categoryData?.name || categoryData?.Name || 
-                   tutorialCategory?.name || tutorialCategory?.Name || 
-                   'Subcategoria';
+        groupName = categoryData?.name || categoryData?.Name ||
+          tutorialCategory?.name || tutorialCategory?.Name ||
+          'Subcategoria';
       } else {
         // É um tutorial diretamente na categoria principal (sem subcategoria)
         groupId = mainCategoryId;
         groupKey = 'main_category';
         groupName = mainCategory.name || mainCategory.Name || 'Categoria Principal';
       }
-      
+
       if (!groupedBySubcategory[groupKey]) {
         groupedBySubcategory[groupKey] = {
           id: groupId,
@@ -144,20 +144,20 @@ const TutorialsUnified = () => {
           tutorials: []
         };
       }
-      
+
       groupedBySubcategory[groupKey].tutorials.push(tutorial);
     });
-    
+
     // Ordenar grupos: categoria principal primeiro, depois subcategorias por nome
     const sortedGroups = Object.values(groupedBySubcategory).sort((a, b) => {
       if (a.id === mainCategoryId) return -1;
       if (b.id === mainCategoryId) return 1;
       return a.name.localeCompare(b.name);
     });
-    
+
     return sortedGroups;
   }, [publishedTutorials, categoriaParam, categories]);
-  
+
   // Definir aba ativa quando os tutoriais carregarem ou categoria mudar
   useEffect(() => {
     if (tutorials.length > 0) {
@@ -174,7 +174,7 @@ const TutorialsUnified = () => {
   // Função para navegar para próxima/anterior aba
   const navigateTab = (direction) => {
     if (tutorials.length === 0) return;
-    
+
     const currentIndex = tutorials.findIndex(group => group.id === activeTab);
     if (currentIndex === -1) return;
 
@@ -196,7 +196,7 @@ const TutorialsUnified = () => {
 
   const handleTouchEnd = () => {
     if (!touchStartX.current || !touchEndX.current) return;
-    
+
     const distance = touchStartX.current - touchEndX.current;
     const minSwipeDistance = 50; // Distância mínima para considerar um swipe
 
@@ -212,13 +212,13 @@ const TutorialsUnified = () => {
     touchStartX.current = 0;
     touchEndX.current = 0;
   };
-  
+
   // Obter tutorial ativo baseado na aba selecionada
   const activeTutorialGroup = useMemo(() => {
     if (!activeTab || !tutorials.length) return null;
     return tutorials.find(group => group.id === activeTab) || tutorials[0];
   }, [activeTab, tutorials]);
-  
+
   const isLoading = tutorialsLoading || categoriesLoading;
 
   // Compat: alguns trechos antigos deste componente ainda usam esse helper.
@@ -256,7 +256,7 @@ const TutorialsUnified = () => {
   // Função para contar tutoriais publicados em uma categoria (incluindo subcategorias)
   const getTutorialCountForCategory = (category) => {
     if (!publishedTutorials || publishedTutorials.length === 0) return 0;
-    
+
     // Contar tutoriais publicados diretamente na categoria
     let count = publishedTutorials.filter(t => {
       const catId =
@@ -267,31 +267,31 @@ const TutorialsUnified = () => {
         t.Category?.id;
       return Number(catId) === Number(category.id);
     }).length;
-    
+
     // Contar tutoriais publicados nas subcategorias recursivamente
     if (category.children && category.children.length > 0) {
       category.children.forEach(child => {
         count += getTutorialCountForCategory(child);
       });
     }
-    
+
     return count;
   };
 
   // Categorias de tutoriais do componente Tutorials.jsx
   // Se houver categorias da API, usar elas, senão usar categorias padrão
-  const tutorialCategories = categories.length > 0 
+  const tutorialCategories = categories.length > 0
     ? categories.map(cat => ({
-        id: cat.Slug || cat.Id?.toString() || cat.id,
-        title: cat.Name || cat.name,
-        description: cat.Description || cat.description || "Tutoriais sobre " + (cat.Name || cat.name),
-        icon: FileText,
-        color: cat.Color || "blue",
-        tutorials: getTutorialCountForCategory(cat),
-        duration: "45 min",
-        image: cat.ImageUrl || cat.imageUrl || "https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=800",
-        link: `/tutoriais?categoria=${cat.Slug || cat.slug || cat.id}`
-      }))
+      id: cat.Slug || cat.Id?.toString() || cat.id,
+      title: cat.Name || cat.name,
+      description: cat.Description || cat.description || "Tutoriais sobre " + (cat.Name || cat.name),
+      icon: FileText,
+      color: cat.Color || "blue",
+      tutorials: getTutorialCountForCategory(cat),
+      duration: "45 min",
+      image: cat.ImageUrl || cat.imageUrl || "https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=800",
+      link: `/tutoriais?categoria=${cat.Slug || cat.slug || cat.id}`
+    }))
     : [
       {
         id: "Retaguarda",
@@ -419,15 +419,68 @@ const TutorialsUnified = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative ">
       {/* Padrão de gradiente diagonal */}
-      <div 
-        className="absolute inset-0 opacity-40" 
+      <div
+        className="absolute inset-0 opacity-40"
         style={{
-          backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(59, 130, 246, 0.3) 40px, rgba(59, 130, 246, 0.3) 42px)'
+          backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(59, 130, 246, 0.3) 40px, rgba(59, 130, 246, 0.3) 42px) '
         }}
       ></div>
-      
+
+
+      <main className=" ">
+
+
+
+        {/* 2. SEÇÃO AZUL -> AGORA ROXA (Hero Courses) */}
+        <section className="bg-[#5a2ab3] min-h-[500px] py-20 px-6 md:px-20 flex flex-col justify-center overflow-hidden rounded-b-2xl">
+          <div className="max-w-7xl mx-auto w-full">
+            <nav className="flex items-center gap-2 text-white/70 text-sm mb-16">
+              <span>Home</span>
+              <span className="opacity-30">{'>'}</span>
+              <span className="text-white font-medium">Tutoriais Lukos</span>
+            </nav>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              {/* Lado do Título com Efeito Outline */}
+              <div className="relative">
+                <h2 className="text-7xl md:text-9xl font-black text-white relative z-10 leading-none">
+                  Tutoriais
+                </h2>
+                {/* Camadas Vazadas Roxas */}
+                <h2 className="text-7xl md:text-9xl font-black absolute top-6 left-1 opacity-30 select-none leading-none"
+                  style={{ WebkitTextStroke: '1px rgba(255,255,255,0.5)', color: 'transparent' }}>
+                  Tutoriais
+                </h2>
+                <h2 className="text-7xl md:text-9xl font-black absolute top-12 left-2 opacity-10 select-none leading-none"
+                  style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)', color: 'transparent' }}>
+                  Tutoriais
+                </h2>
+              </div>
+
+              {/* Lado do Conteúdo */}
+              <div className="text-white space-y-6">
+                <h3 className="text-3xl md:text-4xl font-bold leading-tight">
+                  Tutoriais Lukos: <p className="text-white/80 text-2xl">Tutoriais exclusivos para nossos clientes</p>
+                </h3>
+                <p className="text-white/80 text-lg">
+                  Domine as tecnologias mais modernas com nossa metodologia exclusiva.
+                </p>
+
+              </div>
+            </div>
+
+
+
+          </div>
+        </section>
+
+      </main>
+
+
+
+
       {/* Categories Grid - Estilo Tutorials.jsx */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
         <div className="text-center mt-12 mb-20">
@@ -442,19 +495,19 @@ const TutorialsUnified = () => {
               <BookOpen className="h-8 w-8 text-white" />
             </div>
           </div>
-          
+
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               {categoriaParam ? `Tutoriais - ${categoriaParam.charAt(0).toUpperCase() + categoriaParam.slice(1)}` : 'Tutoriais do Sistema'}
             </span>
           </h1>
-          
+
           {/* Barra de Pesquisa Gigante - Luk Unified Search */}
           <LukUnifiedSearch />
 
           {categoriaParam && (
-            <Link 
-              to="/tutoriais" 
+            <Link
+              to="/tutoriais"
               className="inline-block mt-4 text-blue-600 hover:text-blue-700 font-semibold"
             >
               ← Ver todas as categorias
@@ -468,9 +521,9 @@ const TutorialsUnified = () => {
             {/* Abas de Subcategorias */}
             <div className="mb-8">
               <div className="border-b border-gray-200">
-                <nav 
+                <nav
                   ref={tabsRef}
-                  className="-mb-px flex space-x-8 overflow-x-auto justify-center" 
+                  className="-mb-px flex space-x-8 overflow-x-auto justify-center"
                   aria-label="Tabs"
                   onTouchStart={handleTouchStart}
                   onTouchMove={handleTouchMove}
@@ -484,8 +537,8 @@ const TutorialsUnified = () => {
                         onClick={() => setActiveTab(subcategoryGroup.id)}
                         className={`
                           whitespace-nowrap py-5 px-4 border-b-2 font-bold text-lg transition-all duration-200
-                          ${isActive 
-                            ? 'border-blue-500 text-blue-600 shadow-sm' 
+                          ${isActive
+                            ? 'border-blue-500 text-blue-600 shadow-sm'
                             : 'border-transparent text-gray-800 hover:text-gray-900 hover:border-gray-300'
                           }
                         `}
@@ -515,26 +568,26 @@ const TutorialsUnified = () => {
                         className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden text-left w-full max-w-sm cursor-pointer transform hover:-translate-y-1"
                         disabled={!tutorialSlug}
                       >
-                      {tutorial.ThumbnailUrl && (
-                        <img 
-                          src={tutorial.ThumbnailUrl} 
-                          alt={tutorial.Title || tutorial.title}
-                          className="w-full h-48 object-cover"
-                        />
-                      )}
-                      <div className="p-4">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{tutorial.Title || tutorial.title}</h3>
-                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                          {tutorial.Description || tutorial.description || ''}
-                        </p>
-                        <div className="flex items-center justify-between text-sm text-gray-500">
-                          <span>{tutorial.EstimatedDuration || tutorial.estimatedDuration ? `${tutorial.EstimatedDuration || tutorial.estimatedDuration} min` : 'N/A'}</span>
-                          <span className="text-blue-600 font-semibold">Ver tutorial →</span>
+                        {tutorial.ThumbnailUrl && (
+                          <img
+                            src={tutorial.ThumbnailUrl}
+                            alt={tutorial.Title || tutorial.title}
+                            className="w-full h-48 object-cover"
+                          />
+                        )}
+                        <div className="p-4">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">{tutorial.Title || tutorial.title}</h3>
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                            {tutorial.Description || tutorial.description || ''}
+                          </p>
+                          <div className="flex items-center justify-between text-sm text-gray-500">
+                            <span>{tutorial.EstimatedDuration || tutorial.estimatedDuration ? `${tutorial.EstimatedDuration || tutorial.estimatedDuration} min` : 'N/A'}</span>
+                            <span className="text-blue-600 font-semibold">Ver tutorial →</span>
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  );
-                })}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -553,48 +606,54 @@ const TutorialsUnified = () => {
           <>
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Categorias</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {tutorialCategories.map((category) => {
-            const Icon = category.icon;
-            const colors = getColorClasses(category.color);
-            
-            const handleCategoryClick = (e) => {
-              e.preventDefault();
-              // Navegar para a página da categoria usando o link definido
-              if (category.link) {
-                navigate(category.link);
-              }
-            };
-            
-            return (
-              <button
-                key={category.id}
-                onClick={handleCategoryClick}
-                className="group text-left w-full cursor-pointer"
-              >
-                <div className={`bg-gradient-to-br ${colors.bg} rounded-2xl overflow-hidden border-2 ${colors.border} hover:shadow-2xl transition-all duration-300 hover:-translate-y-2`}>
-                  {/* Image */}
-                  <div className="relative h-48 overflow-hidden">
-                    <img 
-                      src={category.image} 
-                      alt={category.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  </div>
-                  {/* Content */}
-                  <div className="p-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                      {category.title}
-                    </h3>
-                    <p className="text-gray-600 mb-4">
-                      {category.description}
-                    </p>
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-          </div>
+              {tutorialCategories.map((category) => {
+                const Icon = category.icon;
+                const colors = getColorClasses(category.color);
+
+                const handleCategoryClick = (e) => {
+                  e.preventDefault();
+                  // Navegar para a página da categoria usando o link definido
+                  if (category.link) {
+                    navigate(category.link);
+                  }
+                };
+
+                return (
+                  <button
+                    key={category.id}
+                    onClick={handleCategoryClick}
+                    className="group text-left w-full cursor-pointer"
+                  >
+                    <div className={`bg-gradient-to-br ${colors.bg} rounded-2xl overflow-hidden border-2 ${colors.border} hover:shadow-2xl transition-all duration-300 hover:-translate-y-2`}>
+                      {/* Image */}
+                      <div className="relative h-48 overflow-hidden">
+                        <img
+                          src={category.image}
+                          alt={category.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <div className="absolute bottom-4 left-4 flex items-center space-x-2">
+                          <div className={`${colors.icon} p-2 rounded-lg`}>
+                            <Icon className="w-5 h-5 text-white" />
+                          </div>
+                          <span className="text-white font-semibold">{category.tutorials} tutoriais</span>
+                        </div>
+                      </div>
+                      {/* Content */}
+                      <div className="p-6">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                          {category.title}
+                        </h3>
+                        <p className="text-gray-600 mb-4">
+                          {category.description}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </>
         )}
 

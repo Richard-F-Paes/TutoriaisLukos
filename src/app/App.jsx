@@ -46,6 +46,7 @@ import SobreNos from '../presentation/pages/public/SobreNos';
 import ConciliacaoPage from '../presentation/pages/public/ConciliacaoPage';
 import FullcheckPage from '../presentation/pages/public/FullcheckPage';
 import FidelidadePage from '../presentation/pages/public/FidelidadePage';
+import LmsDemoPage from '../presentation/pages/public/LmsDemoPage';
 
 
 
@@ -137,6 +138,7 @@ function AppContent() {
           <Route path="/conciliacao" element={<ConciliacaoPage />} />
           <Route path="/fullcheck" element={<FullcheckPage />} />
           <Route path="/fidelidade" element={<FidelidadePage />} />
+          <Route path="/lms-demo" element={<LmsDemoPage />} />
 
 
 

@@ -1,38 +1,71 @@
 from __future__ import annotations
 
-import json
 import logging
+import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
 
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.utils.urls import google_sites_path_segments, is_http_url, join_url, normalize_url, same_site, url_id
+from src.utils.urls import (
+    google_sites_path_segments,
+    is_http_url,
+    join_url,
+    normalize_url,
+    normalize_googleusercontent_url,
+    same_site,
+    url_id,
+)
 
 
 log = logging.getLogger(__name__)
 
-# #region agent log
-DEBUG_LOG_PATH = Path(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log")
-def _debug_log(location: str, message: str, data: dict[str, Any], hypothesis_id: str = ""):
+# Constants for content checking and waiting
+DEFAULT_CONTENT_CHECK_MIN_WORDS = 10
+DEFAULT_WAIT_DELAY_SECONDS = 0.3
+DEFAULT_MAX_WAIT_ATTEMPTS = 2
+DEFAULT_DELAY_BETWEEN_PAGES = 0.5
+DEFAULT_DESCRIPTION_MAX_LENGTH = 280
+DEFAULT_SHORT_WAIT_TIMEOUT = 1
+
+
+def _check_content_loaded(
+    driver: Any,
+    *,
+    min_words: int = DEFAULT_CONTENT_CHECK_MIN_WORDS,
+) -> dict[str, Any] | bool:
+    """
+    Check if page content is loaded by executing JavaScript check.
+    
+    Args:
+        driver: Selenium WebDriver instance
+        min_words: Minimum number of words to consider content loaded
+    
+    Returns:
+        Dictionary with check result or False if check failed
+    """
     try:
-        with DEBUG_LOG_PATH.open("a", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "sessionId": "debug-session",
-                "runId": "run2",
-                "hypothesisId": hypothesis_id,
-                "location": location,
-                "message": message,
-                "data": data,
-                "timestamp": __import__("time").time() * 1000
-            }, ensure_ascii=False) + "\n")
-    except Exception:
-        pass
-# #endregion
+        script = f"""
+            var main = document.querySelector('div[role="main"]') || document.querySelector('main');
+            if (!main) return {{hasContent: false, reason: 'no_main'}};
+            var contentElements = main.querySelectorAll('p, h2, h3, h4, img, ol, ul, table, div[class*="content"], div[class*="text"], div[class*="paragraph"], div[class*="section"]');
+            if (contentElements.length > 0) return {{hasContent: true, reason: 'elements', count: contentElements.length}};
+            var textContent = (main.innerText || main.textContent || '').trim();
+            var words = textContent.split(/\\s+/).filter(function(w) {{ return w.length > 0; }});
+            if (words.length >= {min_words}) return {{hasContent: true, reason: 'text', wordCount: words.length}};
+            return {{hasContent: false, reason: 'insufficient', wordCount: words.length, textLength: textContent.length}};
+        """
+        result = driver.execute_script(script)
+        if isinstance(result, dict):
+            return result
+        return False
+    except Exception as e:
+        log.debug("Erro ao verificar conteúdo carregado: %s", e)
+        return False
 
 
 @dataclass(frozen=True)
@@ -47,243 +80,232 @@ class ExtractedMedia:
     thumbnail_url: str | None = None
 
 
-def extract_page(driver: Any, *, url: str, base_url: str, wait_timeout_seconds: int) -> dict[str, Any]:
-    driver.get(url)
-    wait = WebDriverWait(driver, wait_timeout_seconds)
-    wait.until(lambda d: d.execute_script("return document.readyState") in ("interactive", "complete"))
+def extract_page(
+    driver: Any,
+    *,
+    url: str,
+    base_url: str,
+    wait_timeout_seconds: int,
+    content_check_min_words: int = DEFAULT_CONTENT_CHECK_MIN_WORDS,
+    wait_delay_seconds: float = DEFAULT_WAIT_DELAY_SECONDS,
+    max_wait_attempts: int = DEFAULT_MAX_WAIT_ATTEMPTS,
+    short_wait_timeout: int = DEFAULT_SHORT_WAIT_TIMEOUT,
+    enable_debug_log: bool = False,
+) -> dict[str, Any]:
+    """
+    Extract content from a Google Sites page.
     
-    # Aguardar conteúdo dinâmico do Google Sites carregar
-    # Google Sites usa JavaScript para carregar conteúdo, então precisamos aguardar
-    import time
-    from selenium.webdriver.support import expected_conditions as EC
+    Args:
+        driver: Selenium WebDriver instance
+        url: URL of the page to extract
+        base_url: Base URL of the site
+        wait_timeout_seconds: Timeout for page load
+        content_check_min_words: Minimum words to consider content loaded
+        wait_delay_seconds: Delay between wait attempts
+        max_wait_attempts: Maximum number of wait attempts
+        short_wait_timeout: Timeout for short wait operations
+        enable_debug_log: Enable debug logging (default: False)
     
-    # #region agent log
-    _debug_log("extractor.py:55", "Before wait for content", {
-        "url": url,
-        "page_source_length": len(driver.page_source or ""),
-        "ready_state": driver.execute_script("return document.readyState")
-    }, "H6")
-    # #endregion
+    Returns:
+        Dictionary with extracted page data
+    """
+    start_time = time.time()
     
-    # Verificar se o conteúdo já está disponível imediatamente (otimização)
-    content_loaded = False
     try:
-        check_result = driver.execute_script("""
-            var main = document.querySelector('div[role="main"]') || document.querySelector('main');
-            if (!main) return {hasContent: false, reason: 'no_main'};
-            var contentElements = main.querySelectorAll('p, h2, h3, h4, img, ol, ul, table, div[class*="content"], div[class*="text"], div[class*="paragraph"], div[class*="section"]');
-            if (contentElements.length > 0) return {hasContent: true, reason: 'elements', count: contentElements.length};
-            var textContent = (main.innerText || main.textContent || '').trim();
-            var words = textContent.split(/\\s+/).filter(function(w) { return w.length > 0; });
-            if (words.length > 10) return {hasContent: true, reason: 'text', wordCount: words.length};
-            return {hasContent: false, reason: 'insufficient', wordCount: words.length, textLength: textContent.length};
-        """)
-        if isinstance(check_result, dict) and check_result.get("hasContent"):
-            content_loaded = True
-        else:
-            content_loaded = False
-    except Exception:
-        content_loaded = False
+        driver.get(url)
+        wait = WebDriverWait(driver, wait_timeout_seconds)
+        wait.until(lambda d: d.execute_script("return document.readyState") in ("interactive", "complete"))
+    except Exception as e:
+        log.error("Erro ao carregar página %s: %s", url, e)
+        raise
     
-    # Se o conteúdo já está disponível, pular esperas
+    # Check if content is already loaded (optimization)
+    content_loaded = False
+    check_result = _check_content_loaded(driver, min_words=content_check_min_words)
+    if isinstance(check_result, dict) and check_result.get("hasContent"):
+        content_loaded = True
+        log.debug("Conteúdo já carregado imediatamente para %s", url)
+    
+    # If content not loaded, wait for it
     if not content_loaded:
-        # Aguardar inicial reduzido para JavaScript executar
-        time.sleep(0.3)
+        # Initial delay for JavaScript to execute
+        time.sleep(wait_delay_seconds)
         
-        # #region agent log
-        try:
-            main_exists = bool(driver.find_elements(By.CSS_SELECTOR, "div[role='main'], main"))
-            main_innerHTML_result = driver.execute_script("""
-                var main = document.querySelector('div[role="main"]') || document.querySelector('main');
-                return main ? (main.innerHTML || '').length : 0;
-            """)
-            main_text_result = driver.execute_script("""
-                var main = document.querySelector('div[role="main"]') || document.querySelector('main');
-                return main ? (main.innerText || main.textContent || '').trim().length : 0;
-            """)
-            main_innerHTML_length = main_innerHTML_result if isinstance(main_innerHTML_result, int) else len(str(main_innerHTML_result or ""))
-            main_text_length = main_text_result if isinstance(main_text_result, int) else len(str(main_text_result or ""))
-            _debug_log("extractor.py:62", "After initial sleep", {
-                "main_exists": main_exists,
-                "main_innerHTML_length": main_innerHTML_length,
-                "main_text_length": main_text_length
-            }, "H6")
-        except Exception as e:
-            _debug_log("extractor.py:62_error", "After initial sleep ERROR", {
-                "error": str(e),
-                "error_type": type(e).__name__
-            }, "H6")
-        # #endregion
-        
-        # Tentar aguardar por conteúdo real (reduzido para 2 tentativas)
-        max_wait_attempts = 2
+        # Try waiting for content with multiple attempts
         for attempt in range(max_wait_attempts):
-            try:
-                check_result = driver.execute_script("""
-                    var main = document.querySelector('div[role="main"]') || document.querySelector('main');
-                    if (!main) return {hasContent: false, reason: 'no_main'};
-                    var contentElements = main.querySelectorAll('p, h2, h3, h4, img, ol, ul, table, div[class*="content"], div[class*="text"], div[class*="paragraph"], div[class*="section"]');
-                    if (contentElements.length > 0) return {hasContent: true, reason: 'elements', count: contentElements.length};
-                    var textContent = (main.innerText || main.textContent || '').trim();
-                    var words = textContent.split(/\\s+/).filter(function(w) { return w.length > 0; });
-                    if (words.length > 10) return {hasContent: true, reason: 'text', wordCount: words.length};
-                    return {hasContent: false, reason: 'insufficient', wordCount: words.length, textLength: textContent.length};
-                """)
-                
-                # #region agent log
-                _debug_log(f"extractor.py:attempt{attempt+1}", "Content check result", {
-                    "attempt": attempt + 1,
-                    "has_content": check_result.get("hasContent") if isinstance(check_result, dict) else bool(check_result),
-                    "check_result": check_result
-                }, "H6")
-                # #endregion
-                
-                if isinstance(check_result, dict) and check_result.get("hasContent"):
-                    content_loaded = True
-                    break
-            except Exception as e:
-                # #region agent log
-                _debug_log(f"extractor.py:attempt{attempt+1}_error", "Content check error", {
-                    "attempt": attempt + 1,
-                    "error": str(e)
-                }, "H6")
-                # #endregion
-                pass
+            check_result = _check_content_loaded(driver, min_words=content_check_min_words)
+            if isinstance(check_result, dict) and check_result.get("hasContent"):
+                content_loaded = True
+                log.debug("Conteúdo carregado após tentativa %d para %s", attempt + 1, url)
+                break
             
-            # Aguardar reduzido antes da próxima tentativa
+            # Wait before next attempt
             if attempt < max_wait_attempts - 1:
-                time.sleep(0.2)
+                time.sleep(wait_delay_seconds * 0.67)  # Slightly shorter delay between attempts
         
-        # Se ainda não carregou, tentar aguardar por elementos específicos (com timeout reduzido)
+        # If still not loaded, try waiting for specific elements
         if not content_loaded:
             try:
-                short_wait = WebDriverWait(driver, 1)  # Timeout reduzido para 1s
-                short_wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[role='main'] p, div[role='main'] h2, div[role='main'] img, div[role='main'] ol, div[role='main'] ul")))
+                short_wait = WebDriverWait(driver, short_wait_timeout)
+                short_wait.until(EC.presence_of_element_located((
+                    By.CSS_SELECTOR,
+                    "div[role='main'] p, div[role='main'] h2, div[role='main'] img, "
+                    "div[role='main'] ol, div[role='main'] ul"
+                )))
                 content_loaded = True
-                # #region agent log
-                _debug_log("extractor.py:EC_wait", "EC wait succeeded", {}, "H6")
-                # #endregion
+                log.debug("Conteúdo carregado após espera por elementos específicos para %s", url)
             except Exception as e:
-                # Última tentativa: aguardar reduzido
-                # #region agent log
-                _debug_log("extractor.py:EC_wait_failed", "EC wait failed", {
-                    "error": str(e)
-                }, "H6")
-                # #endregion
-                time.sleep(0.2)
-    
-    # #region agent log
-    try:
-        final_main_innerHTML_result = driver.execute_script("""
-            var main = document.querySelector('div[role="main"]') || document.querySelector('main');
-            return main ? (main.innerHTML || '').length : 0;
-        """)
-        final_main_text_result = driver.execute_script("""
-            var main = document.querySelector('div[role="main"]') || document.querySelector('main');
-            return main ? (main.innerText || main.textContent || '').trim().length : 0;
-        """)
-        final_main_innerHTML_length = final_main_innerHTML_result if isinstance(final_main_innerHTML_result, int) else len(str(final_main_innerHTML_result or ""))
-        final_main_text_length = final_main_text_result if isinstance(final_main_text_result, int) else len(str(final_main_text_result or ""))
-        _debug_log("extractor.py:after_wait", "After all wait attempts", {
-            "content_loaded": content_loaded,
-            "final_main_innerHTML_length": final_main_innerHTML_length,
-            "final_main_text_length": final_main_text_length
-        }, "H6")
-    except Exception as e:
-        _debug_log("extractor.py:after_wait_error", "After all wait attempts ERROR", {
-            "content_loaded": content_loaded,
-            "error": str(e),
-            "error_type": type(e).__name__
-        }, "H6")
-    # #endregion
+                log.warning("Timeout aguardando elementos específicos para %s: %s", url, e)
+                # Last attempt: small delay
+                time.sleep(wait_delay_seconds * 0.67)
 
+    # Get page title
     try:
         title = (driver.title or "").strip() or None
-    except Exception:
-        # Sessão pode ter sido invalidada, usar None
+    except Exception as e:
+        log.warning("Erro ao obter título da página %s: %s", url, e)
         title = None
-
-    # #region agent log
-    # Verificar se há iframes que podem conter conteúdo
-    iframes_info = driver.execute_script("""
-        var iframes = document.querySelectorAll('iframe');
-        return Array.from(iframes).map(function(iframe) {
-            return {
-                src: iframe.src || '',
-                id: iframe.id || '',
-                className: iframe.className || ''
-            };
-        });
-    """)
-    _debug_log("extractor.py:before_get_main", "Before _get_main_html", {
-        "iframes_count": len(iframes_info) if isinstance(iframes_info, list) else 0,
-        "iframes": iframes_info
-    }, "H6")
-    # #endregion
     
-    main_html, main_selector = _get_main_html(driver)
+    # Wait for images to load and force lazy loading images to load
+    try:
+        # Scroll to trigger lazy loading
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(0.5)  # Wait for lazy images to start loading
+        driver.execute_script("window.scrollTo(0, 0);")
+        time.sleep(0.3)  # Wait a bit more
+        
+        # Force lazy images to load by setting src from data-src
+        driver.execute_script("""
+            var images = document.querySelectorAll('img[data-src], img[data-lazy-src], img[data-original]');
+            images.forEach(function(img) {
+                var src = img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || img.getAttribute('data-original');
+                if (src && !img.src) {
+                    img.src = src;
+                }
+            });
+        """)
+        time.sleep(0.5)  # Wait for images to load
+    except Exception as e:
+        log.debug("Erro ao forçar carregamento de imagens lazy para %s: %s", url, e)
     
-    # #region agent log
-    _debug_log("extractor.py:45", "After _get_main_html", {
-        "main_selector": main_selector,
-        "main_html_length": len(main_html or ""),
-        "main_html_preview": (main_html or "")[:200],
-        "content_loaded": content_loaded
-    }, "H1")
-    # #endregion
+    # Extract main HTML content
+    try:
+        main_html, main_selector = _get_main_html(driver)
+        log.debug("HTML extraído usando seletor: %s (tamanho: %d bytes)", main_selector, len(main_html or ""))
+    except Exception as e:
+        log.error("Erro ao extrair HTML principal de %s: %s", url, e)
+        main_html = ""
+        main_selector = "error"
     
-    soup = BeautifulSoup(main_html or "", "lxml")
+    # Parse HTML with BeautifulSoup
+    try:
+        soup = BeautifulSoup(main_html or "", "lxml")
+    except Exception as e:
+        log.error("Erro ao fazer parse do HTML de %s: %s", url, e)
+        soup = BeautifulSoup("", "lxml")
     
-    # #region agent log
-    _debug_log("extractor.py:52", "After BeautifulSoup parse", {
-        "soup_has_h1": bool(soup.find("h1")),
-        "soup_has_h2": bool(soup.find("h2")),
-        "soup_has_h3": bool(soup.find("h3")),
-        "soup_has_p": bool(soup.find("p")),
-        "soup_has_ol": bool(soup.find("ol")),
-        "soup_has_ul": bool(soup.find("ul")),
-        "soup_has_img": bool(soup.find("img")),
-        "soup_text_length": len(soup.get_text() or "")
-    }, "H1")
-    # #endregion
+    # Remove navigation elements before processing
+    try:
+        from src.scraper.processor import _remove_navigation_elements
+        soup = _remove_navigation_elements(soup)
+    except Exception as e:
+        log.warning("Erro ao remover elementos de navegação de %s: %s", url, e)
     
-    # Remover elementos de navegação antes de processar
-    from src.scraper.processor import _remove_navigation_elements
-    soup = _remove_navigation_elements(soup)
+    # Validate extracted content
+    text = soup.get_text("\n", strip=True)
+    text_length = len(text)
+    has_content = text_length > 0
     
-    # #region agent log
-    _debug_log("extractor.py:after_nav_removal", "After navigation removal", {
-        "soup_has_h1": bool(soup.find("h1")),
-        "soup_has_h2": bool(soup.find("h2")),
-        "soup_has_h3": bool(soup.find("h3")),
-        "soup_has_p": bool(soup.find("p")),
-        "soup_text_length": len(soup.get_text() or "")
-    }, "H1")
-    # #endregion
+    if not has_content:
+        log.warning("Página %s extraída sem conteúdo de texto", url)
+    else:
+        log.debug("Conteúdo extraído: %d caracteres de texto", text_length)
     
     # Attempt a better title from h1 inside main
-    h1 = soup.find(["h1", "h2"])
-    if h1:
-        t = h1.get_text(" ", strip=True)
-        if t:
-            title = t
+    try:
+        h1 = soup.find(["h1", "h2"])
+        if h1:
+            t = h1.get_text(" ", strip=True)
+            if t:
+                title = t
+    except Exception as e:
+        log.debug("Erro ao extrair título de h1/h2 de %s: %s", url, e)
     
-    media = _extract_media(soup, base_url=base_url, page_url=url)
-    links_internal = _extract_internal_links(soup, base_url=base_url, page_url=url)
+    # Extract media and links
+    try:
+        media = _extract_media(soup, base_url=base_url, page_url=url, remove_size_params=True)
+        # #region agent log
+        import json
+        with open(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log", "a", encoding="utf-8") as f:
+            f.write(json.dumps({"sessionId":"debug-session","runId":"post-fix","hypothesisId":"G","location":"extractor.py:214","message":"Mídias extraídas","data":{"url":url[:100],"media_count":len(media),"media_types":[m.type for m in media]},"timestamp":int(time.time()*1000)})+"\n")
+        # #endregion
+        log.debug("Extraídas %d mídias de %s", len(media), url)
+    except Exception as e:
+        # #region agent log
+        import json
+        with open(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log", "a", encoding="utf-8") as f:
+            f.write(json.dumps({"sessionId":"debug-session","runId":"post-fix","hypothesisId":"G","location":"extractor.py:217","message":"Erro ao extrair mídias","data":{"url":url[:100],"error":str(e)[:200]},"timestamp":int(time.time()*1000)})+"\n")
+        # #endregion
+        log.error("Erro ao extrair mídias de %s: %s", url, e)
+        media = []
     
-    segs = google_sites_path_segments(url, base_url)
-    category_path = segs[:-1] if len(segs) >= 2 else segs[:-1]
+    try:
+        links_internal = _extract_internal_links(soup, base_url=base_url, page_url=url)
+        log.debug("Extraídos %d links internos de %s", len(links_internal), url)
+    except Exception as e:
+        log.error("Erro ao extrair links internos de %s: %s", url, e)
+        links_internal = []
     
-    # Extrair descrição após remover navegação
-    text = soup.get_text("\n", strip=True)
+    # Extract category path
+    try:
+        segs = google_sites_path_segments(url, base_url)
+        category_path = segs[:-1] if len(segs) >= 2 else segs[:-1]
+    except Exception as e:
+        log.warning("Erro ao extrair category_path de %s: %s", url, e)
+        category_path = []
+    
+    # Extract description
     description = None
     if text:
-        description = text[:280]
+        description = text[:DEFAULT_DESCRIPTION_MAX_LENGTH]
     
-    # Atualizar main_html com o soup limpo
+    # Update main_html with cleaned soup
     main_html = str(soup)
-
-    return {
+    
+    # Calculate extraction time
+    extraction_time = time.time() - start_time
+    
+    # Get cookies from driver for later use in media downloads
+    cookies = []
+    try:
+        selenium_cookies = driver.get_cookies()
+        # Convert Selenium cookie format to requests cookie format
+        cookies = [
+            {
+                "name": c.get("name"),
+                "value": c.get("value"),
+                "domain": c.get("domain"),
+                "path": c.get("path", "/"),
+            }
+            for c in selenium_cookies
+            if c.get("name") and c.get("value")
+        ]
+        # #region agent log
+        import json
+        with open(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log", "a", encoding="utf-8") as f:
+            f.write(json.dumps({"sessionId":"debug-session","runId":"post-fix","hypothesisId":"F","location":"extractor.py:261","message":"Cookies extraídos do driver","data":{"url":url[:100],"cookie_count":len(cookies),"selenium_cookie_count":len(selenium_cookies)},"timestamp":int(time.time()*1000)})+"\n")
+        # #endregion
+        log.debug("Extraídos %d cookies do driver para %s", len(cookies), url)
+    except Exception as e:
+        # #region agent log
+        import json
+        with open(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log", "a", encoding="utf-8") as f:
+            f.write(json.dumps({"sessionId":"debug-session","runId":"post-fix","hypothesisId":"F","location":"extractor.py:263","message":"Erro ao obter cookies","data":{"url":url[:100],"error":str(e)[:200]},"timestamp":int(time.time()*1000)})+"\n")
+        # #endregion
+        log.debug("Erro ao obter cookies do driver para %s: %s", url, e)
+        cookies = []
+    
+    result = {
         "id": url_id(url),
         "url": normalize_url(url),
         "title": title,
@@ -295,7 +317,16 @@ def extract_page(driver: Any, *, url: str, base_url: str, wait_timeout_seconds: 
         "media": [m.__dict__ for m in media],
         "links_internal": links_internal,
         "extracted_at": datetime.now(timezone.utc).isoformat(),
+        "extraction_time_seconds": round(extraction_time, 2),
+        "content_validated": has_content,
+        "text_length": text_length,
+        "cookies": cookies,  # Save cookies for media downloads
     }
+    
+    log.info("Página extraída: %s (tempo: %.2fs, texto: %d chars, mídias: %d, links: %d)",
+            url, extraction_time, text_length, len(media), len(links_internal))
+    
+    return result
 
 
 def _get_main_html(driver: Any) -> tuple[str, str]:
@@ -351,21 +382,77 @@ def _get_main_html(driver: Any) -> tuple[str, str]:
     return driver.page_source or "", "page_source"
 
 
-def _extract_media(soup: BeautifulSoup, *, base_url: str, page_url: str) -> list[ExtractedMedia]:
+def _extract_media(
+    soup: BeautifulSoup,
+    *,
+    base_url: str,
+    page_url: str,
+    remove_size_params: bool = True,
+) -> list[ExtractedMedia]:
+    """
+    Extract media (images, videos, documents) from parsed HTML.
+    
+    Args:
+        soup: BeautifulSoup parsed HTML
+        base_url: Base URL of the site
+        page_url: URL of the current page
+        remove_size_params: If True, normalize Google image URLs by removing size parameters
+    
+    Returns:
+        List of ExtractedMedia objects
+    """
     out: list[ExtractedMedia] = []
 
-    # Images
-    for img in soup.find_all("img", src=True):
-        src = img.get("src")
+    # Images - check both src and data-src (lazy loading)
+    all_imgs = soup.find_all("img")
+    # #region agent log
+    import json
+    with open(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log", "a", encoding="utf-8") as f:
+        f.write(json.dumps({"sessionId":"debug-session","runId":"post-fix","hypothesisId":"G","location":"extractor.py:374","message":"Encontradas tags img no HTML","data":{"url":page_url[:100],"total_img_tags":len(all_imgs)},"timestamp":int(time.time()*1000)})+"\n")
+    # #endregion
+    
+    for img in all_imgs:
+        # Try src first, then data-src, then data-lazy-src (common lazy loading attributes)
+        src = img.get("src") or img.get("data-src") or img.get("data-lazy-src") or img.get("data-original")
+        src_attr = "src" if img.get("src") else ("data-src" if img.get("data-src") else ("data-lazy-src" if img.get("data-lazy-src") else "data-original"))
+        
         if not src:
+            # #region agent log
+            with open(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log", "a", encoding="utf-8") as f:
+                f.write(json.dumps({"sessionId":"debug-session","runId":"post-fix","hypothesisId":"G","location":"extractor.py:378","message":"Imagem sem src válido","data":{"url":page_url[:100],"has_src":bool(img.get("src")),"has_data_src":bool(img.get("data-src")),"has_data_lazy_src":bool(img.get("data-lazy-src"))},"timestamp":int(time.time()*1000)})+"\n")
+            # #endregion
             continue
+        
+        # Skip data URIs and placeholder images
+        if src.startswith("data:") or src.startswith("blob:"):
+            continue
+        
+        # Skip common placeholder/empty images
+        if any(placeholder in src.lower() for placeholder in ["placeholder", "spacer", "blank", "transparent", "1x1"]):
+            continue
+        
         full = join_url(page_url, src)
         if not is_http_url(full):
+            # #region agent log
+            with open(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log", "a", encoding="utf-8") as f:
+                f.write(json.dumps({"sessionId":"debug-session","runId":"post-fix","hypothesisId":"G","location":"extractor.py:388","message":"URL não é HTTP válida","data":{"url":page_url[:100],"src":src[:100],"full":full[:100]},"timestamp":int(time.time()*1000)})+"\n")
+            # #endregion
             continue
+        
+        # Normalize Google image URLs if configured
+        normalized_url = normalize_url(full)
+        if remove_size_params and "googleusercontent.com" in normalized_url.lower():
+            normalized_url = normalize_googleusercontent_url(normalized_url, remove_size_params=True)
+        
+        # #region agent log
+        with open(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log", "a", encoding="utf-8") as f:
+            f.write(json.dumps({"sessionId":"debug-session","runId":"post-fix","hypothesisId":"G","location":"extractor.py:395","message":"Imagem extraída","data":{"url":page_url[:100],"src_attr":src_attr,"normalized_url":normalized_url[:100]},"timestamp":int(time.time()*1000)})+"\n")
+        # #endregion
+        
         out.append(
             ExtractedMedia(
                 type="image",
-                url=normalize_url(full),
+                url=normalized_url,
                 alt=(img.get("alt") or None),
             )
         )

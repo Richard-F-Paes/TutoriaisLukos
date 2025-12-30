@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import json
 import logging
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 from bs4 import BeautifulSoup, Tag
@@ -225,23 +223,7 @@ def _remove_navigation_elements(soup: BeautifulSoup) -> BeautifulSoup:
     
     return soup_copy
 
-# #region agent log
-DEBUG_LOG_PATH = Path(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log")
-def _debug_log(location: str, message: str, data: dict[str, Any], hypothesis_id: str = ""):
-    try:
-        with DEBUG_LOG_PATH.open("a", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "sessionId": "debug-session",
-                "runId": "run1",
-                "hypothesisId": hypothesis_id,
-                "location": location,
-                "message": message,
-                "data": data,
-                "timestamp": __import__("time").time() * 1000
-            }, ensure_ascii=False) + "\n")
-    except Exception:
-        pass
-# #endregion
+# Debug logging removed - use standard logging instead
 
 
 @dataclass(frozen=True)
@@ -387,14 +369,17 @@ def _convert_internal_links(html: str, url_to_hash_map: dict[str, str], base_url
 
 
 def process_raw_page(page: dict[str, Any], *, url_to_hash_map: dict[str, str] | None = None) -> dict[str, Any]:
-    # #region agent log
-    _debug_log("processor.py:26", "process_raw_page ENTRY", {
-        "page_url": page.get("url"),
-        "has_content_html": bool(page.get("content_html")),
-        "content_html_length": len(page.get("content_html") or ""),
-        "media_count": len(page.get("media") or [])
-    }, "H1")
-    # #endregion
+    """
+    Process raw page data into structured tutorial format.
+    
+    Args:
+        page: Raw page dictionary with content_html, media, etc.
+        url_to_hash_map: Optional mapping of URLs to share hashes for link conversion
+    
+    Returns:
+        Dictionary with processed tutorial, steps, and media data
+    """
+    log.debug("Processando página: %s", page.get("url"))
     
     html = page.get("content_html") or ""
     cleaned = clean_html(html)
@@ -402,19 +387,6 @@ def process_raw_page(page: dict[str, Any], *, url_to_hash_map: dict[str, str] | 
     
     # Remover elementos de navegação antes de processar
     soup = _remove_navigation_elements(soup)
-
-    # #region agent log
-    _debug_log("processor.py:35", "After clean_html and nav removal", {
-        "cleaned_length": len(cleaned),
-        "soup_has_h1": bool(soup.find("h1")),
-        "soup_has_h2": bool(soup.find("h2")),
-        "soup_has_h3": bool(soup.find("h3")),
-        "soup_has_ol": bool(soup.find("ol")),
-        "soup_has_images": len(soup.find_all("img")) > 0,
-        "soup_has_iframes": len(soup.find_all("iframe")) > 0,
-        "soup_text_length": len(soup.get_text() or "")
-    }, "H1,H2")
-    # #endregion
 
     # Mapear mídias originais por URL para associar com mídias extraídas dos passos
     # Normalizar URLs para melhor matching (remover query params, normalizar)
@@ -430,26 +402,11 @@ def process_raw_page(page: dict[str, Any], *, url_to_hash_map: dict[str, str] | 
                 if url_base not in original_media_by_url:
                     original_media_by_url[url_base] = m
 
-    # #region agent log
-    _debug_log("processor.py:52", "Before _split_into_steps", {
-        "original_media_count": len(original_media_by_url),
-        "soup_text_preview": (soup.get_text() or "")[:200]
-    }, "H2")
-    # #endregion
+    
 
     steps = _split_into_steps(soup)
     
-    # #region agent log
-    _debug_log("processor.py:56", "After _split_into_steps", {
-        "steps_count": len(steps),
-        "steps_details": [{
-            "title": s.get("title"),
-            "content_length": len(s.get("content_html") or ""),
-            "content_preview": (s.get("content_html") or "")[:100],
-            "media_count": len(s.get("media") or [])
-        } for s in steps[:3]]
-    }, "H1,H3")
-    # #endregion
+    
     
     # Converter links internos nos passos se mapeamento fornecido
     page_url = page.get("url", "") or ""
@@ -480,25 +437,14 @@ def process_raw_page(page: dict[str, Any], *, url_to_hash_map: dict[str, str] | 
     media_rows: list[dict[str, Any]] = []
     
     for i, st in enumerate(steps, start=1):
-        # #region agent log
-        _debug_log(f"processor.py:60-step{i}", "Processing step", {
-            "step_number": i,
-            "step_title": st.get("title"),
-            "step_content_length": len(st.get("content_html") or ""),
-            "step_media_count": len(st.get("media") or [])
-        }, "H1,H3")
-        # #endregion
+        
         
         step_media = st.get("media") or []
         step_image_url = None
         step_video_url = None
         step_content_html = st.get("content_html") or ""
         
-        # #region agent log
-        _debug_log(f"processor.py:67-step{i}", "Step media details", {
-            "step_media": step_media
-        }, "H2,H5")
-        # #endregion
+        
         
         # Processar mídias do passo e remover vídeos do content_html
         step_content_soup = BeautifulSoup(step_content_html, "lxml")
@@ -785,38 +731,17 @@ def _find_step_separators(soup: BeautifulSoup) -> list[Tag]:
 
 
 def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
-    # #region agent log
-    _debug_log("processor.py:217", "_split_into_steps ENTRY", {
-        "soup_has_h1": bool(soup.find("h1")),
-        "soup_has_h2": bool(soup.find("h2")),
-        "soup_has_h3": bool(soup.find("h3")),
-        "soup_has_ol": bool(soup.find("ol")),
-        "soup_text_length": len(soup.get_text() or "")
-    }, "H1,H3")
-    # #endregion
+    
     
     # Remover H1 e obter conteúdo introdutório
     soup_no_h1, intro_content = _remove_h1_and_get_intro(soup)
     
-    # #region agent log
-    _debug_log("processor.py:225", "After _remove_h1_and_get_intro", {
-        "has_intro_content": bool(intro_content),
-        "intro_content_length": len(intro_content or ""),
-        "soup_no_h1_has_h1": bool(soup_no_h1.find("h1")),
-        "soup_no_h1_has_h2": bool(soup_no_h1.find("h2")),
-        "soup_no_h1_has_h3": bool(soup_no_h1.find("h3"))
-    }, "H1")
-    # #endregion
+    
     
     # 0) Prioridade: Usar separadores específicos (divs ou sections)
     separators = _find_step_separators(soup_no_h1)
     if separators:
-        # #region agent log
-        _debug_log("processor.py:separators", "Found step separators", {
-            "separators_count": len(separators),
-            "separator_types": [s.name for s in separators[:3]]
-        }, "H1")
-        # #endregion
+        
         
         out_sep: list[dict[str, Any]] = []
         
@@ -931,12 +856,7 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
         
         # Se encontrou pelo menos 1 passo, retornar
         if len(out_sep) >= 1:
-            # #region agent log
-            _debug_log("processor.py:separators", "Returning steps from separators", {
-                "steps_count": len(out_sep),
-                "steps_summary": [{"title": s.get("title"), "content_len": len(s.get("content_html") or "")} for s in out_sep[:3]]
-            }, "H1")
-            # #endregion
+            
             return out_sep
     
     # 1) Prefer ordered list(s)
@@ -961,12 +881,7 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
     # 2) Split by headings (h2/h3)
     headings = soup_no_h1.find_all(["h2", "h3"])
     
-    # #region agent log
-    _debug_log("processor.py:245", "Checking headings", {
-        "headings_count": len(headings),
-        "headings_titles": [h.get_text(" ", strip=True) for h in headings[:5]]
-    }, "H1,H3")
-    # #endregion
+    
     
     if headings:
         out2: list[dict[str, Any]] = []
@@ -975,12 +890,7 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
             # Extrair mídias do conteúdo introdutório
             intro_soup = BeautifulSoup(intro_content, "lxml")
             intro_media = _extract_media_from_element(intro_soup)
-            # #region agent log
-            _debug_log("processor.py:252", "Intro step created", {
-                "intro_media_count": len(intro_media),
-                "intro_content_length": len(intro_content)
-            }, "H2")
-            # #endregion
+            
             out2.append({"title": None, "content_html": intro_content, "media": intro_media})
         
         for h in headings:
@@ -997,27 +907,13 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
                 if isinstance(sib, Tag):
                     sib_media = _extract_media_from_element(sib)
                     step_media.extend(sib_media)
-                    # #region agent log
-                    _debug_log(f"processor.py:270-heading-{title}", "Sibling processed", {
-                        "sibling_tag": sib.name,
-                        "sibling_media_found": len(sib_media),
-                        "total_chunk_length": sum(len(str(c)) for c in chunk)
-                    }, "H3,H4")
-                    # #endregion
+                    
             
             # Se não encontrou mídias nos irmãos, procurar no próprio heading
             if not step_media:
                 step_media = _extract_media_from_element(h)
             
-            # #region agent log
-            _debug_log(f"processor.py:280-heading-{title}", "Step created from heading", {
-                "title": title,
-                "chunk_length": sum(len(str(c)) for c in chunk),
-                "siblings_count": siblings_processed,
-                "step_media_count": len(step_media),
-                "final_content_length": len("".join(chunk))
-            }, "H1,H3,H4")
-            # #endregion
+            
             
             # Verificar se não é um passo de rodapé antes de adicionar
             chunk_soup = BeautifulSoup("".join(chunk), "lxml")
@@ -1042,12 +938,7 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
         
         # If we got at least 2 chunks (ou 1 se tiver intro), treat as steps.
         if len(out2) >= 2 or (len(out2) == 1 and intro_content):
-            # #region agent log
-            _debug_log("processor.py:290", "Returning steps from headings", {
-                "steps_count": len(out2),
-                "steps_summary": [{"title": s.get("title"), "content_len": len(s.get("content_html") or "")} for s in out2]
-            }, "H1")
-            # #endregion
+            
             return out2
 
     # 3) Tentar dividir por parágrafos longos ou divs com conteúdo significativo
@@ -1098,12 +989,7 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
     
     # Se encontrou múltiplos passos potenciais, retornar
     if len(potential_steps) >= 2:
-        # #region agent log
-        _debug_log("processor.py:fallback_structured", "Found structured steps", {
-            "steps_count": len(potential_steps),
-            "steps_summary": [{"title": s.get("title"), "content_len": len(s.get("content_html") or "")} for s in potential_steps[:3]]
-        }, "H1")
-        # #endregion
+        
         return potential_steps
     
     # 4) Fallback final: single-step with entire content (sem H1)
@@ -1136,12 +1022,7 @@ def _extract_media_from_element(elem: Tag | BeautifulSoup) -> list[dict[str, Any
     Extrai mídias (imagens e vídeos) de um elemento HTML.
     Retorna lista de dicionários com informações das mídias.
     """
-    # #region agent log
-    _debug_log("processor.py:295", "_extract_media_from_element ENTRY", {
-        "elem_type": type(elem).__name__,
-        "elem_name": getattr(elem, "name", None) if isinstance(elem, Tag) else None
-    }, "H2")
-    # #endregion
+    
     
     media: list[dict[str, Any]] = []
     
@@ -1150,12 +1031,7 @@ def _extract_media_from_element(elem: Tag | BeautifulSoup) -> list[dict[str, Any
     
     # Extrair imagens
     imgs = elem.find_all("img", src=True)
-    # #region agent log
-    _debug_log("processor.py:305", "Found images", {
-        "images_count": len(imgs),
-        "image_srcs": [img.get("src") for img in imgs[:3]]
-    }, "H2")
-    # #endregion
+    
     
     for img in imgs:
         src = img.get("src") or ""
@@ -1195,13 +1071,7 @@ def _extract_media_from_element(elem: Tag | BeautifulSoup) -> list[dict[str, Any
     iframes = elem.find_all("iframe", src=True)
     videos = elem.find_all("video", src=True)
     
-    # #region agent log
-    _debug_log("processor.py:320", "Found videos", {
-        "iframes_count": len(iframes),
-        "videos_count": len(videos),
-        "iframe_srcs": [iframe.get("src") for iframe in iframes[:3]]
-    }, "H2")
-    # #endregion
+    
     
     for iframe in iframes:
         src = iframe.get("src") or ""
@@ -1219,12 +1089,7 @@ def _extract_media_from_element(elem: Tag | BeautifulSoup) -> list[dict[str, Any
                 "url": src,
             })
     
-    # #region agent log
-    _debug_log("processor.py:340", "_extract_media_from_element EXIT", {
-        "total_media_found": len(media),
-        "media_types": [m.get("type") for m in media]
-    }, "H2")
-    # #endregion
+    
     
     return media
 

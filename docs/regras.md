@@ -5,8 +5,7 @@
 ## Princípios Fundamentais
 
 - **DRY (Don't Repeat Yourself)** - Uma única fonte de verdade, sem duplicação de código ou arquivos
-- **KISS (Keep It Simple)** - Complexidade desnecessária quebra a lógica e o sistema
-- **Não criar arquivos desnecessariamente** - Reutilize o que já existe
+- **KISS (Keep It Simple Stupid)** - Complexidade desnecessária quebra a lógica e o sistema
 - **Sem mocks em produção** - Nunca usar dados sintéticos ou fictícios no ambiente produtivo
 - **Testes não invasivos** - Não chumbar testes no código nem prejudicar o fluxo/UX
 - **Validar após edições** - Sempre checar posicionamentos e controles obrigatóriamente

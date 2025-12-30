@@ -70,6 +70,16 @@ class Settings:
     respect_robots: bool
     download_max_workers_pages: int
     download_max_workers_media: int
+    download_max_media_per_page: int | None
+    download_remove_size_params: bool
+    download_delay_seconds: float
+    download_validate_integrity: bool
+
+    extract_content_check_min_words: int
+    extract_wait_delay_seconds: float
+    extract_max_wait_attempts: int
+    extract_delay_between_pages: float
+    extract_enable_debug_log: bool
 
     data_dir: Path
     media_dir: Path
@@ -91,6 +101,8 @@ class Settings:
     sqlserver_username: str | None
     sqlserver_password: str | None
     sqlserver_port: int | None
+
+    default_user_id: int
 
     tables: DbTableMapping
     columns: DbColumnMapping
@@ -201,6 +213,15 @@ def load_settings(dotenv_path: str | os.PathLike[str] | None = None) -> Settings
         respect_robots=_env_bool("RESPECT_ROBOTS", True),
         download_max_workers_pages=_env_int("DOWNLOAD_MAX_WORKERS_PAGES", 4),
         download_max_workers_media=_env_int("DOWNLOAD_MAX_WORKERS_MEDIA", 8),
+        download_max_media_per_page=_env_int("DOWNLOAD_MAX_MEDIA_PER_PAGE", None),
+        download_remove_size_params=_env_bool("DOWNLOAD_REMOVE_SIZE_PARAMS", True),
+        download_delay_seconds=_env_float("DOWNLOAD_DELAY_SECONDS", 0.1),
+        download_validate_integrity=_env_bool("DOWNLOAD_VALIDATE_INTEGRITY", True),
+        extract_content_check_min_words=_env_int("EXTRACT_CONTENT_CHECK_MIN_WORDS", 10),
+        extract_wait_delay_seconds=_env_float("EXTRACT_WAIT_DELAY_SECONDS", 0.3),
+        extract_max_wait_attempts=_env_int("EXTRACT_MAX_WAIT_ATTEMPTS", 2),
+        extract_delay_between_pages=_env_float("EXTRACT_DELAY_BETWEEN_PAGES", 0.5),
+        extract_enable_debug_log=_env_bool("EXTRACT_ENABLE_DEBUG_LOG", False),
         data_dir=data_dir,
         media_dir=media_dir,
         category_source=category_source,
@@ -215,6 +236,7 @@ def load_settings(dotenv_path: str | os.PathLike[str] | None = None) -> Settings
         sqlserver_username=(os.getenv("SQLSERVER_USERNAME") or "").strip() or None,
         sqlserver_password=(os.getenv("SQLSERVER_PASSWORD") or "").strip() or None,
         sqlserver_port=_env_int("SQLSERVER_PORT", None) if os.getenv("SQLSERVER_PORT") else None,
+        default_user_id=_env_int("DEFAULT_USER_ID", 1),
         tables=tables,
         columns=columns,
     )

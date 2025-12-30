@@ -155,6 +155,8 @@ def _discover_pages(settings) -> None:
 
 
 def _extract_pages(settings, *, limit: int, force: bool) -> None:
+    import time
+    
     pages_path = settings.data_dir / "pages.json"
     if not pages_path.exists():
         raise RuntimeError("pages.json não encontrado. Execute a descoberta primeiro.")
@@ -173,6 +175,12 @@ def _extract_pages(settings, *, limit: int, force: bool) -> None:
         user_agent=settings.user_agent,
     )
     driver = create_driver(cfg)
+    
+    # Metrics tracking
+    total_start_time = time.time()
+    extraction_times: list[float] = []
+    stats = {"success": 0, "failed": 0, "skipped": 0, "total_text_length": 0, "total_media": 0, "total_links": 0}
+    
     try:
         for i, p in enumerate(pages, start=1):
             url = normalize_url(p.get("url"))
@@ -181,15 +189,43 @@ def _extract_pages(settings, *, limit: int, force: bool) -> None:
             
             if out_path.exists() and not force:
                 log.debug("(%d/%d) Já extraído: %s", i, len(pages), url)
+                stats["skipped"] += 1
                 continue
             
             log.info("(%d/%d) Extraindo: %s", i, len(pages), url)
-            raw = extract_page(
-                driver,
-                url=url,
-                base_url=settings.base_url,
-                wait_timeout_seconds=settings.wait_timeout_seconds,
-            )
+            
+            # Rate limiting: delay between pages
+            if i > 1 and settings.extract_delay_between_pages > 0:
+                time.sleep(settings.extract_delay_between_pages)
+            
+            try:
+                raw = extract_page(
+                    driver,
+                    url=url,
+                    base_url=settings.base_url,
+                    wait_timeout_seconds=settings.wait_timeout_seconds,
+                    content_check_min_words=settings.extract_content_check_min_words,
+                    wait_delay_seconds=settings.extract_wait_delay_seconds,
+                    max_wait_attempts=settings.extract_max_wait_attempts,
+                    enable_debug_log=settings.extract_enable_debug_log,
+                )
+                
+                # Collect metrics
+                extraction_time = raw.get("extraction_time_seconds", 0)
+                if extraction_time > 0:
+                    extraction_times.append(extraction_time)
+                
+                stats["success"] += 1
+                stats["total_text_length"] += raw.get("text_length", 0)
+                stats["total_media"] += len(raw.get("media", []))
+                stats["total_links"] += len(raw.get("links_internal", []))
+                
+                if not raw.get("content_validated", False):
+                    log.warning("Página %s extraída sem validação de conteúdo", url)
+            except Exception as e:
+                stats["failed"] += 1
+                log.error("Erro ao extrair página %s: %s", url, e, exc_info=True)
+                continue
             
             # Merge discovery hints
             raw["discovered_from_menu"] = bool(p.get("discovered_from_menu"))
@@ -216,11 +252,35 @@ def _extract_pages(settings, *, limit: int, force: bool) -> None:
                 raw["category_path"] = p.get("category_path")
             
             # Enforce max depth (categoria/subcategoria only). Keep *_menu intact for audit.
-            raw["category_path"] = limit_category_depth(raw.get("category_path"), max_depth=2)
+            if raw.get("category_path"):
+                raw["category_path"] = limit_category_depth(raw.get("category_path"), max_depth=2)
 
+            # Save extracted page data (with cookies if available)
             write_json(out_path, raw)
+            
+            # Log progress every 25% or at the end
+            if i % max(1, len(pages) // 4) == 0 or i == len(pages):
+                elapsed = time.time() - total_start_time
+                avg_time = sum(extraction_times) / len(extraction_times) if extraction_times else 0
+                success_rate = (stats["success"] / i * 100) if i > 0 else 0
+                log.info("Progresso extração: %d/%d concluídos (%d sucessos, %d falhas, %d pulados) | "
+                        "Taxa de sucesso: %.1f%% | Tempo médio: %.2fs | Tempo total: %.1fs",
+                        i, len(pages), stats["success"], stats["failed"], stats["skipped"],
+                        success_rate, avg_time, elapsed)
         
-        log.info("[OK] Extracao concluida para %d paginas", len(pages))
+        # Final metrics
+        total_duration = time.time() - total_start_time
+        avg_extraction_time = sum(extraction_times) / len(extraction_times) if extraction_times else 0
+        min_extraction_time = min(extraction_times) if extraction_times else 0
+        max_extraction_time = max(extraction_times) if extraction_times else 0
+        success_rate = (stats["success"] / len(pages) * 100) if pages else 0
+        
+        log.info("[OK] Extração concluída para %d páginas", len(pages))
+        log.info("Métricas de extração: taxa de sucesso=%.1f%%, tempo médio=%.2fs, "
+                "tempo min=%.2fs, tempo max=%.2fs, tempo total=%.1fs",
+                success_rate, avg_extraction_time, min_extraction_time, max_extraction_time, total_duration)
+        log.info("Estatísticas: texto total=%d chars, mídias total=%d, links total=%d",
+                stats["total_text_length"], stats["total_media"], stats["total_links"])
     finally:
         driver.quit()
 
@@ -239,10 +299,17 @@ def _download_media(settings, *, limit: int) -> None:
     robots = RobotsPolicy(base_url=settings.base_url, user_agent=settings.user_agent)
     can_fetch = (robots.can_fetch if settings.respect_robots else None)
     
-    def process_page(fp: Path) -> tuple[Path, str]:
-        """Processa uma única página. Thread-safe."""
+    def process_page(fp: Path) -> tuple[Path, str, dict[str, int]]:
+        """Processa uma única página. Thread-safe. Retorna estatísticas."""
         page = read_json(fp)
         title = page.get("title") or page.get("url") or fp.name
+        
+        # Contar mídias antes do download
+        media_before = len(page.get("media") or [])
+        
+        # Get cookies from page if available (saved during extraction)
+        page_cookies = page.get("cookies")
+        
         updated = download_media_for_page(
             page,
             images_dir=settings.images_dir(),
@@ -253,30 +320,58 @@ def _download_media(settings, *, limit: int) -> None:
             backoff_seconds=settings.request_backoff_seconds,
             can_fetch=can_fetch,
             max_workers=settings.download_max_workers_media,
+            max_media_per_page=settings.download_max_media_per_page,
+            remove_size_params=settings.download_remove_size_params,
+            delay_seconds=settings.download_delay_seconds,
+            validate_integrity=settings.download_validate_integrity,
+            cookies=page_cookies,
         )
         write_json(fp, updated)
-        return fp, title
+        
+        # Calcular estatísticas
+        media_after = updated.get("media") or []
+        stats = {
+            "total": media_before,
+            "downloaded": sum(1 for m in media_after if m.get("downloaded")),
+            "failed": sum(1 for m in media_after if not m.get("downloaded") and m.get("download_error")),
+            "skipped": sum(1 for m in media_after if m.get("local_path") and not m.get("downloaded")),
+        }
+        
+        return fp, title, stats
     
     # Paralelizar processamento de páginas
     max_workers_pages = settings.download_max_workers_pages
-    log.info("Processando %d páginas com %d workers (até %d downloads simultâneos por página)",
-             len(files), max_workers_pages, settings.download_max_workers_media)
+    limit_info = f" (limite: {settings.download_max_media_per_page} por página)" if settings.download_max_media_per_page else ""
+    log.info("Processando %d páginas com %d workers (até %d downloads simultâneos por página)%s",
+             len(files), max_workers_pages, settings.download_max_workers_media, limit_info)
     
     completed = 0
+    total_stats = {"total": 0, "downloaded": 0, "failed": 0, "skipped": 0}
+    
     with ThreadPoolExecutor(max_workers=max_workers_pages) as executor:
         futures = {executor.submit(process_page, fp): fp for fp in files}
         
         for future in as_completed(futures):
             try:
-                fp, title = future.result()
+                fp, title, stats = future.result()
                 completed += 1
-                log.info("(%d/%d) [OK] Concluido: %s", completed, len(files), title)
+                
+                # Acumular estatísticas
+                total_stats["total"] += stats["total"]
+                total_stats["downloaded"] += stats["downloaded"]
+                total_stats["failed"] += stats["failed"]
+                total_stats["skipped"] += stats["skipped"]
+                
+                log.info("(%d/%d) [OK] Concluido: %s (mídias: %d baixadas, %d falhas, %d puladas)",
+                        completed, len(files), title, stats["downloaded"], stats["failed"], stats["skipped"])
             except Exception as exc:
                 fp = futures[future]
                 completed += 1
                 log.error("(%d/%d) [ERRO] Erro ao processar %s: %s", completed, len(files), fp.name, exc, exc_info=True)
     
     log.info("[OK] Download de midias concluido para %d paginas", len(files))
+    log.info("Estatísticas totais: %d mídias processadas (%d baixadas, %d falhas, %d puladas)",
+             total_stats["total"], total_stats["downloaded"], total_stats["failed"], total_stats["skipped"])
 
 
 def _process_data(settings) -> None:
@@ -477,14 +572,13 @@ def _insert_to_db(settings, *, dry_run: bool) -> None:
     )
     conn = db_connect(cfg)
     try:
-        default_user_id = 1  # Assumindo que existe um usuário com ID 1
         result = insert_all(
             conn,
             tables=settings.tables,
             cols=settings.columns,
             processed=processed,
             dry_run=dry_run,
-            default_user_id=default_user_id,
+            default_user_id=settings.default_user_id,
         )
         if dry_run:
             log.info("[OK] Simulacao concluida (dry-run)")

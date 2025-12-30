@@ -10,10 +10,16 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 ### Adicionado
 - Sistema de changelog para rastreamento de mudanças do projeto
 - Documentação consolidada na pasta `docs`
+- Suporte a variável de ambiente `DEFAULT_USER_ID` no WebScrape para configurar ID do usuário padrão
 
 ### Alterado
 - Estrutura da documentação consolidada em arquivos essenciais
 - Atualização das regras do projeto com tecnologias reais utilizadas
+- WebScrape: `default_user_id` centralizado no Settings (configurável via `.env`) em vez de hardcoded
+- WebScrape: Documentação reorganizada (`VALIDACAO.md` movido para `WebScrape/docs/`)
+
+### Corrigido
+- WebScrape: Violação DRY corrigida - `default_user_id` removido de múltiplos locais e centralizado em `config.py`
 
 ## Tipos de Mudanças
 

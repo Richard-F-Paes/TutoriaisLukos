@@ -201,14 +201,16 @@ def _cmd_download_media(settings, *, limit: int) -> None:
             backoff_seconds=settings.request_backoff_seconds,
             can_fetch=can_fetch,
             max_workers=settings.download_max_workers_media,
+            max_media_per_page=settings.download_max_media_per_page,
         )
         write_json(fp, updated)
         return fp, title
 
     # Parallelize page processing
     max_workers_pages = settings.download_max_workers_pages
-    log.info("Processing %d pages with %d workers (up to %d simultaneous downloads per page)",
-             len(files), max_workers_pages, settings.download_max_workers_media)
+    limit_info = f" (limit: {settings.download_max_media_per_page} per page)" if settings.download_max_media_per_page else ""
+    log.info("Processing %d pages with %d workers (up to %d simultaneous downloads per page)%s",
+             len(files), max_workers_pages, settings.download_max_workers_media, limit_info)
 
     completed = 0
     with ThreadPoolExecutor(max_workers=max_workers_pages) as executor:
@@ -358,16 +360,13 @@ def _cmd_insert_db(settings, *, dry_run: bool) -> None:
     )
     conn = db_connect(cfg)
     try:
-        # Obter ID do usuário padrão (assumindo que existe um usuário com ID 1)
-        # Se não existir, o usuário precisa criar um primeiro
-        default_user_id = 1
         result = insert_all(
             conn, 
             tables=settings.tables, 
             cols=settings.columns, 
             processed=processed, 
             dry_run=dry_run,
-            default_user_id=default_user_id
+            default_user_id=settings.default_user_id
         )
         log.info("Inserted: %s", result)
     finally:

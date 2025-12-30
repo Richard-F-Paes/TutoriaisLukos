@@ -24,7 +24,7 @@ WebScrape/
 2. **SQL Server** com banco de dados configurado
 3. **Driver ODBC** para SQL Server instalado
 4. **Selenium WebDriver** (Chrome/Edge/Firefox)
-5. **Usuário padrão** no banco de dados (ID 1) para campos CreatedBy/UpdatedBy
+5. **Usuário padrão** no banco de dados (configurável via `DEFAULT_USER_ID` no `.env`, padrão: 1) para campos CreatedBy/UpdatedBy
 
 ## Instalação
 
@@ -166,9 +166,9 @@ SQLSERVER_TRUSTED_CONNECTION=true
 - Instale o WebDriver apropriado para seu navegador
 - Verifique se está no PATH ou configure o caminho
 
-### Erro: "User ID 1 not found"
-- Certifique-se de que existe um usuário com ID 1 no banco
-- Ou modifique `default_user_id` no código
+### Erro: "User ID not found"
+- Certifique-se de que existe um usuário com o ID configurado no banco
+- Configure `DEFAULT_USER_ID` no arquivo `.env` para usar um ID diferente
 
 ## Notas Importantes
 
@@ -201,5 +201,5 @@ media/
 
 ## Suporte
 
-Para problemas ou dúvidas, consulte o arquivo `plano.md` para detalhes sobre a estratégia de extração.
+Para problemas ou dúvidas, consulte o arquivo `docs/VALIDACAO.md` para detalhes sobre validação e configuração.
 

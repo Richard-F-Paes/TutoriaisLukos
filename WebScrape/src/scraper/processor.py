@@ -145,6 +145,11 @@ def _remove_navigation_elements(soup: BeautifulSoup) -> BeautifulSoup:
         "Embedded Files",
         "Tutoriais Lukos",
         "Início",
+        # Textos de navegação em português
+        "Pular para o conteúdo principal Pular para a navegação",
+        "Pular para o conteúdo principalPular para a navegação",
+        "Pular para o conteúdo principal",
+        "Pular para a navegação",
     ]
     
     # Remover elementos por role
@@ -183,6 +188,37 @@ def _remove_navigation_elements(soup: BeautifulSoup) -> BeautifulSoup:
                     nav_text_count = sum(1 for nav_text in navigation_texts if nav_text.lower() in parent_text.lower())
                     if nav_text_count > 0:
                         parent.decompose()
+    
+    # Remover especificamente elementos com textos de navegação em português
+    # Procurar por elementos que contêm esses textos (incluindo variações sem espaços)
+    portuguese_nav_patterns = [
+        "pular para o conteúdo principal",
+        "pular para a navegação",
+        "pular para o conteúdo principalpular para a navegação",
+    ]
+    
+    for elem in soup_copy.find_all(True):  # Todos os elementos
+        if not isinstance(elem, Tag):
+            continue
+        
+        elem_text = elem.get_text(" ", strip=True).lower()
+        # Normalizar espaços múltiplos para um único espaço
+        elem_text_normalized = " ".join(elem_text.split())
+        
+        # Verificar se o elemento contém algum dos padrões de navegação
+        for pattern in portuguese_nav_patterns:
+            if pattern in elem_text_normalized:
+                # Se o elemento contém principalmente esse texto de navegação, remover
+                # Verificar se o texto de navegação é uma parte significativa do conteúdo
+                if len(elem_text_normalized) < 150:  # Elementos pequenos provavelmente são navegação
+                    elem.decompose()
+                    log.debug("Removido elemento com texto de navegação em português: %s", pattern)
+                    break
+                # Para elementos maiores, verificar se começa com o texto de navegação
+                elif elem_text_normalized.startswith(pattern) or elem_text_normalized[:len(pattern)+20].startswith(pattern):
+                    elem.decompose()
+                    log.debug("Removido elemento que começa com texto de navegação em português: %s", pattern)
+                    break
     
     # Remover elementos com classes específicas do Google Sites que são navegação
     google_sites_nav_classes = [
@@ -663,6 +699,7 @@ def _find_step_separators(soup: BeautifulSoup) -> list[Tag]:
     """
     Encontra elementos separadores de passos.
     Prioridade:
+    0. Divs com classe "iwQgFb" e role="presentation" (separador de linha/divisão visual)
     1. Divs com classes "oKdM2c ZZyype Kzv0Me" (separador principal)
     2. Sections com id no formato "h.{hash}" e classe "yaqOZd lQAHbd"
     
@@ -670,6 +707,36 @@ def _find_step_separators(soup: BeautifulSoup) -> list[Tag]:
         Lista de elementos Tag que são separadores, ordenados por posição no documento
     """
     separators: list[Tag] = []
+    
+    # 0. Prioridade máxima: Procurar por divs com classe "iwQgFb" e role="presentation"
+    # Este é o separador visual usado pelo Google Sites para dividir seções
+    for div in soup.find_all("div", class_=True):
+        classes = div.get("class", [])
+        class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+        role = div.get("role", "")
+        
+        # Verificar se tem classe "iwQgFb" e role="presentation"
+        if "iwQgFb" in class_str and role == "presentation":
+            separators.append(div)
+            log.debug("Encontrado separador div.iwQgFb com role=presentation")
+    
+    # Se encontrou separadores iwQgFb, retornar apenas eles (prioridade máxima)
+    if separators:
+        # Ordenar por posição no documento
+        def get_element_position(elem: Tag) -> int:
+            """Retorna uma posição aproximada do elemento no documento"""
+            pos = 0
+            for parent in elem.parents:
+                if parent.name:
+                    pos += 1
+            # Contar elementos anteriores
+            for prev in elem.previous_siblings:
+                if isinstance(prev, Tag):
+                    pos += 1
+            return pos
+        
+        separators.sort(key=get_element_position)
+        return separators
     
     # 1. Procurar por divs com classes "oKdM2c ZZyype Kzv0Me"
     # Nota: As classes podem estar em qualquer ordem, então verificamos se todas estão presentes
@@ -801,7 +868,7 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
                     
                     if not is_footer:
                         out_sep.append({
-                            "title": step_title or f"Passo {step_num}",
+                            "title": step_title or str(step_num),
                             "content_html": segment_html,
                             "media": step_media
                         })
@@ -847,7 +914,7 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
                 
                 if not is_footer:
                     out_sep.append({
-                        "title": step_title or f"Passo {step_num}",
+                        "title": step_title or str(step_num),
                         "content_html": segment_html,
                         "media": step_media
                     })
@@ -873,7 +940,7 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
                 if not _is_footer_element(li, soup_no_h1):
                     # Extrair mídias do li
                     step_media = _extract_media_from_element(li)
-                    out.append({"title": f"Passo {idx}", "content_html": str(li), "media": step_media})
+                    out.append({"title": str(idx), "content_html": str(li), "media": step_media})
                 else:
                     log.debug("Pulado passo de rodapé da lista: Passo %d", idx)
             return out
@@ -941,7 +1008,157 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
             
             return out2
 
-    # 3) Tentar dividir por parágrafos longos ou divs com conteúdo significativo
+    # 3) Dividir por parágrafos - agrupar 1-2 parágrafos consecutivos com imagens associadas
+    paragraphs = soup_no_h1.find_all("p")
+    if paragraphs:
+        # Filtrar parágrafos com conteúdo significativo
+        valid_paragraphs = []
+        for p in paragraphs:
+            p_text = p.get_text(" ", strip=True)
+            # Ignorar parágrafos muito pequenos ou vazios
+            if len(p_text) > 10:
+                # Verificar se não é um parágrafo de rodapé
+                p_text_upper = p_text.upper()
+                is_footer = False
+                footer_texts = ["LUKOS SOLUÇÕES EM TECNOLOGIA", "© 2018", "SITES DO GOOGLE", "DENUNCIAR ABUSO", "REPORT ABUSE"]
+                for footer_text in footer_texts:
+                    if footer_text in p_text_upper and len(p_text) < 300:
+                        is_footer = True
+                        break
+                
+                # Verificar se não é elemento de rodapé
+                if not is_footer:
+                    is_footer = _is_footer_element(p, soup_no_h1)
+                
+                if not is_footer:
+                    valid_paragraphs.append(p)
+        
+        # Se encontrou pelo menos 1 parágrafo válido, usar como passos
+        if len(valid_paragraphs) >= 1:
+            out_para: list[dict[str, Any]] = []
+            # Adicionar conteúdo introdutório como primeiro passo se existir
+            if intro_content:
+                intro_soup = BeautifulSoup(intro_content, "lxml")
+                intro_media = _extract_media_from_element(intro_soup)
+                out_para.append({"title": None, "content_html": intro_content, "media": intro_media})
+            
+            # Agrupar 1-2 parágrafos consecutivos por passo
+            i = 0
+            while i < len(valid_paragraphs):
+                # Começar um novo passo com o primeiro parágrafo
+                step_paragraphs = [valid_paragraphs[i]]
+                
+                # Verificar se podemos adicionar um segundo parágrafo consecutivo
+                if i + 1 < len(valid_paragraphs):
+                    next_p = valid_paragraphs[i + 1]
+                    current_p = valid_paragraphs[i]
+                    
+                    # Verificar se há um separador visual entre os dois parágrafos
+                    has_separator = False
+                    
+                    # Verificar se há um heading entre eles
+                    for elem in current_p.next_siblings:
+                        if isinstance(elem, Tag):
+                            if elem == next_p:
+                                # Chegamos no próximo parágrafo sem encontrar separador
+                                break
+                            if elem.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
+                                has_separator = True
+                                break
+                            # Verificar se é um separador visual (div com classes específicas)
+                            if elem.name == "div":
+                                classes = elem.get("class", [])
+                                class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+                                role = elem.get("role", "")
+                                # Verificar separadores conhecidos
+                                if ("iwQgFb" in class_str and role == "presentation") or \
+                                   all(cls in class_str for cls in ["oKdM2c", "ZZyype", "Kzv0Me"]):
+                                    has_separator = True
+                                    break
+                    
+                    # Se não há separador, adicionar o segundo parágrafo ao passo
+                    if not has_separator:
+                        step_paragraphs.append(next_p)
+                        i += 1  # Pular o próximo parágrafo pois já foi incluído
+                
+                # Criar HTML do passo com os parágrafos agrupados
+                step_html_parts = [str(p) for p in step_paragraphs]
+                
+                # Procurar por imagem após os parágrafos agrupados
+                last_p = step_paragraphs[-1]
+                associated_image = None
+                
+                # Procurar imagem nos próximos irmãos (até encontrar outro parágrafo ou separador)
+                for next_elem in last_p.next_siblings:
+                    if isinstance(next_elem, Tag):
+                        # Se encontrou outro parágrafo válido, parar
+                        if next_elem.name == "p" and next_elem in valid_paragraphs:
+                            break
+                        # Se encontrou um heading, parar (novo passo)
+                        if next_elem.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
+                            break
+                        # Se encontrou um separador visual, parar
+                        if next_elem.name == "div":
+                            classes = next_elem.get("class", [])
+                            class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+                            role = next_elem.get("role", "")
+                            if ("iwQgFb" in class_str and role == "presentation") or \
+                               all(cls in class_str for cls in ["oKdM2c", "ZZyype", "Kzv0Me"]):
+                                break
+                        # Se encontrou uma imagem, adicionar ao passo
+                        if next_elem.name == "img" and next_elem.get("src"):
+                            associated_image = next_elem
+                            step_html_parts.append(str(next_elem))
+                            break
+                        # Se encontrou um container com imagem dentro, procurar
+                        if next_elem.find("img", src=True):
+                            img = next_elem.find("img", src=True)
+                            if img:
+                                associated_image = img
+                                # Incluir o container inteiro se for pequeno (div wrapper da imagem)
+                                if len(next_elem.get_text(" ", strip=True)) < 50:
+                                    step_html_parts.append(str(next_elem))
+                                else:
+                                    step_html_parts.append(str(img))
+                                break
+                
+                # Combinar HTML dos parágrafos e imagem
+                step_content_html = "".join(step_html_parts)
+                
+                # Extrair mídias do passo (parágrafos + imagem associada)
+                step_soup = BeautifulSoup(step_content_html, "lxml")
+                step_media = _extract_media_from_element(step_soup)
+                
+                # Extrair título do passo
+                step_title = None
+                first_p = step_paragraphs[0]
+                # Verificar se há um heading antes do primeiro parágrafo
+                for prev in first_p.previous_siblings:
+                    if isinstance(prev, Tag) and prev.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
+                        step_title = prev.get_text(" ", strip=True)
+                        break
+                
+                # Se não encontrou heading, usar primeiras palavras do primeiro parágrafo
+                if not step_title:
+                    first_p_text = first_p.get_text(" ", strip=True)
+                    words = first_p_text.split()[:10]
+                    if words and len(first_p_text) > 50:
+                        step_title = " ".join(words)
+                
+                out_para.append({
+                    "title": step_title,
+                    "content_html": step_content_html,
+                    "media": step_media
+                })
+                
+                i += 1  # Avançar para o próximo parágrafo
+            
+            # Se encontrou pelo menos 1 passo, retornar
+            if len(out_para) >= 1:
+                log.debug("Dividido em %d passos baseados em agrupamento de parágrafos (1-2 por passo)", len(out_para))
+                return out_para
+
+    # 4) Tentar dividir por divs/sections com conteúdo significativo
     # Procurar por divs ou sections que possam ser passos
     content_elements = soup_no_h1.find_all(["div", "section", "article"], class_=True)
     potential_steps = []

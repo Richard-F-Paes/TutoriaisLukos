@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import logging
+import re
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
 import pyodbc
+from bs4 import BeautifulSoup
 
 from config import DbColumnMapping, DbTableMapping
 from src.database.schema_check import TableCheck, check_schema
@@ -21,6 +23,61 @@ class InsertResult:
     tutorials_inserted: int
     steps_inserted: int
     media_inserted: int
+
+
+def sanitize_description(description: str | None, content_html: str | None = None, max_length: int = 280) -> str | None:
+    """
+    Sanitize description to ensure it's plain text without HTML tags.
+    
+    Args:
+        description: Original description (may contain HTML)
+        content_html: Optional HTML content to extract description from if description is None
+        max_length: Maximum length for description (default 280)
+    
+    Returns:
+        Clean plain text description truncated to max_length, or None if no valid description can be extracted
+    """
+    # If description is provided, use it; otherwise try to extract from content_html
+    source_text = description
+    if not source_text and content_html:
+        # Try to extract plain text from HTML content
+        try:
+            soup = BeautifulSoup(content_html, "lxml")
+            source_text = soup.get_text(" ", strip=True)
+        except Exception as e:
+            log.debug("Erro ao extrair texto do HTML para description: %s", e)
+            source_text = None
+    
+    if not source_text:
+        return None
+    
+    # If source_text appears to contain HTML, extract plain text
+    if "<" in source_text and ">" in source_text:
+        try:
+            soup = BeautifulSoup(source_text, "lxml")
+            source_text = soup.get_text(" ", strip=True)
+        except Exception as e:
+            log.debug("Erro ao remover HTML do description: %s", e)
+            # Fallback: simple tag removal
+            source_text = re.sub(r'<[^>]+>', '', source_text)
+    
+    # Clean whitespace
+    source_text = " ".join(source_text.split())
+    
+    if not source_text:
+        return None
+    
+    # Truncate to max_length, trying to break at word boundary
+    if len(source_text) <= max_length:
+        return source_text
+    
+    # Truncate at word boundary
+    truncated = source_text[:max_length].rsplit(' ', 1)[0]
+    if not truncated:
+        # If truncation removed everything, just take first max_length chars
+        truncated = source_text[:max_length]
+    
+    return truncated + "..." if len(truncated) < len(source_text) else truncated
 
 
 def build_schema_checks(tables: DbTableMapping, cols: DbColumnMapping) -> list[TableCheck]:
@@ -374,6 +431,28 @@ def _insert_tutorials(
         # Incluir também campos com DEFAULT para evitar problemas de ordem
         # Ordem: title, slug, description, content, CategoryId, ViewCount, IsPublished, IsFeatured, ShareHash, CreatedBy, UpdatedBy, CreatedAt, UpdatedAt
         now = datetime.now()
+        
+        # Sanitize description - ensure it's plain text without HTML
+        raw_description = t.get("description")
+        content_html = t.get("content_html") or ""
+        sanitized_description = sanitize_description(raw_description, content_html, max_length=280)
+        
+        # Validate content_html - ensure it's not None (empty string is acceptable)
+        if content_html is None:
+            log.warning("content_html is None for tutorial '%s', using empty string", title)
+            content_html = ""
+        
+        # Debug logs for description and content
+        desc_length = len(sanitized_description) if sanitized_description else 0
+        content_length = len(content_html) if content_html else 0
+        log.debug(
+            "Inserindo tutorial '%s': description=%d chars (original tinha %d chars), content=%d chars",
+            title,
+            desc_length,
+            len(raw_description) if raw_description else 0,
+            content_length
+        )
+        
         sql = (
             f"INSERT INTO {tables.schema}.{tables.tutorials} "
             f"({cols.tutorial_title}, {cols.tutorial_slug}, {cols.tutorial_description}, {cols.tutorial_content}, {cols.tutorial_category_id}, ViewCount, IsPublished, IsFeatured, ShareHash, {cols.tutorial_created_by}, {cols.tutorial_updated_by}, CreatedAt, UpdatedAt) "
@@ -382,8 +461,8 @@ def _insert_tutorials(
         params = (
             title,
             slug,
-            t.get("description"),
-            t.get("content_html") or "",
+            sanitized_description,
+            content_html,
             db_cat,
             0,  # ViewCount DEFAULT 0
             1,  # IsPublished = 1 (publicado) para aparecer no frontend
@@ -489,7 +568,7 @@ def _insert_steps(
         video_url = s.get("video_url")
         
         # Truncar título para 300 caracteres (limite do banco)
-        step_title = s.get("title") or f"Passo {step_number}"
+        step_title = s.get("title") or str(step_number)
         if len(step_title) > 300:
             step_title = step_title[:297] + "..."
         

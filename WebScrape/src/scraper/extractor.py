@@ -31,6 +31,92 @@ DEFAULT_MAX_WAIT_ATTEMPTS = 2
 DEFAULT_DELAY_BETWEEN_PAGES = 0.5
 DEFAULT_DESCRIPTION_MAX_LENGTH = 280
 DEFAULT_SHORT_WAIT_TIMEOUT = 1
+DEFAULT_DESCRIPTION_MIN_LENGTH = 50
+
+
+def generate_smart_description(soup: BeautifulSoup, max_length: int = DEFAULT_DESCRIPTION_MAX_LENGTH, min_length: int = DEFAULT_DESCRIPTION_MIN_LENGTH) -> str | None:
+    """
+    Generate a smart description from page content.
+    
+    Strategy:
+    1. Try to find the first meaningful paragraph (at least min_length chars)
+    2. If no paragraph found, use first text block after title
+    3. Remove HTML tags and clean whitespace
+    4. Truncate to max_length at word boundary
+    
+    Args:
+        soup: BeautifulSoup object with page content
+        max_length: Maximum length for description (default 280)
+        min_length: Minimum length for a meaningful paragraph (default 50)
+    
+    Returns:
+        Clean plain text description or None if no valid description found
+    """
+    if not soup:
+        return None
+    
+    # Strategy 1: Find first meaningful paragraph
+    paragraphs = soup.find_all("p")
+    for p in paragraphs:
+        p_text = p.get_text(" ", strip=True)
+        # Remove extra whitespace
+        p_text = " ".join(p_text.split())
+        if len(p_text) >= min_length:
+            # Found a meaningful paragraph
+            if len(p_text) <= max_length:
+                return p_text
+            # Truncate at word boundary
+            truncated = p_text[:max_length].rsplit(' ', 1)[0]
+            if truncated:
+                return truncated + "..."
+            return p_text[:max_length] + "..."
+    
+    # Strategy 2: Find first text block after removing title/navigation
+    # Remove h1, navigation elements, and get text
+    soup_copy = BeautifulSoup(str(soup), "lxml")
+    
+    # Remove h1
+    for h1 in soup_copy.find_all("h1"):
+        h1.decompose()
+    
+    # Remove navigation elements (buttons, skip links, etc.)
+    for nav in soup_copy.find_all(["button", "nav", "a"], class_=lambda x: x and any(
+        cls in str(x).lower() for cls in ["skip", "nav", "button", "menu"]
+    )):
+        nav.decompose()
+    
+    # Get all text blocks
+    text_blocks = []
+    for elem in soup_copy.find_all(["p", "div", "section", "article"]):
+        elem_text = elem.get_text(" ", strip=True)
+        elem_text = " ".join(elem_text.split())
+        if len(elem_text) >= min_length:
+            text_blocks.append(elem_text)
+    
+    if text_blocks:
+        first_block = text_blocks[0]
+        if len(first_block) <= max_length:
+            return first_block
+        # Truncate at word boundary
+        truncated = first_block[:max_length].rsplit(' ', 1)[0]
+        if truncated:
+            return truncated + "..."
+        return first_block[:max_length] + "..."
+    
+    # Strategy 3: Fallback - use first meaningful text from entire content
+    all_text = soup_copy.get_text(" ", strip=True)
+    all_text = " ".join(all_text.split())
+    
+    if len(all_text) >= min_length:
+        if len(all_text) <= max_length:
+            return all_text
+        # Truncate at word boundary
+        truncated = all_text[:max_length].rsplit(' ', 1)[0]
+        if truncated:
+            return truncated + "..."
+        return all_text[:max_length] + "..."
+    
+    return None
 
 
 def _check_content_loaded(
@@ -264,10 +350,8 @@ def extract_page(
         log.warning("Erro ao extrair category_path de %s: %s", url, e)
         category_path = []
     
-    # Extract description
-    description = None
-    if text:
-        description = text[:DEFAULT_DESCRIPTION_MAX_LENGTH]
+    # Extract description using smart generation
+    description = generate_smart_description(soup, max_length=DEFAULT_DESCRIPTION_MAX_LENGTH)
     
     # Update main_html with cleaned soup
     main_html = str(soup)

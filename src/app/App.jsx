@@ -47,6 +47,8 @@ import ConciliacaoPage from '../presentation/pages/public/ConciliacaoPage';
 import FullcheckPage from '../presentation/pages/public/FullcheckPage';
 import FidelidadePage from '../presentation/pages/public/FidelidadePage';
 import LmsDemoPage from '../presentation/pages/public/LmsDemoPage';
+import ProductsPage from '../presentation/pages/public/ProductsPage';
+import ProductDetailPage from '../presentation/pages/public/ProductDetailPage';
 
 
 
@@ -163,6 +165,8 @@ function AppContent() {
           <Route path="/apresentacao-sistemas" element={<ApresentacaoSistemasPage />} />
           <Route path="/sistemas" element={<ApresentacaoSistemasPage />} />
           <Route path="/erp" element={<ERPPage />} />
+          <Route path="/produtos" element={<ProductsPage />} />
+          <Route path="/produto/:id" element={<ProductDetailPage />} />
 
           {/* Rotas administrativas */}
           <Route path="/admin" element={<AdminPage />} />

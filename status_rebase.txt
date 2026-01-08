@@ -1,0 +1,35 @@
+interactive rebase in progress; onto 71323c4
+Last command done (1 command done):
+   pick 2188487 # layout tutorial
+Next command to do (1 remaining command):
+   pick c027575 # layout tutorial
+  (use "git rebase --edit-todo" to view and edit)
+You are currently rebasing branch 'main' on '71323c4'.
+  (fix conflicts and then run "git rebase --continue")
+  (use "git rebase --skip" to skip this patch)
+  (use "git rebase --abort" to check out the original branch)
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   backend/src/config/database.js
+	modified:   index.html
+	modified:   package-lock.json
+	modified:   src/app/App.jsx
+	new file:   src/presentation/components/LmsPlayer/LmsPlayer.css
+	new file:   src/presentation/components/LmsPlayer/LmsPlayer.jsx
+	modified:   src/presentation/components/Navbarcategoria/Navbarcategoria.jsx
+	modified:   src/presentation/components/search/LukUnifiedSearch/LukUnifiedSearch.jsx
+	modified:   src/presentation/pages/public/BlogPage.js
+	new file:   src/presentation/pages/public/LmsDemoPage.jsx
+
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add/rm <file>..." as appropriate to mark resolution)
+	deleted by them: backend/package-lock.json
+	both modified:   src/presentation/pages/public/TutorialsUnified.jsx
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	status.txt
+	status_rebase.txt
+

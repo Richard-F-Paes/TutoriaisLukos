@@ -12,7 +12,7 @@ const ProductCard = ({ subItem, index, isMobile = false }) => {
 
   // Tamanhos responsivos para mobile e desktop - ajustados para melhor visualização
   const cardHeight = isMobile ? 'h-56' : 'h-[16rem]';
-  const cardWidth = isMobile ? 'w-44' : 'w-56';
+  const cardWidth = isMobile ? 'w-full' : 'w-56'; // Full width on mobile menu
   const mdHeight = isMobile ? 'md:h-64' : 'md:h-[18.5rem]';
   const mdWidth = isMobile ? 'md:w-52' : 'md:w-60';
 
@@ -184,10 +184,8 @@ function PageNavbar({ transparent = false }) {
       const target = event.target;
       const inDropdownContainer = !!target?.closest?.('.dropdown-container');
       const inPortalDropdown = !!target?.closest?.('.glass-dropdown');
-      // #region agent log
-      __agentLog({ sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H1', location: 'src/presentation/components/layout/PageNavbar/PageNavbar.js:handleClickOutside', message: 'PageNavbar outside click check', data: { type: event.type, targetTag: target?.tagName || null, inDropdownContainer, inPortalDropdown, willClose: !inDropdownContainer }, timestamp: Date.now() });
-      // #endregion
-      if (!inDropdownContainer) {
+
+      if (!inDropdownContainer && !inPortalDropdown) {
         setOpenDropdowns({});
         setOpenClienteDropdown(false);
         setOpenLanguageMenu(false);
@@ -210,10 +208,19 @@ function PageNavbar({ transparent = false }) {
     };
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
+
   const toggleDropdown = (key) => {
-    // #region agent log
-    __agentLog({ sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H1', location: 'src/presentation/components/layout/PageNavbar/PageNavbar.js:toggleDropdown', message: 'PageNavbar toggleDropdown', data: { key, prevOpen: !!openDropdowns[key] }, timestamp: Date.now() });
-    // #endregion
     setOpenDropdowns(prev => ({
       ...prev,
       [key]: !prev[key]
@@ -221,7 +228,6 @@ function PageNavbar({ transparent = false }) {
   };
 
   const handleDropdownMouseEnter = (key) => {
-    // Limpar timeout de fechamento se existir
     if (closeTimeoutRef.current[key]) {
       clearTimeout(closeTimeoutRef.current[key]);
       delete closeTimeoutRef.current[key];
@@ -231,7 +237,6 @@ function PageNavbar({ transparent = false }) {
   };
 
   const handleDropdownMouseLeave = (key) => {
-    // Delay antes de fechar para melhor UX
     closeTimeoutRef.current[key] = setTimeout(() => {
       setOpenDropdowns(prev => {
         const newState = { ...prev };
@@ -368,126 +373,6 @@ function PageNavbar({ transparent = false }) {
           --dropdown-duration: 300ms;
         }
 
-        .product-description {
-          color: rgb(0, 22, 71);
-          font-family: "Plus Jakarta Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
-          font-size: 14px;
-          font-weight: 400;
-          line-height: 20px;
-          box-sizing: border-box;
-          padding: 0px;
-          margin: 0px;
-          text-rendering: geometricprecision;
-          scroll-behavior: smooth;
-        }
-        
-        @media screen and (min-width: 1081px) and (max-width: 1239px) {
-          .product-description {
-            font-size: 11.8px;
-          }
-        }
-        
-        @media (min-width: 1240px) and (max-width: 1359px) {
-          .product-description {
-            font-size: 12.3px;
-          }
-        }
-        
-        @media screen and (max-width: 380px) {
-          .product-description {
-            font-size: 12px;
-          }
-        }
-        
-        .product-card {
-          box-sizing: border-box;
-          padding: 0px;
-          margin: 0px;
-          text-rendering: geometricprecision;
-          scroll-behavior: smooth;
-          font-family: "Plus Jakarta Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
-          cursor: pointer;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          flex: 1 1 auto;
-          min-width: 160px;
-          max-width: 100%;
-          width: 0;
-          overflow: visible;
-          position: relative;
-        }
-        
-        .product-card::before {
-          content: '';
-          position: absolute;
-          inset: -2px;
-          border-radius: 0.5rem;
-          padding: 2px;
-          background: linear-gradient(135deg, 
-            rgba(0, 212, 255, 0) 0%,
-            rgba(59, 130, 246, 0) 50%,
-            rgba(139, 92, 246, 0) 100%);
-          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-          -webkit-mask-composite: xor;
-          mask-composite: exclude;
-          opacity: 0;
-          transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          z-index: -1;
-        }
-        
-        .product-card:hover {
-          transform: scale(1.05) translateY(-4px);
-        }
-        
-        .product-card:hover::before {
-          opacity: 1;
-          background: linear-gradient(135deg, 
-            rgba(0, 212, 255, 0.6) 0%,
-            rgba(59, 130, 246, 0.5) 50%,
-            rgba(139, 92, 246, 0.6) 100%);
-        }
-        
-        .product-card:hover {
-          box-shadow: 
-            0 20px 40px rgba(0, 212, 255, 0.25),
-            0 10px 20px rgba(59, 130, 246, 0.15),
-            0 4px 8px rgba(139, 92, 246, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-        
-        .product-card * {
-          min-width: 0;
-        }
-        
-        @media screen and (max-width: 1280px) {
-          .product-card {
-            min-width: 140px;
-            gap: 6px;
-          }
-        }
-
-        @media screen and (max-width: 1024px) {
-          .product-card {
-            min-width: 130px;
-            gap: 5px;
-          }
-        }
-
-        @media screen and (max-width: 768px) {
-          .product-card {
-            min-width: 120px;
-            gap: 4px;
-          }
-        }
-
-        @media screen and (max-width: 640px) {
-          .product-card {
-            min-width: 110px;
-          }
-        }
-
         /* Dropdown animations */
         .dropdown-menu-enter {
           opacity: 0;
@@ -525,15 +410,11 @@ function PageNavbar({ transparent = false }) {
           position: relative;
         }
 
-        /* Removidos efeitos de brilho excessivo (shimmer/borderGlow) para reduzir o ruído */
-        
-        /* Garantir que o conteúdo fique acima do fundo */
         .glass-dropdown > * {
           position: relative;
           z-index: 1;
         }
 
-        /* Menu item hover effects */
         .menu-item-link {
           transition: all 0.3s var(--dropdown-transition);
           position: relative;
@@ -562,13 +443,6 @@ function PageNavbar({ transparent = false }) {
           background: rgba(139, 92, 246, 0.05);
         }
 
-        .menu-item-link:focus-visible {
-          outline: 2px solid #00D4FF;
-          outline-offset: 2px;
-          border-radius: 4px;
-        }
-
-        /* Submenu item hover */
         .submenu-item {
           transition: all 0.2s var(--dropdown-transition);
           transform-origin: left center;
@@ -579,12 +453,6 @@ function PageNavbar({ transparent = false }) {
           background-color: rgba(0, 212, 255, 0.05);
         }
 
-        /* Active indicator animation */
-        .active-indicator {
-          transition: width 0.3s var(--dropdown-transition), opacity 0.3s var(--dropdown-transition);
-        }
-
-        /* Keyframe animations */
         @keyframes fadeInSlideDown {
           from {
             opacity: 0;
@@ -596,18 +464,6 @@ function PageNavbar({ transparent = false }) {
           }
         }
 
-        @keyframes fadeOutSlideUp {
-          from {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0) scale(1);
-          }
-          to {
-            opacity: 0;
-            transform: translateX(-50%) translateY(-10px) scale(0.95);
-          }
-        }
-        
-        /* Keyframe animations para dropdowns não centralizados */
         @keyframes fadeInSlideDownLeft {
           from {
             opacity: 0;
@@ -618,83 +474,7 @@ function PageNavbar({ transparent = false }) {
             transform: translateY(0) scale(1);
           }
         }
-
-        @keyframes fadeOutSlideUpLeft {
-          from {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-          to {
-            opacity: 0;
-            transform: translateY(-10px) scale(0.95);
-          }
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 1024px) {
-          .glass-dropdown {
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-          }
-        }
-
-        /* Garantir que o sub-menu não ultrapasse os limites da tela */
-        .sub-menu.glass-dropdown {
-          box-sizing: border-box;
-          max-width: calc(100vw - 2rem);
-          scrollbar-width: thin;
-          scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
-        }
-
-        .sub-menu.glass-dropdown::-webkit-scrollbar {
-          width: 6px;
-        }
-
-        .sub-menu.glass-dropdown::-webkit-scrollbar-track {
-          background: transparent;
-        }
-
-        .sub-menu.glass-dropdown::-webkit-scrollbar-thumb {
-          background: rgba(139, 92, 246, 0.2);
-          border-radius: 10px;
-        }
-
-        .sub-menu.glass-dropdown::-webkit-scrollbar-thumb:hover {
-          background: rgba(139, 92, 246, 0.4);
-        }
-
-        .products-grid-container::-webkit-scrollbar {
-          height: 8px;
-        }
-
-        .products-grid-container::-webkit-scrollbar-track {
-          background: #f9fafb;
-          border-radius: 10px;
-        }
-
-        .products-grid-container::-webkit-scrollbar-thumb {
-          background: #d1d5db;
-          border-radius: 10px;
-          border: 2px solid #f9fafb;
-          transition: all 0.2s ease;
-        }
-
-        .products-grid-container::-webkit-scrollbar-thumb:hover {
-          background: #9ca3af;
-          border-color: #f3f4f6;
-        }
-
-        .products-grid-container::-webkit-scrollbar-thumb:active {
-          background: #6b7280;
-        }
-
-        .sub-menu.glass-dropdown .mega-menu-content {
-          max-width: 100%;
-          padding: 2rem;
-          box-sizing: border-box;
-        }
-
-        /* CSS Grid Container para produtos - Layout em Grade Mega-Menu */
+        
         .products-grid-container {
           display: grid;
           grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -708,82 +488,11 @@ function PageNavbar({ transparent = false }) {
             grid-template-columns: repeat(2, minmax(0, 1fr));
           }
         }
-
+        
         @media (min-width: 1024px) {
           .products-grid-container {
             grid-template-columns: repeat(3, minmax(0, 1fr));
             width: auto;
-          }
-        }
-
-
-        @media (min-width: 641px) and (max-width: 768px) {
-          .products-grid-container {
-            gap: 0.625rem;
-          }
-        }
-
-        @media (min-width: 769px) and (max-width: 1024px) {
-          .products-grid-container {
-            gap: 0.75rem;
-          }
-        }
-
-        @media (min-width: 1025px) and (max-width: 1280px) {
-          .products-grid-container {
-            gap: 0.75rem;
-          }
-        }
-
-        @media (min-width: 1281px) {
-          .products-grid-container {
-            gap: 0.875rem;
-          }
-        }
-
-        /* Tamanhos de botões dentro do grid - Ajustados para Mega-Menu */
-        .products-grid-container button {
-          width: 100%;
-          height: 16rem;
-          min-width: 14rem;
-        }
-
-        @media (min-width: 1280px) {
-          .products-grid-container button {
-            height: 18.5rem;
-            min-width: 16rem;
-          }
-        }
-        /* Smooth scroll behavior */
-        html {
-          scroll-behavior: smooth;
-        }
-
-        /* Prevent layout shift during animations */
-        .dropdown-container {
-          position: relative;
-        }
-
-        /* Otimizações de performance para dropdowns */
-        .sub-menu.glass-dropdown {
-          will-change: transform, opacity;
-          backface-visibility: hidden;
-          -webkit-backface-visibility: hidden;
-        }
-
-        /* Improved focus styles for better accessibility */
-        *:focus-visible {
-          outline: 2px solid #00D4FF;
-          outline-offset: 2px;
-        }
-
-        /* Better touch targets for mobile */
-        @media (max-width: 768px) {
-          .menu-item-link,
-          .submenu-item {
-            min-height: 44px;
-            display: flex;
-            align-items: center;
           }
         }
 
@@ -798,7 +507,6 @@ function PageNavbar({ transparent = false }) {
           gap: 0.5rem;
           opacity: 0.65;
           transition: opacity 0.3s ease;
-          pointer-events: auto;
         }
 
         .language-selector-minimalist:hover,
@@ -818,59 +526,7 @@ function PageNavbar({ transparent = false }) {
           display: flex;
           align-items: center;
           justify-content: center;
-        }
-
-        .language-selector-minimalist .globe-button:hover {
-          color: #00D4FF;
-          background: rgba(255, 255, 255, 0.05);
-          opacity: 1;
-          transform: scale(1.1);
-        }
-
-        .language-selector-minimalist .globe-button:focus {
-          outline: 2px solid #00D4FF;
-          outline-offset: 2px;
-        }
-
-        .language-selector-minimalist .globe-button:active {
-          transform: scale(0.95);
-        }
-
-        .language-selector-minimalist .divider-line {
-          height: 1rem;
-          width: 1px;
-          background: rgba(255, 255, 255, 0.3);
-          opacity: 0.5;
-          flex-shrink: 0;
-        }
-
-        /* Responsividade para mobile */
-        @media (max-width: 1024px) {
-          .language-selector-minimalist {
-            top: 0.75rem;
-            right: 0.75rem;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .language-selector-minimalist {
-            top: 0.5rem;
-            right: 0.5rem;
-          }
-          
-          .language-selector-minimalist .globe-button {
-            padding: 0.5rem;
-            min-width: 36px;
-            min-height: 36px;
-          }
-        }
-
-        /* Garantir que não interfira com outros elementos */
-        @media (max-width: 640px) {
-          .language-selector-minimalist {
-            display: none;
-          }
-        }
+        }      
       `}</style>
       <nav className={`fixed left-0 right-0 z-50 w-full flex items-center justify-center transition-all duration-500 ${transparent ? 'top-6 px-6' : 'top-0 px-0'}`}>
         <div className={`container mx-auto transition-all duration-500 relative flex items-center justify-between px-8 h-[70px] ${transparent
@@ -974,67 +630,21 @@ function PageNavbar({ transparent = false }) {
                                 centered={false}
                                 onMouseEnter={() => handleDropdownMouseEnter(item.key)}
                                 onMouseLeave={() => handleDropdownMouseLeave(item.key)}
-                                className="sub-menu glass-dropdown w-64 rounded-xl py-2 dropdown-menu-enter-active"
+                                className="sub-menu glass-dropdown w-56 rounded-xl py-2 dropdown-menu-enter-active"
                               >
-                                <ul role="menu">
+                                <div role="menu">
                                   {item.submenu.map((subItem, index) => (
-                                    <li key={index} className="menu-item" role="none">
-                                      {subItem.hasSubmenu ? (
-                                        <div className="relative">
-                                          <button
-                                            onClick={() => toggleDropdown(`${item.key}-${index}`)}
-                                            onKeyDown={(e) => {
-                                              if (e.key === 'Enter' || e.key === ' ') {
-                                                e.preventDefault();
-                                                toggleDropdown(`${item.key}-${index}`);
-                                              }
-                                            }}
-                                            aria-expanded={openDropdowns[`${item.key}-${index}`]}
-                                            aria-haspopup="true"
-                                            className="submenu-item block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                                            role="menuitem"
-                                          >
-                                            {subItem.label}
-                                            <ChevronDown className={`ml-1 h-3 w-3 inline transition-transform duration-300 ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} aria-hidden="true" />
-                                          </button>
-                                          {openDropdowns[`${item.key}-${index}`] && (
-                                            <ul
-                                              className="sub-menu glass-dropdown absolute left-full top-0 ml-2 w-56 rounded-xl z-50 py-2 dropdown-menu-enter-active"
-                                              style={{
-                                                animation: 'fadeInSlideDownLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                transformOrigin: 'top left',
-                                                transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                                              }}
-                                              role="menu"
-                                            >
-                                              {subItem.submenu.map((subSubItem, subIndex) => (
-                                                <li key={subIndex} role="none">
-                                                  <a
-                                                    href={subSubItem.href}
-                                                    className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                                                    role="menuitem"
-                                                  >
-                                                    {subSubItem.label}
-                                                  </a>
-                                                </li>
-                                              ))}
-                                            </ul>
-                                          )}
-                                        </div>
-                                      ) : (
-                                        <a
-                                          href={subItem.href}
-                                          target={subItem.external ? "_blank" : undefined}
-                                          rel={subItem.external ? "noopener noreferrer" : undefined}
-                                          className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                                          role="menuitem"
-                                        >
-                                          {subItem.label}
-                                        </a>
-                                      )}
-                                    </li>
+                                    <div key={index} className="menu-item" role="none">
+                                      <a
+                                        href={subItem.href}
+                                        className="submenu-item block px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
+                                        role="menuitem"
+                                      >
+                                        {subItem.label}
+                                      </a>
+                                    </div>
                                   ))}
-                                </ul>
+                                </div>
                               </PortalDropdownContent>
                             )}
                           </>
@@ -1078,343 +688,130 @@ function PageNavbar({ transparent = false }) {
                 Contato
               </Link>
             </div>
-
-
           </div>
 
           {/* Mobile Menu Button */}
           <div className="col-2 md:hidden text-right flex-shrink-0">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setIsMenuOpen(!isMenuOpen);
-                }
-              }}
-              aria-expanded={isMenuOpen}
-              aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
-              aria-controls="mobile-menu"
               className="navbar-toggler hamburger flex flex-col justify-center items-center w-10 h-10 space-y-1.5 rounded-lg hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2 transition-all duration-200"
               type="button"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
-              <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} aria-hidden="true"></span>
-              <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} aria-hidden="true"></span>
-              <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} aria-hidden="true"></span>
+              <span className={`block w-6 h-0.5 bg-[#8B5CF6] transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} aria-hidden="true"></span>
+              <span className={`block w-6 h-0.5 bg-[#8B5CF6] transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} aria-hidden="true"></span>
+              <span className={`block w-6 h-0.5 bg-[#8B5CF6] transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} aria-hidden="true"></span>
             </button>
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu Overlay - Premium Full Screen */}
           {isMenuOpen && (
-            <div id="mobile-menu" className="nav-primary-mobile lg:hidden glass-dropdown rounded-xl shadow-xl mt-4 p-6" role="navigation" aria-label="Menu mobile">
-              <nav className="menu-principal-container">
-                <ul className="nav nav-mobile space-y-4" role="menubar">
-                  {menuItems.map((item) => (
-                    <li key={item.key} className="menu-item" role="none">
+            <div
+              id="mobile-menu"
+              className="fixed inset-0 z-40 bg-white lg:hidden overflow-y-auto pb-24 animate-[fadeIn_0.3s_ease-out]"
+              role="navigation"
+              aria-label="Menu mobile"
+            >
+              <nav className="container mx-auto px-6 py-8 pt-[90px]">
+                <ul className="space-y-4" role="menubar">
+                  {menuItems.map((item, index) => (
+                    <li key={item.key} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0" role="none" style={{ animation: `fadeIn 0.4s ease-out ${index * 0.05}s forwards`, opacity: 1 }}>
+                      {/* Note: changed animation to just fadeIn to avoid complex keyframes dependency for now */}
                       {item.hasDropdown ? (
-                        <button
-                          onClick={() => toggleDropdown(item.key)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              toggleDropdown(item.key);
-                            }
-                          }}
-                          aria-expanded={openDropdowns[item.key]}
-                          aria-haspopup={true}
-                          className="w-full text-left flex items-center justify-between px-5 py-3.5 text-gray-700 hover:text-[#8B5CF6] transition-all duration-200 rounded-lg hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:ring-offset-2"
-                          role="menuitem"
-                        >
-                          <span className="flex items-center gap-2">
-                            {item.icon && <item.icon className="h-4 w-4" />}
-                            {item.label}
-                          </span>
-                          <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${openDropdowns[item.key] ? 'rotate-180' : ''}`} aria-hidden="true" />
-                        </button>
-                      ) : (
-                        <a
-                          href={item.href}
-                          onClick={() => setIsMenuOpen(false)}
-                          className="w-full text-left flex items-center gap-2 px-5 py-3.5 text-gray-700 hover:text-[#8B5CF6] transition-all duration-200 rounded-lg hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:ring-offset-2"
-                          role="menuitem"
-                        >
-                          {item.icon && <item.icon className="h-4 w-4" />}
-                          {item.label}
-                        </a>
-                      )}
-                      {openDropdowns[item.key] && item.hasDropdown && (
-                        <>
-                          {item.isCardDropdown ? (
-                            <div className="sub-menu pl-4 mt-2">
-                              <div className="grid grid-cols-2 gap-3">
-                                {item.submenu.map((subItem, index) => (
-                                  <ProductCard
-                                    key={index}
-                                    subItem={subItem}
-                                    index={index}
-                                    isMobile={true}
-                                  />
+                        <div className="py-2">
+                          <button
+                            onClick={() => toggleDropdown(item.key)}
+                            className="w-full text-left flex items-center justify-between py-2 text-2xl font-bold text-gray-900 hover:text-[#8B5CF6] transition-colors"
+                            aria-expanded={openDropdowns[item.key]}
+                          >
+                            <span className="flex items-center gap-3">
+                              {item.icon && <item.icon className="h-6 w-6 text-gray-400" />}
+                              {item.label}
+                            </span>
+                            <ChevronDown className={`h-6 w-6 text-gray-400 transition-transform duration-300 ${openDropdowns[item.key] ? 'rotate-180 text-[#8B5CF6]' : ''}`} />
+                          </button>
+
+                          {/* Mobile Submenu */}
+                          <div className={`overflow-hidden transition-all duration-300 ${openDropdowns[item.key] ? 'max-h-[1000px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+                            {item.isCardDropdown ? (
+                              <div className="grid grid-cols-1 gap-4 pl-0 border-l-2 border-gray-100 ml-3 pl-4">
+                                {item.submenu.map((subItem, idx) => (
+                                  <Link
+                                    key={idx}
+                                    to={subItem.href}
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 active:bg-gray-100 transition-colors"
+                                  >
+                                    <div className="w-12 h-12 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center shrink-0">
+                                      {subItem.icon && <subItem.icon className="w-6 h-6 text-[#8B5CF6]" />}
+                                    </div>
+                                    <div>
+                                      <p className="font-bold text-lg text-gray-900">{subItem.label}</p>
+                                      <p className="text-sm text-gray-500 line-clamp-1">{subItem.description}</p>
+                                    </div>
+                                  </Link>
                                 ))}
                               </div>
-                            </div>
-                          ) : (
-                            <ul className="sub-menu pl-4 space-y-2 mt-2" role="menu">
-                              {item.submenu.map((subItem, index) => (
-                                <li key={index} className="menu-item" role="none">
-                                  {subItem.hasSubmenu ? (
-                                    <div>
-                                      <button
-                                        onClick={() => toggleDropdown(`${item.key}-${index}`)}
-                                        onKeyDown={(e) => {
-                                          if (e.key === 'Enter' || e.key === ' ') {
-                                            e.preventDefault();
-                                            toggleDropdown(`${item.key}-${index}`);
-                                          }
-                                        }}
-                                        aria-expanded={openDropdowns[`${item.key}-${index}`]}
-                                        aria-haspopup="true"
-                                        className="submenu-item w-full text-left flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:text-[#00D4FF] transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                                        role="menuitem"
-                                      >
-                                        {subItem.label}
-                                        <ChevronDown className={`h-3 w-3 transition-transform duration-300 ${openDropdowns[`${item.key}-${index}`] ? 'rotate-180' : ''}`} aria-hidden="true" />
-                                      </button>
-                                      {openDropdowns[`${item.key}-${index}`] && (
-                                        <ul className="sub-menu pl-4 space-y-2 mt-2" role="menu">
-                                          {subItem.submenu.map((subSubItem, subIndex) => (
-                                            <li key={subIndex} role="none">
-                                              <a
-                                                href={subSubItem.href}
-                                                className="submenu-item block px-4 py-2.5 text-sm text-gray-600 hover:text-[#00D4FF] transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                                                role="menuitem"
-                                              >
-                                                {subSubItem.label}
-                                              </a>
-                                            </li>
-                                          ))}
-                                        </ul>
-                                      )}
-                                    </div>
-                                  ) : (
-                                    <a
-                                      href={subItem.href}
-                                      target={subItem.external ? "_blank" : undefined}
-                                      rel={subItem.external ? "noopener noreferrer" : undefined}
-                                      className="submenu-item block px-4 py-2.5 text-sm text-gray-600 hover:text-[#00D4FF] transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                                      role="menuitem"
+                            ) : (
+                              <ul className="pl-6 space-y-4 border-l-2 border-gray-100 ml-3">
+                                {item.submenu.map((subItem, idx) => (
+                                  <li key={idx}>
+                                    <Link
+                                      to={subItem.href}
+                                      onClick={() => setIsMenuOpen(false)}
+                                      className="block py-1 text-lg text-gray-600 font-medium hover:text-[#8B5CF6]"
                                     >
                                       {subItem.label}
-                                    </a>
-                                  )}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </>
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <Link
+                          to={item.href}
+                          onClick={() => setIsMenuOpen(false)}
+                          className="w-full text-left flex items-center gap-3 py-2 text-2xl font-bold text-gray-900 hover:text-[#8B5CF6] transition-colors"
+                        >
+                          {item.icon && <item.icon className="h-6 w-6 text-gray-400" />}
+                          {item.label}
+                        </Link>
                       )}
                     </li>
                   ))}
                 </ul>
+
+                <div className="mt-12 space-y-4">
+                  <Link
+                    to="/contato"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="w-full flex items-center justify-center py-4 bg-[#8B5CF6] text-white rounded-xl font-bold text-lg shadow-xl shadow-purple-500/20 active:scale-95 transition-all"
+                  >
+                    Fale com Consultor
+                  </Link>
+                </div>
               </nav>
-
-              <div className="menu-info text-center mt-6 space-y-4">
-                <a href="/contato" className="block">
-                  <button
-                    className="btn btn-sm btn-blue w-full px-5 py-3 bg-gradient-to-br from-green-500 via-green-500 to-purple-100/40 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:via-green-600 hover:to-purple-200/50 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                    aria-label="Ir para página de contato"
-                  >
-                    Contato
-                  </button>
-                </a>
-
-                <div className="btn-group dropdown dropdown-container relative">
-                  <button
-                    onClick={() => setOpenClienteDropdown(!openClienteDropdown)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        setOpenClienteDropdown(!openClienteDropdown);
-                      }
-                    }}
-                    aria-expanded={openClienteDropdown}
-                    aria-haspopup="true"
-                    aria-label="Menu do cliente"
-                    className="btn btn-sm btn-white-outline w-full px-5 py-3 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 flex items-center justify-center hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-2"
-                  >
-                    Sou cliente
-                    <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-300 ${openClienteDropdown ? 'rotate-180' : ''}`} aria-hidden="true" />
-                  </button>
-
-                  {openClienteDropdown && (
-                    <div
-                      className="dropdown-menu dropdown-menu-secondary glass-dropdown absolute top-full left-0 right-0 mt-2 w-full rounded-xl z-50 py-4 px-4 text-center dropdown-menu-enter-active"
-                      style={{
-                        animation: 'fadeInSlideDownLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                        transformOrigin: 'top center',
-                        transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                      }}
-                      role="menu"
-                      aria-label="Menu de suporte ao cliente"
-                    >
-                      <strong className="block text-gray-900 font-semibold mb-2">Suporte</strong>
-                      <a href="tel:40030015" className="block text-[#00D4FF] hover:text-[#00B8E6] transition-colors mb-3" role="menuitem">4003-0015</a>
-                      <small className="block text-gray-600 mt-3 mb-3">ou acesse</small>
-                      <div className="space-y-2">
-                        <a href="https://suporte.totvs.com" className="submenu-item block text-[#00D4FF] hover:text-[#00B8E6] transition-all duration-200 rounded-lg px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" role="menuitem" target="_blank" rel="noopener noreferrer">Central do Cliente</a>
-                        <a href="https://espacolegislacao.totvs.com/" className="submenu-item block text-[#00D4FF] hover:text-[#00B8E6] transition-all duration-200 rounded-lg px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" role="menuitem" target="_blank" rel="noopener noreferrer">Espaço Legislação</a>
-                        <a href="https://www.totvs.com/carta-da-reforma-tributaria/" className="submenu-item block text-[#00D4FF] hover:text-[#00B8E6] transition-all duration-200 rounded-lg px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" role="menuitem" target="_blank" rel="noopener noreferrer">Carta Reforma Tributária</a>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="langs-option langs-mobile flex justify-center space-x-3" role="group" aria-label="Seleção de idioma">
-                  <a href="/" className="langs-btn-mobile flex items-center space-x-2 px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" aria-label="Português (Brasil)">
-                    <figure className="m-0" aria-hidden="true">
-                      <img
-                        src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-br_00c220c9.jpg.webp"
-                        alt="Bandeira Brasil"
-                        className="w-6 h-4 object-cover rounded"
-                      />
-                    </figure>
-                    <span className="text text-sm text-gray-700 font-medium">PT</span>
-                  </a>
-                  <a href="https://es.totvs.com/" className="langs-btn-mobile flex items-center space-x-2 px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" aria-label="Español" target="_blank" rel="noopener noreferrer">
-                    <figure className="m-0" aria-hidden="true">
-                      <img
-                        src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-es_9fac6f20.jpg.webp"
-                        alt="Bandeira Espanha"
-                        className="w-6 h-4 object-cover rounded"
-                      />
-                    </figure>
-                    <span className="text text-sm text-gray-700 font-medium">ES</span>
-                  </a>
-                  <a href="https://en.totvs.com/" className="langs-btn-mobile flex items-center space-x-2 px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1" aria-label="English" target="_blank" rel="noopener noreferrer">
-                    <figure className="m-0" aria-hidden="true">
-                      <img
-                        src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-en_19a7eea0.png.webp"
-                        alt="Bandeira Reino Unido"
-                        className="w-6 h-4 object-cover rounded"
-                      />
-                    </figure>
-                    <span className="text text-sm text-gray-700 font-medium">EN</span>
-                  </a>
-                </div>
-              </div>
             </div>
           )}
         </div>
       </nav>
 
-      {/* Seletor de Idioma Minimalista - Fixo no top-right */}
-      <div
-        className={`language-selector-minimalist dropdown-container ${openLanguageMenu ? 'active' : ''}`}
-        style={{
-          display: isMenuOpen ? 'none' : 'flex'
-        }}
-      >
-        {/* Ícone de Globo */}
+      <div className={`language-selector-minimalist dropdown-container ${openLanguageMenu ? 'active' : ''}`} style={{ display: isMenuOpen ? 'none' : 'flex' }}>
         <button
           onClick={() => setOpenLanguageMenu(!openLanguageMenu)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              setOpenLanguageMenu(!openLanguageMenu);
-            }
-          }}
-          aria-expanded={openLanguageMenu}
-          aria-haspopup="true"
-          aria-label="Selecionar idioma"
           className="globe-button"
+          aria-label="Selecionar idioma"
         >
           <Globe className="w-4 h-4" aria-hidden="true" />
         </button>
-
-        {/* Linha Minimalista */}
-        <div
-          className="divider-line"
-          aria-hidden="true"
-        />
-
-        {/* Dropdown Menu */}
+        <div className="divider-line" aria-hidden="true" />
         {openLanguageMenu && (
-          <ul
-            className="glass-dropdown absolute top-full right-0 mt-2 w-44 rounded-xl z-50 py-2 dropdown-menu-enter-active"
-            style={{
-              animation: 'fadeInSlideDownLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              transformOrigin: 'top right',
-              transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(20px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.3)'
-            }}
-            role="menu"
-            aria-label="Menu de idiomas"
-            onMouseEnter={(e) => {
-              const container = e.currentTarget.closest('.language-selector-minimalist');
-              if (container) container.style.opacity = '1';
-            }}
-            onMouseLeave={(e) => {
-              const container = e.currentTarget.closest('.language-selector-minimalist');
-              if (container && !openLanguageMenu) container.style.opacity = '0.65';
-            }}
-          >
-            <li role="none">
-              <a
-                href="/"
-                className="submenu-item flex items-center px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                role="menuitem"
-                aria-label="Português (Brasil)"
-                onClick={() => setOpenLanguageMenu(false)}
-              >
-                <figure className="m-0 mr-2" aria-hidden="true">
-                  <img
-                    src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-br_00c220c9.jpg.webp"
-                    alt="Bandeira Brasil"
-                    className="w-6 h-4 object-cover rounded"
-                  />
-                </figure>
-                <span className="text">PT</span>
-              </a>
-            </li>
-            <li role="none">
-              <a
-                href="https://es.totvs.com/"
-                className="submenu-item flex items-center px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                role="menuitem"
-                aria-label="Espanhol"
-                onClick={() => setOpenLanguageMenu(false)}
-              >
-                <figure className="m-0 mr-2" aria-hidden="true">
-                  <img
-                    src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-es_9fac6f20.jpg.webp"
-                    alt="Bandeira Espanha"
-                    className="w-6 h-4 object-cover rounded"
-                  />
-                </figure>
-                <span className="text">ES</span>
-              </a>
-            </li>
-            <li role="none">
-              <a
-                href="https://en.totvs.com/"
-                className="submenu-item flex items-center px-4 py-2.5 text-sm text-gray-700 hover:text-[#00D4FF] transition-all duration-200 rounded-lg mx-2 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:ring-offset-1"
-                role="menuitem"
-                aria-label="Inglês"
-                onClick={() => setOpenLanguageMenu(false)}
-              >
-                <figure className="m-0 mr-2" aria-hidden="true">
-                  <img
-                    src="https://www.totvs.com/wp-content/webp-express/webp-images/themes/totvs-theme/dist/images/totvs-menu-bandeira-en_19a7eea0.png.webp"
-                    alt="Bandeira Reino Unido"
-                    className="w-6 h-4 object-cover rounded"
-                  />
-                </figure>
-                <span className="text">EN</span>
-              </a>
-            </li>
+          <ul className="glass-dropdown absolute top-full right-0 mt-2 w-44 rounded-xl z-50 py-2" role="menu">
+            <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer">PT</li>
+            <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer">EN</li>
+            <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer">ES</li>
           </ul>
         )}
       </div>

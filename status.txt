@@ -1,0 +1,52 @@
+On branch main
+Your branch and 'origin/main' have diverged,
+and have 2 and 2 different commits each, respectively.
+  (use "git pull" if you want to integrate the remote branch with yours)
+
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Changes to be committed:
+	modified:   .env
+	modified:   WebScrape/config.py
+	renamed:    WebScrape/config/env.example -> WebScrape/env.example
+	modified:   WebScrape/plano.md
+	modified:   WebScrape/run_scraper.py
+	modified:   WebScrape/src/database/inserter.py
+	modified:   WebScrape/src/main.py
+	modified:   WebScrape/src/scraper/browser.py
+	modified:   WebScrape/src/scraper/extractor.py
+	modified:   WebScrape/src/scraper/media_downloader.py
+	modified:   WebScrape/src/scraper/processor.py
+	modified:   WebScrape/src/utils/logging_utils.py
+	new file:   backend/RESET_DATABASE.md
+	modified:   backend/env.example
+	modified:   backend/prisma/migrations/20250121120000_add_training_availability/migration.sql
+	new file:   backend/src/scripts/clear-database.js
+	new file:   backend/src/scripts/reset-seed-scraper.js
+	modified:   backend/src/scripts/seed.js
+	new file:   scripts/reset-db-seed-scraper.ps1
+	modified:   src/contexts/TrainingModalContext.js
+	modified:   src/hooks/useAvailability.js
+	modified:   src/presentation/components/TrainingModal/TrainingModal.css
+	modified:   src/presentation/components/TrainingViewer/TrainingActions.css
+	modified:   src/presentation/components/TrainingViewer/TrainingActions.jsx
+	modified:   src/presentation/components/TrainingViewer/TrainingHeader.css
+	modified:   src/presentation/components/TrainingViewer/TrainingHeader.jsx
+	modified:   src/presentation/components/TrainingViewer/TrainingMedia.css
+	modified:   src/presentation/components/TrainingViewer/TrainingMedia.jsx
+	modified:   src/presentation/components/TrainingViewer/TrainingViewer.css
+	modified:   src/presentation/components/TrainingViewer/TrainingViewer.jsx
+	modified:   src/services/availabilityService.js
+
+Unmerged paths:
+  (use "git add/rm <file>..." as appropriate to mark resolution)
+	deleted by us:   backend/package-lock.json
+	both modified:   backend/package.json
+	both modified:   src/presentation/pages/public/TutorialsUnified.jsx
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	status.txt
+

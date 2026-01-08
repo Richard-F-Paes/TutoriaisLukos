@@ -8,26 +8,74 @@ const LmsDemoPage = () => {
             id: 1,
             title: "Módulo 1: Sistema PDV (Frente de Caixa)",
             lessons: [
-                { id: 101, title: "101. Abertura e Fechamento de Caixa", duration: "5m", type: "video" },
-                { id: 102, title: "102. Realizando Vendas e Sangrias", duration: "8m", type: "video" },
-                { id: 103, title: "103. Cancelamento de Cupom Fiscal", duration: "4m", type: "video" },
+                {
+                    id: 101,
+                    title: "101. Abertura e Fechamento de Caixa",
+                    duration: "5m",
+                    type: "video",
+                    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" // Exemplo YouTube
+                },
+                {
+                    id: 102,
+                    title: "102. Realizando Vendas e Sangrias",
+                    duration: "8m",
+                    type: "video",
+                    videoUrl: "https://vjs.zencdn.net/v/oceans.mp4" // Exemplo MP4 direto
+                },
+                {
+                    id: 103,
+                    title: "103. Cancelamento de Cupom Fiscal",
+                    duration: "4m",
+                    type: "video",
+                    videoUrl: "https://www.youtube.com/embed/aqz-KE-bpKQ"
+                },
             ]
         },
         {
             id: 2,
             title: "Módulo 2: Retaguarda (ERP)",
             lessons: [
-                { id: 201, title: "201. Cadastro de Produtos e Estoque", duration: "12m", type: "video" },
-                { id: 202, title: "202. Entrada de Notas Fiscais (XML)", duration: "15m", type: "video" },
-                { id: 203, title: "203. Configuração de Promoções", duration: "6m", type: "video" },
+                {
+                    id: 201,
+                    title: "201. Cadastro de Produtos e Estoque",
+                    duration: "12m",
+                    type: "video",
+                    videoUrl: "https://www.youtube.com/embed/tgbNymZ7vqY"
+                },
+                {
+                    id: 202,
+                    title: "202. Entrada de Notas Fiscais (XML)",
+                    duration: "15m",
+                    type: "video",
+                    videoUrl: "https://www.youtube.com/embed/EngW7tLk6R8"
+                },
+                {
+                    id: 203,
+                    title: "203. Configuração de Promoções",
+                    duration: "6m",
+                    type: "video",
+                    videoUrl: "https://www.youtube.com/embed/60ItHLz5WEA"
+                },
             ]
         },
         {
             id: 3,
             title: "Módulo 3: Gestão Financeira",
             lessons: [
-                { id: 301, title: "301. Fluxo de Caixa e DRE", duration: "10m", type: "video" },
-                { id: 302, title: "302. Conciliação Bancária Automática", duration: "7m", type: "video" },
+                {
+                    id: 301,
+                    title: "301. Fluxo de Caixa e DRE",
+                    duration: "10m",
+                    type: "video",
+                    videoUrl: "https://www.youtube.com/embed/9bZkp7q19f0"
+                },
+                {
+                    id: 302,
+                    title: "302. Conciliação Bancária Automática",
+                    duration: "7m",
+                    type: "video",
+                    videoUrl: "https://www.youtube.com/embed/3JZ_D3iQXHM"
+                },
                 { id: 303, title: "303. Relatórios de Performance", duration: "1m", type: "text" },
             ]
         }

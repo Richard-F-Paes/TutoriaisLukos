@@ -21,8 +21,8 @@ export default function LandingHero() {
                 }
             `}</style>
 
-            <section className="flex flex-col items-center text-sm bg-[#0a0a0f] bg-[url('https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png')] bg-cover bg-center bg-no-repeat pb-40 relative min-h-screen">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0a0a0f]"></div>
+            <section className="flex flex-col items-center text-sm bg-[#0a0a0f] bg-[url('https://lukos.com.br/wp-content/uploads/2025/01/BANNER-HOME-1.png')] bg-contain bg-top bg-no-repeat pb-40 relative min-h-screen">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a0f]"></div>
                 <nav className="z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 lg:px-24 xl:px-32 backdrop-blur-md bg-black/5 text-white text-sm border-b border-white/5">
                     <a href="https://prebuiltui.com">
 

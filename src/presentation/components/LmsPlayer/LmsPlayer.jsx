@@ -1,70 +1,72 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-    Play,
-    Check,
-    Share2,
-    MoreVertical,
-    X,
-    ChevronLeft,
-    Star,
-    Trophy,
-    Layout,
+    Search,
     MessageSquare,
     FileText,
-    Search,
-    CheckCircle,
+    Trophy,
+    Star,
+    Layout,
+    Share2,
+    MoreVertical,
+    ChevronLeft,
+    ChevronRight,
     PlayCircle,
-    ChevronRight
+    CheckCircle2,
+    Clock,
+    X,
+    Menu
 } from 'lucide-react';
 import './LmsPlayer.css';
 
 const LmsPlayer = ({
-    courseTitle = "Tutoriais Lukos - Guia de Sistemas",
-    sections = [],
-    onLessonSelect = () => { },
-    initialLessonId = null
+    courseTitle = "Formação Lukos Professional",
+    sections = []
 }) => {
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [activeTab, setActiveTab] = useState('visao-geral');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [currentLesson, setCurrentLesson] = useState(null);
+    const [currentLesson, setCurrentLesson] = useState(sections[0]?.lessons[0]);
+    const [expandedSections, setExpandedSections] = useState([sections[0]?.id]);
     const [completedLessons, setCompletedLessons] = useState([]);
 
-    // Mock data if sections are empty
-    const displaySections = sections.length > 0 ? sections : [
-        {
-            id: 1,
-            title: "Módulo 1: Introdução",
-            lessons: [
-                { id: 415, title: "415. Tutorial: Visão Geral do Sistema", duration: "7m", type: "video" },
-                { id: 416, title: "416. Guia: Primeiro Login e Acesso", duration: "1m", type: "text" },
-                { id: 417, title: "417. Tutorial: Configurações Iniciais", duration: "4m", type: "video" },
-                { id: 418, title: "418. Tutorial: Gestão de Usuários", duration: "5m", type: "video" },
-                { id: 419, title: "419. Tutorial: Relatórios Básicos", duration: "5m", type: "video" },
-                { id: 420, title: "420. Tutorial: Suporte e Ajuda", duration: "4m", type: "video" },
-                { id: 421, title: "421. Tutorial Avançado: Customização", duration: "25m", type: "video" },
-            ]
-        }
-    ];
-
-    useEffect(() => {
-        if (!currentLesson && displaySections.length > 0) {
-            setCurrentLesson(displaySections[0].lessons[0]);
-        }
-    }, [displaySections, currentLesson]);
-
-    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-
-    const toggleLessonCompletion = (id, e) => {
-        e.stopPropagation();
-        setCompletedLessons(prev =>
-            prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    const toggleSection = (sectionId) => {
+        setExpandedSections(prev =>
+            prev.includes(sectionId)
+                ? prev.filter(id => id !== sectionId)
+                : [...prev, sectionId]
         );
     };
 
     const handleLessonClick = (lesson) => {
         setCurrentLesson(lesson);
-        onLessonSelect(lesson);
+        // On mobile, automatically close sidebar when a lesson is selected
+        if (window.innerWidth < 1024) {
+            setSidebarOpen(false);
+        }
     };
+
+    const toggleLessonComplete = (e, lessonId) => {
+        e.stopPropagation();
+        setCompletedLessons(prev =>
+            prev.includes(lessonId)
+                ? prev.filter(id => id !== lessonId)
+                : [...prev, lessonId]
+        );
+    };
+
+    // Use default sections if none provided for better preview
+    const defaultSections = [
+        {
+            id: 1,
+            title: "Introdução ao TutoriaisLukos",
+            lessons: [
+                { id: 1, title: "1. Bem-vindo à plataforma", duration: "2m", type: "video" },
+                { id: 2, title: "2. Como navegar nos tutoriais", duration: "5m", type: "video" },
+                { id: 3, title: "3. Configurando seu ambiente", duration: "10m", type: "video" }
+            ]
+        }
+    ];
+
+    const displaySections = sections.length > 0 ? sections : defaultSections;
 
     const allLessons = displaySections.flatMap(s => s.lessons);
     const currentIndex = allLessons.findIndex(l => l.id === currentLesson?.id);
@@ -126,141 +128,165 @@ const LmsPlayer = ({
             <div className="lms-main-layout">
                 {/* Content Area */}
                 <main className="lms-content-area">
-                    <div className="lms-video-container">
-                        {currentLesson?.type === 'video' ? (
-                            <div className="w-full h-full bg-black flex items-center justify-center relative group">
-                                <PlayCircle className="w-20 h-20 text-white opacity-50 group-hover:scale-110 transition-transform cursor-pointer" />
+                    <div className="lms-video-container-outer">
+                        <div className="lms-video-container">
+                            {currentLesson?.type === 'video' ? (
+                                <div className="w-full h-full bg-black flex items-center justify-center relative group">
+                                    {currentLesson.videoUrl ? (
+                                        currentLesson.videoUrl.includes('youtube.com/embed') || currentLesson.videoUrl.includes('player.vimeo.com') ? (
+                                            <iframe
+                                                src={currentLesson.videoUrl}
+                                                className="w-full h-full border-0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                                title={currentLesson.title}
+                                            ></iframe>
+                                        ) : (
+                                            <video
+                                                src={currentLesson.videoUrl}
+                                                controls
+                                                className="w-full h-full"
+                                                controlsList="nodownload"
+                                            ></video>
+                                        )
+                                    ) : (
+                                        <>
+                                            <PlayCircle className="w-20 h-20 text-white opacity-50 group-hover:scale-110 transition-transform cursor-pointer" />
+                                            <div className="absolute bottom-4 left-4 right-4 bg-black bg-opacity-50 p-2 rounded text-sm text-gray-300 pointer-events-none">
+                                                Player de Vídeo: {currentLesson.title}
+                                            </div>
+                                        </>
+                                    )}
 
-                                {/* Navigation Arrows */}
-                                <button
-                                    onClick={goToPrevLesson}
-                                    disabled={currentIndex === 0}
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-black/60 disabled:hidden"
-                                >
-                                    <ChevronLeft className="w-6 h-6" />
-                                </button>
+                                    {/* Navigation Arrows */}
+                                    <button
+                                        onClick={goToPrevLesson}
+                                        disabled={currentIndex === 0}
+                                        className="lms-nav-arrow left"
+                                    >
+                                        <ChevronLeft className="w-6 h-6" />
+                                    </button>
 
-                                <button
-                                    onClick={goToNextLesson}
-                                    disabled={currentIndex === allLessons.length - 1}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-black/60 disabled:hidden"
-                                >
-                                    <ChevronRight className="w-6 h-6" />
-                                </button>
-
-                                {/* Real video player would go here */}
-                                <div className="absolute bottom-4 left-4 right-4 bg-black bg-opacity-50 p-2 rounded text-sm text-gray-300 pointer-events-none">
-                                    Player de Vídeo: {currentLesson.title}
+                                    <button
+                                        onClick={goToNextLesson}
+                                        disabled={currentIndex === allLessons.length - 1}
+                                        className="lms-nav-arrow right"
+                                    >
+                                        <ChevronRight className="w-6 h-6" />
+                                    </button>
                                 </div>
-                            </div>
-                        ) : (
-                            <div className="w-full h-full bg-gray-900 flex items-center justify-center relative group">
-                                <FileText className="w-20 h-20 text-blue-400" />
-                                <span className="ml-4 text-xl">Conteúdo em Texto: {currentLesson?.title}</span>
+                            ) : (
+                                <div className="w-full h-full bg-gray-900 flex items-center justify-center relative group p-8 text-center">
+                                    <div className="flex flex-col items-center">
+                                        <FileText className="w-20 h-20 text-blue-400 mb-4" />
+                                        <span className="text-xl font-semibold">{currentLesson?.title}</span>
+                                        <p className="text-gray-400 mt-2 max-w-md">Este é um conteúdo em formato de texto. Veja as observações abaixo para mais detalhes.</p>
+                                    </div>
 
-                                {/* Navigation Arrows for Text content too */}
-                                <button
-                                    onClick={goToPrevLesson}
-                                    disabled={currentIndex === 0}
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-black/60 disabled:hidden"
-                                >
-                                    <ChevronLeft className="w-6 h-6" />
-                                </button>
+                                    {/* Navigation Arrows for Text content too */}
+                                    <button
+                                        onClick={goToPrevLesson}
+                                        disabled={currentIndex === 0}
+                                        className="lms-nav-arrow left"
+                                    >
+                                        <ChevronLeft className="w-6 h-6" />
+                                    </button>
 
-                                <button
-                                    onClick={goToNextLesson}
-                                    disabled={currentIndex === allLessons.length - 1}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-black/60 disabled:hidden"
-                                >
-                                    <ChevronRight className="w-6 h-6" />
-                                </button>
-                            </div>
-                        )}
+                                    <button
+                                        onClick={goToNextLesson}
+                                        disabled={currentIndex === allLessons.length - 1}
+                                        className="lms-nav-arrow right"
+                                    >
+                                        <ChevronRight className="w-6 h-6" />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <div className="lms-tabs-container">
-                        <nav className="lms-tabs-header">
-                            {tabs.map(tab => (
-                                <div
-                                    key={tab.id}
-                                    className={`lms-tab ${activeTab === tab.id ? 'active' : ''}`}
-                                    onClick={() => setActiveTab(tab.id)}
-                                >
-                                    {tab.label}
-                                </div>
-                            ))}
-                        </nav>
-
+                        <div className="lms-tabs-header">
+                            {tabs.map((tab) => {
+                                const Icon = tab.icon;
+                                return (
+                                    <button
+                                        key={tab.id}
+                                        className={`lms-tab ${activeTab === tab.id ? 'active' : ''}`}
+                                        onClick={() => setActiveTab(tab.id)}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                );
+                            })}
+                        </div>
                         <div className="lms-tab-content">
-                            {activeTab === 'visao-geral' && (
-                                <div className="animate-in fade-in duration-500">
-                                    <h2 className="lms-tab-title">Guia de Aprendizado: Domine as ferramentas Lukos</h2>
-                                    <p className="text-gray-400 leading-relaxed mb-6">
-                                        Neste tutorial, você aprenderá passo a passo como utilizar as funcionalidades mais poderosas do nosso sistema para otimizar o seu fluxo de trabalho.
-                                    </p>
-                                    <p className="text-gray-300">
-                                        Focaremos na praticidade e eficiência, garantindo que você tenha o melhor aproveitamento técnico.
-                                    </p>
-                                </div>
-                            )}
-                            {activeTab !== 'visao-geral' && (
-                                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                                    <Layout className="w-12 h-12 mb-4 opacity-20" />
-                                    <p>Conteúdo de {tabs.find(t => t.id === activeTab)?.label} em breve.</p>
-                                </div>
-                            )}
+                            <h2 className="lms-tab-title">
+                                {tabs.find(t => t.id === activeTab)?.label}
+                            </h2>
+                            <p className="text-gray-600">
+                                Conteúdo em desenvolvimento para: {currentLesson?.title}
+                            </p>
                         </div>
                     </div>
                 </main>
 
                 {/* Sidebar */}
-                <aside className={`lms-sidebar ${!isSidebarOpen ? 'closed' : ''}`}>
+                <aside className={`lms-sidebar ${sidebarOpen ? '' : 'closed'}`}>
                     <div className="lms-sidebar-header">
-                        <span className="lms-sidebar-title">Conteúdo do tutorial</span>
-                        <div className="flex items-center gap-4">
-                            <div className="text-[#a485f9] font-bold flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity">
-                                <Star className="w-4 h-4 fill-[#a485f9]" />
-                                <span>AI Assistant</span>
-                            </div>
-                            <X className="lms-sidebar-close w-5 h-5 hover:text-red-500 transition-colors" onClick={toggleSidebar} />
-                        </div>
+                        <span className="lms-sidebar-title">Conteúdo do curso</span>
+                        <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2">
+                            <X className="w-5 h-5" />
+                        </button>
                     </div>
 
                     <div className="lms-sidebar-content">
-                        {displaySections.map(section => (
-                            <div key={section.id}>
-                                {section.lessons.map(lesson => (
-                                    <div
-                                        key={lesson.id}
-                                        className={`lms-section-item ${currentLesson?.id === lesson.id ? 'active' : ''}`}
-                                        onClick={() => handleLessonClick(lesson)}
-                                    >
-                                        <div
-                                            className={`lms-checkbox ${completedLessons.includes(lesson.id) ? 'checked' : ''}`}
-                                            onClick={(e) => toggleLessonCompletion(lesson.id, e)}
-                                        >
-                                            {completedLessons.includes(lesson.id) && <Check className="w-3 h-3" />}
-                                        </div>
-                                        <div className="lms-item-info">
-                                            <div className="lms-item-title">{lesson.title}</div>
-                                            <div className="lms-item-meta">
-                                                {lesson.type === 'video' ? <PlayCircle className="w-3 h-3" /> : <FileText className="w-3 h-3" />}
-                                                <span>{lesson.duration}</span>
+                        {displaySections.map((section) => (
+                            <div key={section.id} className="lms-section">
+                                <button
+                                    className="lms-section-header"
+                                    onClick={() => toggleSection(section.id)}
+                                >
+                                    <span className="lms-section-title">{section.title}</span>
+                                    <ChevronLeft className={`w-4 h-4 transition-transform ${expandedSections.includes(section.id) ? 'rotate-270' : 'rotate-90'}`} />
+                                </button>
+
+                                {expandedSections.includes(section.id) && (
+                                    <div className="lms-section-lessons">
+                                        {section.lessons.map((lesson) => (
+                                            <div
+                                                key={lesson.id}
+                                                className={`lms-section-item ${currentLesson?.id === lesson.id ? 'active' : ''}`}
+                                                onClick={() => handleLessonClick(lesson)}
+                                            >
+                                                <div
+                                                    className={`lms-checkbox ${completedLessons.includes(lesson.id) ? 'checked' : ''}`}
+                                                    onClick={(e) => toggleLessonComplete(e, lesson.id)}
+                                                >
+                                                    {completedLessons.includes(lesson.id) && <CheckCircle2 className="w-4 h-4" />}
+                                                </div>
+                                                <div className="lms-item-info">
+                                                    <div className="lms-item-title">{lesson.title}</div>
+                                                    <div className="lms-item-meta">
+                                                        {lesson.type === 'video' ? <PlayCircle className="w-3 h-3" /> : <FileText className="w-3 h-3" />}
+                                                        <span>{lesson.duration}</span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        ))}
                                     </div>
-                                ))}
+                                )}
                             </div>
                         ))}
                     </div>
                 </aside>
 
-                {!isSidebarOpen && (
+                {/* Mobile Toggle Sidebar */}
+                {!sidebarOpen && (
                     <button
-                        className="fixed right-0 top-1/2 -translate-y-1/2 bg-white text-black p-2 rounded-l-md shadow-lg z-50 hover:bg-gray-100"
-                        onClick={toggleSidebar}
+                        className="fixed right-4 bottom-4 w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg lg:hidden z-100"
+                        onClick={() => setSidebarOpen(true)}
                     >
-                        <ChevronLeft className="w-5 h-5 rotate-180" />
+                        <Menu className="w-6 h-6" />
                     </button>
                 )}
             </div>

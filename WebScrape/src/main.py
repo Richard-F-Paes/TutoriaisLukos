@@ -191,10 +191,11 @@ def _cmd_download_media(settings, *, limit: int) -> None:
         """Process a single page. Thread-safe."""
         page = read_json(fp)
         title = page.get("title") or page.get("url") or fp.name
-        updated = download_media_for_page(
-            page,
-            images_dir=settings.images_dir(),
-            documents_dir=settings.documents_dir(),
+            updated = download_media_for_page(
+                page,
+                images_dir=settings.backend_images_dir(),
+                documents_dir=settings.documents_dir(),
+                videos_dir=settings.videos_dir(),
             user_agent=settings.user_agent,
             timeout_seconds=settings.request_timeout_seconds,
             retries=settings.request_retries,

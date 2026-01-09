@@ -12,6 +12,7 @@ from typing import Any
 from typing import Callable
 from urllib.parse import urlparse
 
+from bs4 import BeautifulSoup
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -85,6 +86,7 @@ def _download_single_media(
     page_slug: str,
     images_dir: Path,
     documents_dir: Path,
+    videos_dir: Path | None = None,
     user_agent: str,
     timeout_seconds: int,
     retries: int,
@@ -106,6 +108,7 @@ def _download_single_media(
         page_slug: Slug for organizing files by page
         images_dir: Directory for images
         documents_dir: Directory for documents
+        videos_dir: Directory for videos (optional)
         user_agent: User agent string
         timeout_seconds: Request timeout
         retries: Number of retry attempts
@@ -120,17 +123,24 @@ def _download_single_media(
     mtype = (m.get("type") or "unknown").lower()
     original_url = normalize_url(m.get("url") or "")
     
-    # Normalize Google URLs by removing size parameters if configured
-    if remove_size_params and "googleusercontent.com" in original_url.lower():
-        url = normalize_googleusercontent_url(original_url, remove_size_params=True)
-        # Store original URL for reference (only if different)
-        if url != original_url:
-            m["original_url"] = original_url
-            log.debug("URL normalizada (parâmetros de tamanho removidos): %s -> %s", 
-                     original_url[:80] + "..." if len(original_url) > 80 else original_url,
-                     url[:80] + "..." if len(url) > 80 else url)
+    # For Google Drive embeds (images and videos), prefer download_url if available
+    # This ensures we download the actual file, not the preview HTML
+    download_url = m.get("download_url")
+    if download_url and "drive.google.com" in (original_url.lower() or download_url.lower()):
+        url = normalize_url(download_url)
+        log.debug("Usando download_url do Google Drive para %s: %s", mtype, url[:80] + "..." if len(url) > 80 else url)
     else:
-        url = original_url
+        # Normalize Google URLs by removing size parameters if configured
+        if remove_size_params and "googleusercontent.com" in original_url.lower():
+            url = normalize_googleusercontent_url(original_url, remove_size_params=True)
+            # Store original URL for reference (only if different)
+            if url != original_url:
+                m["original_url"] = original_url
+                log.debug("URL normalizada (parâmetros de tamanho removidos): %s -> %s", 
+                         original_url[:80] + "..." if len(original_url) > 80 else original_url,
+                         url[:80] + "..." if len(url) > 80 else url)
+        else:
+            url = original_url
     
     # Log início do download
     if media_index is not None and total_media is not None:
@@ -141,7 +151,7 @@ def _download_single_media(
     if not is_http_url(url):
         log.debug("URL inválida, pulando: %s", url)
         return m
-    if mtype not in {"image", "document"}:
+    if mtype not in {"image", "document", "video"}:
         log.debug("Tipo de mídia não suportado (%s), pulando: %s", mtype, url)
         return m
     if can_fetch is not None and not can_fetch(url):
@@ -150,8 +160,21 @@ def _download_single_media(
         m["download_reason"] = "blocked_by_robots"
         return m
 
-    target_base = images_dir if mtype == "image" else documents_dir
-    target_dir = target_base / page_slug
+    # Determine target directory based on media type
+    if mtype == "image":
+        target_base = images_dir
+    elif mtype == "video":
+        if videos_dir is None:
+            log.warning("videos_dir não fornecido, pulando download de vídeo: %s", url)
+            return m
+        target_base = videos_dir
+    else:  # document
+        target_base = documents_dir
+    
+    # For backend/uploads, don't use page_slug subdirectory (flat structure)
+    # Check if we're saving to backend/uploads by checking if path contains "uploads"
+    use_page_slug = "uploads" not in str(target_base)
+    target_dir = target_base / page_slug if use_page_slug else target_base
     target_dir.mkdir(parents=True, exist_ok=True)
 
     # Determinar nome do arquivo ANTES de fazer qualquer requisição HTTP
@@ -400,6 +423,117 @@ def _download_single_media(
             final_size_mb = bytes_downloaded / (1024 * 1024)
             log.debug("Download concluído: %.2f MB", final_size_mb)
             
+                # CRITICAL: Check if Drive returned HTML instead of the actual file
+            # This happens when Drive shows a confirmation page instead of direct download
+            if content_type_from_resp and content_type_from_resp.startswith("text/html"):
+                log.warning("Drive retornou HTML em vez do arquivo real (página de confirmação). Tentando detectar redirect...")
+                # Try to read first few bytes to confirm it's HTML
+                is_invalid_html = False
+                html_content_bytes = b""
+                try:
+                    with current_out_path.open("rb") as f:
+                        first_bytes = f.read(512)
+                        first_text = first_bytes.decode("utf-8", errors="ignore").lower()
+                        if "<html" in first_text or "<!doctype" in first_text:
+                            is_invalid_html = True
+                            # Read the rest of the file for parsing later
+                            html_content_bytes = first_bytes + f.read()
+                except Exception as e:
+                    # If we can't read it, we can't verify, but if content-type says html, it's suspect.
+                    # safer to fail if we are unsure? or let it pass?
+                    # logic was: catch exception and cleanup.
+                    if current_out_path.exists():
+                        try:
+                            current_out_path.unlink() 
+                        except OSError:
+                            pass
+                    raise
+
+                if is_invalid_html:
+                    # Tentar encontrar link de confirmação (virus scan warning)
+                    log.warning("Tentando encontrar link de confirmação no HTML...")
+                    try:
+                        soup = BeautifulSoup(html_content_bytes, "html.parser")
+                        confirm_link = None
+                        for a in soup.find_all("a", href=True):
+                            if "confirm=" in a["href"]:
+                                confirm_link = a["href"]
+                                break
+                        
+                        if confirm_link:
+                            # Se for link relativo, adicionar base
+                            if confirm_link.startswith("/"):
+                                parsed_url = urlparse(url)
+                                base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+                                confirm_link = base_url + confirm_link
+                            
+                            log.info("Link de confirmação encontrado: %s", confirm_link)
+                            
+                            # Fazer nova requisição para o link de confirmação
+                            # Fechar arquivo atual para poder sobrescrever
+                            
+                            # Recursão limitada (ou apenas uma nova chamada simples)
+                            # Vamos fazer uma nova request simples aqui mesmo
+                            log.info("Seguindo link de confirmação...")
+                            confirm_resp = session.get(confirm_link, stream=True, timeout=timeout_seconds, allow_redirects=True)
+                            confirm_resp.raise_for_status()
+                            
+                            # Atualizar info do response
+                            resp = confirm_resp
+                            content_type_from_resp = (resp.headers.get("content-type") or "").split(";")[0].strip() or None
+                            size_from_resp = int(resp.headers.get("content-length") or 0) or None
+                            
+                            # Resetar arquivo e continuar download com o novo response
+                            # O loop de leitura abaixo vai ler do novo 'resp'
+                            # Precisamos reiniciar o arquivo para escrita (truncate)
+                            # ATENÇÃO: O código original está dentro de um 'with open', então precisamos ter cuidado.
+                            # Na verdade, como estamos DENTRO do 'with open', não podemos simplesmente trocar o 'resp' e continuar o loop externo facilmente
+                            # sem reestruturar.
+                            # Melhor abordagem: Retornar recursivamente chamando do_download com a NOVA URL se detectado.
+                            # Mas do_download usa a URL original do escopo externo via closure.
+                            
+                            # Alternativa simples e segura:
+                            # 1. Fechar este arquivo (já vamos sair do with open via raise se falhar)
+                            # 2. Levantar uma exceção especial ou retornar um valor que indique "tentar nova URL"
+                            # mas estamos dentro de uma função aninhada complexa.
+                            
+                            # Vamos fazer o download completo DO CONFIRM LINK aqui mesmo e substituir o arquivo.
+                            # Isso evita reestruturar todo o loop de chunks.
+                            
+                            current_out_path.unlink() # Remove o HTML parcial/invalido
+                            
+                            # Download do arquivo real
+                            with current_out_path.open("wb") as f_real:
+                                for chunk in resp.iter_content(chunk_size=chunk_size):
+                                    if download_timed_out.is_set():
+                                        raise requests.exceptions.Timeout(f"Timeout após {timeout_seconds * 2}s durante download de stream (confirmação)")
+                                    if chunk:
+                                        f_real.write(chunk)
+                                        # (Atualizar stats de progresso seria bom, mas opcional aqui para simplificar)
+                            
+                            # Se chegou aqui, sucesso no download do arquivo real
+                            log.info("Download via link de confirmação concluído com sucesso.")
+                            
+                            # Atualizar variáveis para o return final
+                            # O loop externo vai terminar (estamos dentro do 'with' que escrevia o HTML), mas já sobrescrevemos o arquivo.
+                            # Precisamos garantir que o loop externo pare ou que a gente retorne aqui.
+                            return current_out_path, content_type_from_resp, size_from_resp or size_from_resp # size pode ser None
+                            
+                    except Exception as e:
+                        log.error("Falha ao processar link de confirmação: %s", e)
+                        # Fallback para o erro original
+                    
+                    # Se não conseguiu recuperar via confirmação, falha como antes
+                    log.warning("Arquivo baixado é HTML (página de confirmação do Drive) e não foi possível confirmar. Removendo.")
+                    if current_out_path.exists():
+                        try:
+                            current_out_path.unlink()
+                        except OSError:
+                            pass 
+                    
+                    raise IOError("Drive retornou página HTML de confirmação em vez do arquivo real. "
+                                "O arquivo pode requerer autenticação ou confirmação manual.")
+            
             # Validate file integrity
             if validate_integrity:
                 # Check file exists and has content
@@ -418,11 +552,17 @@ def _download_single_media(
                                    size_from_resp, actual_size, size_diff_pct)
                 
                 # Validate content-type if available
-                if content_type_from_resp and mtype == "image":
-                    expected_types = ["image/", "application/octet-stream"]
-                    if not any(content_type_from_resp.startswith(et) for et in expected_types):
-                        log.warning("Content-Type inesperado para imagem: %s (esperado: image/*)",
-                                   content_type_from_resp)
+                if content_type_from_resp:
+                    if mtype == "image":
+                        expected_types = ["image/", "application/octet-stream"]
+                        if not any(content_type_from_resp.startswith(et) for et in expected_types):
+                            log.warning("Content-Type inesperado para imagem: %s (esperado: image/*)",
+                                       content_type_from_resp)
+                    elif mtype == "video":
+                        expected_types = ["video/", "application/octet-stream", "application/x-mpegURL"]
+                        if not any(content_type_from_resp.startswith(et) for et in expected_types):
+                            log.warning("Content-Type inesperado para vídeo: %s (esperado: video/* ou application/octet-stream)",
+                                       content_type_from_resp)
             
             return current_out_path, content_type_from_resp, size_from_resp or bytes_downloaded
         finally:
@@ -544,6 +684,7 @@ def download_media_for_page(
     *,
     images_dir: Path,
     documents_dir: Path,
+    videos_dir: Path | None = None,
     user_agent: str,
     timeout_seconds: int,
     retries: int,
@@ -564,6 +705,7 @@ def download_media_for_page(
         page: Page dictionary with media list
         images_dir: Directory for images
         documents_dir: Directory for documents
+        videos_dir: Directory for videos (optional)
         user_agent: User agent string
         timeout_seconds: Request timeout
         retries: Number of retry attempts
@@ -610,7 +752,11 @@ def download_media_for_page(
         if not is_http_url(url):
             skipped_count += 1
             continue
-        if mtype not in {"image", "document"}:
+        if mtype not in {"image", "document", "video"}:
+            skipped_count += 1
+            continue
+        if mtype == "video" and videos_dir is None:
+            log.debug("Vídeo ignorado (videos_dir não fornecido): %s", url)
             skipped_count += 1
             continue
         if can_fetch is not None and not can_fetch(url):
@@ -655,6 +801,7 @@ def download_media_for_page(
                 page_slug=page_slug,
                 images_dir=images_dir,
                 documents_dir=documents_dir,
+                videos_dir=videos_dir,
                 user_agent=user_agent,
                 timeout_seconds=timeout_seconds,
                 retries=retries,
@@ -835,6 +982,7 @@ def _update_media_metadata(
 ) -> None:
     """
     Atualiza todos os metadados do arquivo de uma vez.
+    Gera URL pública (/uploads/...) se o arquivo estiver em backend/uploads.
     
     Args:
         m: Objeto de mídia a ser atualizado
@@ -856,5 +1004,21 @@ def _update_media_metadata(
     m["file_name"] = m.get("file_name") or file_path.name
     m["file_size"] = m.get("file_size") or file_size
     m["downloaded"] = True
+    
+    # Generate public URL if saving to backend/uploads
+    file_path_str = str(file_path)
+    if "uploads" in file_path_str:
+        # Extract subdirectory (images or videos) and filename
+        parts = file_path.parts
+        try:
+            uploads_idx = next(i for i, part in enumerate(parts) if part == "uploads")
+            if uploads_idx + 1 < len(parts):
+                subdir = parts[uploads_idx + 1]  # "images" or "videos"
+                filename = parts[-1]  # filename
+                public_url = f"/uploads/{subdir}/{filename}"
+                m["public_url"] = public_url
+                log.debug("URL pública gerada: %s", public_url)
+        except (StopIteration, IndexError):
+            pass
 
 

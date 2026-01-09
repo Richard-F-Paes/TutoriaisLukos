@@ -312,8 +312,9 @@ def _download_media(settings, *, limit: int) -> None:
         
         updated = download_media_for_page(
             page,
-            images_dir=settings.images_dir(),
+            images_dir=settings.backend_images_dir(),
             documents_dir=settings.documents_dir(),
+            videos_dir=settings.videos_dir(),
             user_agent=settings.user_agent,
             timeout_seconds=settings.request_timeout_seconds,
             retries=settings.request_retries,

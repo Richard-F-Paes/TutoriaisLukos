@@ -12,6 +12,80 @@ import { defaultHeaderMenus } from '../../../shared/constants/defaultHeaderMenus
 import AdminPasswordModal from '../ui/AdminPasswordModal/AdminPasswordModal';
 import './Navbarcategoria.css';
 
+const MobileSubmenu = ({ item, depth = 0, openModal, setMenuOpen }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const hasChildren = (item.children || []).length > 0;
+  // Aumentando o padding left para melhor hierarquia visual (16px base + depth * 12px)
+  const pad = { paddingLeft: `${16 + Math.min(depth, 6) * 12}px` };
+
+  if (hasChildren || item.isSubmenu) {
+    return (
+      <div className="mobile-submenu-container">
+        <div
+          className="category-mobile-link sub"
+          style={{
+            ...pad,
+            fontWeight: 600,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            cursor: 'pointer',
+            paddingRight: '16px'
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsOpen(!isOpen);
+          }}
+        >
+          <span>{item.label}</span>
+          <ChevronRightIcon
+            className={`h-4 w-4 text-purple-700 transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
+          />
+        </div>
+
+        {/* Container para animação de altura poderia ser adicionado aqui */}
+        <div className={`mobile-submenu-children ${isOpen ? 'block' : 'hidden'}`}>
+          {hasChildren && item.children.map((child, idx) => (
+            <MobileSubmenu
+              key={`${child.label}-${depth + 1}-${idx}`}
+              item={child}
+              depth={depth + 1}
+              openModal={openModal}
+              setMenuOpen={setMenuOpen}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (item.tutorialSlug) {
+    return (
+      <button
+        onClick={() => {
+          setMenuOpen(false);
+          openModal(item.tutorialSlug);
+        }}
+        className="category-mobile-link sub"
+        role="menuitem"
+        style={pad}
+      >
+        {item.label}
+      </button>
+    );
+  }
+
+  return (
+    <div
+      className="category-mobile-link sub"
+      style={{ ...pad, opacity: 0.5, cursor: 'not-allowed' }}
+      title="Tutorial não configurado"
+    >
+      {item.label}
+    </div>
+  );
+};
+
 // Component que renderiza conteúdo do menu via portal
 const PortalMenuContent = ({ buttonRef, children, className, isOpen, align = 'left' }) => {
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -867,9 +941,36 @@ export default function Navbarcateria() {
       </div>
 
       {/* Menu Mobile */}
-      {menuOpen && (
+      {menuOpen && ReactDOM.createPortal(
         <div id="mobile-category-menu" className="category-mobile-menu" role="navigation" aria-label="Menu mobile de categorias">
-          <div className="category-mobile-menu-content">
+          {/* Overlay para fechar ao clicar fora */}
+          <div
+            className="absolute inset-0 z-0"
+            onClick={() => setMenuOpen(false)}
+          />
+
+          <div className="category-mobile-menu-content z-10">
+            {/* Botão Fechar Sidebar */}
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="category-mobile-close-button"
+              aria-label="Fechar menu mobile"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+
             <Link
               to="/tutoriais"
               className={`category-mobile-link ${location.pathname === '/tutoriais' ? 'active' : ''}`}
@@ -889,59 +990,16 @@ export default function Navbarcateria() {
               Treinamentos
             </Link>
             {menus.map((menu) => (
-              <div key={menu.label} className="category-mobile-dropdown" role="group" aria-label={menu.label}>
-                <div className="category-mobile-dropdown-header">{menu.label}</div>
-                {(function renderMobileItems(items, depth = 0) {
-                  return items.map((item, idx) => {
-                    const hasChildren = (item.children || []).length > 0;
-                    const isSubmenuItem = item.isSubmenu || hasChildren;
-                    const pad = { paddingLeft: `${Math.min(depth, 6) * 12}px` };
-
-                    if (isSubmenuItem) {
-                      return (
-                        <div key={`${item.label}-${depth}-${idx}`} style={pad}>
-                          <div className="category-mobile-link sub" style={{ fontWeight: 600 }}>
-                            {item.label}
-                          </div>
-                          {hasChildren && renderMobileItems(item.children, depth + 1)}
-                        </div>
-                      );
-                    }
-
-                    if (item.tutorialSlug) {
-                      return (
-                        <button
-                          key={`${item.label}-${depth}-${idx}`}
-                          onClick={() => {
-                            setMenuOpen(false);
-                            openModal(item.tutorialSlug);
-                          }}
-                          className="category-mobile-link sub"
-                          role="menuitem"
-                          style={pad}
-                        >
-                          {item.label}
-                        </button>
-                      );
-                    }
-
-                    return (
-                      <span
-                        key={`${item.label}-${depth}-${idx}`}
-                        className="category-mobile-link sub"
-                        style={{ ...pad, opacity: 0.5, cursor: 'not-allowed' }}
-                        title="Tutorial não configurado"
-                      >
-                        {item.label}
-                      </span>
-                    );
-                  });
-                })(menu.items)}
-              </div>
+              <MobileSubmenu
+                key={menu.label}
+                item={{ label: menu.label, children: menu.items }}
+                openModal={openModal}
+                setMenuOpen={setMenuOpen}
+              />
             ))}
 
             {/* Autenticação mobile */}
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <div className="category-mobile-user">
                 <div className="category-mobile-user-info">
                   <i className="fas fa-user"></i>
@@ -966,19 +1024,10 @@ export default function Navbarcateria() {
                   Sair
                 </button>
               </div>
-            ) : (
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  setShowAdminModal(true);
-                }}
-                className="category-mobile-login-button"
-              >
-                Entrar
-              </button>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Modal de Senha Administrativa */}
@@ -986,6 +1035,6 @@ export default function Navbarcateria() {
         isOpen={showAdminModal}
         onClose={() => setShowAdminModal(false)}
       />
-    </header>
+    </header >
   );
 }

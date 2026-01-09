@@ -434,7 +434,7 @@ const TutorialsUnified = () => {
 
 
         {/* 2. SEÇÃO AZUL -> AGORA ROXA (Hero Courses) */}
-        <section className="bg-[#5a2ab3] min-h-[500px] py-20 px-6 md:px-20 flex flex-col justify-center overflow-hidden rounded-b-2xl">
+        <section className="bg-[#5a2ab3] min-h-auto md:min-h-[500px] py-12 md:py-20 px-4 md:px-20 flex flex-col justify-center overflow-hidden rounded-b-2xl">
           <div className="max-w-7xl mx-auto w-full">
             <nav className="flex items-center gap-2 text-white/70 text-sm mb-16">
               <span>Home</span>
@@ -445,15 +445,15 @@ const TutorialsUnified = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               {/* Lado do Título com Efeito Outline */}
               <div className="relative">
-                <h2 className="text-7xl md:text-9xl font-black text-white relative z-10 leading-none">
+                <h2 className="text-5xl md:text-9xl font-black text-white relative z-10 leading-none">
                   Tutoriais
                 </h2>
                 {/* Camadas Vazadas Roxas */}
-                <h2 className="text-7xl md:text-9xl font-black absolute top-6 left-1 opacity-30 select-none leading-none"
+                <h2 className="text-5xl md:text-9xl font-black absolute top-6 left-1 opacity-30 select-none leading-none"
                   style={{ WebkitTextStroke: '1px rgba(255,255,255,0.5)', color: 'transparent' }}>
                   Tutoriais
                 </h2>
-                <h2 className="text-7xl md:text-9xl font-black absolute top-12 left-2 opacity-10 select-none leading-none"
+                <h2 className="text-5xl md:text-9xl font-black absolute top-12 left-2 opacity-10 select-none leading-none"
                   style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)', color: 'transparent' }}>
                   Tutoriais
                 </h2>
@@ -482,7 +482,7 @@ const TutorialsUnified = () => {
 
 
       {/* Categories Grid - Estilo Tutorials.jsx */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16 relative z-10">
         <div className="text-center mt-12 mb-20">
           <div className="flex justify-center space-x-4 mb-6">
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-2xl shadow-lg transform rotate-[12deg] hover:rotate-0 transition-transform duration-300">
@@ -496,7 +496,7 @@ const TutorialsUnified = () => {
             </div>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+          <h1 className="text-3xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               {categoriaParam ? `Tutoriais - ${categoriaParam.charAt(0).toUpperCase() + categoriaParam.slice(1)}` : 'Tutoriais do Sistema'}
             </span>

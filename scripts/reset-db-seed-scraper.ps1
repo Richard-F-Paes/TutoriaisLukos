@@ -13,7 +13,8 @@ param(
     [switch]$SkipSeed,
     [switch]$SkipScraper,
     [int]$ScraperLimit = 0,
-    [switch]$ForceExtract
+    [switch]$ForceExtract,
+    [switch]$CleanArtifacts
 )
 
 $ErrorActionPreference = "Stop"
@@ -25,6 +26,49 @@ Write-Host ""
 $rootDir = Split-Path -Parent $PSScriptRoot
 $backendDir = Join-Path $rootDir "backend"
 $webScrapeDir = Join-Path $rootDir "WebScrape"
+
+# Limpar artefatos se solicitado
+if ($CleanArtifacts) {
+    Write-Host "🧹 Limpando artefatos do scraper e uploads..." -ForegroundColor Yellow
+    Write-Host ""
+    
+    # Limpar dados do scraper
+    $scraperDataDirs = @(
+        Join-Path $webScrapeDir "data\raw_content",
+        Join-Path $webScrapeDir "data\processed_data"
+    )
+    
+    foreach ($dir in $scraperDataDirs) {
+        if (Test-Path $dir) {
+            Write-Host "   Removendo: $dir" -ForegroundColor Gray
+            Remove-Item -Path $dir -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+    
+    # Limpar mídias do scraper
+    $scraperMediaDir = Join-Path $webScrapeDir "media"
+    if (Test-Path $scraperMediaDir) {
+        Write-Host "   Removendo: $scraperMediaDir\*" -ForegroundColor Gray
+        Get-ChildItem -Path $scraperMediaDir -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
+    }
+    
+    # Limpar uploads do backend
+    $backendUploadDirs = @(
+        Join-Path $backendDir "uploads\images",
+        Join-Path $backendDir "uploads\videos"
+    )
+    
+    foreach ($dir in $backendUploadDirs) {
+        if (Test-Path $dir) {
+            Write-Host "   Removendo: $dir\*" -ForegroundColor Gray
+            Get-ChildItem -Path $dir -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
+        }
+    }
+    
+    Write-Host ""
+    Write-Host "✅ Artefatos limpos com sucesso!" -ForegroundColor Green
+    Write-Host ""
+}
 
 # Verificar se os diretórios existem
 if (-not (Test-Path $backendDir)) {

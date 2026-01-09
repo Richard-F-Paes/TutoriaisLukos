@@ -5,7 +5,7 @@
   right: 0;
   bottom: 0;
   background-color: #ffffff;
-  z-index: 9999;
+  z-index: 10000;
   display: flex;
   align-items: stretch;
   justify-content: stretch;
@@ -18,6 +18,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -42,6 +43,7 @@
     transform: translateY(20px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -245,13 +247,13 @@
 }
 
 /* Reduzir tamanho do ícone de busca */
-.tutorial-modal-header-search > div > div[class*="absolute"][class*="left-0"] svg {
+.tutorial-modal-header-search>div>div[class*="absolute"][class*="left-0"] svg {
   width: 1.25rem !important;
   height: 1.25rem !important;
 }
 
 /* Ajustar posicionamento do ícone */
-.tutorial-modal-header-search > div > div[class*="absolute"][class*="left-0"] {
+.tutorial-modal-header-search>div>div[class*="absolute"][class*="left-0"] {
   padding-left: 0.75rem !important;
 }
 
@@ -306,12 +308,12 @@
   .tutorial-modal-content {
     padding: 1.5rem;
   }
-  
+
   .tutorial-viewer-content-wrapper {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .tutorial-viewer-sidebar {
     position: static;
   }
@@ -327,7 +329,7 @@
     width: 44px;
     height: 44px;
   }
-  
+
   .tutorial-modal-menu-button svg {
     width: 22px;
     height: 22px;
@@ -338,7 +340,7 @@
     width: 44px;
     height: 44px;
   }
-  
+
   .tutorial-modal-actions .btn-edit svg,
   .tutorial-modal-actions .btn-share svg {
     width: 18px;
@@ -349,14 +351,15 @@
     width: 44px;
     height: 44px;
   }
-  
+
   .tutorial-modal-close svg {
     width: 24px;
     height: 24px;
   }
 
   .tutorial-modal-content {
-    padding: 1rem;
+    padding: 1rem 1rem 5rem 1rem;
+    /* Extra padding bottom for scrolling */
   }
 
   .tutorial-modal-nav-btn {
@@ -369,24 +372,24 @@
     font-size: 0.9rem !important;
     padding-left: 4.25rem !important;
   }
-  
+
   .tutorial-viewer-content-wrapper {
     gap: 1rem;
     margin-top: 1.5rem;
   }
-  
+
   .tutorial-header {
     margin-bottom: 1.5rem;
   }
-  
+
   .tutorial-title {
     font-size: 1.75rem;
   }
-  
+
   .tutorial-steps {
     margin-top: 2rem;
   }
-  
+
   .tutorial-step-item {
     padding: 1rem;
   }
@@ -396,7 +399,7 @@
   .tutorial-modal-header {
     padding: 0.5rem 0.75rem;
   }
-  
+
   .tutorial-modal-content {
     padding: 0.75rem;
   }
@@ -405,13 +408,12 @@
   .tutorial-modal-nav-btn {
     display: none;
   }
-  
+
   .tutorial-title {
     font-size: 1.5rem;
   }
-  
+
   .tutorial-description {
     font-size: 1rem;
   }
 }
-

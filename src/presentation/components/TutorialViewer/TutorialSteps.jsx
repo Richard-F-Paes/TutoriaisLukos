@@ -27,7 +27,8 @@ const TutorialStepItem = ({ step, index, onZoomImage }) => {
   const stepId = step.id || step.Id || index;
   const sortOrder = step.sortOrder || step.SortOrder || index + 1;
   const title = step.title || step.Title || '';
-  const content = step.content || step.Content;
+  // Fallback para campos alternativos (content_html/contentHtml) sem quebrar o shape atual
+  const content = step.content || step.Content || step.content_html || step.contentHtml;
   const imageUrl = step.imageUrl || step.ImageUrl;
   const videoUrl = step.videoUrl || step.VideoUrl;
 

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import html as html_module
+import json
 import logging
+import re
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -26,11 +29,11 @@ log = logging.getLogger(__name__)
 
 # Constants for content checking and waiting
 DEFAULT_CONTENT_CHECK_MIN_WORDS = 10
-DEFAULT_WAIT_DELAY_SECONDS = 0.3
-DEFAULT_MAX_WAIT_ATTEMPTS = 2
+DEFAULT_WAIT_DELAY_SECONDS = 2.0  # Increased from 0.3 for slower SPA loading
+DEFAULT_MAX_WAIT_ATTEMPTS = 15    # Increased from 2 to allow ~30s wait
 DEFAULT_DELAY_BETWEEN_PAGES = 0.5
 DEFAULT_DESCRIPTION_MAX_LENGTH = 280
-DEFAULT_SHORT_WAIT_TIMEOUT = 1
+DEFAULT_SHORT_WAIT_TIMEOUT = 10   # Increased from 1s to 10s fallback wait
 DEFAULT_DESCRIPTION_MIN_LENGTH = 50
 
 
@@ -42,7 +45,8 @@ def generate_smart_description(soup: BeautifulSoup, max_length: int = DEFAULT_DE
     1. Try to find the first meaningful paragraph (at least min_length chars)
     2. If no paragraph found, use first text block after title
     3. Remove HTML tags and clean whitespace
-    4. Truncate to max_length at word boundary
+    4. Filter out skip-links and navigation noise
+    5. Truncate to max_length at word boundary
     
     Args:
         soup: BeautifulSoup object with page content
@@ -55,13 +59,37 @@ def generate_smart_description(soup: BeautifulSoup, max_length: int = DEFAULT_DE
     if not soup:
         return None
     
+    # Skip-link patterns to filter out
+    skip_link_patterns = [
+        "pular para o conteúdo principal",
+        "pular para a navegação",
+        "pular para",
+        "skip to main content",
+        "skip to navigation",
+        "skip to",
+    ]
+    
+    def is_valid_text(text: str) -> bool:
+        """Check if text is valid (not a skip-link or navigation noise)"""
+        if not text or len(text.strip()) < min_length:
+            return False
+        text_lower = text.lower().strip()
+        # Check if it's a skip-link pattern
+        for pattern in skip_link_patterns:
+            if text_lower.startswith(pattern) or pattern in text_lower:
+                return False
+        # Check if it's mostly navigation/UI noise
+        if text_lower.count("pular") > 0 and len(text_lower) < 100:
+            return False
+        return True
+    
     # Strategy 1: Find first meaningful paragraph
     paragraphs = soup.find_all("p")
     for p in paragraphs:
         p_text = p.get_text(" ", strip=True)
         # Remove extra whitespace
         p_text = " ".join(p_text.split())
-        if len(p_text) >= min_length:
+        if is_valid_text(p_text):
             # Found a meaningful paragraph
             if len(p_text) <= max_length:
                 return p_text
@@ -85,12 +113,26 @@ def generate_smart_description(soup: BeautifulSoup, max_length: int = DEFAULT_DE
     )):
         nav.decompose()
     
+    # Remove skip-link buttons/text explicitly
+    for button in soup_copy.find_all("button"):
+        button_text = button.get_text(" ", strip=True).lower()
+        if any(pattern in button_text for pattern in skip_link_patterns):
+            button.decompose()
+    
+    for span in soup_copy.find_all("span"):
+        span_text = span.get_text(" ", strip=True).lower()
+        if any(pattern in span_text for pattern in skip_link_patterns):
+            # Check if parent is a button or link
+            parent = span.parent
+            if parent and parent.name in ["button", "a"]:
+                parent.decompose()
+    
     # Get all text blocks
     text_blocks = []
     for elem in soup_copy.find_all(["p", "div", "section", "article"]):
         elem_text = elem.get_text(" ", strip=True)
         elem_text = " ".join(elem_text.split())
-        if len(elem_text) >= min_length:
+        if is_valid_text(elem_text):
             text_blocks.append(elem_text)
     
     if text_blocks:
@@ -107,10 +149,28 @@ def generate_smart_description(soup: BeautifulSoup, max_length: int = DEFAULT_DE
     all_text = soup_copy.get_text(" ", strip=True)
     all_text = " ".join(all_text.split())
     
-    if len(all_text) >= min_length:
+    # Filter out skip-link patterns from the beginning
+    lines = all_text.split("\n")
+    filtered_lines = []
+    for line in lines:
+        line_clean = line.strip()
+        if is_valid_text(line_clean):
+            filtered_lines.append(line_clean)
+    
+    if filtered_lines:
+        first_valid = filtered_lines[0]
+        if len(first_valid) >= min_length:
+            if len(first_valid) <= max_length:
+                return first_valid
+            truncated = first_valid[:max_length].rsplit(' ', 1)[0]
+            if truncated:
+                return truncated + "..."
+            return first_valid[:max_length] + "..."
+    
+    # Last resort: use all_text if it's valid
+    if is_valid_text(all_text) and len(all_text) >= min_length:
         if len(all_text) <= max_length:
             return all_text
-        # Truncate at word boundary
         truncated = all_text[:max_length].rsplit(' ', 1)[0]
         if truncated:
             return truncated + "..."
@@ -154,7 +214,7 @@ def _check_content_loaded(
         return False
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=False)  # Changed to mutable to allow adding download_url
 class ExtractedMedia:
     type: str  # image | video | document | unknown
     url: str
@@ -164,6 +224,7 @@ class ExtractedMedia:
     file_name: str | None = None
     file_size: int | None = None
     thumbnail_url: str | None = None
+    download_url: str | None = None  # For Google Drive videos
 
 
 def extract_page(
@@ -417,6 +478,7 @@ def _get_main_html(driver: Any) -> tuple[str, str]:
     """
     Google Sites varies; we try several candidates.
     Prefer elements with actual content (text, images, etc.)
+    Evaluates ALL occurrences of div[role='main'] and picks the best one.
     """
     selectors = [
         "div[role='main']",
@@ -429,39 +491,95 @@ def _get_main_html(driver: Any) -> tuple[str, str]:
     best_selector = "page_source"
     best_content_score = 0
     
-    for sel in selectors:
+    # Special handling for div[role='main']: evaluate ALL occurrences
+    if selectors[0] == "div[role='main']":
+        try:
+            all_main_divs = driver.find_elements(By.CSS_SELECTOR, "div[role='main']")
+            log.debug("Encontrados %d elementos div[role='main']", len(all_main_divs))
+            
+            for idx, el in enumerate(all_main_divs):
+                try:
+                    html = el.get_attribute("outerHTML") or ""
+                    if not html.strip():
+                        continue
+                    
+                    # Calculate content score
+                    content_elements = el.find_elements(By.CSS_SELECTOR, "p, h2, h3, h4, img, ol, ul, table, div[class*='content'], div[class*='text'], div[class*='paragraph'], div[class*='section']")
+                    text_content = (el.text or "").strip()
+                    
+                    # Filter out skip-link text from score calculation
+                    text_lines = text_content.split("\n")
+                    meaningful_text = "\n".join([
+                        line for line in text_lines 
+                        if line.strip() and not any(
+                            pattern in line.lower() 
+                            for pattern in ["pular para", "skip to", "pular para o conteúdo", "pular para a navegação"]
+                        )
+                    ])
+                    
+                    # Score based on elements + meaningful text (not skip-links)
+                    content_score = len(content_elements) + (len(meaningful_text) // 10)
+                    
+                    log.debug("div[role='main'][%d]: score=%d, elements=%d, text_len=%d, meaningful_text_len=%d", 
+                            idx, content_score, len(content_elements), len(text_content), len(meaningful_text))
+                    
+                    if content_score > best_content_score:
+                        best_html = html
+                        best_selector = f"div[role='main'][{idx}]"
+                        best_content_score = content_score
+                        
+                        # If found significant content, use this immediately
+                        if content_score > 5 or len(meaningful_text) > 100:
+                            log.debug("Usando div[role='main'][%d] com score %d", idx, content_score)
+                            return html, best_selector
+                except Exception as e:
+                    log.debug("Erro ao avaliar div[role='main'][%d]: %s", idx, e)
+                    continue
+        except Exception as e:
+            log.debug("Erro ao buscar div[role='main']: %s", e)
+    
+    # Try other selectors
+    for sel in selectors[1:]:  # Skip first (already handled)
         try:
             el = driver.find_element(By.CSS_SELECTOR, sel)
             html = el.get_attribute("outerHTML") or ""
             if not html.strip():
                 continue
             
-            # Calcular "score" de conteúdo: verificar se há elementos de conteúdo real
+            # Calculate content score
             try:
-                # Contar elementos de conteúdo
                 content_elements = el.find_elements(By.CSS_SELECTOR, "p, h2, h3, h4, img, ol, ul, table, div[class*='content'], div[class*='text']")
                 text_content = (el.text or "").strip()
-                content_score = len(content_elements) + (len(text_content) // 10)  # Score baseado em elementos + texto
                 
-                # Se este tem mais conteúdo, usar este
+                # Filter out skip-link text
+                text_lines = text_content.split("\n")
+                meaningful_text = "\n".join([
+                    line for line in text_lines 
+                    if line.strip() and not any(
+                        pattern in line.lower() 
+                        for pattern in ["pular para", "skip to", "pular para o conteúdo", "pular para a navegação"]
+                    )
+                ])
+                
+                content_score = len(content_elements) + (len(meaningful_text) // 10)
+                
                 if content_score > best_content_score:
                     best_html = html
                     best_selector = sel
                     best_content_score = content_score
                     
-                    # Se encontrou conteúdo significativo, usar este
-                    if content_score > 5 or len(text_content) > 100:
+                    if content_score > 5 or len(meaningful_text) > 100:
                         return html, sel
             except Exception:
-                # Se não conseguir calcular score, usar se for o primeiro com HTML
                 if not best_html:
                     best_html = html
                     best_selector = sel
         except Exception:
             continue
     
-    # Retornar o melhor encontrado, ou page_source como fallback
+    # Return the best found, or page_source as fallback
     if best_html:
+        log.debug("Retornando melhor seletor: %s (score: %d)", best_selector, best_content_score)
         return best_html, best_selector
     return driver.page_source or "", "page_source"
 
@@ -486,14 +604,134 @@ def _extract_media(
         List of ExtractedMedia objects
     """
     out: list[ExtractedMedia] = []
+    
+    # PRIORITY: Extract Google Drive embeds first (before processing regular images/iframes)
+    # These contain the real media files, not just previews/icons
+    drive_embed_divs = soup.find_all("div", attrs={"data-embed-doc-id": True})
+    seen_doc_ids: set[str] = set()
+    
+    for div in drive_embed_divs:
+        doc_id = div.get("data-embed-doc-id")
+        if not doc_id or doc_id in seen_doc_ids:
+            continue
+        seen_doc_ids.add(doc_id)
+        
+        download_url = div.get("data-embed-download-url")
+        thumbnail_url = div.get("data-embed-thumbnail-url")
+        
+        if not download_url:
+            continue
+        
+        # Decode HTML entities (e.g., &amp; -> &)
+        download_url = html_module.unescape(download_url)
+        if thumbnail_url:
+            thumbnail_url = html_module.unescape(thumbnail_url)
+        
+        # Try to determine media type from aria-label or filename in download_url
+        media_type = "unknown"
+        aria_label = div.get("aria-label") or ""
+        
+        # Look for filename in aria-label (e.g., "Drive, Fechar Caixa.mp4")
+        filename = None
+        if "," in aria_label:
+            filename = aria_label.split(",", 1)[1].strip()
+        elif aria_label:
+            filename = aria_label.strip()
+        
+        # Also check nested elements for filename
+        if not filename:
+            # Look for span with filename (common pattern: <span class="pB4Yfc">filename</span>)
+            filename_span = div.find("span", class_=lambda x: x and "pB4Yfc" in x)
+            if filename_span:
+                filename = filename_span.get_text(strip=True)
+        
+        # Infer type from filename extension
+        if filename:
+            filename_lower = filename.lower()
+            if any(filename_lower.endswith(ext) for ext in [".mp4", ".mov", ".avi", ".webm", ".mkv", ".flv", ".wmv"]):
+                media_type = "video"
+            elif any(filename_lower.endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".svg"]):
+                media_type = "image"
+            elif any(filename_lower.endswith(ext) for ext in [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx"]):
+                media_type = "document"
+        
+        # If still unknown, check if download_url contains video/image indicators
+        if media_type == "unknown":
+            download_lower = download_url.lower()
+            if "video" in download_lower or "/file/d/" in download_lower:
+                # Check iframe src to see if it's a video preview
+                iframe = div.find("iframe", src=True)
+                if iframe and "/preview" in iframe.get("src", "").lower():
+                    media_type = "video"  # Likely a video if it has a preview iframe
+                else:
+                    media_type = "image"  # Default to image for Drive files
+            else:
+                media_type = "image"  # Default fallback
+        
+        # Create ExtractedMedia with download_url as primary source
+        media_obj = ExtractedMedia(
+            type=media_type,
+            url=normalize_url(download_url),  # Use download_url as primary URL
+            download_url=normalize_url(download_url),
+            thumbnail_url=normalize_url(thumbnail_url) if thumbnail_url else None,
+        )
+        out.append(media_obj)
+        log.debug("Drive embed extraído: type=%s, doc_id=%s, download=%s, filename=%s", 
+                 media_type, doc_id, download_url[:80], filename)
+    
+    # Also extract images from background-image in divs with data-embed (thumbnails)
+    # These are the actual preview images shown, not the icon
+    for div in soup.find_all("div", style=True):
+        style = div.get("style", "")
+        if "background-image" in style and "drive.google.com/thumbnail" in style:
+            # Extract URL from background-image: url(...)
+            match = re.search(r'url\(["\']?([^"\']+)["\']?\)', style)
+            if match:
+                bg_url = match.group(1)
+                # Decode HTML entities
+                bg_url = html_module.unescape(bg_url)
+                
+                # Check if this thumbnail is already covered by a drive embed
+                # (if parent has data-embed-doc-id, we already extracted it above)
+                parent_embed = div.find_parent("div", attrs={"data-embed-doc-id": True})
+                if not parent_embed:
+                    # This is a standalone thumbnail, extract it as an image
+                    full_bg_url = join_url(page_url, bg_url)
+                    if is_http_url(full_bg_url):
+                        out.append(
+                            ExtractedMedia(
+                                type="image",
+                                url=normalize_url(full_bg_url),
+                                thumbnail_url=normalize_url(full_bg_url),
+                            )
+                        )
+                        log.debug("Thumbnail extraído de background-image: %s", bg_url[:80])
 
+    # Track URLs already extracted from Drive embeds to avoid duplicates
+    extracted_download_urls: set[str] = set()
+    extracted_thumbnail_urls: set[str] = set()
+    for m in out:
+        if m.download_url:
+            extracted_download_urls.add(normalize_url(m.download_url))
+        if m.thumbnail_url:
+            extracted_thumbnail_urls.add(normalize_url(m.thumbnail_url))
+    
     # Images - check both src and data-src (lazy loading)
     all_imgs = soup.find_all("img")
     # #region agent log
-    import json
     with open(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log", "a", encoding="utf-8") as f:
         f.write(json.dumps({"sessionId":"debug-session","runId":"post-fix","hypothesisId":"G","location":"extractor.py:374","message":"Encontradas tags img no HTML","data":{"url":page_url[:100],"total_img_tags":len(all_imgs)},"timestamp":int(time.time()*1000)})+"\n")
     # #endregion
+    
+    # Patterns to filter out decorative icons
+    decorative_patterns = [
+        "drive-32.png",
+        "drive-16.png",
+        "icons/product/drive",
+        "google.com/images/icons",
+        "spacer",
+        "1x1",
+    ]
     
     for img in all_imgs:
         # Try src first, then data-src, then data-lazy-src (common lazy loading attributes)
@@ -515,6 +753,19 @@ def _extract_media(
         if any(placeholder in src.lower() for placeholder in ["placeholder", "spacer", "blank", "transparent", "1x1"]):
             continue
         
+        # Skip decorative icons (Google Drive icons, etc.)
+        if any(pattern in src.lower() for pattern in decorative_patterns):
+            log.debug("Filtrada imagem decorativa: %s", src)
+            continue
+
+        # Filtrar imagens com classe CENy8b (decorativas/rodapé do Google Sites)
+        # ATENÇÃO: Desabilitado pois estava removendo imagens válidas
+        # classes = img.get("class", [])
+        # class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+        # if "CENy8b" in class_str:
+        #     log.debug("Filtrada imagem decorativa com classe CENy8b: %s", src)
+        #     continue
+        
         full = join_url(page_url, src)
         if not is_http_url(full):
             # #region agent log
@@ -527,6 +778,11 @@ def _extract_media(
         normalized_url = normalize_url(full)
         if remove_size_params and "googleusercontent.com" in normalized_url.lower():
             normalized_url = normalize_googleusercontent_url(normalized_url, remove_size_params=True)
+        
+        # Skip if this URL was already extracted from a Drive embed
+        if normalized_url in extracted_thumbnail_urls or normalized_url in extracted_download_urls:
+            log.debug("Imagem já extraída de Drive embed, pulando: %s", normalized_url[:80])
+            continue
         
         # #region agent log
         with open(r"c:\Desenvolvimento\TutoriaisLukos\.cursor\debug.log", "a", encoding="utf-8") as f:
@@ -541,7 +797,7 @@ def _extract_media(
             )
         )
 
-    # Iframes (YouTube etc.)
+    # Iframes (YouTube, Google Drive, etc.)
     for iframe in soup.find_all("iframe", src=True):
         src = iframe.get("src")
         if not src:
@@ -549,7 +805,51 @@ def _extract_media(
         full = join_url(page_url, src)
         if not is_http_url(full):
             continue
-        out.append(ExtractedMedia(type="video", url=normalize_url(full)))
+        
+        # Check if this iframe is part of a Drive embed we already processed
+        parent_embed = iframe.find_parent("div", attrs={"data-embed-doc-id": True})
+        if parent_embed:
+            # Already extracted from Drive embed above, skip to avoid duplicate
+            log.debug("Iframe já processado como Drive embed, pulando: %s", full[:80])
+            continue
+        
+        # Check if it's a Google Drive embed - try to extract download URL (fallback for old format)
+        download_url = None
+        if "drive.google.com" in full.lower():
+            # Look for parent container with data-embed-download-url
+            parent = iframe.parent
+            if parent:
+                # Check parent and its siblings for download URL
+                for ancestor in [parent] + list(parent.parents if hasattr(parent, 'parents') else []):
+                    if isinstance(ancestor, Tag):
+                        download_url = ancestor.get("data-embed-download-url")
+                        if download_url:
+                            download_url = html_module.unescape(download_url)
+                            log.debug("Encontrado download_url do Google Drive (fallback): %s", download_url)
+                            break
+                        # Also check in nested divs
+                        download_div = ancestor.find("div", attrs={"data-embed-download-url": True})
+                        if download_div:
+                            download_url = download_div.get("data-embed-download-url")
+                            if download_url:
+                                download_url = html_module.unescape(download_url)
+                                log.debug("Encontrado download_url do Google Drive (nested, fallback): %s", download_url)
+                                break
+        
+        # Skip if this download_url was already extracted
+        if download_url and normalize_url(download_url) in extracted_download_urls:
+            log.debug("Download URL já extraído, pulando iframe: %s", full[:80])
+            continue
+        
+        # Create media object with download_url if available
+        media_obj = ExtractedMedia(
+            type="video",
+            url=normalize_url(full),
+            download_url=normalize_url(download_url) if download_url else None
+        )
+        out.append(media_obj)
+        if download_url:
+            log.debug("Vídeo Google Drive encontrado (fallback): preview=%s, download=%s", full, download_url)
 
     # Document links (best-effort: pdf, doc, etc.)
     for a in soup.find_all("a", href=True):

@@ -173,8 +173,10 @@
 }
 
 .category-drawer-row.active {
-  background: #eff6ff;
+  background: linear-gradient(to right, #f3e8ff, #f9fafb);
   border-left-color: #6c2396;
+  color: #581c87;
+  font-weight: 600;
 }
 
 .category-drawer-chevron {
@@ -351,8 +353,13 @@
 /* Responsive */
 @media (max-width: 768px) {
   .categories-drawer {
-    width: 320px;
-    left: -320px;
+    width: 85vw;
+    max-width: 320px;
+    left: -100%;
+  }
+
+  .categories-drawer.open {
+    left: 0;
   }
 
   .categories-drawer-search {
@@ -367,4 +374,3 @@
     right: 1.5rem;
   }
 }
-

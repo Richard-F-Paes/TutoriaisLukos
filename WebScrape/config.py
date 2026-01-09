@@ -118,6 +118,32 @@ class Settings:
 
     def documents_dir(self) -> Path:
         return self.media_dir / "documents"
+    
+    def videos_dir(self) -> Path:
+        """Directory for videos. Uses backend/uploads/videos if BACKEND_UPLOADS_DIR is set."""
+        backend_uploads = os.getenv("BACKEND_UPLOADS_DIR")
+        if backend_uploads:
+            return Path(backend_uploads) / "videos"
+        # Fallback: try to find backend/uploads relative to WebScrape directory
+        import os as os_module
+        webscrape_dir = Path(__file__).parent
+        backend_uploads_fallback = webscrape_dir.parent / "backend" / "uploads"
+        if backend_uploads_fallback.exists():
+            return backend_uploads_fallback / "videos"
+        return self.media_dir / "videos"
+    
+    def backend_images_dir(self) -> Path:
+        """Directory for images in backend. Uses backend/uploads/images if BACKEND_UPLOADS_DIR is set."""
+        backend_uploads = os.getenv("BACKEND_UPLOADS_DIR")
+        if backend_uploads:
+            return Path(backend_uploads) / "images"
+        # Fallback: try to find backend/uploads relative to WebScrape directory
+        import os as os_module
+        webscrape_dir = Path(__file__).parent
+        backend_uploads_fallback = webscrape_dir.parent / "backend" / "uploads"
+        if backend_uploads_fallback.exists():
+            return backend_uploads_fallback / "images"
+        return self.images_dir()
 
 
 def _env_bool(name: str, default: bool) -> bool:

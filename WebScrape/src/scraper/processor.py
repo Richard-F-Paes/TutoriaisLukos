@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup, Tag
 from src.utils.html_cleaner import clean_html
 from src.utils.category_path import limit_category_depth
 from src.utils.urls import slugify, url_id
+from src.scraper.step_merger import _merge_alert_steps
 
 
 log = logging.getLogger(__name__)
@@ -250,12 +251,13 @@ def _remove_navigation_elements(soup: BeautifulSoup) -> BeautifulSoup:
         log.debug("Removido elemento de rodapé: %s", elem.name)
     
     # Remover imagens com classe CENy8b (decorativas/rodapé do Google Sites)
-    for img in soup_copy.find_all("img", class_=True):
-        classes = img.get("class", [])
-        class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
-        if "CENy8b" in class_str:
-            img.decompose()
-            log.debug("Removida imagem decorativa com classe CENy8b")
+    # ATENÇÃO: Desabilitado pois estava removendo imagens válidas do conteúdo principal
+    # for img in soup_copy.find_all("img", class_=True):
+    #     classes = img.get("class", [])
+    #     class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+    #     if "CENy8b" in class_str:
+    #         img.decompose()
+    #         log.debug("Removida imagem decorativa com classe CENy8b")
     
     return soup_copy
 
@@ -426,9 +428,22 @@ def process_raw_page(page: dict[str, Any], *, url_to_hash_map: dict[str, str] | 
 
     # Mapear mídias originais por URL para associar com mídias extraídas dos passos
     # Normalizar URLs para melhor matching (remover query params, normalizar)
+    # Also map by download_url and doc-id for Drive embeds
     original_media_by_url: dict[str, dict[str, Any]] = {}
+    original_media_by_doc_id: dict[str, dict[str, Any]] = {}
+    
     for m in page.get("media") or []:
         url = m.get("url") or ""
+        download_url = m.get("download_url")
+        doc_id = None
+        
+        # Extract doc-id from download_url if it's a Drive URL
+        if download_url and "drive.google.com" in download_url:
+            import re
+            match = re.search(r'[?&]id=([a-zA-Z0-9_-]+)', download_url)
+            if match:
+                doc_id = match.group(1)
+        
         if url:
             # Armazenar por URL original e também por URL normalizada
             original_media_by_url[url] = m
@@ -437,10 +452,26 @@ def process_raw_page(page: dict[str, Any], *, url_to_hash_map: dict[str, str] | 
                 url_base = url.split("?")[0]
                 if url_base not in original_media_by_url:
                     original_media_by_url[url_base] = m
+        
+        # Map by download_url if available (for Drive embeds)
+        if download_url:
+            original_media_by_url[download_url] = m
+            # Also map by base URL without query params
+            if "?" in download_url:
+                download_url_base = download_url.split("?")[0]
+                if download_url_base not in original_media_by_url:
+                    original_media_by_url[download_url_base] = m
+        
+        # Map by doc-id for Drive embeds
+        if doc_id:
+            original_media_by_doc_id[doc_id] = m
 
     
 
     steps = _split_into_steps(soup)
+    
+    # Merge "alert" steps (IMPORTANTE!, OBSERVAÇÃO, etc.) with the following step
+    steps = _merge_alert_steps(steps)
     
     
     
@@ -490,26 +521,44 @@ def process_raw_page(page: dict[str, Any], *, url_to_hash_map: dict[str, str] | 
             media_type = media_info.get("type") or "unknown"
             
             # Tentar encontrar mídia original (com informações de download)
-            # Tentar matching exato primeiro
+            # Priority: 1) exact URL match, 2) download_url match, 3) doc-id match, 4) partial match
+            
+            original_media = None
+            
+            # 1. Try exact URL match
             original_media = original_media_by_url.get(media_url)
             
-            # Se não encontrou, tentar matching parcial (URL base sem query params)
+            # 2. Try matching by download_url (for Drive embeds)
+            if not original_media:
+                download_url = media_info.get("download_url")
+                if download_url:
+                    original_media = original_media_by_url.get(download_url)
+            
+            # 3. Try matching by doc-id (extract from URL if it's a Drive preview)
+            if not original_media and "drive.google.com" in media_url:
+                import re
+                match = re.search(r'/file/d/([a-zA-Z0-9_-]+)', media_url)
+                if match:
+                    doc_id = match.group(1)
+                    original_media = original_media_by_doc_id.get(doc_id)
+            
+            # 4. Try partial match (URL base without query params)
             if not original_media and "?" in media_url:
                 url_base = media_url.split("?")[0]
                 original_media = original_media_by_url.get(url_base)
             
-            # Se ainda não encontrou, tentar matching por sufixo (última parte da URL)
+            # 5. Try matching by suffix (filename)
             if not original_media:
-                # Tentar encontrar por sufixo da URL (nome do arquivo)
                 for orig_url, orig_media in original_media_by_url.items():
                     if media_url.endswith(orig_url.split("/")[-1]) or orig_url.endswith(media_url.split("/")[-1]):
                         original_media = orig_media
                         break
             
-            # Determinar URL final (local_path se disponível, senão url original)
+            # Determinar URL final (public_url > local_path > url original)
             final_url = None
             if original_media:
-                final_url = original_media.get("local_path") or original_media.get("url") or media_url
+                # Prefer public_url (e.g., /uploads/images/...) if available
+                final_url = original_media.get("public_url") or original_media.get("local_path") or original_media.get("url") or media_url
             else:
                 final_url = media_url
             
@@ -708,42 +757,82 @@ def _find_step_separators(soup: BeautifulSoup) -> list[Tag]:
     """
     separators: list[Tag] = []
     
-    # 0. Prioridade máxima: Procurar por divs com classe "iwQgFb" e role="presentation"
-    # Este é o separador visual usado pelo Google Sites para dividir seções
-    for div in soup.find_all("div", class_=True):
-        classes = div.get("class", [])
+    # 1. Prioridade máxima (alterada): Sections com id no formato "h.{hash}" e classe "yaqOZd" (sem exigir lQAHbd)
+    # Motivo: Em alguns tutoriais, os separadores visuais estão aninhados profundamente, mas as sections definem a estrutura real.
+    sections = []
+    for section in soup.find_all("section", id=True, class_=True):
+        section_id = section.get("id", "")
+        classes = section.get("class", [])
         class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
-        role = div.get("role", "")
         
-        # Verificar se tem classe "iwQgFb" e role="presentation"
-        if "iwQgFb" in class_str and role == "presentation":
-            separators.append(div)
-            log.debug("Encontrado separador div.iwQgFb com role=presentation")
+        # Verificar se id começa com "h." e tem a classe yaqOZd
+        if section_id.startswith("h.") and "yaqOZd" in class_str:
+             # Excluir sections que estão dentro de elementos <footer>
+            is_in_footer = False
+            for parent in section.parents:
+                if isinstance(parent, Tag) and parent.name == "footer":
+                    is_in_footer = True
+                    break
+            
+            # Excluir sections que são rodapé (contêm textos de rodapé conhecidos)
+            if not is_in_footer:
+                section_text = section.get_text(" ", strip=True).upper()
+                footer_texts = ["LUKOS SOLUÇÕES EM TECNOLOGIA", "© 2018", "TELEFONE", "EMAIL", "ATENDIMENTO", "SUPORTE@LUKOS.COM.BR"]
+                is_footer_text = any(ft in section_text for ft in footer_texts)
+                
+                if not is_footer_text:
+                    sections.append(section)
+                else:
+                    log.debug("Excluída section de rodapé dos separadores: %s", section_id)
+            else:
+                log.debug("Excluída section dentro de <footer> dos separadores: %s", section_id)
     
-    # Se encontrou separadores iwQgFb, retornar apenas eles (prioridade máxima)
-    if separators:
-        # Ordenar por posição no documento
+    if sections:
+        log.debug("Encontradas %d sections separadoras. Ignorando separadores visuais.", len(sections))
+        # Ordenar por posição
         def get_element_position(elem: Tag) -> int:
-            """Retorna uma posição aproximada do elemento no documento"""
             pos = 0
             for parent in elem.parents:
                 if parent.name:
                     pos += 1
-            # Contar elementos anteriores
             for prev in elem.previous_siblings:
                 if isinstance(prev, Tag):
                     pos += 1
             return pos
         
-        separators.sort(key=get_element_position)
-        return separators
-    
-    # 1. Procurar por divs com classes "oKdM2c ZZyype Kzv0Me"
-    # Nota: As classes podem estar em qualquer ordem, então verificamos se todas estão presentes
+        sections.sort(key=get_element_position)
+        return sections
+
+    # 2. Se não encontrou sections, tentar separadores visuais (compatibilidade com layouts antigos)
+    # Procurar por divs com classe "iwQgFb" e role="presentation"
     for div in soup.find_all("div", class_=True):
         classes = div.get("class", [])
         class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
-        # Verificar se contém todas as classes necessárias
+        role = div.get("role", "")
+        
+        if "iwQgFb" in class_str and role == "presentation":
+            separators.append(div)
+            log.debug("Encontrado separador div.iwQgFb com role=presentation")
+    
+    if separators:
+        # Ordenar por posição no documento
+        def get_element_position_div(elem: Tag) -> int:
+            pos = 0
+            for parent in elem.parents:
+                if parent.name:
+                    pos += 1
+            for prev in elem.previous_siblings:
+                if isinstance(prev, Tag):
+                    pos += 1
+            return pos
+        
+        separators.sort(key=get_element_position_div)
+        return separators
+
+    # 3. Procurar por divs com classes "oKdM2c ZZyype Kzv0Me"
+    for div in soup.find_all("div", class_=True):
+        classes = div.get("class", [])
+        class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
         if all(cls in class_str for cls in ["oKdM2c", "ZZyype", "Kzv0Me"]):
             separators.append(div)
     
@@ -805,125 +894,225 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
     
     
     
-    # 0) Prioridade: Usar separadores específicos (divs ou sections)
+    # 0) Prioridade: Usar separadores específicos (divs ou sections) - DOM-based chunking
     separators = _find_step_separators(soup_no_h1)
-    if separators:
-        
-        
+    if separators and len(separators) > 0:
         out_sep: list[dict[str, Any]] = []
         
-        # Estratégia simplificada: dividir o HTML baseado nas posições dos separadores
-        # Converter soup para string e encontrar posições dos separadores
-        html_str = str(soup_no_h1)
+        # Check if separators are sections (containers) or divs (boundaries)
+        is_container_mode = separators[0].name == "section"
         
-        # Encontrar posições dos separadores no HTML
-        separator_positions = []
-        for sep in separators:
-            sep_str = str(sep)
-            pos = html_str.find(sep_str)
-            if pos != -1:
-                separator_positions.append((pos, sep))
-        
-        # Ordenar por posição
-        separator_positions.sort(key=lambda x: x[0])
-        
-        # Dividir HTML em segmentos
-        step_num = 1
-        start_pos = 0
-        
-        for sep_pos, sep in separator_positions:
-            # Extrair segmento entre start_pos e sep_pos
-            if sep_pos > start_pos:
-                segment_html = html_str[start_pos:sep_pos].strip()
+        if is_container_mode:
+            log.debug("Usando modo de container (sections) para divisão de passos")
+            step_num = 1
+            if intro_content:
+                 out_sep.append({"title": None, "content_html": intro_content, "media": []})
+
+            for section in separators:
+                chunk_soup = section # The section itself is the chunk
                 
-                if segment_html:
-                    segment_soup = BeautifulSoup(segment_html, "lxml")
-                    step_media = _extract_media_from_element(segment_soup)
+                # Remover skip-links
+                for button in chunk_soup.find_all("button"):
+                    button_text = button.get_text(" ", strip=True).lower()
+                    if any(pattern in button_text for pattern in ["pular para", "skip to"]):
+                        button.decompose()
+                
+                chunk_text = chunk_soup.get_text(" ", strip=True)
+                has_media = bool(chunk_soup.find("img", src=True) or chunk_soup.find("iframe", src=True) or chunk_soup.find("video", src=True))
+                
+                if len(chunk_text) >= 10 or has_media:
+                    step_media = _extract_media_from_element(chunk_soup)
                     
                     # Extrair título
                     step_title = None
-                    first_heading = segment_soup.find(["h1", "h2", "h3", "h4", "h5", "h6"])
+                    first_heading = chunk_soup.find(["h1", "h2", "h3", "h4", "h5", "h6"])
                     if first_heading:
                         step_title = first_heading.get_text(" ", strip=True)
                     else:
-                        text = segment_soup.get_text(" ", strip=True)
-                        if text and len(text) > 10:
-                            step_title = text[:100].strip()
+                        if chunk_text and len(chunk_text) > 10:
+                            step_title = chunk_text[:100].strip()
                     
                     # Verificar se não é um passo de rodapé
-                    # Verificar pelo texto do segmento
-                    segment_text = segment_soup.get_text(" ", strip=True).upper()
+                    chunk_text_upper = chunk_text.upper()
                     is_footer = False
                     footer_texts = ["LUKOS SOLUÇÕES EM TECNOLOGIA", "© 2018", "SITES DO GOOGLE", "DENUNCIAR ABUSO", "REPORT ABUSE"]
                     for footer_text in footer_texts:
-                        if footer_text in segment_text and len(segment_text) < 300:
+                        if footer_text in chunk_text_upper and len(chunk_text) < 300:
                             is_footer = True
                             break
                     
-                    # Se não detectou pelo texto, verificar pelo primeiro elemento
                     if not is_footer:
-                        first_elem = segment_soup.find()
+                        first_elem = chunk_soup.find()
                         if first_elem:
                             is_footer = _is_footer_element(first_elem, soup_no_h1)
                     
                     if not is_footer:
                         out_sep.append({
                             "title": step_title or str(step_num),
-                            "content_html": segment_html,
+                            "content_html": str(chunk_soup),
+                            "media": step_media
+                        })
+                        step_num += 1
+                    else:
+                        log.debug("Pulado passo de rodapé (section): %s", step_title)
+            
+            if len(out_sep) >= 1:
+                return out_sep
+
+        # DOM-based chunking: usar a estrutura DOM para dividir entre separadores
+        # Estratégia: encontrar o container comum e dividir pelos separadores usando next_siblings
+        def extract_chunk_between_separators(soup: BeautifulSoup, start_sep: Tag | None, end_sep: Tag | None) -> str:
+            """Extrai o HTML entre dois separadores usando a estrutura DOM"""
+            if start_sep is None and end_sep is None:
+                return str(soup)
+            
+            # Encontrar o container comum (geralmente o body ou main)
+            container = soup.find("body") or soup.find("main") or soup
+            
+            chunk_parts = []
+            
+            if start_sep is None:
+                # Primeiro chunk: tudo antes do primeiro separador
+                for elem in container.children:
+                    if isinstance(elem, Tag):
+                        if elem == end_sep or (end_sep and end_sep in elem.descendants):
+                            break
+                        chunk_parts.append(str(elem))
+            elif end_sep is None:
+                # Último chunk: tudo após o último separador
+                found_start = False
+                for elem in container.children:
+                    if isinstance(elem, Tag):
+                        if elem == start_sep or (start_sep and start_sep in elem.descendants):
+                            found_start = True
+                            continue
+                        if found_start:
+                            chunk_parts.append(str(elem))
+            else:
+                # Chunk entre dois separadores
+                found_start = False
+                for elem in container.children:
+                    if isinstance(elem, Tag):
+                        if elem == start_sep or (start_sep and start_sep in elem.descendants):
+                            found_start = True
+                            continue
+                        if not found_start:
+                            continue
+                        if elem == end_sep or (end_sep and end_sep in elem.descendants):
+                            break
+                        chunk_parts.append(str(elem))
+            
+            return "".join(chunk_parts)
+        
+        # Dividir em chunks usando os separadores
+        step_num = 1
+        previous_sep = None
+        
+        for i, current_sep in enumerate(separators):
+            # Extrair chunk entre previous_sep e current_sep
+            chunk_html = extract_chunk_between_separators(soup_no_h1, previous_sep, current_sep)
+            
+            if chunk_html and chunk_html.strip():
+                chunk_soup = BeautifulSoup(chunk_html, "lxml")
+                
+                # Filtrar chunks sem conteúdo significativo
+                chunk_text = chunk_soup.get_text(" ", strip=True)
+                
+                # Remover skip-links do chunk
+                for button in chunk_soup.find_all("button"):
+                    button_text = button.get_text(" ", strip=True).lower()
+                    if any(pattern in button_text for pattern in ["pular para", "skip to"]):
+                        button.decompose()
+                
+                chunk_text = chunk_soup.get_text(" ", strip=True)
+                
+                if len(chunk_text) >= 10:
+                    step_media = _extract_media_from_element(chunk_soup)
+                    
+                    # Extrair título
+                    step_title = None
+                    first_heading = chunk_soup.find(["h1", "h2", "h3", "h4", "h5", "h6"])
+                    if first_heading:
+                        step_title = first_heading.get_text(" ", strip=True)
+                    else:
+                        if chunk_text and len(chunk_text) > 10:
+                            step_title = chunk_text[:100].strip()
+                    
+                    # Verificar se não é um passo de rodapé
+                    chunk_text_upper = chunk_text.upper()
+                    is_footer = False
+                    footer_texts = ["LUKOS SOLUÇÕES EM TECNOLOGIA", "© 2018", "SITES DO GOOGLE", "DENUNCIAR ABUSO", "REPORT ABUSE"]
+                    for footer_text in footer_texts:
+                        if footer_text in chunk_text_upper and len(chunk_text) < 300:
+                            is_footer = True
+                            break
+                    
+                    if not is_footer:
+                        first_elem = chunk_soup.find()
+                        if first_elem:
+                            is_footer = _is_footer_element(first_elem, soup_no_h1)
+                    
+                    if not is_footer:
+                        out_sep.append({
+                            "title": step_title or str(step_num),
+                            "content_html": str(chunk_soup),
                             "media": step_media
                         })
                         step_num += 1
                     else:
                         log.debug("Pulado passo de rodapé: %s", step_title)
-            
-            # Próximo segmento começa após o separador
-            start_pos = sep_pos + len(str(sep))
-        
-        # Adicionar último segmento (após último separador)
-        if start_pos < len(html_str):
-            segment_html = html_str[start_pos:].strip()
-            
-            if segment_html:
-                segment_soup = BeautifulSoup(segment_html, "lxml")
-                step_media = _extract_media_from_element(segment_soup)
-                
-                step_title = None
-                first_heading = segment_soup.find(["h1", "h2", "h3", "h4", "h5", "h6"])
-                if first_heading:
-                    step_title = first_heading.get_text(" ", strip=True)
                 else:
-                    text = segment_soup.get_text(" ", strip=True)
-                    if text and len(text) > 10:
-                        step_title = text[:100].strip()
-                
-                # Verificar se não é um passo de rodapé
-                # Verificar pelo texto do segmento
-                segment_text = segment_soup.get_text(" ", strip=True).upper()
-                is_footer = False
-                footer_texts = ["LUKOS SOLUÇÕES EM TECNOLOGIA", "© 2018", "SITES DO GOOGLE", "DENUNCIAR ABUSO", "REPORT ABUSE"]
-                for footer_text in footer_texts:
-                    if footer_text in segment_text and len(segment_text) < 300:
-                        is_footer = True
-                        break
-                
-                # Se não detectou pelo texto, verificar pelo primeiro elemento
-                if not is_footer:
-                    first_elem = segment_soup.find()
-                    if first_elem:
-                        is_footer = _is_footer_element(first_elem, soup_no_h1)
-                
-                if not is_footer:
-                    out_sep.append({
-                        "title": step_title or str(step_num),
-                        "content_html": segment_html,
-                        "media": step_media
-                    })
-                else:
-                    log.debug("Pulado último passo de rodapé: %s", step_title)
-        
-        # Se encontrou pelo menos 1 passo, retornar
-        if len(out_sep) >= 1:
+                    log.debug("Chunk ignorado por falta de conteúdo (texto: %d chars)", len(chunk_text))
             
+            previous_sep = current_sep
+        
+        # Adicionar último chunk (após último separador)
+        if previous_sep:
+            chunk_html = extract_chunk_between_separators(soup_no_h1, previous_sep, None)
+            
+            if chunk_html and chunk_html.strip():
+                chunk_soup = BeautifulSoup(chunk_html, "lxml")
+                
+                # Remover skip-links
+                for button in chunk_soup.find_all("button"):
+                    button_text = button.get_text(" ", strip=True).lower()
+                    if any(pattern in button_text for pattern in ["pular para", "skip to"]):
+                        button.decompose()
+                
+                chunk_text = chunk_soup.get_text(" ", strip=True)
+                
+                if len(chunk_text) >= 10:
+                    step_media = _extract_media_from_element(chunk_soup)
+                    step_title = None
+                    first_heading = chunk_soup.find(["h1", "h2", "h3", "h4", "h5", "h6"])
+                    if first_heading:
+                        step_title = first_heading.get_text(" ", strip=True)
+                    else:
+                        if chunk_text and len(chunk_text) > 10:
+                            step_title = chunk_text[:100].strip()
+                    
+                    chunk_text_upper = chunk_text.upper()
+                    is_footer = False
+                    footer_texts = ["LUKOS SOLUÇÕES EM TECNOLOGIA", "© 2018", "SITES DO GOOGLE", "DENUNCIAR ABUSO", "REPORT ABUSE"]
+                    for footer_text in footer_texts:
+                        if footer_text in chunk_text_upper and len(chunk_text) < 300:
+                            is_footer = True
+                            break
+                    
+                    if not is_footer:
+                        first_elem = chunk_soup.find()
+                        if first_elem:
+                            is_footer = _is_footer_element(first_elem, soup_no_h1)
+                    
+                    if not is_footer:
+                        out_sep.append({
+                            "title": step_title or str(step_num),
+                            "content_html": str(chunk_soup),
+                            "media": step_media
+                        })
+        
+        # Se encontrou pelo menos 2 passos válidos (ou 1 se tiver intro), retornar
+        if len(out_sep) >= 2 or (len(out_sep) >= 1 and intro_content):
             return out_sep
     
     # 1) Prefer ordered list(s)
@@ -1048,16 +1237,30 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
                 # Começar um novo passo com o primeiro parágrafo
                 step_paragraphs = [valid_paragraphs[i]]
                 
-                # Verificar se podemos adicionar um segundo parágrafo consecutivo
-                if i + 1 < len(valid_paragraphs):
+                # Check if this paragraph is an alert/important notice
+                p_text_upper = valid_paragraphs[i].get_text(" ", strip=True).upper()
+                alert_keywords = ["IMPORTANTE", "ATENÇÃO", "ATENCAO", "OBSERVAÇÃO", "OBSERVACAO", "NOTA", "CUIDADO"]
+                is_alert_start = any(k in p_text_upper for k in alert_keywords)
+                
+                # If it's an alert, we want to capture more paragraphs to keep the message together
+                # Otherwise, we limit to 2 paragraphs per step
+                max_paragraphs = 10 if is_alert_start else 2
+                paragraphs_added = 1
+                
+                # Attempt to add subsequent paragraphs
+                while i + 1 < len(valid_paragraphs) and paragraphs_added < max_paragraphs:
                     next_p = valid_paragraphs[i + 1]
-                    current_p = valid_paragraphs[i]
+                    current_p = valid_paragraphs[i] # This is the last added paragraph
                     
                     # Verificar se há um separador visual entre os dois parágrafos
                     has_separator = False
                     
                     # Verificar se há um heading entre eles
-                    for elem in current_p.next_siblings:
+                    # Need to check siblings between the LAST added paragraph and the NEXT one
+                    # Note: We should check between step_paragraphs[-1] and next_p
+                    last_added_p = step_paragraphs[-1]
+                    
+                    for elem in last_added_p.next_siblings:
                         if isinstance(elem, Tag):
                             if elem == next_p:
                                 # Chegamos no próximo parágrafo sem encontrar separador
@@ -1076,10 +1279,14 @@ def _split_into_steps(soup: BeautifulSoup) -> list[dict[str, Any]]:
                                     has_separator = True
                                     break
                     
-                    # Se não há separador, adicionar o segundo parágrafo ao passo
+                    # Se não há separador, adicionar o próximo parágrafo ao passo
                     if not has_separator:
                         step_paragraphs.append(next_p)
                         i += 1  # Pular o próximo parágrafo pois já foi incluído
+                        paragraphs_added += 1
+                    else:
+                        # Found separator, stop adding to this step
+                        break
                 
                 # Criar HTML do passo com os parágrafos agrupados
                 step_html_parts = [str(p) for p in step_paragraphs]
@@ -1256,11 +1463,12 @@ def _extract_media_from_element(elem: Tag | BeautifulSoup) -> list[dict[str, Any
             continue
         
         # Filtrar imagens com classe CENy8b (decorativas/rodapé do Google Sites)
-        classes = img.get("class", [])
-        class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
-        if "CENy8b" in class_str:
-            log.debug("Filtrada imagem decorativa com classe CENy8b: %s", src)
-            continue
+        # ATENÇÃO: Desabilitado pois estava removendo imagens válidas
+        # classes = img.get("class", [])
+        # class_str = " ".join(classes) if isinstance(classes, list) else str(classes)
+        # if "CENy8b" in class_str:
+        #     log.debug("Filtrada imagem decorativa com classe CENy8b: %s", src)
+        #     continue
         
         # Verificar se a imagem está dentro de um elemento de rodapé
         if _is_footer_element(img, None):
